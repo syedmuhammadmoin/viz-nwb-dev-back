@@ -1,5 +1,8 @@
-﻿using Domain.Interfaces;
+﻿using Domain.Base;
+using Domain.Interfaces;
 using Infrastructure.Context;
+using Infrastructure.Specifications;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T, TKey> : IGenericRepository<T, TKey> where T : BaseEntity<TKey>
     {
         private readonly ApplicationDbContext _context;
 
@@ -18,39 +21,36 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public void Add(T entity)
+        public async Task<T> Add(T entity)
         {
-            _context.Set<T>().Add(entity);
+            var result = await _context.Set<T>().AddAsync(entity);
+            return result.Entity;
         }
 
-        public void AddRange(IEnumerable<T> entities)
+        public async Task<IEnumerable<T>> GetAll()
+        {
+            return await _context.Set<T>().AsNoTracking().ToListAsync();
+        }
+
+        public Task<bool> Delete(TKey id)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<T> Find(Expression<Func<T, bool>> expression)
+        public IEnumerable<T> Find(ISpecification<T> specification = null)
         {
-            return _context.Set<T>().Where(expression);
+            return ApplySpecification(specification);
         }
 
-        public IEnumerable<T> GetAll()
+        public async Task<T> GetById(TKey id)
         {
-            return _context.Set<T>().ToList();
+            return await _context.Set<T>().FindAsync(id);
         }
 
-        public T GetById(dynamic id)
-        {
-            return _context.Set<T>().Find(id);
-        }
-
-        public void Remove(T entity)
-        {
-            _context.Set<T>().Remove(entity);
-        }
-
-        public void RemoveRange(IEnumerable<T> entities)
-        {
-            _context.Set<T>().RemoveRange(entities);
-        }
+        private IQueryable<T> ApplySpecification(ISpecification<T> spec)
+    {
+        return SpecificationEvaluator<T, TKey>.GetQuery(_context.Set<T>().AsQueryable(), spec);
+    }
+        
     }
 }
