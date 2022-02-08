@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -7,14 +8,12 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IGenericRepository<T> where T : class
+    public interface IGenericRepository<T, TKey> where T : BaseEntity<TKey>
     {
-        T GetById(dynamic id);
-        IEnumerable<T> GetAll();
-        IEnumerable<T> Find(Expression<Func<T, bool>> expression);
-        void Add(T entity);
-        void AddRange(IEnumerable<T> entities);
-        void Remove(T entity);
-        void RemoveRange(IEnumerable<T> entities);
+        Task<IEnumerable<T>> GetAll();
+        Task<T> GetById(TKey id);
+        Task<T> Add(T entity);
+        Task<bool> Delete(TKey id);
+        IEnumerable<T> Find(ISpecification<T> specification = null);
     }
 }
