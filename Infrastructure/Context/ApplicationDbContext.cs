@@ -18,6 +18,8 @@ namespace Infrastructure.Context
 
         }
 
+        public DbSet<Client> Clients { get ; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
