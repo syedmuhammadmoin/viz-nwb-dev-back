@@ -9,6 +9,8 @@ namespace Domain.Interfaces
     public interface IUnitOfWork
     {
         IClientRepository Client { get; }
+        IOrganizationRepository Organization { get; }
+
         Task SaveAsync();
         void CreateTransaction();
         void Commit();
