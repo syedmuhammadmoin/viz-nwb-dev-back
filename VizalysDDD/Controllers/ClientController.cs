@@ -1,6 +1,6 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Vizalys.Api.Controllers
@@ -17,21 +17,21 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ClientDto>>> GetAll()
+        public async Task<ActionResult<List<ClientDto>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
-            var clients = await _clientService.GetAllAsync();
+            var clients = await _clientService.GetAllAsync(filter);
             return Ok(clients);
         }
 
         [HttpPost]
-        public async Task<ActionResult<ClientDto>> Create(CreateClientDto entity)
+        public async Task<ActionResult<ClientDto>> CreateAsync(CreateClientDto entity)
         {
             var clients = await _clientService.CreateAsync(entity);
             return Ok(clients);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<ClientDto>> Create(int id)
+        public async Task<ActionResult<ClientDto>> GetByIdAsync(int id)
         {
             var result = await _clientService.GetByIdAsync(id);
             return Ok(result); // Status Code : 200
@@ -41,17 +41,11 @@ namespace Vizalys.Api.Controllers
         public async Task<ActionResult<ClientDto>> UpdateAsync(int id, CreateClientDto entity)
         {
             if (id != entity.Id)
-                return BadRequest("Product ID mismatch");
+                return BadRequest("ID mismatch");
             
             var result = await _clientService.UpdateAsync(entity);
             return Ok(result); // Status Code : 200
         }
 
-        [HttpGet("Find")]
-        public IActionResult Find()
-        {
-            var result = _clientService.Find();
-            return Ok(result); // Status Code : 200
-        }
     }
 }
