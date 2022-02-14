@@ -9,18 +9,18 @@ namespace Application.Contracts.DTOs
     public class ClientDto
     {
         public int Id { get; set; }
-        public string Name { get; private set; }
-        public string Country { get; private set; }
-        public string State { get; private set; }
-        public string City { get; private set; }
-        public string Address { get; private set; }
-        public string Phone { get; private set; }
-        public string Fax { get; private set; }
-        public string Email { get; private set; }
-        public string Website { get; private set; }
-        public string BankName { get; private set; }
-        public string BankAccountTitle { get; private set; }
-        public string BankAccountNumber { get; private set; }
-        public string Currency { get; private set; }
+        public string Name { get; set; }
+        public string Country { get; set; }
+        public string State { get; set; }
+        public string City { get; set; }
+        public string Address { get; set; }
+        public string Phone { get; set; }
+        public string Fax { get; set; }
+        public string Email { get; set; }
+        public string Website { get; set; }
+        public string BankName { get; set; }
+        public string BankAccountTitle { get; set; }
+        public string BankAccountNumber { get; set; }
+        public string Currency { get; set; }
     }
 }

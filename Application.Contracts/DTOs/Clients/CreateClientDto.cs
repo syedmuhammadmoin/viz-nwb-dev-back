@@ -12,30 +12,30 @@ namespace Application.Contracts.DTOs
         public int? Id { get; set; }
         [Required]
         [MaxLength(100)]
-        public string Name { get; private set; }
+        public string Name { get; set; }
         [MaxLength(50)]
-        public string Country { get; private set; }
+        public string Country { get; set; }
         [MaxLength(50)]
-        public string State { get; private set; }
+        public string State { get; set; }
         [MaxLength(50)]
-        public string City { get; private set; }
+        public string City { get; set; }
         [MaxLength(20)]
-        public string Address { get; private set; }
+        public string Address { get; set; }
         [MaxLength(20)]
-        public string Phone { get; private set; }
+        public string Phone { get; set; }
         [MaxLength(20)]
-        public string Fax { get; private set; }
+        public string Fax { get; set; }
         [MaxLength(20)]
-        public string Email { get; private set; }
+        public string Email { get; set; }
         [MaxLength(50)]
-        public string Website { get; private set; }
+        public string Website { get; set; }
         [MaxLength(50)]
-        public string BankName { get; private set; }
+        public string BankName { get; set; }
         [MaxLength(50)]
-        public string BankAccountTitle { get; private set; }
+        public string BankAccountTitle { get; set; }
         [MaxLength(30)]
-        public string BankAccountNumber { get; private set; }
+        public string BankAccountNumber { get; set; }
         [MaxLength(30)]
-        public string Currency { get; private set; }
+        public string Currency { get; set; }
     }
 }
