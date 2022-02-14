@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IClientService : ICrudService<CreateClientDto, ClientDto, int, PaginationFilter>
+    public interface IOrganizationService : ICrudService<CreateOrganizationDto, OrganizationDto, int, PaginationFilter>
     {
     }
 }

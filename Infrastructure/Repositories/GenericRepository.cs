@@ -27,9 +27,12 @@ namespace Infrastructure.Repositories
             return result.Entity;
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public async Task<IEnumerable<T>> GetAll(ISpecification<T> specification = null)
         {
-            return await _context.Set<T>().AsNoTracking().ToListAsync();
+            return await SpecificationEvaluator<T, TKey>.GetQuery(_context.Set<T>()
+                                    .AsQueryable(), specification)
+                                    .AsNoTracking()
+                                    .ToListAsync();
         }
 
         public Task<bool> Delete(TKey id)
@@ -37,20 +40,22 @@ namespace Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
+        public async Task<T> GetById(TKey id, ISpecification<T> specification = null)
+        {
+            return await SpecificationEvaluator<T, TKey>.GetQuery(_context.Set<T>()
+                                    .Where(x => x.Id.Equals(id))
+                                    .AsQueryable(), specification)
+                                    .FirstOrDefaultAsync();
+        }
+
+        public async Task<int> TotalRecord()
+        {
+            return await _context.Set<T>().CountAsync();
+        }
+
         public IEnumerable<T> Find(ISpecification<T> specification = null)
         {
-            return ApplySpecification(specification);
+            throw new NotImplementedException();
         }
-
-        public async Task<T> GetById(TKey id)
-        {
-            return await _context.Set<T>().FindAsync(id);
-        }
-
-        private IQueryable<T> ApplySpecification(ISpecification<T> spec)
-    {
-        return SpecificationEvaluator<T, TKey>.GetQuery(_context.Set<T>().AsQueryable(), spec);
-    }
-        
     }
 }

@@ -10,8 +10,8 @@ namespace Application.Interfaces
 {
     public interface IApplicationDbContext
     {
-
         public DbSet<Client> Clients { get; set; }
+        public DbSet<Organization> Organizations { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

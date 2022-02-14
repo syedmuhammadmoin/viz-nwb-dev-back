@@ -7,19 +7,21 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.DTOs
 {
-    public class CreateClientDto
+    public class CreateOrganizationDto
     {
         public int? Id { get; set; }
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }
+        [MaxLength(500)]
+        public string Description { get; set; }
         [MaxLength(50)]
         public string Country { get; set; }
         [MaxLength(50)]
         public string State { get; set; }
         [MaxLength(50)]
         public string City { get; set; }
-        [MaxLength(20)]
+        [MaxLength(200)]
         public string Address { get; set; }
         [MaxLength(20)]
         public string Phone { get; set; }
@@ -29,13 +31,22 @@ namespace Application.Contracts.DTOs
         public string Email { get; set; }
         [MaxLength(50)]
         public string Website { get; set; }
+        //Industry will link from chart of account in future...
         [MaxLength(50)]
-        public string BankName { get; set; }
+        public string Industry { get; set; }
+        //this will link from tax in future
         [MaxLength(50)]
-        public string BankAccountTitle { get; set; }
-        [MaxLength(30)]
-        public string BankAccountNumber { get; set; }
-        [MaxLength(30)]
-        public string Currency { get; set; }
+        public string LegalStatus { get; set; }
+        [MaxLength(50)]
+        public string IncomeTaxId { get; set; }
+        [MaxLength(50)]
+        public string SalesTaxId { get; set; }
+        [Required]
+
+        public DateTime StartDate { get; set; }
+        [Required]
+        public DateTime EndDate { get; set; }
+        [Required]
+        public int ClientId { get; set; }
     }
 }

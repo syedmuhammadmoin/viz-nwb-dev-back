@@ -18,11 +18,19 @@ namespace Infrastructure.Context
 
         }
 
-        public DbSet<Client> Clients { get ; set; }
+        public DbSet<Client> Clients { get; set; }
+        public DbSet<Organization> Organizations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            
+            //changing cascade delete behavior
+            foreach (var foreignKey in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
+            }
+
             //Changing Identity users and roles tables name
             modelBuilder.Entity<User>(entity =>
             {

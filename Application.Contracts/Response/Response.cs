@@ -8,7 +8,7 @@ namespace Application.Contracts.Response
 {
     public class Response<T>
     {
-        private Response()
+        protected Response()
         {
         }
 
@@ -26,9 +26,9 @@ namespace Application.Contracts.Response
             Message = message;
         }
 
-        public T Result { get; private set; }
-        public bool IsSuccess { get; private set; }
-        public string[] Errors { get; private set; }
-        public string Message { get; private set; }
+        public T Result { get; protected set; }
+        public bool IsSuccess { get; protected set; }
+        public string[] Errors { get; protected set; }
+        public string Message { get; protected set; }
     }
 }

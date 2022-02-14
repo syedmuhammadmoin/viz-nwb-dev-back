@@ -8,12 +8,19 @@ using Infrastructure.Uow;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+//Add database connection conf
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// Add unit of work
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+//Add services
 builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IOrganizationService, OrganizationService>();
+
+//Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -18,7 +18,7 @@ namespace Domain.Entities
         public string State { get; private set; }
         [MaxLength(50)]
         public string City { get; private set; }
-        [MaxLength(20)]
+        [MaxLength(200)]
         public string Address { get; private set; }
         [MaxLength(20)]
         public string Phone { get; private set; }
@@ -36,6 +36,7 @@ namespace Domain.Entities
         public string BankAccountNumber { get; private set; }
         [MaxLength(30)]
         public string Currency { get; private set; }
+        public List<Organization> Organizations { get; set; }
 
         public Client(Client client)
         {
