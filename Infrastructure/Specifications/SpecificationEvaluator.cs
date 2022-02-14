@@ -23,11 +23,7 @@ namespace Infrastructure.Specifications
 
             // Includes all expression-based includes
             query = specification.Includes.Aggregate(query,
-                                    (current, include) => current.Include(include));
-
-            // Include any string-based include statements
-            query = specification.IncludeStrings.Aggregate(query,
-                                    (current, include) => current.Include(include));
+                                    (current, include) => current.Include(include).AsNoTracking());
 
             // Apply ordering if expressions are set
             if (specification.OrderBy != null)
@@ -37,11 +33,6 @@ namespace Infrastructure.Specifications
             else if (specification.OrderByDescending != null)
             {
                 query = query.OrderByDescending(specification.OrderByDescending);
-            }
-
-            if (specification.GroupBy != null)
-            {
-                query = query.GroupBy(specification.GroupBy).SelectMany(x => x);
             }
 
             // Apply paging if enabled
