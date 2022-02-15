@@ -14,16 +14,21 @@ namespace Infrastructure.Uow
     {
         private readonly ApplicationDbContext _context;
         private IDbContextTransaction _transaction;
-
         public IClientRepository Client { get; private set; }
+        public ICategoryRepository Category { get; private set; }
         public IOrganizationRepository Organization { get; private set; }
+        public IBusinessPartnerRepository BusinessPartner { get; private set; }
+        public IProductRepository Product { get; private set; }
+        public ILevel4Repository Level4{ get; private set; }
 
-        
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
             Client = new ClientRepository(context);
             Organization = new OrganizationRepository(context);
+            Category = new CategoryRepository(context);
+            BusinessPartner = new BusinessPartnerRepository(context);
+            Level4 = new Level4Repository(context);
         }
 
         public async Task SaveAsync()
