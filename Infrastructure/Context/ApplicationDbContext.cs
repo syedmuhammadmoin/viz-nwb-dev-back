@@ -20,6 +20,13 @@ namespace Infrastructure.Context
 
         public DbSet<Client> Clients { get; set; }
         public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Level1> Level1 { get; set; }
+        public DbSet<Level2> Level2 { get; set; }
+        public DbSet<Level3> Level3 { get; set; }
+        public DbSet<Level4> Level4 { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<BusinessPartner> BusinessPartners { get; set; }
+        public DbSet<Product> Products { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
