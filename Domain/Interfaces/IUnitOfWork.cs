@@ -10,6 +10,9 @@ namespace Domain.Interfaces
     {
         IClientRepository Client { get; }
         IOrganizationRepository Organization { get; }
+        IDepartmentRepository Department { get; }
+        ILocationRepository Location { get; }
+        IWarehouseRepository Warehouse { get; }
 
         Task SaveAsync();
         void CreateTransaction();

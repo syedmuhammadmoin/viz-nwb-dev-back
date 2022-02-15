@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.DTOs
 {
-    public class CreateClientDto
+    public class CreateWarehouseDto
     {
         public int? Id { get; set; }
         [Required]
@@ -16,31 +16,22 @@ namespace Application.Contracts.DTOs
         [Required]
         [MaxLength(50)]
         public string Country { get; set; }
+        [Required]
         [MaxLength(50)]
         public string State { get; set; }
+        [Required]
         [MaxLength(50)]
         public string City { get; set; }
-        [MaxLength(20)]
-        public string Address { get; set; }
-        [MaxLength(20)]
-        public string Phone { get; set; }
-        [MaxLength(20)]
-        public string Fax { get; set; }
-        [MaxLength(20)]
-        public string Email { get; set; }
         [MaxLength(50)]
-        public string Website { get; set; }
-        [Required]
+        public string Street { get; set; }
         [MaxLength(50)]
-        public string BankName { get; set; }
-        [Required]
+        public string Block { get; set; }
         [MaxLength(50)]
-        public string BankAccountTitle { get; set; }
+        public string Road { get; set; }
         [Required]
-        [MaxLength(30)]
-        public string BankAccountNumber { get; set; }
+        [MaxLength(100)]
+        public string Manager { get; set; }
         [Required]
-        [MaxLength(30)]
-        public string Currency { get; set; }
+        public int DepartmentId { get; set; }
     }
 }
