@@ -10,6 +10,10 @@ namespace Domain.Interfaces
     {
         IClientRepository Client { get; }
         IOrganizationRepository Organization { get; }
+        ICategoryRepository Category { get; }
+        IBusinessPartnerRepository BusinessPartner { get; }
+        ILevel4Repository Level4 { get; }
+        IProductRepository Product { get; }
 
         Task SaveAsync();
         void CreateTransaction();
