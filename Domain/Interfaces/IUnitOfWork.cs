@@ -13,6 +13,13 @@ namespace Domain.Interfaces
         IDepartmentRepository Department { get; }
         ILocationRepository Location { get; }
         IWarehouseRepository Warehouse { get; }
+        ICategoryRepository Category { get; }
+        IBusinessPartnerRepository BusinessPartner { get; }
+        ILevel1Repository Level1 { get; }
+        ILevel2Repository Level2 { get; }
+        ILevel3Repository Level3 { get; }
+        ILevel4Repository Level4 { get; }
+        IProductRepository Product { get; }
 
         Task SaveAsync();
         void CreateTransaction();
