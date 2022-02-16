@@ -33,15 +33,18 @@ namespace Application.Mapper
             CreateMap<CreateLocationDto, Location>();
 
             CreateMap<Level4, Level4Dto>()
-                .ForMember(dto => dto.levle3Name, core => core.MapFrom(a => a.Level3.Name));
+                .ForMember(dto => dto.Level3Name, core => core.MapFrom(a => a.Level3.Name));
             CreateMap<CreateLevel4Dto, Level4>();
 
             CreateMap<Category, CategoryDto>()
-                .ForMember(dto => dto.Name, core => core.MapFrom(a => a.Name));
+                .ForMember(dto => dto.InventoryAccount, core => core.MapFrom(a => a.InventoryAccount.Name))
+                .ForMember(dto => dto.RevenueAccount, core => core.MapFrom(a => a.RevenueAccount.Name))
+                .ForMember(dto => dto.CostAccount, core => core.MapFrom(a => a.CostAccount.Name));
             CreateMap<CreateCategoryDto, Category>();
 
             CreateMap<BusinessPartner, BusinessPartnerDto>()
-                .ForMember(dto => dto.Name, core => core.MapFrom(a => a.Name));
+                .ForMember(dto => dto.AccountReceivable, core => core.MapFrom(a => a.AccountReceivable.Name))
+                .ForMember(dto => dto.AccountPayable, core => core.MapFrom(a => a.AccountPayable.Name));
             CreateMap<CreateBusinessPartnerDto, BusinessPartner>();
 
             CreateMap<Product, ProductDto>()
