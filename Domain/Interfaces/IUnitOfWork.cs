@@ -20,6 +20,7 @@ namespace Domain.Interfaces
         ILevel3Repository Level3 { get; }
         ILevel4Repository Level4 { get; }
         IProductRepository Product { get; }
+        IJournalEntryRepository JournalEntry { get; }
 
         Task SaveAsync();
         void CreateTransaction();
