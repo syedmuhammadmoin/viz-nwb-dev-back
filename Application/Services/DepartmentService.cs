@@ -53,7 +53,7 @@ namespace Application.Services
 
         public async Task<Response<DeptDto>> GetByIdAsync(int id)
         {
-            var dept = await _unitOfWork.Client.GetById(id);
+            var dept = await _unitOfWork.Department.GetById(id);
             if (dept == null)
                 return new Response<DeptDto>("Not found");
 
