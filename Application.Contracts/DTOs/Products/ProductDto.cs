@@ -18,5 +18,6 @@ namespace Application.Contracts.DTOs
         public decimal Cost { get; set; }
         public decimal SalesTax { get; set; }
         public string Barcode { get; set; }
+        public string CategoryName { get; set; }
     }
 }
