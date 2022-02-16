@@ -21,7 +21,7 @@ namespace Application.Mapper
             CreateMap<CreateOrganizationDto, Organization>();
 
             CreateMap<Level4, Level4Dto>()
-                .ForMember(dto => dto.Name, core => core.MapFrom(a => a.Name));
+                .ForMember(dto => dto.levle3Name, core => core.MapFrom(a => a.Level3.Name));
             CreateMap<CreateLevel4Dto, Level4>();
 
             CreateMap<Category, CategoryDto>()
@@ -33,7 +33,7 @@ namespace Application.Mapper
             CreateMap<CreateBusinessPartnerDto, BusinessPartner>();
 
             CreateMap<Product, ProductDto>()
-                .ForMember(dto => dto.ProductName, core => core.MapFrom(a => a.ProductName));
+                .ForMember(dto => dto.CategoryName, core => core.MapFrom(a => a.Category.Name));
             CreateMap<CreateProductDto, Product>();
         }
     }
