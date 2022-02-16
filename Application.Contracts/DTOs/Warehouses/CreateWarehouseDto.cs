@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Application.Contracts.DTOs
 {
@@ -28,7 +23,6 @@ namespace Application.Contracts.DTOs
         public string Block { get; set; }
         [MaxLength(50)]
         public string Road { get; set; }
-        [Required]
         [MaxLength(100)]
         public string Manager { get; set; }
         [Required]

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Application.Contracts.DTOs
 {
@@ -11,11 +6,11 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        [StringLength(100)]
+        [MaxLength(100)]
         public string Name { get; set; }
+        [MaxLength(50)]
         public string Dimensions { get; set; }
-        [Required]
-        [StringLength(100)]
+        [MaxLength(50)]
         public string Supervisor { get; set; }
         [Required]
         public int WarehouseId { get; set; }
