@@ -22,8 +22,9 @@ builder.Services.AddScoped<IWarehouseService, WarehouseService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 
 builder.Services.AddScoped<IBusinessPartnerService, BusinessPartnerService>();
-builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ILevel4Service, Level4Service>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 //Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
