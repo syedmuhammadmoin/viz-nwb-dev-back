@@ -10,6 +10,7 @@ namespace Application.Contracts.DTOs
     public class CreateCategoryDto
     {
         public int? Id { get; set; }
+        [MaxLength(100)]
         [Required]
         public string Name { get; set; }
         [Required]
