@@ -20,6 +20,18 @@ namespace Application.Mapper
                 .ForMember(dto => dto.ClientName, core => core.MapFrom(a => a.Client.Name));
             CreateMap<CreateOrganizationDto, Organization>();
 
+            CreateMap<Department, DeptDto>()
+                .ForMember(dto => dto.OrgnizationName, core => core.MapFrom(a => a.Orgnization.Name));
+            CreateMap<CreateDeptDto, Department>();
+
+            CreateMap<Warehouse, WarehouseDto>()
+                .ForMember(dto => dto.DepartmentName, core => core.MapFrom(a => a.Department.Name));
+            CreateMap<CreateWarehouseDto, Warehouse>();
+
+            CreateMap<Location, LocationDto>()
+                .ForMember(dto => dto.WarehouseName, core => core.MapFrom(a => a.Warehouse.Name));
+            CreateMap<CreateLocationDto, Location>();
+
             CreateMap<Level4, Level4Dto>()
                 .ForMember(dto => dto.levle3Name, core => core.MapFrom(a => a.Level3.Name));
             CreateMap<CreateLevel4Dto, Level4>();

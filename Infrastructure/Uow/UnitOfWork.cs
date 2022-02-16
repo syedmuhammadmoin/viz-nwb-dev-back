@@ -17,6 +17,10 @@ namespace Infrastructure.Uow
         public IClientRepository Client { get; private set; }
         public ICategoryRepository Category { get; private set; }
         public IOrganizationRepository Organization { get; private set; }
+        public IDepartmentRepository Department { get; private set; }
+        public IWarehouseRepository Warehouse { get; private set; }
+        public ILocationRepository Location { get; private set; }
+
         public IBusinessPartnerRepository BusinessPartner { get; private set; }
         public IProductRepository Product { get; private set; }
         public ILevel4Repository Level4{ get; private set; }
@@ -26,6 +30,9 @@ namespace Infrastructure.Uow
             _context = context;
             Client = new ClientRepository(context);
             Organization = new OrganizationRepository(context);
+            Department = new DepartmentRepository(context);
+            Warehouse = new WarehouseRepository(context);
+            Location = new LocationRepository(context);
             Category = new CategoryRepository(context);
             BusinessPartner = new BusinessPartnerRepository(context);
             Level4 = new Level4Repository(context);

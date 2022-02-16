@@ -20,6 +20,9 @@ namespace Infrastructure.Context
 
         public DbSet<Client> Clients { get; set; }
         public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Location> Locations { get; set; }
+        public DbSet<Warehouse> Warehouses { get; set; }
         public DbSet<Level1> Level1 { get; set; }
         public DbSet<Level2> Level2 { get; set; }
         public DbSet<Level3> Level3 { get; set; }
