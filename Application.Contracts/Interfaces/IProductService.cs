@@ -1,4 +1,4 @@
-﻿using Application.Contracts.DTOs.Products;
+﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
 using System;
 using System.Collections.Generic;
