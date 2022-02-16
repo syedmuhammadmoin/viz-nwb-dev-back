@@ -11,5 +11,6 @@ namespace Application.Contracts.DTOs
         public Guid Id { get; set; }
         public string Name { get; set; }
         public Guid Level3_id { get; set; }
+        public string levle3Name { get; set; }
     }
 }
