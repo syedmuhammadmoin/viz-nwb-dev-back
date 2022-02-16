@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Constants;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace Application.Contracts.DTOs
     public class BusinessPartnerDto
     {
         public int Id { get; set; }
-        public string BusinessPartnerType { get; set; }
+        public BusinessPartnerType BusinessPartnerType { get; set; }
         public string Entity { get; set; }
         public string Name { get; set; }
         public string CNIC { get; set; }
