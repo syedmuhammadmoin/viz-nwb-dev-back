@@ -11,6 +11,7 @@ namespace Domain.Entities
 {
     public class Warehouse : BaseEntity<int>
     {
+        [MaxLength(100)]
         public string Name { get; private set; }
         [MaxLength(50)]
         public string Country { get; private set; }
@@ -18,11 +19,11 @@ namespace Domain.Entities
         public string State { get; private set; }
         [MaxLength(50)]
         public string City { get; private set; }
-        [MaxLength(20)]
+        [MaxLength(50)]
         public string Street { get; private set; }
-        [MaxLength(20)]
+        [MaxLength(50)]
         public string Block { get; private set; }
-        [MaxLength(20)]
+        [MaxLength(50)]
         public string Road { get; private set; }
         [MaxLength(50)]
         public string Manager { get; private set; }
@@ -42,11 +43,9 @@ namespace Domain.Entities
             Road = warehouse.Road;
             Manager = warehouse.Manager;
             DepartmentId = warehouse.DepartmentId;
-            Locations = warehouse.Locations;
         }
         protected Warehouse()
         {
-
         }
     }
 }

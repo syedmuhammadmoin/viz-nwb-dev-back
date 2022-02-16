@@ -19,13 +19,13 @@ namespace Domain.Entities
         public string State { get; private set; }
         [MaxLength(50)]
         public string City { get; private set; }
-        [MaxLength(20)]
-        public string Street { get; private set; }
-        [MaxLength(20)]
-        public string Block { get; private set; }
-        [MaxLength(20)]
-        public string Road { get; private set; }
         [MaxLength(50)]
+        public string Street { get; private set; }
+        [MaxLength(50)]
+        public string Block { get; private set; }
+        [MaxLength(50)]
+        public string Road { get; private set; }
+        [MaxLength(100)]
         public string HeadOfDept { get; private set; }
 
         public int OrganizationId { get; private set; }
@@ -46,7 +46,6 @@ namespace Domain.Entities
         }
         protected Department()
         {
-
         }
     }
 }
