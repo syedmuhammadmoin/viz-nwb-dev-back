@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Contracts.DTOs.Products
+namespace Application.Contracts.DTOs
 {
     public class CreateProductDto
     {
