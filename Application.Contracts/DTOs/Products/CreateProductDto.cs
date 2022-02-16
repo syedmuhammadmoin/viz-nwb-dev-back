@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Constants;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -11,11 +12,12 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
+        [MaxLength(100)]
         public string ProductName { get; set; }
         [Required]
-        public int PurchasedOrSold { get; set; }
+        public PurchasedOrSold PurchasedOrSold { get; set; }
         [Required]
-        public int ProductType { get; set; }
+        public ProductType ProductType { get; set; }
         [Required]
         public int CategoryId { get; set; }
         [Required]
@@ -24,6 +26,7 @@ namespace Application.Contracts.DTOs
         public decimal Cost { get; set; }
         [Required]
         public decimal SalesTax { get; set; }
+        [MaxLength(100)]
         public string Barcode { get; set; }
     }
 }
