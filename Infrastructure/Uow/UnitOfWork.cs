@@ -29,6 +29,7 @@ namespace Infrastructure.Uow
             Category = new CategoryRepository(context);
             BusinessPartner = new BusinessPartnerRepository(context);
             Level4 = new Level4Repository(context);
+            Product = new ProductRepository(context);
         }
 
         public async Task SaveAsync()
