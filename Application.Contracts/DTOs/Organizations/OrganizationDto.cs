@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Application.Contracts.DTOs
 {
     public class OrganizationDto
@@ -14,6 +9,9 @@ namespace Application.Contracts.DTOs
         public string Country { get; set; }
         public string State { get; set; }
         public string City { get; set; }
+        public string Street { get; private set; }
+        public string Block { get; private set; }
+        public string Road { get; private set; }
         public string Address { get; set; }
         public string Phone { get; set; }
         public string Fax { get; set; }

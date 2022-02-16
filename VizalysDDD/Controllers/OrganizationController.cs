@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +14,13 @@ namespace Vizalys.Api.Controllers
         public OrganizationController(IOrganizationService organizationService)
         {
             _organizationService = organizationService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<OrganizationDto>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        {
+            var orgs = await _organizationService.GetAllAsync(filter);
+            return Ok(orgs);
         }
 
         [HttpPost]

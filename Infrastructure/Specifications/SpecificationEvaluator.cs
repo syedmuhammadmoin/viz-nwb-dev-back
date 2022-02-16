@@ -15,32 +15,36 @@ namespace Infrastructure.Specifications
         {
             var query = inputQuery;
 
-            // modify the IQueryable using the specification's criteria expression
-            if (specification.Criteria != null)
+            if (specification != null)
             {
-                query = query.Where(specification.Criteria);
+                // modify the IQueryable using the specification's criteria expression
+                if (specification.Criteria != null)
+                {
+                    query = query.Where(specification.Criteria);
+                }
+
+                // Includes all expression-based includes
+                query = specification.Includes.Aggregate(query,
+                                        (current, include) => current.Include(include).AsNoTracking());
+
+                // Apply ordering if expressions are set
+                if (specification.OrderBy != null)
+                {
+                    query = query.OrderBy(specification.OrderBy);
+                }
+                else if (specification.OrderByDescending != null)
+                {
+                    query = query.OrderByDescending(specification.OrderByDescending);
+                }
+
+                // Apply paging if enabled
+                if (specification.IsPagingEnabled)
+                {
+                    query = query.Skip(specification.Skip)
+                                 .Take(specification.Take);
+                }
             }
 
-            // Includes all expression-based includes
-            query = specification.Includes.Aggregate(query,
-                                    (current, include) => current.Include(include).AsNoTracking());
-
-            // Apply ordering if expressions are set
-            if (specification.OrderBy != null)
-            {
-                query = query.OrderBy(specification.OrderBy);
-            }
-            else if (specification.OrderByDescending != null)
-            {
-                query = query.OrderByDescending(specification.OrderByDescending);
-            }
-
-            // Apply paging if enabled
-            if (specification.IsPagingEnabled)
-            {
-                query = query.Skip(specification.Skip)
-                             .Take(specification.Take);
-            }
             return query;
         }
     }

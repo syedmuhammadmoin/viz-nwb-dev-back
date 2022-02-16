@@ -12,6 +12,9 @@ namespace Application.Interfaces
     {
         public DbSet<Client> Clients { get; set; }
         public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Location> Locations { get; set; }
+        public DbSet<Warehouse> Warehouses { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

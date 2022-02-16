@@ -13,6 +13,7 @@ namespace Application.Contracts.DTOs
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }
+        [Required]
         [MaxLength(50)]
         public string Country { get; set; }
         [MaxLength(50)]
@@ -29,12 +30,16 @@ namespace Application.Contracts.DTOs
         public string Email { get; set; }
         [MaxLength(50)]
         public string Website { get; set; }
+        [Required]
         [MaxLength(50)]
         public string BankName { get; set; }
+        [Required]
         [MaxLength(50)]
         public string BankAccountTitle { get; set; }
+        [Required]
         [MaxLength(30)]
         public string BankAccountNumber { get; set; }
+        [Required]
         [MaxLength(30)]
         public string Currency { get; set; }
     }

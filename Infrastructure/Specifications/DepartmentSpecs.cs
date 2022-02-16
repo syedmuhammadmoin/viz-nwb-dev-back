@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Specifications
 {
-    public class ClientSpecs : BaseSpecification<Client>
+    public class DepartmentSpecs : BaseSpecification<Department>
     {
-        public ClientSpecs(PaginationFilter filter)
+        public DepartmentSpecs(PaginationFilter filter)
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

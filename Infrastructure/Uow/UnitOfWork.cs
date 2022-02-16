@@ -17,13 +17,18 @@ namespace Infrastructure.Uow
 
         public IClientRepository Client { get; private set; }
         public IOrganizationRepository Organization { get; private set; }
+        public IDepartmentRepository Department { get; private set; }
+        public IWarehouseRepository Warehouse { get; private set; }
+        public ILocationRepository Location { get; private set; }
 
-        
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
             Client = new ClientRepository(context);
             Organization = new OrganizationRepository(context);
+            Department = new DepartmentRepository(context);
+            Warehouse = new WarehouseRepository(context);
+            Location = new LocationRepository(context);
         }
 
         public async Task SaveAsync()
