@@ -12,46 +12,50 @@ namespace Domain.Entities
     {
         [MaxLength(100)]
         public string Name { get; private set; }
-        [MaxLength(500)]
-        public string Description { get; private set; }
         [MaxLength(50)]
         public string Country { get; private set; }
         [MaxLength(50)]
         public string State { get; private set; }
         [MaxLength(50)]
         public string City { get; private set; }
-        [MaxLength(200)]
-        public string Address { get; private set; }
+        [MaxLength(50)]
+        public string Street { get; private set; }
+        [MaxLength(50)]
+        public string Block { get; private set; }
+        [MaxLength(50)]
+        public string Road { get; private set; }
         [MaxLength(20)]
         public string Phone { get; private set; }
         [MaxLength(20)]
         public string Fax { get; private set; }
         [MaxLength(20)]
         public string Email { get; private set; }
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string Website { get; private set; }
         //Industry will link from chart of account in future...
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string Industry { get; private set; }
         //this will link from tax in future
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string LegalStatus { get; private set; }
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string IncomeTaxId { get; private set; }
-        [MaxLength(50)]
-        public string SalesTaxId { get; private set; }
+        [MaxLength(100)]
+        public string GSTRegistrationNo{ get; private set; }
         public DateTime StartDate { get; private set; }
-        public DateTime EndDate { get; private set; }
+        public DateTime FiscalYear { get; private set; }
         public int ClientId { get; private set; }
         public Client Client { get; private set; }
+
         public Organization(Organization organization)
         {
             Name = organization.Name;
-            Description = organization.Description;
             Country = organization.Country;
             State = organization.State;
             City = organization.City;
-            Address = organization.Address;
+            Street = organization.Street;
+            Block = organization.Block;
+            Road = organization.Road;
             Phone = organization.Phone;
             Fax = organization.Fax;
             Email = organization.Email;
@@ -59,9 +63,9 @@ namespace Domain.Entities
             Industry = organization.Industry;
             LegalStatus = organization.LegalStatus;
             IncomeTaxId = organization.IncomeTaxId;
-            SalesTaxId = organization.SalesTaxId;
+            GSTRegistrationNo = organization.GSTRegistrationNo;
             StartDate = organization.StartDate;
-            EndDate = organization.EndDate;
+            FiscalYear = organization.FiscalYear;
             ClientId = organization.ClientId;
         }
 

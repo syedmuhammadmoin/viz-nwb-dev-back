@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Application.Contracts.DTOs
 {
@@ -13,16 +8,21 @@ namespace Application.Contracts.DTOs
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }
-        [MaxLength(500)]
-        public string Description { get; set; }
+        [Required]
         [MaxLength(50)]
         public string Country { get; set; }
+        [Required]
         [MaxLength(50)]
         public string State { get; set; }
+        [Required]
         [MaxLength(50)]
         public string City { get; set; }
-        [MaxLength(200)]
-        public string Address { get; set; }
+        [MaxLength(50)]
+        public string Street { get; private set; }
+        [MaxLength(50)]
+        public string Block { get; private set; }
+        [MaxLength(50)]
+        public string Road { get; private set; }
         [MaxLength(20)]
         public string Phone { get; set; }
         [MaxLength(20)]
