@@ -2,7 +2,6 @@
 using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
-using Application.Specifications;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
