@@ -29,10 +29,8 @@ namespace Domain.Entities
         {
             Name = category.Name;
             InventoryAccountId = category.InventoryAccountId;
-            RevenueAccount = category.RevenueAccount;
-            CostAccount = category.CostAccount;
-            InventoryAccount = category.InventoryAccount;
-            RevenueAccount = category.RevenueAccount;    
+            RevenueAccountId = category.RevenueAccountId;
+            CostAccountId = category.CostAccountId;
         }
         protected Category()
         {
