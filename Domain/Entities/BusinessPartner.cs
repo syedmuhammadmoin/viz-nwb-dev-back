@@ -1,4 +1,5 @@
 ﻿using Domain.Base;
+using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,21 +12,21 @@ namespace Domain.Entities
 {
     public class BusinessPartner : BaseEntity<int>
     {
-        public string BusinessPartnerType { get; private set; }
-        [MaxLength(50)]
+        public BusinessPartnerType BusinessPartnerType { get; private set; }
+        [MaxLength(150)]
         public string Entity { get; private set; }
         [MaxLength(100)]
         public string Name { get; private set; }
         [MaxLength(20)]
         public string CNIC { get; private set; }
-        [MaxLength(200)]
-        public string Address { get; private set; }
         [MaxLength(50)]
         public string Country { get; private set; }
         [MaxLength(50)]
         public string State { get; private set; }
         [MaxLength(50)]
         public string City { get; private set; }
+        [MaxLength(200)]
+        public string Address { get; private set; }
         [MaxLength(20)]
         public string Phone { get; private set; }
         [MaxLength(20)]
@@ -54,10 +55,10 @@ namespace Domain.Entities
             Entity = businessPartner.Entity;
             Name = businessPartner.Name;
             CNIC = businessPartner.CNIC;
-            Address = businessPartner.Address;
             Country = businessPartner.Country;
             State = businessPartner.State;
             City = businessPartner.City;
+            Address = businessPartner.Address;
             Phone = businessPartner.Phone;
             Mobile = businessPartner.Mobile;
             Email = businessPartner.Email;
@@ -67,9 +68,7 @@ namespace Domain.Entities
             BankAccountTitle = businessPartner.BankAccountTitle;
             BankAccountNumber = businessPartner.BankAccountNumber;
             AccountReceivableId = businessPartner.AccountReceivableId;
-            AccountReceivable = businessPartner.AccountReceivable;
             AccountPayableId = businessPartner.AccountPayableId;
-            AccountPayable = businessPartner.AccountPayable;
         }
         protected BusinessPartner()
         {

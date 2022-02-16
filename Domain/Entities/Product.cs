@@ -1,4 +1,5 @@
 ﻿using Domain.Base;
+using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,10 +14,10 @@ namespace Domain.Entities
     {
         [MaxLength(100)]
         public string ProductName { get; private set; }
-        public int PurchasedOrSold { get; private set; }
-        public int ProductType { get; private set; }
-        public int ProductCategoryId { get; private set; }
-        [ForeignKey("ProductCategoryId")]
+        public PurchasedOrSold PurchasedOrSold { get; private set; }
+        public ProductType ProductType { get; private set; }
+        public int CategoryId { get; private set; }
+        [ForeignKey("CategoryId")]
         public Category Category { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal SalesPrice { get; private set; }
@@ -24,7 +25,7 @@ namespace Domain.Entities
         public decimal Cost { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal SalesTax { get; private set; }
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string Barcode { get; private set; }
 
         public Product(Product product)
@@ -32,8 +33,7 @@ namespace Domain.Entities
             ProductName = product.ProductName;
             PurchasedOrSold = product.PurchasedOrSold;
             ProductType = product.ProductType;
-            ProductCategoryId = product.ProductCategoryId;
-            Category = product.Category;
+            CategoryId = product.CategoryId;
             SalesPrice = product.SalesPrice;
             Cost = product.Cost;
             SalesTax = product.SalesTax;
