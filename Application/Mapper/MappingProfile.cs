@@ -50,6 +50,17 @@ namespace Application.Mapper
             CreateMap<Product, ProductDto>()
                 .ForMember(dto => dto.CategoryName, core => core.MapFrom(a => a.Category.Name));
             CreateMap<CreateProductDto, Product>();
+
+            CreateMap<JournalEntryMaster, JournalEntryDto>()
+               .ForMember(dto => dto.JournalEntryLines, core => core.MapFrom(a => a.JournalEntryLines));
+            CreateMap<CreateJournalEntryDto, JournalEntryMaster>();
+
+            CreateMap<JournalEntryLines, JournalEntryLinesDto>()
+              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
+              .ForMember(dto => dto.BusinessPartnerName, core => core.MapFrom(a => a.BusinessPartner.Name))
+              .ForMember(dto => dto.LocationName, core => core.MapFrom(a => a.Location.Name))
+              .ForMember(dto => dto.MasterId, core => core.MapFrom(a => a.MasterId));
+            CreateMap<CreateJournalEntryLinesDto, JournalEntryLines>();
         }
     }
 }
