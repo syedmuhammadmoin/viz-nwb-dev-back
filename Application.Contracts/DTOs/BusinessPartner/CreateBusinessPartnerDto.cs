@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Constants;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public string BusinessPartnerType { get; set; }
+        public BusinessPartnerType BusinessPartnerType { get; set; }
         [Required]
         public string Entity { get; set; }
         [Required]
@@ -26,7 +27,6 @@ namespace Application.Contracts.DTOs
         [Required]
         public string City { get; set; }
         public string Phone { get; set; }
-        [Required]
         public string Mobile { get; set; }
         public string Email { get; set; }
         public string Website { get; set; }
