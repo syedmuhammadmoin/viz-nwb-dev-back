@@ -11,13 +11,12 @@ namespace Domain.Entities
 {
     public class Level2 : BaseEntity<Guid>
     {
-        [MaxLength(100)]
+        [MaxLength(200)]
         public string Name { get; private set; }
         public IEnumerable<Level3> Level3 { get; private set; }
         public Guid Level1_id { get; private set; }
         [ForeignKey("Level1_id")]
         public Level1 Level1 { get; private set; }
-
         public Level2(Level2 level2)
         {
             Name = level2.Name;
@@ -26,6 +25,5 @@ namespace Domain.Entities
         protected Level2()
         {
         }
-
     }
 }
