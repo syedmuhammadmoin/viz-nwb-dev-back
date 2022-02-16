@@ -31,14 +31,14 @@ namespace Vizalys.Api.Controllers
             return Ok(level4);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:Guid}")]
         public async Task<ActionResult<Level4Dto>> GetByIdAsync(Guid id)
         {
             var result = await _level4Service.GetByIdAsync(id);
             return Ok(result); // Status Code : 200
         }
 
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:Guid}")]
         public async Task<ActionResult<Level4Dto>> UpdateAsync(Guid id, CreateLevel4Dto entity)
         {
             if (id != entity.Id)
