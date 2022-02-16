@@ -30,6 +30,8 @@ namespace Infrastructure.Uow
 
         public ILevel3Repository Level3 { get; private set; }
 
+        public IJournalEntryRepository JournalEntry { get; private set; }
+
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
@@ -42,6 +44,7 @@ namespace Infrastructure.Uow
             BusinessPartner = new BusinessPartnerRepository(context);
             Level4 = new Level4Repository(context);
             Product = new ProductRepository(context);
+            JournalEntry = new JournalEntryRepository(context);
         }
 
         public async Task SaveAsync()
