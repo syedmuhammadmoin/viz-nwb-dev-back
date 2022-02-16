@@ -11,4 +11,20 @@ namespace Domain.Constants
         SuperAdmin,
         Admin
     }
+    public enum BusinessPartnerType 
+    {
+        Customer,
+        Vendor,
+        Employee
+    }
+    public enum PurchasedOrSold
+    { 
+        Purchased,
+        Sold
+    }
+    public enum ProductType
+    { 
+        Consumable,
+        Service
+    }
 }
