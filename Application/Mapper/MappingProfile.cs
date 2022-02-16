@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.DTOs;
-using Application.Contracts.DTOs.Products;
 using AutoMapper;
 using Domain.Entities;
 using System;
