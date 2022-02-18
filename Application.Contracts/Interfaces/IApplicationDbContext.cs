@@ -20,6 +20,8 @@ namespace Application.Interfaces
         public DbSet<Product> Products { get; set; }
         public DbSet<JournalEntryMaster> JournalEntryMaster { get; set; }
         public DbSet<JournalEntryLines> JournalEntryLines { get; set; }
+        public DbSet<InvoiceMaster> InvoiceMaster { get; set; }
+        public DbSet<InvoiceLines> InvoiceLines { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
