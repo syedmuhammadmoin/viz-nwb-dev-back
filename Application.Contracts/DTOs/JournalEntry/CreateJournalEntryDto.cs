@@ -13,6 +13,9 @@ namespace Application.Contracts.DTOs
         public DateTime Date { get; set; }
         [MaxLength(200)]
         public string Description { get; set; }
-        public virtual IEnumerable<CreateJournalEntryLinesDto> JournalEntryLines { get; set; }
+        [Required]
+        public bool isSubmit { get; set; }
+        [Required]
+        public virtual List<CreateJournalEntryLinesDto> JournalEntryLines { get; set; }
     }
 }
