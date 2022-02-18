@@ -61,9 +61,7 @@ namespace Application.Mapper
             CreateMap<CreateProductDto, Product>();
 
             // JournalEntry Mapping
-            CreateMap<JournalEntryMaster, JournalEntryDto>()
-               .ForMember(dto => dto.TotalDebit, core => core.MapFrom(a => a.JournalEntryLines.Sum(i => i.Debit)))
-               .ForMember(dto => dto.TotalCredit, core => core.MapFrom(a => a.JournalEntryLines.Sum(i => i.Credit)));
+            CreateMap<JournalEntryMaster, JournalEntryDto>();
 
             CreateMap<JournalEntryLines, JournalEntryLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
@@ -74,9 +72,24 @@ namespace Application.Mapper
                .ForMember(core => core.TotalDebit, dto => dto.MapFrom(a => a.JournalEntryLines.Sum(i => i.Debit)))
                .ForMember(core => core.TotalCredit, dto => dto.MapFrom(a => a.JournalEntryLines.Sum(i => i.Credit))); ;
 
-
-
             CreateMap<CreateJournalEntryLinesDto, JournalEntryLines>();
+
+            // Invoice Mapping
+            CreateMap<InvoiceMaster, InvoiceDto>()
+              .ForMember(dto => dto.CustomerName, core => core.MapFrom(a => a.Customer.Name));
+
+            CreateMap<InvoiceLines, InvoiceLinesDto>()
+              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
+              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
+              .ForMember(dto => dto.LocationName, core => core.MapFrom(a => a.Location.Name));
+
+            CreateMap<CreateInvoiceDto, InvoiceMaster>()
+               .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.InvoiceLines.Sum(e => e.Quantity * e.Price)))
+               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.InvoiceLines.Sum(e => e.Quantity * e.Price * e.Tax / 100)))
+               .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.InvoiceLines.Sum(e => (e.Quantity * e.Price) + (e.Quantity * e.Price * e.Tax / 100))));
+
+            CreateMap<CreateInvoiceLinesDto, InvoiceLines>()
+               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Price) + (a.Quantity * a.Price * a.Tax / 100)));
         }
     }
 }
