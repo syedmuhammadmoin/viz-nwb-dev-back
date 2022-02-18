@@ -1,4 +1,5 @@
 ﻿using Domain.Base;
+using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,16 +17,27 @@ namespace Domain.Entities
         public DateTime Date { get; private set; }
         [MaxLength(500)]
         public string Description { get; private set; }
-        public List<JournalEntryLines> JournalEntryLines { get; set; }
-        public JournalEntryMaster(JournalEntryMaster journalEntry)
-        {
-            DocNo = journalEntry.DocNo;
-            Date = journalEntry.Date;
-            Description = journalEntry.Description;
-            JournalEntryLines = journalEntry.JournalEntryLines;
-        }
+        [Required]
+        public DocumentStatus Status { get; private set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TotalDebit { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TotalCredit { get; set; }
+        public virtual List<JournalEntryLines> JournalEntryLines { get; set; }
+
         protected JournalEntryMaster()
         {
+        }
+
+        public void setStatus(DocumentStatus status) 
+        {
+            Status = status;
+        }
+
+        public void CreateDocNo()
+        {
+            //Creating doc no..
+            DocNo = "JV-" + String.Format("{0:000}", Id);
         }
     }
 }
