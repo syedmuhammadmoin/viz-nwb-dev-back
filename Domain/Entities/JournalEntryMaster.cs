@@ -20,10 +20,10 @@ namespace Domain.Entities
         [Required]
         public DocumentStatus Status { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalDebit { get; set; }
+        public decimal TotalDebit { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalCredit { get; set; }
-        public virtual List<JournalEntryLines> JournalEntryLines { get; set; }
+        public decimal TotalCredit { get; private set; }
+        public virtual List<JournalEntryLines> JournalEntryLines { get; private set; }
 
         protected JournalEntryMaster()
         {
