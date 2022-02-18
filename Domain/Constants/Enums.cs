@@ -23,8 +23,13 @@ namespace Domain.Constants
         Sold
     }
     public enum ProductType
-    { 
+    {
         Consumable,
         Service
+    }
+    public enum DocumentStatus
+    {
+        Draft,
+        Submitted
     }
 }
