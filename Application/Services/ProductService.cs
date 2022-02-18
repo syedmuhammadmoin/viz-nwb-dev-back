@@ -27,7 +27,7 @@ namespace Application.Services
 
         public async Task<Response<ProductDto>> CreateAsync(CreateProductDto entity)
         {
-            var product = new Product(_mapper.Map<Product>(entity));
+            var product = _mapper.Map<Product>(entity);
             var result = await _unitOfWork.Product.Add(product);
             await _unitOfWork.SaveAsync();
 

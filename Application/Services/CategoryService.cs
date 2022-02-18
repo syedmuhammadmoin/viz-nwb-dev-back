@@ -26,7 +26,7 @@ namespace Application.Services
         }
         public async Task<Response<CategoryDto>> CreateAsync(CreateCategoryDto entity)
         {
-            var category = new Category(_mapper.Map<Category>(entity));
+            var category = _mapper.Map<Category>(entity);
             var result = await _unitOfWork.Category.Add(category);
             await _unitOfWork.SaveAsync();
 

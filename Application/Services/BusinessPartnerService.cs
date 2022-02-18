@@ -26,7 +26,7 @@ namespace Application.Services
         }
         public async Task<Response<BusinessPartnerDto>> CreateAsync(CreateBusinessPartnerDto entity)
         {
-            var businessPartner = new BusinessPartner(_mapper.Map<BusinessPartner>(entity));
+            var businessPartner = _mapper.Map<BusinessPartner>(entity);
             var result = await _unitOfWork.BusinessPartner.Add(businessPartner);
             await _unitOfWork.SaveAsync();
 

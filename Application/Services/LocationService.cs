@@ -27,7 +27,7 @@ namespace Application.Services
 
         public async Task<Response<LocationDto>> CreateAsync(CreateLocationDto entity)
         {
-            var location = new Location(_mapper.Map<Location>(entity));
+            var location = _mapper.Map<Location>(entity);
             var result = await _unitOfWork.Location.Add(location);
             await _unitOfWork.SaveAsync();
 

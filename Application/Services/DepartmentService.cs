@@ -26,7 +26,7 @@ namespace Application.Services
         }
         public async Task<Response<DeptDto>> CreateAsync(CreateDeptDto entity)
         {
-            var dept = new Department(_mapper.Map<Department>(entity));
+            var dept = _mapper.Map<Department>(entity);
             var result = await _unitOfWork.Department.Add(dept);
             await _unitOfWork.SaveAsync();
 

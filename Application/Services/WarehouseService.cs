@@ -27,7 +27,7 @@ namespace Application.Services
 
         public async Task<Response<WarehouseDto>> CreateAsync(CreateWarehouseDto entity)
         {
-            var warehouse = new Warehouse(_mapper.Map<Warehouse>(entity));
+            var warehouse = _mapper.Map<Warehouse>(entity);
             var result = await _unitOfWork.Warehouse.Add(warehouse);
             await _unitOfWork.SaveAsync();
 
