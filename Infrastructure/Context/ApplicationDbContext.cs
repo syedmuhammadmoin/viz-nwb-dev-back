@@ -30,7 +30,7 @@ namespace Infrastructure.Context
         public DbSet<Category> Categories { get; set; }
         public DbSet<BusinessPartner> BusinessPartners { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<JournalEntryMaster> JournalEntries { get; set; }
+        public DbSet<JournalEntryMaster> JournalEntryMaster { get; set; }
         public DbSet<JournalEntryLines> JournalEntryLines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
