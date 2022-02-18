@@ -25,13 +25,7 @@ namespace Domain.Entities
         public Level4 RevenueAccount { get; private set; }
         [ForeignKey("CostAccountId")]
         public Level4 CostAccount { get; private set; }
-        public Category(Category category)
-        {
-            Name = category.Name;
-            InventoryAccountId = category.InventoryAccountId;
-            RevenueAccountId = category.RevenueAccountId;
-            CostAccountId = category.CostAccountId;
-        }
+        
         protected Category()
         {
 

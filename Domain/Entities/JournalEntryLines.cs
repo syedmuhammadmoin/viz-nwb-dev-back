@@ -30,15 +30,6 @@ namespace Domain.Entities
         [ForeignKey("MasterId ")]
         public JournalEntryMaster JournalEntryMaster { get; private set; }
 
-        public JournalEntryLines(JournalEntryLines journalEntryLines)
-        {
-            AccountId = journalEntryLines.AccountId;
-            BusinessPartnerId = journalEntryLines.BusinessPartnerId;
-            Description = journalEntryLines.Description;
-            Debit = journalEntryLines.Debit;
-            Credit = journalEntryLines.Credit;
-            LocationId = journalEntryLines.LocationId;
-        }
         protected JournalEntryLines()
         {
         }
