@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Migrations
 {
-    public partial class createTables : Migration
+    public partial class addTables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -40,7 +40,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "JournalEntries",
+                name: "JournalEntryMaster",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -48,6 +48,9 @@ namespace Infrastructure.Migrations
                     DocNo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    TotalDebit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotalCredit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -56,7 +59,7 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_JournalEntries", x => x.Id);
+                    table.PrimaryKey("PK_JournalEntryMaster", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -236,8 +239,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     Level3_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Level1_Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Level1Id = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Level1_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -248,8 +250,8 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Level4", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Level4_Level1_Level1Id",
-                        column: x => x.Level1Id,
+                        name: "FK_Level4_Level1_Level1_id",
+                        column: x => x.Level1_id,
                         principalTable: "Level1",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -403,9 +405,9 @@ namespace Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_JournalEntryLines_JournalEntries_MasterId",
+                        name: "FK_JournalEntryLines_JournalEntryMaster_MasterId",
                         column: x => x.MasterId,
-                        principalTable: "JournalEntries",
+                        principalTable: "JournalEntryMaster",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -514,9 +516,9 @@ namespace Infrastructure.Migrations
                 column: "Level2_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Level4_Level1Id",
+                name: "IX_Level4_Level1_id",
                 table: "Level4",
-                column: "Level1Id");
+                column: "Level1_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Level4_Level3_id",
@@ -556,7 +558,7 @@ namespace Infrastructure.Migrations
                 name: "BusinessPartners");
 
             migrationBuilder.DropTable(
-                name: "JournalEntries");
+                name: "JournalEntryMaster");
 
             migrationBuilder.DropTable(
                 name: "Locations");

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220216130439_createTables")]
-    partial class createTables
+    [Migration("20220218072036_addTables")]
+    partial class addTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -421,9 +421,18 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalCredit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalDebit")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("JournalEntries");
+                    b.ToTable("JournalEntryMaster");
                 });
 
             modelBuilder.Entity("Domain.Entities.Level1", b =>
@@ -548,10 +557,7 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("Level1Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("Level1_Id")
+                    b.Property<Guid>("Level1_id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("Level3_id")
@@ -570,7 +576,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Level1Id");
+                    b.HasIndex("Level1_id");
 
                     b.HasIndex("Level3_id");
 
@@ -1173,8 +1179,9 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Entities.Level1", "Level1")
                         .WithMany()
-                        .HasForeignKey("Level1Id")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("Level1_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entities.Level3", "Level3")
                         .WithMany("Level4")
