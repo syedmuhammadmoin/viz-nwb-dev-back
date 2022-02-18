@@ -13,6 +13,7 @@ namespace Domain.Interfaces
         Expression<Func<T, bool>> Criteria { get; }
         // Include collection to load related data
         List<Expression<Func<T, object>>> Includes { get; }
+        List<string> IncludeStrings { get; }
         // Order By Ascending
         Expression<Func<T, object>> OrderBy { get; }
         // Order By Descending

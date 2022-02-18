@@ -25,7 +25,11 @@ namespace Infrastructure.Specifications
 
                 // Includes all expression-based includes
                 query = specification.Includes.Aggregate(query,
-                                        (current, include) => current.Include(include).AsNoTracking());
+                                        (current, include) => current.Include(include).AsSplitQuery());
+
+                // Include any string-based include statements
+                query = specification.IncludeStrings.Aggregate(query,
+                                        (current, include) => current.Include(include).AsSplitQuery());
 
                 // Apply ordering if expressions are set
                 if (specification.OrderBy != null)

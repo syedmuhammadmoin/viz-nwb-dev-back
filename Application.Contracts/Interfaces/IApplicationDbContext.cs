@@ -18,6 +18,8 @@ namespace Application.Interfaces
         public DbSet<Category> Categories { get; set; }
         public DbSet<Level4> Level4 { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<JournalEntryMaster> JournalEntryMaster { get; set; }
+        public DbSet<JournalEntryLines> JournalEntryLines { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
