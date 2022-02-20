@@ -139,7 +139,7 @@ namespace Application.Services
                 return new Response<InvoiceDto>("Not found");
 
             if (inv.Status == DocumentStatus.Submitted)
-                return new Response<InvoiceDto>("Invioce already submitted");
+                return new Response<InvoiceDto>("Invoice already submitted");
 
             inv.setStatus(status);
 
