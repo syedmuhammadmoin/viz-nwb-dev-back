@@ -34,6 +34,8 @@ namespace Infrastructure.Context
         public DbSet<JournalEntryLines> JournalEntryLines { get; set; }
         public DbSet<InvoiceMaster> InvoiceMaster { get; set; }
         public DbSet<InvoiceLines> InvoiceLines { get; set; }
+        public DbSet<BillMaster> BillMaster { get; set; }
+        public DbSet<BillLines> BillLines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -55,6 +57,12 @@ namespace Infrastructure.Context
             modelBuilder.Entity<InvoiceLines>()
             .HasOne(tc => tc.InvoiceMaster)
             .WithMany(c => c.InvoiceLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //Bill
+            modelBuilder.Entity<BillLines>()
+            .HasOne(tc => tc.BillMaster)
+            .WithMany(c => c.BillLines)
             .OnDelete(DeleteBehavior.Cascade);
 
             //Changing Identity users and roles tables name
