@@ -33,6 +33,7 @@ namespace Infrastructure.Uow
         public IJournalEntryRepository JournalEntry { get; private set; }
         public IInvoiceRepository Invoice { get; private set; }
         public IBillRepository Bill{ get; private set; }
+        public ICreditNoteRepository CreditNote { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -49,6 +50,7 @@ namespace Infrastructure.Uow
             JournalEntry = new JournalEntryRepository(context);
             Invoice = new InvoiceRepository(context);
             Bill = new BillRepository(context);
+            CreditNote = new CreditNoteRepository(context);
         }
 
         public async Task SaveAsync()
