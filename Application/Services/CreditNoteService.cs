@@ -77,6 +77,7 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
+        //Private methods
         private async Task<Response<CreditNoteDto>> SubmitCRN(CreateCreditNoteDto entity)
         {
             if (entity.Id == null)
