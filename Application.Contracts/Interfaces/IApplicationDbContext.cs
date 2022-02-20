@@ -22,6 +22,8 @@ namespace Application.Interfaces
         public DbSet<JournalEntryLines> JournalEntryLines { get; set; }
         public DbSet<InvoiceMaster> InvoiceMaster { get; set; }
         public DbSet<InvoiceLines> InvoiceLines { get; set; }
+        public DbSet<BillMaster> BillMaster { get; set; }
+        public DbSet<BillLines> BillLines { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
