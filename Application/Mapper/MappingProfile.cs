@@ -90,6 +90,24 @@ namespace Application.Mapper
 
             CreateMap<CreateInvoiceLinesDto, InvoiceLines>()
                .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Price) + (a.Quantity * a.Price * a.Tax / 100)));
+
+            // Bill Mapping
+            CreateMap<BillMaster, BillDto>()
+              .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name));
+
+            CreateMap<BillLines, BillLinesDto>()
+              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
+              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
+              .ForMember(dto => dto.LocationName, core => core.MapFrom(a => a.Location.Name));
+
+            CreateMap<CreateBillDto, BillMaster>()
+               .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.BillLines.Sum(e => e.Quantity * e.Cost)))
+               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.BillLines.Sum(e => e.Quantity * e.Cost * e.Tax / 100)))
+               .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.BillLines.Sum(e => (e.Quantity * e.Cost) + (e.Quantity * e.Cost * e.Tax / 100))));
+
+            CreateMap<CreateBillLinesDto, BillLines>()
+               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
+
         }
     }
 }
