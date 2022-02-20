@@ -108,6 +108,22 @@ namespace Application.Mapper
             CreateMap<CreateBillLinesDto, BillLines>()
                .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
 
+            // CreditNote Mapping
+            CreateMap<CreditNoteMaster, CreditNoteDto>()
+              .ForMember(dto => dto.CustomerName, core => core.MapFrom(a => a.Customer.Name));
+
+            CreateMap<CreditNoteLines, CreditNoteLinesDto>()
+              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
+              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
+              .ForMember(dto => dto.LocationName, core => core.MapFrom(a => a.Location.Name));
+
+            CreateMap<CreateCreditNoteDto, CreditNoteMaster>()
+               .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.CreditNoteLines.Sum(e => e.Quantity * e.Price)))
+               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.CreditNoteLines.Sum(e => e.Quantity * e.Price * e.Tax / 100)))
+               .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.CreditNoteLines.Sum(e => (e.Quantity * e.Price) + (e.Quantity * e.Price * e.Tax / 100))));
+
+            CreateMap<CreateCreditNoteLinesDto, CreditNoteLines>()
+               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Price) + (a.Quantity * a.Price * a.Tax / 100)));
         }
     }
 }
