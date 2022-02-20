@@ -22,6 +22,7 @@ namespace Domain.Interfaces
         IProductRepository Product { get; }
         IJournalEntryRepository JournalEntry { get; }
         IInvoiceRepository Invoice { get; }
+        IBillRepository Bill { get; }
 
         Task SaveAsync();
         void CreateTransaction();
