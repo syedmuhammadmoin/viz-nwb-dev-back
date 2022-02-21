@@ -33,5 +33,10 @@ namespace Domain.Entities
         public int MasterId { get; private set; }
         [ForeignKey("MasterId")]
         public CreditNoteMaster CreditNoteMaster { get; private set; }
+
+        protected CreditNoteLines()
+        {
+
+        }
     }
 }
