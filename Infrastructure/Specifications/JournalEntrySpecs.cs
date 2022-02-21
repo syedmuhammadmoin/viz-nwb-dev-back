@@ -14,6 +14,7 @@ namespace Infrastructure.Specifications
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+            AddInclude(i => i.Transactions);
             AddInclude("JournalEntryLines.BusinessPartner");
             AddInclude("JournalEntryLines.Account");
             AddInclude("JournalEntryLines.Location");
@@ -21,6 +22,7 @@ namespace Infrastructure.Specifications
 
         public JournalEntrySpecs()
         {
+            AddInclude(i => i.Transactions);
             AddInclude("JournalEntryLines.BusinessPartner");
             AddInclude("JournalEntryLines.Account");
             AddInclude("JournalEntryLines.Location");
