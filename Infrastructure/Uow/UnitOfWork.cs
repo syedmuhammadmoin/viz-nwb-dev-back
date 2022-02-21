@@ -35,6 +35,9 @@ namespace Infrastructure.Uow
         public IBillRepository Bill{ get; private set; }
         public ICreditNoteRepository CreditNote { get; private set; }
         public IDebitNoteRepository DebitNote { get; private set; }
+        public ITransactionRepository Transaction { get; private set; }
+        public ILedgerRepository Ledger { get; private set; }
+
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -53,6 +56,8 @@ namespace Infrastructure.Uow
             Bill = new BillRepository(context);
             CreditNote = new CreditNoteRepository(context);
             DebitNote = new DebitNoteRepository(context);
+            Transaction = new TransactionRepository(context);
+            Ledger = new LedgerRepository(context);
         }
 
         public async Task SaveAsync()
