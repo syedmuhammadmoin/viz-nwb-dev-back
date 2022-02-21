@@ -61,7 +61,8 @@ namespace Application.Mapper
             CreateMap<CreateProductDto, Product>();
 
             // JournalEntry Mapping
-            CreateMap<JournalEntryMaster, JournalEntryDto>();
+            CreateMap<JournalEntryMaster, JournalEntryDto>()
+                .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
 
             CreateMap<JournalEntryLines, JournalEntryLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
