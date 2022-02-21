@@ -38,6 +38,8 @@ namespace Infrastructure.Context
         public DbSet<BillLines> BillLines { get; set; }
         public DbSet<CreditNoteMaster> CreditNoteMaster { get; set; }
         public DbSet<CreditNoteLines> CreditNoteLines { get; set; }
+        public DbSet<DebitNoteMaster> DebitNoteMaster { get; set; }
+        public DbSet<DebitNoteLines> DebitNoteLines { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -72,6 +74,12 @@ namespace Infrastructure.Context
             modelBuilder.Entity<CreditNoteLines>()
             .HasOne(tc => tc.CreditNoteMaster)
             .WithMany(c => c.CreditNoteLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //DebitNote
+            modelBuilder.Entity<DebitNoteLines>()
+            .HasOne(tc => tc.DebitNoteMaster)
+            .WithMany(c => c.DebitNoteLines)
             .OnDelete(DeleteBehavior.Cascade);
 
             //Changing Identity users and roles tables name
