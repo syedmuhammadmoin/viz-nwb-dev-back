@@ -32,4 +32,22 @@ namespace Domain.Constants
         Draft,
         Submitted
     }
+    public enum DocType
+    {
+        Payment,
+        CreditNote,
+        DebitNote,
+        Invoice,
+        Bill,
+        JournalEntry,
+        BankAccount,
+        CashAccount,
+        PurchaseOrder,
+        SalesOrder,
+        GRN,
+        GDN,
+        InventoryAdjustment,
+        Quotation,
+        Requisition
+    }
 }
