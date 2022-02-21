@@ -17,8 +17,6 @@ namespace Domain.Entities
         public BusinessPartner Vendor { get; private set; }
         [MaxLength(50)]
         public string DocNo { get; private set; }
-        [MaxLength(20)]
-        public string VendorBillRef { get; private set; }
         public DateTime BillDate { get; private set; }
         public DateTime DueDate { get; private set; }
         [Column(TypeName = "decimal(18,2)")]

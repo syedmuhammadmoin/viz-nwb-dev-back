@@ -27,7 +27,7 @@ namespace Domain.Entities
         public Guid AccountId { get; private set; }
         [ForeignKey("AccountId")]
         public Level4 Account { get; private set; }
-        public int LocationId { get; private set; }
+        public int? LocationId { get; private set; }
         [ForeignKey("LocationId")]
         public Location Location { get; private set; }
         public int MasterId { get; private set; }

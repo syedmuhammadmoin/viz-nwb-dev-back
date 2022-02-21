@@ -12,23 +12,23 @@ namespace Domain.Entities
 {
     public class InvoiceMaster : BaseEntity<int>
     {
-        public int CustomerId { get; set; }
+        public int CustomerId { get; private set; }
         [ForeignKey("CustomerId")]
-        public BusinessPartner Customer { get; set; }
+        public BusinessPartner Customer { get; private set; }
         [MaxLength(20)]
-        public string DocNo { get; set; }
-        public DateTime InvoiceDate { get; set; }
-        public DateTime DueDate { get; set; }
+        public string DocNo { get; private set; }
+        public DateTime InvoiceDate { get; private set; }
+        public DateTime DueDate { get; private set; }
         [MaxLength(20)]
-        public string Contact { get; set; }
+        public string Contact { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalBeforeTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; private set; }
-        public DocumentStatus Status { get; set; }
-        public virtual List<InvoiceLines> InvoiceLines { get; set; }
+        public DocumentStatus Status { get; private set; }
+        public virtual List<InvoiceLines> InvoiceLines { get; private set; }
         
         
         protected InvoiceMaster()
