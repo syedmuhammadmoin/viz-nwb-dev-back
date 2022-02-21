@@ -13,14 +13,13 @@ namespace Application.Contracts.DTOs
         [Required]
         public int VendorId { get; set; }
         [Required]
-        public string VendorBillRef { get; set; }
-        [Required]
         public DateTime BillDate { get; set; }
         [Required]
         public DateTime DueDate { get; set; }
         public string Contact { get; set; }
         [Required]
         public bool isSubmit { get; set; }
+        [Required]
         public virtual List<CreateBillLinesDto> BillLines { get; set; }
     }
 }
