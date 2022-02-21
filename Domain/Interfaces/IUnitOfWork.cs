@@ -24,6 +24,7 @@ namespace Domain.Interfaces
         IInvoiceRepository Invoice { get; }
         IBillRepository Bill { get; }
         ICreditNoteRepository CreditNote { get; }
+        IDebitNoteRepository DebitNote { get; }
 
         Task SaveAsync();
         void CreateTransaction();
