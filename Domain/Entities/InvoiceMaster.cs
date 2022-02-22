@@ -42,7 +42,7 @@ namespace Domain.Entities
         {
             Status = status;
         }
-        public void setTrasactionId(int transactionId)
+        public void setTransactionId(int transactionId)
         {
             TransactionId = transactionId;
         }
