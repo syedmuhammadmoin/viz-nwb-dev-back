@@ -73,6 +73,7 @@ namespace Application.Services
                 return await this.UpdateDBN(entity, DocumentStatus.Draft);
             }
         }
+
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
@@ -91,6 +92,7 @@ namespace Application.Services
                 return await this.UpdateDBN(entity, DocumentStatus.Submitted);
             }
         }
+
         private async Task<Response<DebitNoteDto>> SaveDBN(CreateDebitNoteDto entity, DocumentStatus status)
         {
             if (entity.DebitNoteLines.Count() == 0)
@@ -112,6 +114,12 @@ namespace Application.Services
                 dbn.CreateDocNo();
                 await _unitOfWork.SaveAsync();
 
+                //Adding DebitNote to Ledger
+                if (status == DocumentStatus.Submitted)
+                {
+                    await AddToLedger(dbn);
+                }
+
                 //Commiting the transaction 
                 _unitOfWork.Commit();
 
@@ -124,6 +132,7 @@ namespace Application.Services
                 return new Response<DebitNoteDto>(ex.Message);
             }
         }
+
         private async Task<Response<DebitNoteDto>> UpdateDBN(CreateDebitNoteDto entity, DocumentStatus status)
         {
             if (entity.DebitNoteLines.Count() == 0)
@@ -148,6 +157,12 @@ namespace Application.Services
 
                 await _unitOfWork.SaveAsync();
 
+                //Adding DebitNote to Ledger
+                if (status == DocumentStatus.Submitted)
+                {
+                    await AddToLedger(dbn);
+                }
+
                 //Commiting the transaction
                 _unitOfWork.Commit();
 
@@ -159,6 +174,49 @@ namespace Application.Services
                 _unitOfWork.Rollback();
                 return new Response<DebitNoteDto>(ex.Message);
             }
+        }
+
+        private async Task AddToLedger(DebitNoteMaster dbn)
+        {
+            var transaction = new Transactions(dbn.DocNo, DocType.DebitNote);
+            await _unitOfWork.Transaction.Add(transaction);
+            await _unitOfWork.SaveAsync();
+
+            dbn.setTransactionId(transaction.Id);
+            await _unitOfWork.SaveAsync();
+
+            //Inserting line amount into recordledger table
+            foreach (var line in dbn.DebitNoteLines)
+            {
+                var tax = (line.Quantity * line.Cost * line.Tax) / 100;
+                var amount = line.Quantity * line.Cost;
+
+                var addSalesAmountInRecordLedger = new RecordLedger(
+                    transaction.Id,
+                    line.AccountId,
+                    dbn.VendorId,
+                    line.LocationId,
+                    line.Description,
+                    'C',
+                    amount + tax
+                    );
+
+                await _unitOfWork.Ledger.Add(addSalesAmountInRecordLedger);
+                await _unitOfWork.SaveAsync();
+            }
+            var getVendorAccount = await _unitOfWork.BusinessPartner.GetById(dbn.VendorId);
+            var addPayableInLedger = new RecordLedger(
+                        transaction.Id,
+                        getVendorAccount.AccountPayableId,
+                        dbn.VendorId,
+                        null,
+                        dbn.DocNo,
+                        'D',
+                        dbn.TotalAmount
+                    );
+
+            await _unitOfWork.Ledger.Add(addPayableInLedger);
+            await _unitOfWork.SaveAsync();
         }
     }
 }
