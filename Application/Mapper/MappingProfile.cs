@@ -131,7 +131,8 @@ namespace Application.Mapper
 
             // DebitNote Mapping
             CreateMap<DebitNoteMaster, DebitNoteDto>()
-              .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name));
+              .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
+              .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
 
             CreateMap<DebitNoteLines, DebitNoteLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
