@@ -50,7 +50,8 @@ namespace Application.Services
 
         public async Task<Response<Level4Dto>> GetByIdAsync(Guid id)
         {
-            var level4 = await _unitOfWork.Level4.GetById(id);
+            var specification = new Level4Specs();
+            var level4 = await _unitOfWork.Level4.GetById(id, specification);
             if (level4 == null)
                 return new Response<Level4Dto>("Not found");
 
