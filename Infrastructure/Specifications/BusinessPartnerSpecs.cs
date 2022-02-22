@@ -17,5 +17,11 @@ namespace Infrastructure.Specifications
             AddInclude(i=> i.AccountPayable);
             AddInclude(i=> i.AccountReceivable);
         }
+
+        public BusinessPartnerSpecs()
+        {
+            AddInclude(i => i.AccountPayable);
+            AddInclude(i => i.AccountReceivable);
+        }
     }
 }
