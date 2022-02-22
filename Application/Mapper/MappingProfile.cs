@@ -113,7 +113,8 @@ namespace Application.Mapper
 
             // CreditNote Mapping
             CreateMap<CreditNoteMaster, CreditNoteDto>()
-              .ForMember(dto => dto.CustomerName, core => core.MapFrom(a => a.Customer.Name));
+              .ForMember(dto => dto.CustomerName, core => core.MapFrom(a => a.Customer.Name))
+              .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
 
             CreateMap<CreditNoteLines, CreditNoteLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
