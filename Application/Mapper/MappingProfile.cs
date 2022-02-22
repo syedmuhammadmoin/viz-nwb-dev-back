@@ -77,7 +77,8 @@ namespace Application.Mapper
 
             // Invoice Mapping
             CreateMap<InvoiceMaster, InvoiceDto>()
-              .ForMember(dto => dto.CustomerName, core => core.MapFrom(a => a.Customer.Name));
+              .ForMember(dto => dto.CustomerName, core => core.MapFrom(a => a.Customer.Name))
+                .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
 
             CreateMap<InvoiceLines, InvoiceLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
