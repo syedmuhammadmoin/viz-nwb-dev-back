@@ -146,6 +146,15 @@ namespace Application.Mapper
 
             CreateMap<CreateDebitNoteLinesDto, DebitNoteLines>()
                .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
+
+            //Payment Mapping
+            CreateMap<Payment, PaymentDto>()
+                .ForMember(dto => dto.BusinessPartnerName, core => core.MapFrom(a => a.BusinessPartner.Name))
+                .ForMember(dto => dto.PaymentRegisterName, core => core.MapFrom(a => a.PaymentRegister.Name))
+                .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
+
+            CreateMap<CreatePaymentDto, Payment>()
+                .ForMember(core => core.NetPayment, dto => dto.MapFrom(a => (a.GrossPayment - a.Discount - a.IncomeTax - a.SalesTax)));
         }
     }
 }

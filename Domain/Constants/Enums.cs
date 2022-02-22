@@ -32,6 +32,16 @@ namespace Domain.Constants
         Draft,
         Submitted
     }
+    public enum PaymentType
+    {
+        Inflow,
+        Outflow
+    }
+    public enum PaymentRegisterType
+    {
+        CashAccount,
+        BankAccount
+    }
     public enum DocType
     {
         Payment,

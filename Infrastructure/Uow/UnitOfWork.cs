@@ -35,6 +35,8 @@ namespace Infrastructure.Uow
         public IBillRepository Bill{ get; private set; }
         public ICreditNoteRepository CreditNote { get; private set; }
         public IDebitNoteRepository DebitNote { get; private set; }
+        public IPaymentRepository Payment { get; private set; }
+
         public ITransactionRepository Transaction { get; private set; }
         public ILedgerRepository Ledger { get; private set; }
 
@@ -56,6 +58,7 @@ namespace Infrastructure.Uow
             Bill = new BillRepository(context);
             CreditNote = new CreditNoteRepository(context);
             DebitNote = new DebitNoteRepository(context);
+            Payment = new PaymentRepository(context);   
             Transaction = new TransactionRepository(context);
             Ledger = new LedgerRepository(context);
         }
