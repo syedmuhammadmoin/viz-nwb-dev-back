@@ -20,6 +20,7 @@ namespace Application.Contracts.DTOs
         public decimal TotalBeforeTax { get; private set; }
         public decimal TotalTax { get; set; }
         public decimal TotalAmount { get; set; }
+        public int TransactionId { get; set; }
         public virtual List<BillLinesDto> BillLines { get; set; }
     }
 }
