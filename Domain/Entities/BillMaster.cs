@@ -28,6 +28,9 @@ namespace Domain.Entities
         [MaxLength(20)]
         public string Contact { get; private set; }
         public DocumentStatus Status { get; private set; }
+        public int? TransactionId { get; private set; }
+        [ForeignKey("TransactionId")]
+        public Transactions Transactions { get; private set; }
         public virtual List<BillLines> BillLines { get; private set; }
 
         protected BillMaster()
@@ -37,6 +40,11 @@ namespace Domain.Entities
         public void setStatus(DocumentStatus status)
         {
             Status = status;
+        }
+
+        public void setTrasactionId(int transactionId)
+        {
+            TransactionId = transactionId;
         }
 
         public void CreateDocNo()
