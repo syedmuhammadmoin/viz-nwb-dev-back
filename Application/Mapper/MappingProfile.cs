@@ -95,8 +95,9 @@ namespace Application.Mapper
 
             // Bill Mapping
             CreateMap<BillMaster, BillDto>()
-              .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name));
-
+              .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
+              .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+            
             CreateMap<BillLines, BillLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
               .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
