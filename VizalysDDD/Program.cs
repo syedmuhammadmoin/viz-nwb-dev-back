@@ -30,6 +30,7 @@ builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IBillService, BillService>();
 builder.Services.AddScoped<ICreditNoteService, CreditNoteService>();
 builder.Services.AddScoped<IDebitNoteService, DebitNoteService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 //Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

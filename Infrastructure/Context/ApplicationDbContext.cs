@@ -40,6 +40,7 @@ namespace Infrastructure.Context
         public DbSet<CreditNoteLines> CreditNoteLines { get; set; }
         public DbSet<DebitNoteMaster> DebitNoteMaster { get; set; }
         public DbSet<DebitNoteLines> DebitNoteLines { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
