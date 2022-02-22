@@ -8,6 +8,7 @@ namespace Application.Contracts.DTOs
 {
     public class CreditNoteLinesDto
     {
+        public int Id { get; set; }
         public int ItemId { get; set; }
         public string ItemName { get; set; }
         public string Description { get; set; }
