@@ -38,6 +38,9 @@ namespace Domain.Entities
         public decimal IncomeTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal NetPayment { get; private set; }
+        public int? TransactionId { get; private set; }
+        [ForeignKey("TransactionId")]
+        public Transactions Transactions { get; private set; }
         public DocumentStatus Status { get; private set; }
 
         protected Payment()
@@ -47,6 +50,11 @@ namespace Domain.Entities
         public void setStatus(DocumentStatus status)
         {
             Status = status;
+        }
+
+        public void setTransactionId(int transactionId)
+        {
+            TransactionId = transactionId;
         }
 
         public void CreateDocNo()
