@@ -179,10 +179,10 @@ namespace Application.Services
         private async Task AddToLedger(InvoiceMaster inv)
         {
             var transaction = new Transactions(inv.DocNo, DocType.Invoice);
-            var addTransaction = await _unitOfWork.Transaction.Add(transaction);
+            await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
-            inv.setTrasactionId(transaction.Id);
+            inv.setTransactionId(transaction.Id);
             await _unitOfWork.SaveAsync();
 
             //Inserting line amount into recordledger table

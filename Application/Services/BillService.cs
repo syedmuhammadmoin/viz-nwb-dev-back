@@ -175,10 +175,10 @@ namespace Application.Services
         private async Task AddToLedger(BillMaster bill)
         {
             var transaction = new Transactions(bill.DocNo, DocType.Bill);
-            var addTransaction = await _unitOfWork.Transaction.Add(transaction);
+            await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
-            bill.setTrasactionId(transaction.Id);
+            bill.setTransactionId(transaction.Id);
             await _unitOfWork.SaveAsync();
 
             //Inserting line amount into recordledger table
@@ -194,7 +194,7 @@ namespace Application.Services
                     line.LocationId,
                     line.Description,
                     'D',
-                    amount+tax
+                    amount + tax
                     );
 
                 await _unitOfWork.Ledger.Add(addSalesAmountInRecordLedger);
