@@ -188,7 +188,7 @@ namespace Application.Services
             var addTransaction = await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
-            jv.setTrasactionId(transaction.Id);
+            jv.setTransactionId(transaction.Id);
             await _unitOfWork.SaveAsync();
 
             //Inserting data into recordledger table
