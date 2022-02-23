@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
+using Application.Contracts.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,34 +19,46 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<CategoryDto>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<CategoryDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
-            var categorys = await _categoryService.GetAllAsync(filter);
-            return Ok(categorys);
+            var results = await _categoryService.GetAllAsync(filter);
+            if (results.IsSuccess)
+                return Ok(results); // Status Code : 200
+
+            return BadRequest(results); // Status code : 400
         }
 
         [HttpPost]
-        public async Task<ActionResult<CategoryDto>> CreateAsync(CreateCategoryDto entity)
+        public async Task<ActionResult<Response<CategoryDto>>> CreateAsync(CreateCategoryDto entity)
         {
-            var categorys = await _categoryService.CreateAsync(entity);
-            return Ok(categorys);
+            var result = await _categoryService.CreateAsync(entity);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<CategoryDto>> GetByIdAsync(int id)
         {
             var result = await _categoryService.GetByIdAsync(id);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<CategoryDto>> UpdateAsync(int id, CreateCategoryDto entity)
+        public async Task<ActionResult<Response<CategoryDto>>> UpdateAsync(int id, CreateCategoryDto entity)
         {
             if (id != entity.Id)
-                return BadRequest("ID mismatch");
+                return BadRequest("Id mismatch");
 
             var result = await _categoryService.UpdateAsync(entity);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
     }
 }

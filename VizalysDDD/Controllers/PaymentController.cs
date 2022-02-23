@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
+using Application.Contracts.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,34 +19,46 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<PaymentDto>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<PaymentDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
-            var payment = await _paymentService.GetAllAsync(filter);
-            return Ok(payment);
+            var payments = await _paymentService.GetAllAsync(filter);
+            if (payments.IsSuccess)
+                return Ok(payments); // Status Code : 200
+
+            return BadRequest(payments); // Status code : 400
         }
 
         [HttpPost]
-        public async Task<ActionResult<PaymentDto>> CreateAsync(CreatePaymentDto entity)
+        public async Task<ActionResult<Response<PaymentDto>>> CreateAsync(CreatePaymentDto entity)
         {
             var payment = await _paymentService.CreateAsync(entity);
-            return Ok(payment);
+            if (payment.IsSuccess)
+                return Ok(payment); // Status Code : 200
+
+            return BadRequest(payment); // Status code : 400
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<PaymentDto>> GetByIdAsync(int id)
+        public async Task<ActionResult<Response<PaymentDto>>> GetByIdAsync(int id)
         {
             var result = await _paymentService.GetByIdAsync(id);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<PaymentDto>> UpdateAsync(int id, CreatePaymentDto entity)
+        public async Task<ActionResult<Response<PaymentDto>>> UpdateAsync(int id, CreatePaymentDto entity)
         {
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
 
             var result = await _paymentService.UpdateAsync(entity);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
     }

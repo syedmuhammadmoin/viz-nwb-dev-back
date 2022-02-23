@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
+using Application.Contracts.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,34 +19,46 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<InvoiceDto>> CreateAsync(CreateInvoiceDto entity)
+        public async Task<ActionResult<Response<InvoiceDto>>> CreateAsync(CreateInvoiceDto entity)
         {
-            var invoice = await _invoiceService.CreateAsync(entity);
-            return Ok(invoice);
+            var result = await _invoiceService.CreateAsync(entity);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<InvoiceDto>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<InvoiceDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
-            var invs = await _invoiceService.GetAllAsync(filter);
-            return Ok(invs);
+            var results = await _invoiceService.GetAllAsync(filter);
+            if (results.IsSuccess)
+                return Ok(results); // Status Code : 200
+
+            return BadRequest(results); // Status code : 400
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<InvoiceDto>> GetByIdAsync(int id)
+        public async Task<ActionResult<Response<InvoiceDto>>> GetByIdAsync(int id)
         {
             var result = await _invoiceService.GetByIdAsync(id);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<InvoiceDto>> UpdateAsync(int id, CreateInvoiceDto entity)
+        public async Task<ActionResult<Response<InvoiceDto>>> UpdateAsync(int id, CreateInvoiceDto entity)
         {
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
 
             var result = await _invoiceService.UpdateAsync(entity);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
     }
 }

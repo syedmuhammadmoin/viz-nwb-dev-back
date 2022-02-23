@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
+using Application.Contracts.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,34 +18,47 @@ namespace Vizalys.Api.Controllers
             _departmentService = departmentService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<DeptDto>>> GetAllAsync([FromQuery] PaginationFilter filter)
-        {
-            var department = await _departmentService.GetAllAsync(filter);
-            return Ok(department);
-        }
         [HttpPost]
-        public async Task<ActionResult<DeptDto>> CreateAsync(CreateDeptDto entity)
+        public async Task<ActionResult<Response<DeptDto>>> CreateAsync(CreateDeptDto entity)
         {
-            var department = await _departmentService.CreateAsync(entity);
-            return Ok(department);
+            var result = await _departmentService.CreateAsync(entity);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<PaginationResponse<List<DeptDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        {
+            var results = await _departmentService.GetAllAsync(filter);
+            if (results.IsSuccess)
+                return Ok(results); // Status Code : 200
+
+            return BadRequest(results); // Status code : 400
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<DeptDto>> GetByIdAsync(int id)
+        public async Task<ActionResult<Response<DeptDto>>> GetByIdAsync(int id)
         {
             var result = await _departmentService.GetByIdAsync(id);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<DeptDto>> UpdateAsync(int id, CreateDeptDto entity)
+        public async Task<ActionResult<Response<DeptDto>>> UpdateAsync(int id, CreateDeptDto entity)
         {
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
 
             var result = await _departmentService.UpdateAsync(entity);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
     }
 }
