@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
+using Application.Contracts.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,34 +19,46 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CreditNoteDto>> CreateAsync(CreateCreditNoteDto entity)
+        public async Task<ActionResult<Response<CreditNoteDto>>> CreateAsync(CreateCreditNoteDto entity)
         {
-            var CreditNote = await _creditNoteService.CreateAsync(entity);
-            return Ok(CreditNote);
+            var result = await _creditNoteService.CreateAsync(entity);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<CreditNoteDto>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<CreditNoteDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
-            var invs = await _creditNoteService.GetAllAsync(filter);
-            return Ok(invs);
+            var results = await _creditNoteService.GetAllAsync(filter);
+            if (results.IsSuccess)
+                return Ok(results); // Status Code : 200
+
+            return BadRequest(results); // Status code : 400
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<CreditNoteDto>> GetByIdAsync(int id)
+        public async Task<ActionResult<Response<CreditNoteDto>>> GetByIdAsync(int id)
         {
             var result = await _creditNoteService.GetByIdAsync(id);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<CreditNoteDto>> UpdateAsync(int id, CreateCreditNoteDto entity)
+        public async Task<ActionResult<Response<CreditNoteDto>>> UpdateAsync(int id, CreateCreditNoteDto entity)
         {
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
 
             var result = await _creditNoteService.UpdateAsync(entity);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
     }
 }

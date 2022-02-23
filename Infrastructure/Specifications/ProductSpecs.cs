@@ -16,5 +16,9 @@ namespace Infrastructure.Specifications
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
             AddInclude(i => i.Category);
         }
+        public ProductSpecs()
+        {
+            AddInclude(i => i.Category);
+        }
     }
 }

@@ -48,7 +48,8 @@ namespace Application.Services
 
         public async Task<Response<BusinessPartnerDto>> GetByIdAsync(int id)
         {
-            var businessPartner = await _unitOfWork.BusinessPartner.GetById(id);
+            var specification = new BusinessPartnerSpecs();
+            var businessPartner = await _unitOfWork.BusinessPartner.GetById(id, specification);
             if (businessPartner == null)
                 return new Response<BusinessPartnerDto>("Not found");
 

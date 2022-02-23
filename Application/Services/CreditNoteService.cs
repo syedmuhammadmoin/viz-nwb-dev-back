@@ -77,7 +77,7 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        //Private methods
+        //Private methods for CreditNote
         private async Task<Response<CreditNoteDto>> SubmitCRN(CreateCreditNoteDto entity)
         {
             if (entity.Id == null)
@@ -89,6 +89,7 @@ namespace Application.Services
                 return await this.UpdateCRN(entity, DocumentStatus.Submitted);
             }
         }
+
         private async Task<Response<CreditNoteDto>> SaveCRN(CreateCreditNoteDto entity, DocumentStatus status)
         {
             if (entity.CreditNoteLines.Count() == 0)
@@ -110,6 +111,12 @@ namespace Application.Services
                 crn.CreateDocNo();
                 await _unitOfWork.SaveAsync();
 
+                //Adding CreditNote to Ledger
+                if (status == DocumentStatus.Submitted)
+                {
+                    await AddToLedger(crn);
+                }
+
                 //Commiting the transaction 
                 _unitOfWork.Commit();
 
@@ -122,6 +129,7 @@ namespace Application.Services
                 return new Response<CreditNoteDto>(ex.Message);
             }
         }
+
         private async Task<Response<CreditNoteDto>> UpdateCRN(CreateCreditNoteDto entity, DocumentStatus status)
         {
             if (entity.CreditNoteLines.Count() == 0)
@@ -146,6 +154,11 @@ namespace Application.Services
 
                 await _unitOfWork.SaveAsync();
 
+                //Adding CreditNote to Ledger
+                if (status == DocumentStatus.Submitted)
+                {
+                    await AddToLedger(crn);
+                }
                 //Commiting the transaction
                 _unitOfWork.Commit();
 
@@ -157,6 +170,63 @@ namespace Application.Services
                 _unitOfWork.Rollback();
                 return new Response<CreditNoteDto>(ex.Message);
             }
+        }
+
+        private async Task AddToLedger(CreditNoteMaster crn)
+        {
+            var transaction = new Transactions(crn.DocNo, DocType.CreditNote);
+            await _unitOfWork.Transaction.Add(transaction);
+            await _unitOfWork.SaveAsync();
+
+            crn.setTransactionId(transaction.Id);
+            await _unitOfWork.SaveAsync();
+
+            //Inserting line amount into recordledger table
+            foreach (var line in crn.CreditNoteLines)
+            {
+                var addSalesAmountInRecordLedger = new RecordLedger(
+                    transaction.Id,
+                    line.AccountId,
+                    crn.CustomerId,
+                    line.LocationId,
+                    line.Description,
+                    'D',
+                    line.Price * line.Quantity
+                    );
+
+                await _unitOfWork.Ledger.Add(addSalesAmountInRecordLedger);
+                await _unitOfWork.SaveAsync();
+
+                var tax = (line.Quantity * line.Price * line.Tax) / 100;
+
+                if (tax > 0)
+                {
+                    var addSalesTaxInRecordLedger = new RecordLedger(
+                        transaction.Id,
+                        line.AccountId,
+                        crn.CustomerId,
+                        line.LocationId,
+                        line.Description,
+                        'D',
+                        tax
+                    );
+                    await _unitOfWork.Ledger.Add(addSalesTaxInRecordLedger);
+                    await _unitOfWork.SaveAsync();
+                }
+            }
+            var getCustomerAccount = await _unitOfWork.BusinessPartner.GetById(crn.CustomerId);
+            var addReceivableInLedger = new RecordLedger(
+                        transaction.Id,
+                        getCustomerAccount.AccountReceivableId,
+                        crn.CustomerId,
+                        null,
+                        crn.DocNo,
+                        'C',
+                        crn.TotalAmount
+                    );
+
+            await _unitOfWork.Ledger.Add(addReceivableInLedger);
+            await _unitOfWork.SaveAsync();
         }
 
     }

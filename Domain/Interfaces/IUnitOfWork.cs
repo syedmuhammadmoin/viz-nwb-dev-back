@@ -26,6 +26,8 @@ namespace Domain.Interfaces
         ICreditNoteRepository CreditNote { get; }
         IDebitNoteRepository DebitNote { get; }
         IPaymentRepository Payment { get; }
+        ITransactionRepository Transaction { get; }
+        ILedgerRepository Ledger { get; }
 
         Task SaveAsync();
         void CreateTransaction();

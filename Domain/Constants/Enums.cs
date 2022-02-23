@@ -42,4 +42,22 @@ namespace Domain.Constants
         CashAccount,
         BankAccount
     }
+    public enum DocType
+    {
+        Payment,
+        CreditNote,
+        DebitNote,
+        Invoice,
+        Bill,
+        JournalEntry,
+        BankAccount,
+        CashAccount,
+        PurchaseOrder,
+        SalesOrder,
+        GRN,
+        GDN,
+        InventoryAdjustment,
+        Quotation,
+        Requisition
+    }
 }

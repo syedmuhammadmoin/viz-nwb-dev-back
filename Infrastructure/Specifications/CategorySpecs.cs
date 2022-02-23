@@ -18,5 +18,11 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.CostAccount);
             AddInclude(i => i.RevenueAccount);
         }
+        public CategorySpecs()
+        {
+            AddInclude(i => i.InventoryAccount);
+            AddInclude(i => i.CostAccount);
+            AddInclude(i => i.RevenueAccount);
+        }
     }
 }

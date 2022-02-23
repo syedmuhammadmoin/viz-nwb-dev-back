@@ -109,6 +109,12 @@ namespace Application.Services
                 payment.CreateDocNo();
                 await _unitOfWork.SaveAsync();
 
+                //Adding Invoice to Ledger
+                if (status == DocumentStatus.Submitted)
+                {
+                    await AddToLedger(payment);
+                }
+
                 //Commiting the transaction 
                 _unitOfWork.Commit();
 
@@ -142,6 +148,12 @@ namespace Application.Services
 
                 await _unitOfWork.SaveAsync();
 
+                //Adding Invoice to Ledger
+                if (status == DocumentStatus.Submitted)
+                {
+                    await AddToLedger(payment);
+                }
+
                 //Commiting the transaction
                 _unitOfWork.Commit();
 
@@ -153,6 +165,156 @@ namespace Application.Services
                 _unitOfWork.Rollback();
                 return new Response<PaymentDto>(ex.Message);
             }
+        }
+
+        private async Task AddToLedger(Payment payment)
+        {
+            var transaction = new Transactions(payment.DocNo, DocType.Payment);
+            await _unitOfWork.Transaction.Add(transaction);
+            await _unitOfWork.SaveAsync();
+
+            payment.setTransactionId(transaction.Id);
+            await _unitOfWork.SaveAsync();
+
+            if (payment.PaymentType == PaymentType.Inflow)
+            {
+                var addGrossAmountInRecordLedger = new RecordLedger(
+                    transaction.Id,
+                    payment.AccountId,
+                    payment.BusinessPartnerId,
+                    null,
+                    payment.Description,
+                    'C',
+                    payment.GrossPayment
+                    );
+
+                await _unitOfWork.Ledger.Add(addGrossAmountInRecordLedger);
+
+                if (payment.Discount > 0)
+                {
+                    var addDiscountInRecordLedger = new RecordLedger(
+                        transaction.Id,
+                    payment.AccountId,
+                    payment.BusinessPartnerId,
+                    null,
+                    payment.Description,
+                    'D',
+                    payment.Discount
+                        );
+
+                    await _unitOfWork.Ledger.Add(addDiscountInRecordLedger); 
+                }
+
+                if (payment.SalesTax > 0)
+                {
+                    var addSalesTaxInRecordLedger = new RecordLedger(
+
+                    transaction.Id,
+                    payment.AccountId,
+                    payment.BusinessPartnerId,
+                    null,
+                    payment.Description,
+                    'D',
+                    payment.SalesTax
+                        );
+                    await _unitOfWork.Ledger.Add(addSalesTaxInRecordLedger);
+                }
+
+                if (payment.IncomeTax > 0)
+                {
+                    var addIncomeTaxInRecordLedger = new RecordLedger(
+
+                        transaction.Id,
+                    payment.AccountId,
+                    payment.BusinessPartnerId,
+                    null,
+                    payment.Description,
+                    'D',
+                    payment.IncomeTax);
+                    await _unitOfWork.Ledger.Add(addIncomeTaxInRecordLedger);
+                }
+                var addNetPaymentInRecordLedger = new RecordLedger(
+                    transaction.Id,
+                    payment.AccountId,
+                    payment.BusinessPartnerId,
+                    null,
+                    payment.Description,
+                    'D',
+                    (payment.GrossPayment - payment.Discount - payment.SalesTax - payment.IncomeTax));
+                
+                await _unitOfWork.Ledger.Add(addNetPaymentInRecordLedger);
+            }
+
+            if (payment.PaymentType == PaymentType.Outflow)
+            {
+                var addGrossAmountInRecordLedger = new RecordLedger(
+                    transaction.Id,
+                    payment.AccountId,
+                    payment.BusinessPartnerId,
+                    null,
+                    payment.Description,
+                    'D',
+                    payment.GrossPayment
+                    );
+
+                await _unitOfWork.Ledger.Add(addGrossAmountInRecordLedger);
+
+                if (payment.Discount > 0)
+                {
+                    var addDiscountInRecordLedger = new RecordLedger(
+                    transaction.Id,
+                    payment.AccountId,
+                    payment.BusinessPartnerId,
+                    null,
+                    payment.Description,
+                    'C',
+                    payment.Discount
+                        );
+
+                    await _unitOfWork.Ledger.Add(addDiscountInRecordLedger);
+                }
+
+                if (payment.SalesTax > 0)
+                {
+                    var addSalesTaxInRecordLedger = new RecordLedger(
+
+                    transaction.Id,
+                    payment.AccountId,
+                    payment.BusinessPartnerId,
+                    null,
+                    payment.Description,
+                    'C',
+                    payment.SalesTax
+                        );
+                    await _unitOfWork.Ledger.Add(addSalesTaxInRecordLedger);
+                }
+
+                if (payment.IncomeTax > 0)
+                {
+                    var addIncomeTaxInRecordLedger = new RecordLedger(
+
+                    transaction.Id,
+                    payment.AccountId,
+                    payment.BusinessPartnerId,
+                    null,
+                    payment.Description,
+                    'C',
+                    payment.IncomeTax);
+                    await _unitOfWork.Ledger.Add(addIncomeTaxInRecordLedger);
+                }
+                var addNetPaymentInRecordLedger = new RecordLedger(
+                    transaction.Id,
+                    payment.AccountId,
+                    payment.BusinessPartnerId,
+                    null,
+                    payment.Description,
+                    'C',
+                    (payment.GrossPayment - payment.Discount - payment.SalesTax - payment.IncomeTax));
+
+                await _unitOfWork.Ledger.Add(addNetPaymentInRecordLedger);
+            }
+
+            await _unitOfWork.SaveAsync();
         }
     }
 }

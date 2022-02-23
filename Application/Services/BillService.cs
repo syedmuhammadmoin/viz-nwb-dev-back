@@ -112,6 +112,12 @@ namespace Application.Services
                 bill.CreateDocNo();
                 await _unitOfWork.SaveAsync();
 
+                //Adding bill to Ledger
+                if (status == DocumentStatus.Submitted)
+                {
+                    await AddToLedger(bill);
+                }
+
                 //Commiting the transaction 
                 _unitOfWork.Commit();
 
@@ -148,6 +154,12 @@ namespace Application.Services
 
                 await _unitOfWork.SaveAsync();
 
+                //Adding bill to Ledger
+                if (status == DocumentStatus.Submitted)
+                {
+                    await AddToLedger(bill);
+                }
+
                 //Commiting the transaction
                 _unitOfWork.Commit();
 
@@ -159,6 +171,50 @@ namespace Application.Services
                 _unitOfWork.Rollback();
                 return new Response<BillDto>(ex.Message);
             }
+        }
+        private async Task AddToLedger(BillMaster bill)
+        {
+            var transaction = new Transactions(bill.DocNo, DocType.Bill);
+            await _unitOfWork.Transaction.Add(transaction);
+            await _unitOfWork.SaveAsync();
+
+            bill.setTransactionId(transaction.Id);
+            await _unitOfWork.SaveAsync();
+
+            //Inserting line amount into recordledger table
+            foreach (var line in bill.BillLines)
+            {
+                var tax = (line.Quantity * line.Cost * line.Tax) / 100;
+                var amount = line.Quantity * line.Cost;
+
+                var addSalesAmountInRecordLedger = new RecordLedger(
+                    transaction.Id,
+                    line.AccountId,
+                    bill.VendorId,
+                    line.LocationId,
+                    line.Description,
+                    'D',
+                    amount + tax
+                    );
+
+                await _unitOfWork.Ledger.Add(addSalesAmountInRecordLedger);
+                await _unitOfWork.SaveAsync();
+
+
+            }
+            var getVendorAccount = await _unitOfWork.BusinessPartner.GetById(bill.VendorId);
+            var addPayableInLedger = new RecordLedger(
+                        transaction.Id,
+                        getVendorAccount.AccountPayableId,
+                        bill.VendorId,
+                        null,
+                        bill.DocNo,
+                        'C',
+                        bill.TotalAmount
+                    );
+
+            await _unitOfWork.Ledger.Add(addPayableInLedger);
+            await _unitOfWork.SaveAsync();
         }
     }
 }

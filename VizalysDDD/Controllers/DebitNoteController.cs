@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
+using Application.Contracts.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,34 +19,46 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<DebitNoteDto>> CreateAsync(CreateDebitNoteDto entity)
+        public async Task<ActionResult<Response<DebitNoteDto>>> CreateAsync(CreateDebitNoteDto entity)
         {
-            var DebitNote = await _debitNoteService.CreateAsync(entity);
-            return Ok(DebitNote);
+            var result = await _debitNoteService.CreateAsync(entity);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<DebitNoteDto>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<DebitNoteDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
-            var invs = await _debitNoteService.GetAllAsync(filter);
-            return Ok(invs);
+            var results = await _debitNoteService.GetAllAsync(filter);
+            if (results.IsSuccess)
+                return Ok(results); // Status Code : 200
+
+            return BadRequest(results); // Status code : 400
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<DebitNoteDto>> GetByIdAsync(int id)
+        public async Task<ActionResult<Response<DebitNoteDto>>> GetByIdAsync(int id)
         {
             var result = await _debitNoteService.GetByIdAsync(id);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<DebitNoteDto>> UpdateAsync(int id, CreateDebitNoteDto entity)
+        public async Task<ActionResult<Response<DebitNoteDto>>> UpdateAsync(int id, CreateDebitNoteDto entity)
         {
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
 
             var result = await _debitNoteService.UpdateAsync(entity);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
     }
 }

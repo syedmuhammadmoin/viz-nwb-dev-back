@@ -48,7 +48,9 @@ namespace Application.Services
 
         public async Task<Response<CategoryDto>> GetByIdAsync(int id)
         {
-            var category = await _unitOfWork.Category.GetById(id);
+            
+            var specification = new CategorySpecs();
+            var category = await _unitOfWork.Category.GetById(id, specification);
             if (category == null)
                 return new Response<CategoryDto>("Not found");
 

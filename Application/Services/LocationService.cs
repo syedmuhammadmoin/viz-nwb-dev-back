@@ -50,7 +50,8 @@ namespace Application.Services
 
         public async Task<Response<LocationDto>> GetByIdAsync(int id)
         {
-            var location = await _unitOfWork.Location.GetById(id);
+            var specification = new LocationSpecs();
+            var location = await _unitOfWork.Location.GetById(id, specification);
             if (location == null)
                 return new Response<LocationDto>("Not found");
 

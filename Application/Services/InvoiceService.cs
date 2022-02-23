@@ -80,7 +80,7 @@ namespace Application.Services
         }
 
 
-
+        //Private Methods for Invoice
         private async Task<Response<InvoiceDto>> SubmitINV(CreateInvoiceDto entity)
         {
             if (entity.Id == null)
@@ -113,6 +113,12 @@ namespace Application.Services
                 //For creating docNo
                 inv.CreateDocNo();
                 await _unitOfWork.SaveAsync();
+
+                //Adding Invoice to Ledger
+                if (status == DocumentStatus.Submitted)
+                {
+                    await AddToLedger(inv);
+                }
 
                 //Commiting the transaction 
                 _unitOfWork.Commit();
@@ -151,6 +157,12 @@ namespace Application.Services
 
                 await _unitOfWork.SaveAsync();
 
+                //Adding Invoice to Ledger
+                if (status == DocumentStatus.Submitted)
+                {
+                    await AddToLedger(inv);
+                }
+
                 //Commiting the transaction
                 _unitOfWork.Commit();
 
@@ -164,5 +176,61 @@ namespace Application.Services
             }
         }
 
+        private async Task AddToLedger(InvoiceMaster inv)
+        {
+            var transaction = new Transactions(inv.DocNo, DocType.Invoice);
+            await _unitOfWork.Transaction.Add(transaction);
+            await _unitOfWork.SaveAsync();
+
+            inv.setTransactionId(transaction.Id);
+            await _unitOfWork.SaveAsync();
+
+            //Inserting line amount into recordledger table
+            foreach (var line in inv.InvoiceLines)
+            {
+                var addSalesAmountInRecordLedger = new RecordLedger(
+                    transaction.Id,
+                    line.AccountId,
+                    inv.CustomerId,
+                    line.LocationId,
+                    line.Description,
+                    'C',
+                    line.Price * line.Quantity
+                    );
+
+                await _unitOfWork.Ledger.Add(addSalesAmountInRecordLedger);
+                await _unitOfWork.SaveAsync();
+
+                var tax = (line.Quantity * line.Price * line.Tax) / 100;
+
+                if (tax > 0)
+                {
+                    var addSalesTaxInRecordLedger = new RecordLedger(
+                        transaction.Id,
+                        line.AccountId,
+                        inv.CustomerId,
+                        line.LocationId,
+                        line.Description,
+                        'C',
+                        tax
+                    );
+                    await _unitOfWork.Ledger.Add(addSalesTaxInRecordLedger);
+                    await _unitOfWork.SaveAsync();
+                }
+            }
+            var getCustomerAccount = await _unitOfWork.BusinessPartner.GetById(inv.CustomerId);
+            var addReceivableInLedger = new RecordLedger(
+                        transaction.Id,
+                        getCustomerAccount.AccountReceivableId,
+                        inv.CustomerId,
+                        null,
+                        inv.DocNo,
+                        'D',
+                        inv.TotalAmount
+                    );
+
+            await _unitOfWork.Ledger.Add(addReceivableInLedger);
+            await _unitOfWork.SaveAsync();
+        }
     }
 }

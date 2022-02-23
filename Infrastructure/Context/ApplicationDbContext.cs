@@ -42,6 +42,10 @@ namespace Infrastructure.Context
         public DbSet<DebitNoteLines> DebitNoteLines { get; set; }
         public DbSet<Payment> Payments { get; set; }
 
+        public DbSet<Transactions> Transactions { get; set; }
+        public DbSet<RecordLedger> RecordLedger { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

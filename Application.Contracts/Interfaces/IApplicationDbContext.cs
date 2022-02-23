@@ -29,6 +29,9 @@ namespace Application.Interfaces
         public DbSet<DebitNoteMaster> DebitNoteMaster { get; set; }
         public DbSet<DebitNoteLines> DebitNoteLines { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<Transactions> Transactions { get; set; }
+        public DbSet<RecordLedger> RecordLedger { get; set; }
+
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
