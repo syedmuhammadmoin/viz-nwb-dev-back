@@ -20,12 +20,7 @@ namespace Domain.Entities
         public Guid Level1_id { get; private set; }
         [ForeignKey("Level1_id")]
         public Level1 Level1 { get; private set; }
-        public Level4(Level4 level4)
-        {
-            Name = level4.Name;
-            Level3_id = level4.Level3_id;
-            Level1_id = level4.Level1_id;
-        }
+        
         protected Level4()
         {
         }

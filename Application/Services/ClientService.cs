@@ -27,7 +27,7 @@ namespace Application.Services
 
         public async Task<Response<ClientDto>> CreateAsync(CreateClientDto entity)
         {
-            var client = new Client(_mapper.Map<Client>(entity));
+            var client = _mapper.Map<Client>(entity);
             var result = await _unitOfWork.Client.Add(client);
             await _unitOfWork.SaveAsync();
 

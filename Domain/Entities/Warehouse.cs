@@ -32,18 +32,6 @@ namespace Domain.Entities
         public Department Department { get; private set; }
         public virtual List<Location> Locations { get; private set; }
 
-        public Warehouse(Warehouse warehouse)
-        {
-            Name = warehouse.Name;
-            Country = warehouse.Country;
-            State = warehouse.State;
-            City = warehouse.City;
-            Street = warehouse.Street;
-            Block = warehouse.Block;
-            Road = warehouse.Road;
-            Manager = warehouse.Manager;
-            DepartmentId = warehouse.DepartmentId;
-        }
         protected Warehouse()
         {
         }

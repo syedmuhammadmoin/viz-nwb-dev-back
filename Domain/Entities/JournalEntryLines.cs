@@ -11,34 +11,25 @@ namespace Domain.Entities
 {
     public class JournalEntryLines : BaseEntity<int>
     {
-        public Guid AccountId { get; set; }
+        public Guid AccountId { get; private set; }
         [ForeignKey("AccountId")]
-        public Level4 Account { get; set; }
-        public int? BusinessPartnerId { get; set; }
+        public Level4 Account { get; private set; }
+        public int? BusinessPartnerId { get; private set; }
         [ForeignKey("BusinessPartnerId")]
-        public BusinessPartner BusinessPartner { get; set; }
+        public BusinessPartner BusinessPartner { get; private set; }
         [MaxLength(500)]
-        public string Description { get; set; }
+        public string Description { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Debit { get; set; }
+        public decimal Debit { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Credit { get; set; }
-        public int LocationId { get; set; }
+        public decimal Credit { get; private set; }
+        public int LocationId { get; private set; }
         [ForeignKey("LocationId")]
-        public Location Location { get; set; }
-        public int MasterId { get; set; }
+        public Location Location { get; private set; }
+        public int MasterId { get; private set; }
         [ForeignKey("MasterId ")]
-        public JournalEntryMaster JournalEntryMaster { get; set; }
+        public JournalEntryMaster JournalEntryMaster { get; private set; }
 
-        public JournalEntryLines(JournalEntryLines journalEntryLines)
-        {
-            AccountId = journalEntryLines.AccountId;
-            BusinessPartnerId = journalEntryLines.BusinessPartnerId;
-            Description = journalEntryLines.Description;
-            Debit = journalEntryLines.Debit;
-            Credit = journalEntryLines.Credit;
-            LocationId = journalEntryLines.LocationId;
-        }
         protected JournalEntryLines()
         {
         }

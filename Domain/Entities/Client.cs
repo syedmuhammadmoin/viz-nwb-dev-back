@@ -38,23 +38,6 @@ namespace Domain.Entities
         public string Currency { get; private set; }
         public List<Organization> Organizations { get; set; }
 
-        public Client(Client client)
-        {
-            Name = client.Name;
-            Country = client.Country;
-            State = client.State;
-            City = client.City;
-            Address = client.Address;
-            Phone = client.Phone;
-            Fax = client.Fax;
-            Email = client.Email;
-            Website = client.Website;
-            BankName = client.BankName;
-            BankAccountTitle = client.BankAccountTitle;
-            BankAccountNumber = client.BankAccountNumber;
-            Currency = client.Currency;
-        }
-
         protected Client()
         {
 

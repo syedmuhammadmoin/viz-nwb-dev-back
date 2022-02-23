@@ -28,17 +28,6 @@ namespace Domain.Entities
         [MaxLength(100)]
         public string Barcode { get; private set; }
 
-        public Product(Product product)
-        {
-            ProductName = product.ProductName;
-            PurchasedOrSold = product.PurchasedOrSold;
-            ProductType = product.ProductType;
-            CategoryId = product.CategoryId;
-            SalesPrice = product.SalesPrice;
-            Cost = product.Cost;
-            SalesTax = product.SalesTax;
-            Barcode = product.Barcode;
-        }
         protected Product()
         {
 

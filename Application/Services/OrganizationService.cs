@@ -26,7 +26,7 @@ namespace Application.Services
         }
         public async Task<Response<OrganizationDto>> CreateAsync(CreateOrganizationDto entity)
         {
-            var org = new Organization(_mapper.Map<Organization>(entity));
+            var org = _mapper.Map<Organization>(entity);
             var result = await _unitOfWork.Organization.Add(org);
             await _unitOfWork.SaveAsync();
 
@@ -54,7 +54,8 @@ namespace Application.Services
 
         public async Task<Response<OrganizationDto>> GetByIdAsync(int id)
         {
-            var org = await _unitOfWork.Organization.GetById(id);
+            var specification = new OrganizationSpecs();
+            var org = await _unitOfWork.Organization.GetById(id, specification);
             if (org == null)
                 return new Response<OrganizationDto>("Not found");
 

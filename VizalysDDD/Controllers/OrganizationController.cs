@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
+using Application.Contracts.Response;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Vizalys.Api.Controllers
@@ -17,34 +18,46 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<OrganizationDto>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<OrganizationDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
             var orgs = await _organizationService.GetAllAsync(filter);
-            return Ok(orgs);
+            if (orgs.IsSuccess)
+                return Ok(orgs); // Status Code : 200
+
+            return BadRequest(orgs); // Status code : 400
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrganizationDto>> Create(CreateOrganizationDto entity)
+        public async Task<ActionResult<Response<OrganizationDto>>> CreateAsync(CreateOrganizationDto entity)
         {
-            var organizations = await _organizationService.CreateAsync(entity);
-            return Ok(organizations);
+            var org = await _organizationService.CreateAsync(entity);
+            if (org.IsSuccess)
+                return Ok(org); // Status Code : 200
+
+            return BadRequest(org); // Status code : 400
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<OrganizationDto>> Create(int id)
+        public async Task<ActionResult<Response<OrganizationDto>>> GetByIdAsync(int id)
         {
             var result = await _organizationService.GetByIdAsync(id);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<OrganizationDto>> UpdateAsync(int id, CreateOrganizationDto entity)
+        public async Task<ActionResult<Response<OrganizationDto>>> UpdateAsync(int id, CreateOrganizationDto entity)
         {
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
 
             var result = await _organizationService.UpdateAsync(entity);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
     }
 }

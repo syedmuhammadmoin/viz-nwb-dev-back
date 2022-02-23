@@ -20,18 +20,26 @@ namespace Domain.Entities
         [Required]
         public DocumentStatus Status { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalDebit { get; set; }
+        public decimal TotalDebit { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalCredit { get; set; }
-        public virtual List<JournalEntryLines> JournalEntryLines { get; set; }
+        public decimal TotalCredit { get; private set; }
+        public int? TransactionId { get; private set; }
+        [ForeignKey("TransactionId")]
+        public Transactions Transactions { get; private set; }
+        public virtual List<JournalEntryLines> JournalEntryLines { get; private set; }
 
         protected JournalEntryMaster()
         {
         }
 
-        public void setStatus(DocumentStatus status) 
+        public void setStatus(DocumentStatus status)
         {
             Status = status;
+        }
+
+        public void setTransactionId(int transactionId)
+        {
+            TransactionId = transactionId;
         }
 
         public void CreateDocNo()

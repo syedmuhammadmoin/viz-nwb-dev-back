@@ -22,14 +22,6 @@ namespace Domain.Entities
         [ForeignKey("WarehouseId")]
         public Warehouse Warehouse { get; private set; }
 
-        public Location(Location location)
-        {
-            Name = location.Name;
-            Dimensions = location.Dimensions;
-            Supervisor = location.Supervisor;
-            WarehouseId = location.WarehouseId;
-        }
-
         protected Location()
         {
 

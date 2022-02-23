@@ -21,6 +21,13 @@ namespace Domain.Interfaces
         ILevel4Repository Level4 { get; }
         IProductRepository Product { get; }
         IJournalEntryRepository JournalEntry { get; }
+        IInvoiceRepository Invoice { get; }
+        IBillRepository Bill { get; }
+        ICreditNoteRepository CreditNote { get; }
+        IDebitNoteRepository DebitNote { get; }
+        IPaymentRepository Payment { get; }
+        ITransactionRepository Transaction { get; }
+        ILedgerRepository Ledger { get; }
 
         Task SaveAsync();
         void CreateTransaction();
