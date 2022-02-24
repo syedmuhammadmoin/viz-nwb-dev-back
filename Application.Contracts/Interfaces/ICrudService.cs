@@ -17,4 +17,13 @@ namespace Application.Contracts.Interfaces
         Task<Response<DTO>> UpdateAsync(VM entity);
         Task<Response<TKey>> DeleteAsync(TKey id);
     }
+
+    public interface ICrudService<VM, UVM, DTO, TKey, TFilter>
+    {
+        Task<PaginationResponse<List<DTO>>> GetAllAsync(TFilter filter);
+        Task<Response<DTO>> GetByIdAsync(TKey id);
+        Task<Response<DTO>> CreateAsync(VM entity);
+        Task<Response<DTO>> UpdateAsync(UVM entity);
+        Task<Response<TKey>> DeleteAsync(TKey id);
+    }
 }
