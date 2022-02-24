@@ -28,6 +28,7 @@ namespace Domain.Interfaces
         IPaymentRepository Payment { get; }
         ITransactionRepository Transaction { get; }
         ILedgerRepository Ledger { get; }
+        ICashAccountRepository CashAccount { get; }
 
         Task SaveAsync();
         void CreateTransaction();
