@@ -155,6 +155,14 @@ namespace Application.Mapper
 
             CreateMap<CreatePaymentDto, Payment>()
                 .ForMember(core => core.NetPayment, dto => dto.MapFrom(a => (a.GrossPayment - a.Discount - a.IncomeTax - a.SalesTax)));
+
+            // CashAccount Mapping
+            CreateMap<CashAccount, CashAccountDto>()
+                .ForMember(dto => dto.ChAccountName, core => core.MapFrom(a => a.ChAccountName.Name))
+                .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+            CreateMap<CreateCashAccountDto, CashAccount>();
+
+
         }
     }
 }
