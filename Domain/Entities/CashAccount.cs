@@ -45,11 +45,5 @@ namespace Domain.Entities
             //Creating doc no..
             DocNo = "CASH-" + String.Format("{0:000}", Id);
         }
-        public void updateCashAccount(string cashAccName, string handler)
-        {
-            CashAccountName = cashAccName;
-            Handler = handler;
-        }
-
     }
 }
