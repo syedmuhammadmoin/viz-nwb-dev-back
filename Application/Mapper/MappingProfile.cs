@@ -161,6 +161,7 @@ namespace Application.Mapper
                 .ForMember(dto => dto.ChAccountName, core => core.MapFrom(a => a.ChAccountName.Name))
                 .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
             CreateMap<CreateCashAccountDto, CashAccount>();
+            CreateMap<UpdateCashAccountDto, CashAccount>();
 
 
         }
