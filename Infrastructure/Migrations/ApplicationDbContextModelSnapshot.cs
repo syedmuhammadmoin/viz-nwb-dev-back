@@ -1300,7 +1300,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PaymentRegisterId");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Product", b =>

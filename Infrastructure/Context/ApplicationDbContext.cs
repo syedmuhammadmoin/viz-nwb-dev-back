@@ -44,8 +44,7 @@ namespace Infrastructure.Context
 
         public DbSet<Transactions> Transactions { get; set; }
         public DbSet<RecordLedger> RecordLedger { get; set; }
-
-
+        public DbSet<CashAccount> CashAccount { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
