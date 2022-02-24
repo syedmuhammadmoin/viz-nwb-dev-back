@@ -45,7 +45,7 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Response<CashAccountDto>>> UpdateAsync(int id, CreateCashAccountDto entity)
+        public async Task<ActionResult<Response<CashAccountDto>>> UpdateAsync(int id, UpdateCashAccountDto entity)
         {
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
