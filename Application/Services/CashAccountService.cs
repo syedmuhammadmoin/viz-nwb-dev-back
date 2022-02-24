@@ -94,18 +94,6 @@ namespace Application.Services
             return new Response<CashAccountDto>(_mapper.Map<CashAccountDto>(CashAccount), "Returning value");
         }
 
-        public async Task<Response<CashAccountDto>> UpdateAsync(CreateCashAccountDto entity)
-        {
-            var cashAccount = await _unitOfWork.CashAccount.GetById((int)entity.Id);
-
-            if (cashAccount == null)
-                return new Response<CashAccountDto>("Not found");
-
-            cashAccount.updateCashAccount(entity.CashAccountName, entity.Handler);
-            await _unitOfWork.SaveAsync();
-            return new Response<CashAccountDto>(_mapper.Map<CashAccountDto>(cashAccount), "Updated successfully");
-        }
-
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
@@ -129,12 +117,25 @@ namespace Application.Services
                new Guid("12210000-5566-7788-99AA-BBCCDDEEFF04"),
                null,
                null,
-               cashAccount.DocNo,
+               "Opening Balance",
                'C',
                cashAccount.OpeningBalance);
 
             await _unitOfWork.Ledger.Add(addBalanceInOpeningBalanceEquity);
             await _unitOfWork.SaveAsync();
+        }
+
+        public async Task<Response<CashAccountDto>> UpdateAsync(UpdateCashAccountDto entity)
+        {
+            var cashAccount = await _unitOfWork.CashAccount.GetById((int)entity.Id);
+
+            if (cashAccount == null)
+                return new Response<CashAccountDto>("Not found");
+
+            //For updating data
+            _mapper.Map<UpdateCashAccountDto, CashAccount>(entity, cashAccount);
+            await _unitOfWork.SaveAsync();
+            return new Response<CashAccountDto>(_mapper.Map<CashAccountDto>(cashAccount), "Updated successfully");
         }
     }
 }
