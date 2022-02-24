@@ -11,7 +11,9 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
+        [StringLength(200)]
         public string CashAccountName { get; set; }
+        [StringLength(200)] 
         public string Handler { get; set; }
         [Required]
         [Range(0.00, double.MaxValue, ErrorMessage = "Please enter a positive value")]
