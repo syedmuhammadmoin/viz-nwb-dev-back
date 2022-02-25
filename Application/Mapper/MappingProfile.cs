@@ -163,6 +163,12 @@ namespace Application.Mapper
             CreateMap<CreateCashAccountDto, CashAccount>();
             CreateMap<UpdateCashAccountDto, CashAccount>();
 
+            // BankAccount Mapping
+            CreateMap<BankAccount, BankAccountDto>()
+                .ForMember(dto => dto.ChAccountName, core => core.MapFrom(a => a.ChAccount.Name))
+                .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+            CreateMap<CreateBankAccountDto, BankAccount>();
+            CreateMap<UpdateBankAccountDto, BankAccount>();
 
         }
     }
