@@ -74,24 +74,24 @@ namespace Application.Services
         public async Task<PaginationResponse<List<CashAccountDto>>> GetAllAsync(PaginationFilter filter)
         {
             var specification = new CashAccountSpecs(filter);
-            var CashAccount = await _unitOfWork.CashAccount.GetAll(specification);
+            var cashAccount = await _unitOfWork.CashAccount.GetAll(specification);
 
-            if (CashAccount.Count() == 0)
+            if (!cashAccount.Any())
                 return new PaginationResponse<List<CashAccountDto>>("List is empty");
 
             var totalRecords = await _unitOfWork.CashAccount.TotalRecord();
 
-            return new PaginationResponse<List<CashAccountDto>>(_mapper.Map<List<CashAccountDto>>(CashAccount), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
+            return new PaginationResponse<List<CashAccountDto>>(_mapper.Map<List<CashAccountDto>>(cashAccount), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
 
         }
 
         public async Task<Response<CashAccountDto>> GetByIdAsync(int id)
         {
-            var CashAccount = await _unitOfWork.CashAccount.GetById(id);
-            if (CashAccount == null)
+            var cashAccount = await _unitOfWork.CashAccount.GetById(id);
+            if (cashAccount == null)
                 return new Response<CashAccountDto>("Not found");
 
-            return new Response<CashAccountDto>(_mapper.Map<CashAccountDto>(CashAccount), "Returning value");
+            return new Response<CashAccountDto>(_mapper.Map<CashAccountDto>(cashAccount), "Returning value");
         }
 
         public Task<Response<int>> DeleteAsync(int id)
@@ -99,6 +99,19 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
+        
+        public async Task<Response<CashAccountDto>> UpdateAsync(UpdateCashAccountDto entity)
+        {
+            var cashAccount = await _unitOfWork.CashAccount.GetById((int)entity.Id);
+
+            if (cashAccount == null)
+                return new Response<CashAccountDto>("Not found");
+
+            //For updating data
+            _mapper.Map<UpdateCashAccountDto, CashAccount>(entity, cashAccount);
+            await _unitOfWork.SaveAsync();
+            return new Response<CashAccountDto>(_mapper.Map<CashAccountDto>(cashAccount), "Updated successfully");
+        }
         private async Task AddToLedger(CashAccount cashAccount)
         {
             var addBalanceInCashAccount = new RecordLedger(
@@ -125,17 +138,5 @@ namespace Application.Services
             await _unitOfWork.SaveAsync();
         }
 
-        public async Task<Response<CashAccountDto>> UpdateAsync(UpdateCashAccountDto entity)
-        {
-            var cashAccount = await _unitOfWork.CashAccount.GetById((int)entity.Id);
-
-            if (cashAccount == null)
-                return new Response<CashAccountDto>("Not found");
-
-            //For updating data
-            _mapper.Map<UpdateCashAccountDto, CashAccount>(entity, cashAccount);
-            await _unitOfWork.SaveAsync();
-            return new Response<CashAccountDto>(_mapper.Map<CashAccountDto>(cashAccount), "Updated successfully");
-        }
     }
 }
