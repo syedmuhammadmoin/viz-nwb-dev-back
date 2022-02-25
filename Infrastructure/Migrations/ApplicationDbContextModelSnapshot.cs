@@ -22,80 +22,6 @@ namespace Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Domain.Entities.BankAccount", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<long>("AccountNumber")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("AccountTitle")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("BankName")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Branch")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<Guid>("ChAccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ClearingAccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Currency")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("DocNo")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("OpeningBalance")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("OpeningBalanceDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("TransactionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChAccountId");
-
-                    b.HasIndex("ClearingAccountId");
-
-                    b.HasIndex("TransactionId");
-
-                    b.ToTable("BankAccount");
-                });
-
             modelBuilder.Entity("Domain.Entities.BillLines", b =>
                 {
                     b.Property<int>("Id")
@@ -159,7 +85,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("MasterId");
 
-                    b.ToTable("BillLines");
+                    b.ToTable("BillLines", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.BillMaster", b =>
@@ -213,19 +139,14 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("TotalTax")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("TransactionId")
-                        .HasColumnType("int");
-
                     b.Property<int>("VendorId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TransactionId");
-
                     b.HasIndex("VendorId");
 
-                    b.ToTable("BillMaster");
+                    b.ToTable("BillMaster", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.BusinessPartner", b =>
@@ -328,66 +249,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("AccountReceivableId");
 
-                    b.ToTable("BusinessPartners");
-                });
-
-            modelBuilder.Entity("Domain.Entities.CashAccount", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("CashAccountName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<Guid>("ChAccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Currency")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("DocNo")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Handler")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("OpeningBalance")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("TransactionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChAccountId");
-
-                    b.HasIndex("TransactionId");
-
-                    b.ToTable("CashAccount");
+                    b.ToTable("BusinessPartners", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Category", b =>
@@ -436,7 +298,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("RevenueAccountId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Client", b =>
@@ -518,7 +380,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clients");
+                    b.ToTable("Clients", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.CreditNoteLines", b =>
@@ -584,7 +446,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("MasterId");
 
-                    b.ToTable("CreditNoteLines");
+                    b.ToTable("CreditNoteLines", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.CreditNoteMaster", b =>
@@ -634,16 +496,11 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("TotalTax")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("TransactionId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("TransactionId");
-
-                    b.ToTable("CreditNoteMaster");
+                    b.ToTable("CreditNoteMaster", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.DebitNoteLines", b =>
@@ -709,7 +566,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("MasterId");
 
-                    b.ToTable("DebitNoteLines");
+                    b.ToTable("DebitNoteLines", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.DebitNoteMaster", b =>
@@ -756,19 +613,14 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("TotalTax")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("TransactionId")
-                        .HasColumnType("int");
-
                     b.Property<int>("VendorId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TransactionId");
-
                     b.HasIndex("VendorId");
 
-                    b.ToTable("DebitNoteMaster");
+                    b.ToTable("DebitNoteMaster", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Department", b =>
@@ -835,7 +687,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("OrganizationId");
 
-                    b.ToTable("Departments");
+                    b.ToTable("Departments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.InvoiceLines", b =>
@@ -901,7 +753,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("MasterId");
 
-                    b.ToTable("InvoiceLines");
+                    b.ToTable("InvoiceLines", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.InvoiceMaster", b =>
@@ -958,16 +810,11 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("TotalTax")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("TransactionId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("TransactionId");
-
-                    b.ToTable("InvoiceMaster");
+                    b.ToTable("InvoiceMaster", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.JournalEntryLines", b =>
@@ -1027,7 +874,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("MasterId");
 
-                    b.ToTable("JournalEntryLines");
+                    b.ToTable("JournalEntryLines", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.JournalEntryMaster", b =>
@@ -1075,14 +922,9 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("TotalDebit")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("TransactionId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("TransactionId");
-
-                    b.ToTable("JournalEntryMaster");
+                    b.ToTable("JournalEntryMaster", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Level1", b =>
@@ -1114,7 +956,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Level1");
+                    b.ToTable("Level1", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Level2", b =>
@@ -1151,7 +993,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Level1_id");
 
-                    b.ToTable("Level2");
+                    b.ToTable("Level2", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Level3", b =>
@@ -1188,7 +1030,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Level2_id");
 
-                    b.ToTable("Level3");
+                    b.ToTable("Level3", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Level4", b =>
@@ -1230,7 +1072,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Level3_id");
 
-                    b.ToTable("Level4");
+                    b.ToTable("Level4", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Location", b =>
@@ -1277,7 +1119,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId");
 
-                    b.ToTable("Locations");
+                    b.ToTable("Locations", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Organization", b =>
@@ -1378,7 +1220,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("Organizations");
+                    b.ToTable("Organizations", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Payment", b =>
@@ -1450,9 +1292,6 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TransactionId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
@@ -1461,9 +1300,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PaymentRegisterId");
 
-                    b.HasIndex("TransactionId");
-
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Product", b =>
@@ -1521,105 +1358,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("Domain.Entities.RecordLedger", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("BusinessPartnerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("Level4_id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int?>("LocationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Sign")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(1)");
-
-                    b.Property<int>("TransactionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BusinessPartnerId");
-
-                    b.HasIndex("Level4_id");
-
-                    b.HasIndex("LocationId");
-
-                    b.HasIndex("TransactionId");
-
-                    b.ToTable("RecordLedger");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Transactions", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DocNo")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int>("DocType")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Transactions");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -1759,7 +1498,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("Warehouses");
+                    b.ToTable("Warehouses", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1895,33 +1634,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.BankAccount", b =>
-                {
-                    b.HasOne("Domain.Entities.Level4", "ChAccount")
-                        .WithMany()
-                        .HasForeignKey("ChAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Level4", "ClearingAccount")
-                        .WithMany()
-                        .HasForeignKey("ClearingAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Transactions", "Transactions")
-                        .WithMany()
-                        .HasForeignKey("TransactionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ChAccount");
-
-                    b.Navigation("ClearingAccount");
-
-                    b.Navigation("Transactions");
-                });
-
             modelBuilder.Entity("Domain.Entities.BillLines", b =>
                 {
                     b.HasOne("Domain.Entities.Level4", "Account")
@@ -1957,18 +1669,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.BillMaster", b =>
                 {
-                    b.HasOne("Domain.Entities.Transactions", "Transactions")
-                        .WithMany()
-                        .HasForeignKey("TransactionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Domain.Entities.BusinessPartner", "Vendor")
                         .WithMany()
                         .HasForeignKey("VendorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Transactions");
 
                     b.Navigation("Vendor");
                 });
@@ -1990,25 +1695,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("AccountPayable");
 
                     b.Navigation("AccountReceivable");
-                });
-
-            modelBuilder.Entity("Domain.Entities.CashAccount", b =>
-                {
-                    b.HasOne("Domain.Entities.Level4", "ChAccountName")
-                        .WithMany()
-                        .HasForeignKey("ChAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Transactions", "Transactions")
-                        .WithMany()
-                        .HasForeignKey("TransactionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ChAccountName");
-
-                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("Domain.Entities.Category", b =>
@@ -2079,14 +1765,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Transactions", "Transactions")
-                        .WithMany()
-                        .HasForeignKey("TransactionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("Customer");
-
-                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("Domain.Entities.DebitNoteLines", b =>
@@ -2124,18 +1803,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.DebitNoteMaster", b =>
                 {
-                    b.HasOne("Domain.Entities.Transactions", "Transactions")
-                        .WithMany()
-                        .HasForeignKey("TransactionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Domain.Entities.BusinessPartner", "Vendor")
                         .WithMany()
                         .HasForeignKey("VendorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Transactions");
 
                     b.Navigation("Vendor");
                 });
@@ -2192,14 +1864,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Transactions", "Transactions")
-                        .WithMany()
-                        .HasForeignKey("TransactionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("Customer");
-
-                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("Domain.Entities.JournalEntryLines", b =>
@@ -2234,16 +1899,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("JournalEntryMaster");
 
                     b.Navigation("Location");
-                });
-
-            modelBuilder.Entity("Domain.Entities.JournalEntryMaster", b =>
-                {
-                    b.HasOne("Domain.Entities.Transactions", "Transactions")
-                        .WithMany()
-                        .HasForeignKey("TransactionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("Domain.Entities.Level2", b =>
@@ -2329,18 +1984,11 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Transactions", "Transactions")
-                        .WithMany()
-                        .HasForeignKey("TransactionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("Account");
 
                     b.Navigation("BusinessPartner");
 
                     b.Navigation("PaymentRegister");
-
-                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("Domain.Entities.Product", b =>
@@ -2352,39 +2000,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("Domain.Entities.RecordLedger", b =>
-                {
-                    b.HasOne("Domain.Entities.BusinessPartner", "BusinessPartner")
-                        .WithMany()
-                        .HasForeignKey("BusinessPartnerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Level4", "Level4")
-                        .WithMany()
-                        .HasForeignKey("Level4_id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Transactions", "Transactions")
-                        .WithMany()
-                        .HasForeignKey("TransactionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("BusinessPartner");
-
-                    b.Navigation("Level4");
-
-                    b.Navigation("Location");
-
-                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("Domain.Entities.Warehouse", b =>
