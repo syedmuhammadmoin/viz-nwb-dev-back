@@ -31,6 +31,8 @@ namespace Application.Interfaces
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Transactions> Transactions { get; set; }
         public DbSet<RecordLedger> RecordLedger { get; set; }
+        public DbSet<CashAccount> CashAccount { get; set; }
+        public DbSet<BankAccount> BankAccount { get; set; }
 
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);

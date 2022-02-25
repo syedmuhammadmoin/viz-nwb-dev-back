@@ -41,10 +41,10 @@ namespace Infrastructure.Context
         public DbSet<DebitNoteMaster> DebitNoteMaster { get; set; }
         public DbSet<DebitNoteLines> DebitNoteLines { get; set; }
         public DbSet<Payment> Payments { get; set; }
-
         public DbSet<Transactions> Transactions { get; set; }
         public DbSet<RecordLedger> RecordLedger { get; set; }
         public DbSet<CashAccount> CashAccount { get; set; }
+        public DbSet<BankAccount> BankAccount { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

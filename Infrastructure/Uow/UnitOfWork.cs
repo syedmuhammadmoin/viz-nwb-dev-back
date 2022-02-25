@@ -40,6 +40,8 @@ namespace Infrastructure.Uow
         public ILedgerRepository Ledger { get; private set; }
         public ICashAccountRepository CashAccount { get; private set; }
 
+        public IBankAccountRepository BankAccount { get; private set; }
+
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
@@ -61,6 +63,7 @@ namespace Infrastructure.Uow
             Transaction = new TransactionRepository(context);
             Ledger = new LedgerRepository(context);
             CashAccount = new CashAccountRepository(context);
+            BankAccount = new BankAccountRepository(context);
         }
 
         public async Task SaveAsync()

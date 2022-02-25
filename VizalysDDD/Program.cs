@@ -32,6 +32,7 @@ builder.Services.AddScoped<ICreditNoteService, CreditNoteService>();
 builder.Services.AddScoped<IDebitNoteService, DebitNoteService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ICashAccountService, CashAccountService>();
+builder.Services.AddScoped<IBankAccountService, BankAccountService>();
 
 //Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
