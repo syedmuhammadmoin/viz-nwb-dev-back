@@ -170,6 +170,15 @@ namespace Application.Mapper
             CreateMap<CreateBankAccountDto, BankAccount>();
             CreateMap<UpdateBankAccountDto, BankAccount>();
 
+
+            // BankStmt Mapping
+            CreateMap<BankStmtMaster, BankStmtDto>()
+              .ForMember(dto => dto.BankAccountId, core => core.MapFrom(a => a.BankAccount.Id));
+
+            CreateMap<BankStmtLines, BankStmtLinesDto>();
+
+            CreateMap<CreateBankStmtDto, BankStmtMaster>();
+            CreateMap<CreateBankStmtLinesDto, BankStmtLines>();
         }
     }
 }
