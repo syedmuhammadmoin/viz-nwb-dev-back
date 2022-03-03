@@ -45,6 +45,8 @@ namespace Infrastructure.Context
         public DbSet<RecordLedger> RecordLedger { get; set; }
         public DbSet<CashAccount> CashAccount { get; set; }
         public DbSet<BankAccount> BankAccount { get; set; }
+        public DbSet<BankStmtMaster> BankStmtMaster { get; set; }
+        public DbSet<BankStmtLines> BankStmtLines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -84,6 +86,12 @@ namespace Infrastructure.Context
             modelBuilder.Entity<DebitNoteLines>()
             .HasOne(tc => tc.DebitNoteMaster)
             .WithMany(c => c.DebitNoteLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //DebitNote
+            modelBuilder.Entity<BankStmtLines>()
+            .HasOne(tc => tc.BankStmtMaster)
+            .WithMany(c => c.BankStmtLines)
             .OnDelete(DeleteBehavior.Cascade);
 
             //Changing Identity users and roles tables name
