@@ -60,4 +60,10 @@ namespace Domain.Constants
         Quotation,
         Requisition
     }
+    public enum ReconStatus
+    {
+        Unreconciled,
+        Partial,
+        Reconciled
+    }
 }
