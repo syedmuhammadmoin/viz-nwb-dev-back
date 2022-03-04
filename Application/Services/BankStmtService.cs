@@ -12,6 +12,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Domain.Entities;
 using Domain.Constants;
+using Microsoft.AspNetCore.Http;
+using OfficeOpenXml;
 
 namespace Application.Services
 {
@@ -26,14 +28,29 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<Response<BankStmtDto>> CreateAsync(CreateBankStmtDto entity)
+        public async Task<Response<BankStmtDto>> CreateAsync(CreateBankStmtDto entity, IFormFile file)
         {
             _unitOfWork.CreateTransaction();
             try
             {
+                if (file != null)
+                {
+                    var bankStmtLines = await ImportStmtLines(file);
+                }
+                else
+                {
+                    foreach (var line in entity.BankStmtLines)
+                    {
+                        var bankStmtLines = new BankStmtLines(
+                        line.Reference,
+                        line.StmtDate,
+                        line.Label,
+                        ReconStatus.Unreconciled,
+                        line.Debit,
+                        line.Credit);
+                    }
+                }
                 var bankStmt = _mapper.Map<BankStmtMaster>(entity);
-
-                bankStmt.setStatus(ReconStatus.Unreconciled);
 
                 await _unitOfWork.Bankstatement.Add(bankStmt);
                 await _unitOfWork.SaveAsync();
@@ -80,15 +97,22 @@ namespace Application.Services
 
             var specification = new BankStmtSpecs();
             var bankStmt = await _unitOfWork.Bankstatement.GetById((int)entity.Id, specification);
-            
-            if (bankStmt.BankReconStatus!= ReconStatus.Unreconciled)
-                return new Response<BankStmtDto>("Statement lines already reconciled");
-            
+
+            foreach (var line in bankStmt.BankStmtLines)
+            {
+                if (line.BankReconStatus != ReconStatus.Unreconciled)
+                {
+                    return new Response<BankStmtDto>("Statement lines already reconciled");
+                }
+            }
+
             _unitOfWork.CreateTransaction();
             try
             {
                 //For updating data
                 _mapper.Map<CreateBankStmtDto, BankStmtMaster>(entity, bankStmt);
+
+                await _unitOfWork.SaveAsync();
 
                 _unitOfWork.Commit();
 
@@ -107,5 +131,36 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
+        //Private methods for importing BankStmtLines
+        private async Task<List<BankStmtLines>> ImportStmtLines(IFormFile file)
+        {
+            var list = new List<BankStmtLines>();
+            using (var stream = new MemoryStream())
+            {
+                await file.CopyToAsync(stream);
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    var rowCount = worksheet.Dimension.Rows;
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        list.Add(new BankStmtLines(
+                            (int)Convert.ToSingle(worksheet.Cells[row, 1].Value),
+                            (DateTime)worksheet.Cells[row, 2].Value,
+                            worksheet.Cells[row, 3].Value.ToString().Trim(),
+                            ReconStatus.Unreconciled,
+                            Convert.ToDecimal(worksheet.Cells[row, 4].Value),
+                            Convert.ToDecimal(worksheet.Cells[row, 5].Value)
+                            ));
+                    }
+                }
+            }
+            return list;
+        }
+
+        public Task<Response<BankStmtDto>> CreateAsync(CreateBankStmtDto entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
