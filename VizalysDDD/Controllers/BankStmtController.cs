@@ -1,9 +1,12 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
+using System.Data;
 
 namespace Vizalys.Api.Controllers
 {
@@ -24,9 +27,9 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Response<BankStmtDto>>> CreateAsync(CreateBankStmtDto entity)
+        public async Task<ActionResult<Response<BankStmtDto>>> CreateAsync([ModelBinder(BinderType = typeof(JsonModelBinder))] CreateBankStmtDto entity, IFormFile files)
         {
-            var bankStmt = await _bankStmtService.CreateAsync(entity);
+            var bankStmt = await _bankStmtService.CreateAsync(entity, files);
             if (bankStmt.IsSuccess)
                 return Ok(bankStmt); // Status Code : 200
 
@@ -56,5 +59,44 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [HttpGet("getStmtFile")]
+        public ActionResult ExportStmtFormat()
+        {
+            try
+            {
+                DataTable dt = getData();
+                var stream = new MemoryStream();
+                using (var package = new ExcelPackage(stream))
+                {
+                    var workSheet = package.Workbook.Worksheets.Add("Sheet1");
+                    workSheet.Cells.LoadFromDataTable(dt, true);
+                    package.Save();
+                }
+                stream.Position = 0;
+                string excelName = $"BankStmt-{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.xlsx";
+                return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
+
+        private DataTable getData()
+        {
+            //Creating DataTable  
+            DataTable dt = new DataTable();
+            //Setiing Table Name  
+            dt.TableName = "BankStmtLines";
+            //Add Columns  
+            dt.Columns.Add("Reference", typeof(int));
+            dt.Columns.Add("StmtDate", typeof(DateTime));
+            dt.Columns.Add("Label", typeof(string));
+            dt.Columns.Add("Debit", typeof(float));
+            dt.Columns.Add("Credit", typeof(float));
+            dt.AcceptChanges();
+            return dt;
+        }
     }
 }
