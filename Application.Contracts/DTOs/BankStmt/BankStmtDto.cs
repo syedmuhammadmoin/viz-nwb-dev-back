@@ -10,6 +10,7 @@ namespace Application.Contracts.DTOs
     public class BankStmtDto
     {
         public int Id { get; set; }
+        public string BankAccountName { get; set; }
         public int BankAccountId { get; set; }
         //public string DocNo { get; set; }
         public DateTime DocDate { get; set; }

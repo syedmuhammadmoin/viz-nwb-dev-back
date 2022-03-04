@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Constants;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -16,6 +17,7 @@ namespace Application.Contracts.DTOs
         public string Label { get; set; }
         public decimal Debit { get; set; }
         public decimal Credit { get; set; }
+        public ReconStatus ReconStatus { get; set; }
         public int MasterId { get; set; }
 
     }
