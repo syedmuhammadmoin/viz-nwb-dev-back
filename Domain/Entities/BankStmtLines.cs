@@ -16,6 +16,7 @@ namespace Domain.Entities
         public DateTime StmtDate { get; private set; }
         [MaxLength(50)]
         public string Label { get; private set; }
+        public ReconStatus BankReconStatus { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Debit { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
@@ -29,11 +30,12 @@ namespace Domain.Entities
 
         }
 
-        public BankStmtLines(int reference, DateTime stmtDate, string label, decimal debit, decimal credit, ReconStatus bankReconStatus)
+        public BankStmtLines(int reference, DateTime stmtDate, string label, ReconStatus bankReconStatus, decimal debit, decimal credit)
         {
             Reference = reference;
             StmtDate = stmtDate;
             Label = label;
+            BankReconStatus = bankReconStatus;
             Debit = debit;
             Credit = credit;
         }

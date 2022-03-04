@@ -19,7 +19,6 @@ namespace Domain.Entities
         public string Description { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal OpeningBalance { get; private set; }
-        public ReconStatus BankReconStatus { get; private set; }
         public virtual List<BankStmtLines> BankStmtLines { get; private set; }
 
         protected BankStmtMaster()
@@ -27,19 +26,5 @@ namespace Domain.Entities
 
         }
 
-        public void setStatus(ReconStatus bankReconstatus)
-        {
-            BankReconStatus = bankReconstatus;
-        }
-
-
-        public BankStmtMaster(int bankAccountId, string description, decimal openingBalance, ReconStatus bankReconStatus, List<BankStmtLines> bankStmtLines)
-        {
-            BankAccountId = bankAccountId;
-            Description = description;
-            OpeningBalance = openingBalance;
-            BankReconStatus = bankReconStatus;
-            BankStmtLines = bankStmtLines;
-        }
     }
 }
