@@ -173,7 +173,7 @@ namespace Application.Mapper
 
             // BankStmt Mapping
             CreateMap<BankStmtMaster, BankStmtDto>()
-              .ForMember(dto => dto.BankAccountId, core => core.MapFrom(a => a.BankAccount.Id));
+              .ForMember(dto => dto.BankAccountName, core => core.MapFrom(a => a.BankAccount.BankName));
 
             CreateMap<BankStmtLines, BankStmtLinesDto>();
 
