@@ -48,8 +48,24 @@ namespace Application.Services
                         ReconStatus.Unreconciled,
                         line.Debit,
                         line.Credit);
+                        
+                        if (bankStmtLines.Credit == 0 && bankStmtLines.Debit == 0)
+                        {
+                            return new Response<BankStmtDto>("Amount can't be saved with zero value");
+                        }
+
+                        if (bankStmtLines.Credit == bankStmtLines.Debit)
+                        {
+                            return new Response<BankStmtDto>("Only one entry should be entered at a time");
+                        }
                     }
                 }
+                var totalDebit = entity.BankStmtLines.Sum(i => i.Debit);
+                var totalCredit = entity.BankStmtLines.Sum(i => i.Credit);
+
+                if (totalDebit != totalCredit)
+                    return new Response<BankStmtDto>("Sum of debit and credit must be equal");
+
                 var bankStmt = _mapper.Map<BankStmtMaster>(entity);
 
                 await _unitOfWork.Bankstatement.Add(bankStmt);
