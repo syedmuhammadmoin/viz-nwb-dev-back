@@ -50,26 +50,6 @@ namespace Domain.Entities
         [ForeignKey("AccountPayableId")]
         public Level4 AccountPayable { get; private set; }
 
-        public BusinessPartner(BusinessPartner businessPartner)
-        {
-            Entity = businessPartner.Entity;
-            Name = businessPartner.Name;
-            CNIC = businessPartner.CNIC;
-            Country = businessPartner.Country;
-            State = businessPartner.State;
-            City = businessPartner.City;
-            Address = businessPartner.Address;
-            Phone = businessPartner.Phone;
-            Mobile = businessPartner.Mobile;
-            Email = businessPartner.Email;
-            Website = businessPartner.Website;
-            IncomeTaxId = businessPartner.IncomeTaxId;
-            SalesTaxId = businessPartner.SalesTaxId;
-            BankAccountTitle = businessPartner.BankAccountTitle;
-            BankAccountNumber = businessPartner.BankAccountNumber;
-            AccountReceivableId = businessPartner.AccountReceivableId;
-            AccountPayableId = businessPartner.AccountPayableId;
-        }
         protected BusinessPartner()
         {
 

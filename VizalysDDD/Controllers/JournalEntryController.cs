@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
+using Application.Contracts.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,34 +19,46 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<JournalEntryDto>> CreateAsync(CreateJournalEntryDto entity)
+        public async Task<ActionResult<Response<JournalEntryDto>>> CreateAsync(CreateJournalEntryDto entity)
         {
             var journalEntry = await _journalEntryService.CreateAsync(entity);
-            return Ok(journalEntry);
+            if (journalEntry.IsSuccess)
+                return Ok(journalEntry); // Status Code : 200
+
+            return BadRequest(journalEntry); // Status code : 400
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<JournalEntryDto>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<JournalEntryDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
             var jvs = await _journalEntryService.GetAllAsync(filter);
-            return Ok(jvs);
+            if (jvs.IsSuccess)
+                return Ok(jvs); // Status Code : 200
+
+            return BadRequest(jvs); // Status code : 400
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<JournalEntryDto>> GetByIdAsync(int id)
+        public async Task<ActionResult<Response<JournalEntryDto>>> GetByIdAsync(int id)
         {
             var result = await _journalEntryService.GetByIdAsync(id);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<JournalEntryDto>> UpdateAsync(int id, CreateJournalEntryDto entity)
+        public async Task<ActionResult<Response<JournalEntryDto>>> UpdateAsync(int id, CreateJournalEntryDto entity)
         {
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
 
             var result = await _journalEntryService.UpdateAsync(entity);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
     }

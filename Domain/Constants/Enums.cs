@@ -32,4 +32,38 @@ namespace Domain.Constants
         Draft,
         Submitted
     }
+    public enum PaymentType
+    {
+        Inflow,
+        Outflow
+    }
+    public enum PaymentRegisterType
+    {
+        CashAccount,
+        BankAccount
+    }
+    public enum DocType
+    {
+        Payment,
+        CreditNote,
+        DebitNote,
+        Invoice,
+        Bill,
+        JournalEntry,
+        BankAccount,
+        CashAccount,
+        PurchaseOrder,
+        SalesOrder,
+        GRN,
+        GDN,
+        InventoryAdjustment,
+        Quotation,
+        Requisition
+    }
+    public enum ReconStatus
+    {
+        Unreconciled,
+        Partial,
+        Reconciled
+    }
 }

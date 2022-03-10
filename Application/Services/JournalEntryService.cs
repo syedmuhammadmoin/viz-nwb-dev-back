@@ -34,7 +34,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.SaveJV(entity, DocumentStatus.Submitted);
+                return await this.SaveJV(entity, DocumentStatus.Draft);
             }
         }
 
@@ -79,7 +79,7 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-
+        //Private Methods for JournalEntry
         private async Task<Response<JournalEntryDto>> SubmitJV(CreateJournalEntryDto entity)
         {
             if (entity.Id == null)
@@ -115,6 +115,11 @@ namespace Application.Services
                 //For creating docNo
                 jv.CreateDocNo();
                 await _unitOfWork.SaveAsync();
+
+                if (status == DocumentStatus.Submitted)
+                {
+                    await AddToLedger(jv);
+                }
 
                 //Commiting the transaction
                 _unitOfWork.Commit();
@@ -159,6 +164,11 @@ namespace Application.Services
 
                 await _unitOfWork.SaveAsync();
 
+                if (status == DocumentStatus.Submitted)
+                {
+                    await AddToLedger(jv);
+                }
+
                 //Commiting the transaction
                 _unitOfWork.Commit();
 
@@ -172,5 +182,29 @@ namespace Application.Services
             }
         }
 
+        private async Task AddToLedger(JournalEntryMaster jv)
+        {
+            var transaction = new Transactions(jv.DocNo, DocType.JournalEntry);
+            var addTransaction = await _unitOfWork.Transaction.Add(transaction);
+            await _unitOfWork.SaveAsync();
+
+            jv.setTransactionId(transaction.Id);
+            await _unitOfWork.SaveAsync();
+
+            //Inserting data into recordledger table
+            List<RecordLedger> recordLedger = jv.JournalEntryLines
+                .Select(line => new RecordLedger(
+                    transaction.Id,
+                    line.AccountId,
+                    line.BusinessPartnerId,
+                    line.LocationId,
+                    line.Description,
+                    line.Debit > 0 && line.Credit <= 0 ? 'D' : 'C',
+                    line.Debit > 0 && line.Credit <= 0 ? line.Debit : line.Credit
+                    )).ToList();
+
+            await _unitOfWork.Ledger.AddRange(recordLedger);
+            await _unitOfWork.SaveAsync();
+        }
     }
 }

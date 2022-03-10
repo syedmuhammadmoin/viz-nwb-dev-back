@@ -27,7 +27,7 @@ namespace Application.Services
         public async Task<Response<Level4Dto>> CreateAsync(CreateLevel4Dto entity)
         {
 
-            var level4 = new Level4(_mapper.Map<Level4>(entity));
+            var level4 = _mapper.Map<Level4>(entity);
             var result = await _unitOfWork.Level4.Add(level4);
             await _unitOfWork.SaveAsync();
             return new Response<Level4Dto>(_mapper.Map<Level4Dto>(result), "Created successfully");
@@ -50,7 +50,8 @@ namespace Application.Services
 
         public async Task<Response<Level4Dto>> GetByIdAsync(Guid id)
         {
-            var level4 = await _unitOfWork.Level4.GetById(id);
+            var specification = new Level4Specs();
+            var level4 = await _unitOfWork.Level4.GetById(id, specification);
             if (level4 == null)
                 return new Response<Level4Dto>("Not found");
 

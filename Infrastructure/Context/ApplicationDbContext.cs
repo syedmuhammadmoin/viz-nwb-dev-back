@@ -32,6 +32,21 @@ namespace Infrastructure.Context
         public DbSet<Product> Products { get; set; }
         public DbSet<JournalEntryMaster> JournalEntryMaster { get; set; }
         public DbSet<JournalEntryLines> JournalEntryLines { get; set; }
+        public DbSet<InvoiceMaster> InvoiceMaster { get; set; }
+        public DbSet<InvoiceLines> InvoiceLines { get; set; }
+        public DbSet<BillMaster> BillMaster { get; set; }
+        public DbSet<BillLines> BillLines { get; set; }
+        public DbSet<CreditNoteMaster> CreditNoteMaster { get; set; }
+        public DbSet<CreditNoteLines> CreditNoteLines { get; set; }
+        public DbSet<DebitNoteMaster> DebitNoteMaster { get; set; }
+        public DbSet<DebitNoteLines> DebitNoteLines { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Transactions> Transactions { get; set; }
+        public DbSet<RecordLedger> RecordLedger { get; set; }
+        public DbSet<CashAccount> CashAccount { get; set; }
+        public DbSet<BankAccount> BankAccount { get; set; }
+        public DbSet<BankStmtMaster> BankStmtMaster { get; set; }
+        public DbSet<BankStmtLines> BankStmtLines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -47,6 +62,36 @@ namespace Infrastructure.Context
             modelBuilder.Entity<JournalEntryLines>()
             .HasOne(tc => tc.JournalEntryMaster)
             .WithMany(c => c.JournalEntryLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //Invoice
+            modelBuilder.Entity<InvoiceLines>()
+            .HasOne(tc => tc.InvoiceMaster)
+            .WithMany(c => c.InvoiceLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //Bill
+            modelBuilder.Entity<BillLines>()
+            .HasOne(tc => tc.BillMaster)
+            .WithMany(c => c.BillLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //CreditNote
+            modelBuilder.Entity<CreditNoteLines>()
+            .HasOne(tc => tc.CreditNoteMaster)
+            .WithMany(c => c.CreditNoteLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //DebitNote
+            modelBuilder.Entity<DebitNoteLines>()
+            .HasOne(tc => tc.DebitNoteMaster)
+            .WithMany(c => c.DebitNoteLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //DebitNote
+            modelBuilder.Entity<BankStmtLines>()
+            .HasOne(tc => tc.BankStmtMaster)
+            .WithMany(c => c.BankStmtLines)
             .OnDelete(DeleteBehavior.Cascade);
 
             //Changing Identity users and roles tables name

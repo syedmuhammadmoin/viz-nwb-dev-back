@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IJournalEntryLinesService : ICrudService<CreateJournalEntryLinesDto, JournalEntryLinesDto, int, PaginationFilter>
+    public interface IInvoiceService : ICrudService<CreateInvoiceDto, InvoiceDto, int, PaginationFilter>
     {
     }
 }

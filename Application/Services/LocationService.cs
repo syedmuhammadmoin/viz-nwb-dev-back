@@ -27,7 +27,7 @@ namespace Application.Services
 
         public async Task<Response<LocationDto>> CreateAsync(CreateLocationDto entity)
         {
-            var location = new Location(_mapper.Map<Location>(entity));
+            var location = _mapper.Map<Location>(entity);
             var result = await _unitOfWork.Location.Add(location);
             await _unitOfWork.SaveAsync();
 
@@ -50,7 +50,8 @@ namespace Application.Services
 
         public async Task<Response<LocationDto>> GetByIdAsync(int id)
         {
-            var location = await _unitOfWork.Location.GetById(id);
+            var specification = new LocationSpecs();
+            var location = await _unitOfWork.Location.GetById(id, specification);
             if (location == null)
                 return new Response<LocationDto>("Not found");
 

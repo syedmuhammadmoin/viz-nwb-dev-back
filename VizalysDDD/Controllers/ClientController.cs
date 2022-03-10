@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
+using Application.Contracts.Response;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Vizalys.Api.Controllers
@@ -16,35 +17,47 @@ namespace Vizalys.Api.Controllers
             _clientService = clientService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<ClientDto>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        [HttpPost]
+        public async Task<ActionResult<Response<ClientDto>>> CreateAsync(CreateClientDto entity)
         {
-            var clients = await _clientService.GetAllAsync(filter);
-            return Ok(clients);
+            var result = await _clientService.CreateAsync(entity);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
-        [HttpPost]
-        public async Task<ActionResult<ClientDto>> CreateAsync(CreateClientDto entity)
+        [HttpGet]
+        public async Task<ActionResult<PaginationResponse<List<ClientDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
-            var clients = await _clientService.CreateAsync(entity);
-            return Ok(clients);
+            var results = await _clientService.GetAllAsync(filter);
+            if (results.IsSuccess)
+                return Ok(results); // Status Code : 200
+
+            return BadRequest(results); // Status code : 400
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<ClientDto>> GetByIdAsync(int id)
+        public async Task<ActionResult<Response<ClientDto>>> GetByIdAsync(int id)
         {
             var result = await _clientService.GetByIdAsync(id);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<ClientDto>> UpdateAsync(int id, CreateClientDto entity)
+        public async Task<ActionResult<Response<ClientDto>>> UpdateAsync(int id, CreateClientDto entity)
         {
             if (id != entity.Id)
-                return BadRequest("ID mismatch");
+                return BadRequest("Id mismatch");
             
             var result = await _clientService.UpdateAsync(entity);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
     }

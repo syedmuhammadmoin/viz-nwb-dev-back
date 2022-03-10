@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
+using Application.Contracts.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,33 +19,45 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<WarehouseDto>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<WarehouseDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
-            var warehouse = await _warehouseService.GetAllAsync(filter);
-            return Ok(warehouse);
+            var warehouses = await _warehouseService.GetAllAsync(filter);
+            if (warehouses.IsSuccess)
+                return Ok(warehouses); // Status Code : 200
+
+            return BadRequest(warehouses); // Status code : 400
         }
         [HttpPost]
-        public async Task<ActionResult<WarehouseDto>> CreateAsync(CreateWarehouseDto entity)
+        public async Task<ActionResult<Response<WarehouseDto>>> CreateAsync(CreateWarehouseDto entity)
         {
             var warehouse = await _warehouseService.CreateAsync(entity);
-            return Ok(warehouse);
+            if (warehouse.IsSuccess)
+                return Ok(warehouse); // Status Code : 200
+
+            return BadRequest(warehouse); // Status code : 400
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<WarehouseDto>> GetByIdAsync(int id)
+        public async Task<ActionResult<Response<WarehouseDto>>> GetByIdAsync(int id)
         {
             var result = await _warehouseService.GetByIdAsync(id);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<WarehouseDto>> UpdateAsync(int id, CreateWarehouseDto entity)
+        public async Task<ActionResult<Response<WarehouseDto>>> UpdateAsync(int id, CreateWarehouseDto entity)
         {
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
 
             var result = await _warehouseService.UpdateAsync(entity);
-            return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
     }
 }

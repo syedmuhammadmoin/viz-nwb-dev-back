@@ -47,28 +47,6 @@ namespace Domain.Entities
         public int ClientId { get; private set; }
         public Client Client { get; private set; }
 
-        public Organization(Organization organization)
-        {
-            Name = organization.Name;
-            Country = organization.Country;
-            State = organization.State;
-            City = organization.City;
-            Street = organization.Street;
-            Block = organization.Block;
-            Road = organization.Road;
-            Phone = organization.Phone;
-            Fax = organization.Fax;
-            Email = organization.Email;
-            Website = organization.Website;
-            Industry = organization.Industry;
-            LegalStatus = organization.LegalStatus;
-            IncomeTaxId = organization.IncomeTaxId;
-            GSTRegistrationNo = organization.GSTRegistrationNo;
-            StartDate = organization.StartDate;
-            FiscalYear = organization.FiscalYear;
-            ClientId = organization.ClientId;
-        }
-
         protected Organization()
         {
 

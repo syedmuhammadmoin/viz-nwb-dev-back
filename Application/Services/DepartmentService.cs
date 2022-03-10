@@ -26,7 +26,7 @@ namespace Application.Services
         }
         public async Task<Response<DeptDto>> CreateAsync(CreateDeptDto entity)
         {
-            var dept = new Department(_mapper.Map<Department>(entity));
+            var dept = _mapper.Map<Department>(entity);
             var result = await _unitOfWork.Department.Add(dept);
             await _unitOfWork.SaveAsync();
 
@@ -53,7 +53,8 @@ namespace Application.Services
 
         public async Task<Response<DeptDto>> GetByIdAsync(int id)
         {
-            var dept = await _unitOfWork.Department.GetById(id);
+            var specification = new DepartmentSpecs();
+            var dept = await _unitOfWork.Department.GetById(id, specification);
             if (dept == null)
                 return new Response<DeptDto>("Not found");
 

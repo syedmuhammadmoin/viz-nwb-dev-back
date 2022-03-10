@@ -26,6 +26,14 @@ builder.Services.AddScoped<ILevel4Service, Level4Service>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IJournalEntryService, JournalEntryService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<IBillService, BillService>();
+builder.Services.AddScoped<ICreditNoteService, CreditNoteService>();
+builder.Services.AddScoped<IDebitNoteService, DebitNoteService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<ICashAccountService, CashAccountService>();
+builder.Services.AddScoped<IBankAccountService, BankAccountService>();
+builder.Services.AddScoped<IBankStmtService, BankStmtService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 //Add auto mapper config

@@ -32,18 +32,6 @@ namespace Domain.Entities
         [ForeignKey("OrganizationId")]
         public Organization Orgnization { get; private set; }
 
-        public Department(Department department)
-        {
-            Name = department.Name;
-            Country = department.Country;
-            State = department.State;
-            City = department.City;
-            Street = department.Street;
-            Block = department.Block;
-            Road = department.Road;
-            HeadOfDept = department.HeadOfDept;
-            OrganizationId = department.OrganizationId;
-        }
         protected Department()
         {
         }
