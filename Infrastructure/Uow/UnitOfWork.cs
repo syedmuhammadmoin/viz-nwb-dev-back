@@ -36,10 +36,11 @@ namespace Infrastructure.Uow
         public ICreditNoteRepository CreditNote { get; private set; }
         public IDebitNoteRepository DebitNote { get; private set; }
         public IPaymentRepository Payment { get; private set; }
-
         public ITransactionRepository Transaction { get; private set; }
         public ILedgerRepository Ledger { get; private set; }
-
+        public ICashAccountRepository CashAccount { get; private set; }
+        public IBankAccountRepository BankAccount { get; private set; }
+        public IBankStmtRepository Bankstatement { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -61,6 +62,9 @@ namespace Infrastructure.Uow
             Payment = new PaymentRepository(context);   
             Transaction = new TransactionRepository(context);
             Ledger = new LedgerRepository(context);
+            CashAccount = new CashAccountRepository(context);
+            BankAccount = new BankAccountRepository(context);
+            Bankstatement = new BankStmtRepository(context);
         }
 
         public async Task SaveAsync()

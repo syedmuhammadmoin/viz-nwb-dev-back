@@ -25,6 +25,11 @@ namespace Domain.Entities
             DocNo = docNo;
             DocType = docType;
         }
+
+        public void updateDocNo(string docNo)
+        {
+            DocNo = docNo;
+        }
     }
     
 }
