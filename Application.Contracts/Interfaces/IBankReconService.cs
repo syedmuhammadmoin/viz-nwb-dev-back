@@ -10,6 +10,6 @@ namespace Application.Contracts.Interfaces
 {
     public interface IBankReconService
     {
-        Task<Response<int>> CreateAsync(CreateBankReconDto entity);
+        Task<Response<int>> CreateAsync(CreateBankReconDto[] entity);
     }
 }
