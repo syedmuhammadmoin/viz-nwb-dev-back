@@ -52,10 +52,5 @@ namespace Infrastructure.Repositories
         {
             return await _context.Set<T>().CountAsync();
         }
-
-        public IEnumerable<T> Find(ISpecification<T> specification = null)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
