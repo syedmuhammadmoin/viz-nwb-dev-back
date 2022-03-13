@@ -41,6 +41,7 @@ namespace Domain.Entities
         public int? TransactionId { get; private set; }
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
+        public ReconStatus? BankReconStatus { get; private set; } // 0 = unrecon, 1 = partial, 2 = recon
         public DocumentStatus Status { get; private set; }
 
         protected Payment()
@@ -50,6 +51,11 @@ namespace Domain.Entities
         public void setStatus(DocumentStatus status)
         {
             Status = status;
+        }
+
+        public void setReconStatus(ReconStatus status)
+        {
+            BankReconStatus = status;
         }
 
         public void setTransactionId(int transactionId)
