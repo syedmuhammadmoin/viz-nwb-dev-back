@@ -31,6 +31,8 @@ namespace Domain.Interfaces
         ICashAccountRepository CashAccount { get; }
         IBankAccountRepository BankAccount { get; }
         IBankStmtRepository Bankstatement { get; }
+        IBankStmtLinesRepository BankStmtLines { get; }
+        IBankReconRepository BankReconciliation { get; }
 
         Task SaveAsync();
         void CreateTransaction();
