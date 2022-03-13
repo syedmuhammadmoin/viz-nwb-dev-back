@@ -9,5 +9,6 @@ namespace Domain.Interfaces
 {
     public interface IBankAccountRepository : IGenericRepository<BankAccount, int>
     {
+        Task<BankAccount> GetByClearingAccountId(Guid id);
     }
 }
