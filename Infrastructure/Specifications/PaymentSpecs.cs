@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Filters;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,10 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.BusinessPartner);
             AddInclude(i => i.Account);
             AddInclude(i => i.PaymentRegister);
+        }
+
+        public PaymentSpecs(bool forRecon) : base(p => p.BankReconStatus != ReconStatus.Reconciled)
+        {
         }
     }
 }
