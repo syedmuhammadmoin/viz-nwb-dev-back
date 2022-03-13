@@ -25,9 +25,15 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public Task<Response<int>> CreateAsync(CreateBankReconDto entity)
+        public async Task<Response<int>> CreateAsync(CreateBankReconDto[] entity)
         {
-            throw new NotImplementedException();
+            foreach (var r in entity)
+            {
+                var result = await BankReconciliationProcess(r);
+                if (!result.IsSuccess)
+                    return new Response<int>(result.Message);
+            }
+            return new Response<int>(1, "Reconciled successfully");
         }
 
         private async Task<Response<int>> BankReconciliationProcess(CreateBankReconDto entity)
