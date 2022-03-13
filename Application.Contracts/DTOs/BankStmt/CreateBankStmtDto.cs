@@ -18,7 +18,6 @@ namespace Application.Contracts.DTOs
         [MaxLength(100)]
         public string Description { get; set; }
         [Required]
-        [Column(TypeName = "decimal(18,2)")]
         public decimal OpeningBalance { get; set; }
         [Required]
         public virtual List<CreateBankStmtLinesDto> BankStmtLines { get; set; }
