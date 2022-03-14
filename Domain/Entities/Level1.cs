@@ -12,13 +12,13 @@ namespace Domain.Entities
     public class Level1 : BaseEntity<Guid>
     {
         [MaxLength(200)]
-        public string Name { get; private set; }
-        public IEnumerable<Level2> Level2 { get; private set; }
+        public string Name { get; set; }
+        public IEnumerable<Level2> Level2 { get; set; }
         public Level1(Level1 level1)
         {
             Name = level1.Name;
         }
-        protected Level1()
+        public Level1()
         {
         }
     }
