@@ -19,12 +19,8 @@ namespace Domain.Entities
         public string State { get; private set; }
         [MaxLength(50)]
         public string City { get; private set; }
-        [MaxLength(50)]
-        public string Street { get; private set; }
-        [MaxLength(50)]
-        public string Block { get; private set; }
-        [MaxLength(50)]
-        public string Road { get; private set; }
+        [MaxLength(200)]
+        public string Address { get; private set; }
         [MaxLength(50)]
         public string Manager { get; private set; }
         public int DepartmentId { get; private set; }
