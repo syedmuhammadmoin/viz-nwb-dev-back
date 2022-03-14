@@ -127,7 +127,7 @@ namespace Application.Services
 
             var addBalanceInOpeningBalanceEquity = new RecordLedger(
                cashAccount.TransactionId,
-               new Guid("12210000-5566-7788-99AA-BBCCDDEEFF04"),
+               new Guid("31260000-5566-7788-99AA-BBCCDDEEFF00"),
                null,
                null,
                "Opening Balance",
