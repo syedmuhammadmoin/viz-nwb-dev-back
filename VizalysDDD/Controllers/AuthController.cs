@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Interfaces;
+using Application.Contracts.Response;
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,119 +19,143 @@ namespace Vizalys.Api.Controllers
         }
         // /api/auth/login
         [HttpPost("Login")]
-        public async Task<ActionResult<LoginDto>> LoginAsync([FromBody] LoginDto model)
+        public async Task<ActionResult<Response<bool>>> LoginAsync([FromBody] LoginDto model)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _userService.LoginUserAsync(model);
+            var result = await _userService.LoginUserAsync(model);
 
-                if (result.IsSuccess)
-                    return Ok(result);
+            if (result.IsSuccess)
+                return Ok(result);// Status Code : 200
 
-                return BadRequest(result);
-            }
-            return BadRequest("Some properties are not valid");
+            return BadRequest(result); // Status code : 400
+
         }
 
         //  /api/auth/RegisterUser
         [HttpPost("Users")]
-        public async Task<ActionResult<RegisterUserDto>> RegisterUserAsync([FromBody] RegisterUserDto model)
+        public async Task<ActionResult<Response<bool>>> RegisterUserAsync([FromBody] RegisterUserDto model)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _userService.RegisterUserAsync(model);
+            var result = await _userService.RegisterUserAsync(model);
 
-                if (result.IsSuccess)
-                    return Ok(result); // Status Code : 200
-
-                return BadRequest(result);
-            }
-            return BadRequest("Some properties are not valid"); // Status code : 400
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+            return BadRequest(result); // Status code : 400
         }
 
         //  /api/auth/GetUser
         [HttpGet("Users")]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsersAsync()
+        public async Task<ActionResult<Response<IEnumerable<User>>>> GetUsersAsync()
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _userService.GetUsersAsync();
+            var result = await _userService.GetUsersAsync();
 
-                if (result.IsSuccess)
-                    return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
 
-                return BadRequest(result);
-
-            }
-            return BadRequest("Some properties are not valid"); // Status code : 400
+            return BadRequest(result); // Status code : 400
         }
 
         //  /api/auth/GetUserByID
         [HttpGet("Users/{id:Guid}")]
-        public async Task<ActionResult<EditUserDto>> GetUserAsync(string id)
+        public async Task<ActionResult<Response<EditUserDto>>> GetUserAsync(string id)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _userService.GetUserAsync(id);
 
-                if (result.IsSuccess)
-                    return Ok(result); // Status Code : 200
+            var result = await _userService.GetUserAsync(id);
 
-                return BadRequest(result);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
 
-            }
-            return BadRequest("Some properties are not valid"); // Status code : 400
+            return BadRequest(result); // Status code : 400
+
         }
 
         // /api/auth/UpdateUser
         [HttpPut("Users/{id:Guid}")]
-        public async Task<ActionResult<bool>> UpdateUserAsync(string id, EditUserDto model)
+        public async Task<ActionResult<Response<bool>>> UpdateUserAsync(string id, EditUserDto model)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _userService.UpdateUserAsync(id, model);
+            var result = await _userService.UpdateUserAsync(id, model);
 
-                if (result.IsSuccess)
-                    return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
 
-                return BadRequest(result);
-
-            }
-            return BadRequest("Some properties are not valid"); // Status code : 400
+            return BadRequest(result); // Status code : 400
         }
 
         // /api/auth/User/ResetPass/id
         [HttpPut("Users/ResetPass/{id:Guid}")]
-        public async Task<ActionResult<bool>> ResetUserPassword (string id, ResetPasswordDto model)
+        public async Task<ActionResult<Response<bool>>> ResetUserPassword(string id, ResetPasswordDto model)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _userService.ResetUserPassword(id, model);
+            var result = await _userService.ResetUserPassword(id, model);
 
-                if (result.IsSuccess)
-                    return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
 
-                return BadRequest(result);
-
-            }
-            return BadRequest("Some properties are not valid"); // Status code : 400
+            return BadRequest(result);// Status code : 400
         }
 
         // /api/auth/User/changePassword/id
         [HttpPut("Users/changePassword/{id:Guid}")]
-        public async Task<ActionResult<bool>> ChangePassword(string id, ChangePasswordDto model)
+        public async Task<ActionResult<Response<bool>>> ChangePassword(string id, ChangePasswordDto model)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _userService.ChangePassword(id, model);
+            var result = await _userService.ChangePassword(id, model);
 
-                if (result.IsSuccess)
-                    return Ok(result); // Status Code : 200
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
 
-                return BadRequest(result);
+            return BadRequest(result); // Status code : 400
+        }
 
-            }
-            return BadRequest("Some properties are not valid"); // Status code : 400
+        // For Roles
+        [HttpPost("Roles")]
+        public async Task<ActionResult<Response<bool>>> CreateRoleAsync([FromBody] RegisterRoleDto model)
+        {
+            var result = await _userService.CreateRoleAsync(model);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result);// Status code : 400
+        }
+
+        [HttpGet("Roles")]
+        public async Task<ActionResult<Response<bool>>> GetRolesAsync()
+        {
+            var result = await _userService.GetRolesAsync();
+
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
+
+        [HttpGet("Roles/{id:Guid}")]
+        public async Task<ActionResult<Response<bool>>> GetRolesAsync(string id)
+        {
+            var result = await _userService.GetRoleAsync(id);
+
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
+        [HttpGet("Roles/{id:Guid}")]
+        public async Task<ActionResult<Response<bool>>> UpdateRoleAsync(string id, RegisterRoleDto model)
+        {
+            var result = await _userService.UpdateRoleAsync(id, model);
+
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
+
+        // /api/auth/Claims
+        [HttpGet("Claims")]
+        public ActionResult<Response<List<string>>> GetClaims()
+        {
+            var result = _userService.GetClaimsAsync();
+
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result);// Status code : 400
         }
     }
 }
