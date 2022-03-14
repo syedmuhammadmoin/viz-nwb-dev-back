@@ -15,14 +15,9 @@ namespace Application.Contracts.DTOs
         [MaxLength(50)]
         public string State { get; set; }
         [Required]
-        [MaxLength(50)]
-        public string City { get; set; }
-        [MaxLength(20)]
-        public string Street { get; set; }
-        [MaxLength(20)]
-        public string Block { get; set; }
-        [MaxLength(20)]
-        public string Road { get; set; }
+        [MaxLength(200)]
+        public string Address { get; set; }
+        
         [MaxLength(100)]
         public string HeadOfDept { get; set; }
         [Required]
