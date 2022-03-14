@@ -17,12 +17,8 @@ namespace Application.Contracts.DTOs
         [Required]
         [MaxLength(50)]
         public string City { get; set; }
-        [MaxLength(50)]
-        public string Street { get; private set; }
-        [MaxLength(50)]
-        public string Block { get; private set; }
-        [MaxLength(50)]
-        public string Road { get; private set; }
+        [MaxLength(200)]
+        public string Address { get; set; }
         [MaxLength(20)]
         public string Phone { get; set; }
         [MaxLength(20)]
@@ -40,7 +36,7 @@ namespace Application.Contracts.DTOs
         [MaxLength(50)]
         public string IncomeTaxId { get; set; }
         [MaxLength(50)]
-        public string SalesTaxId { get; set; }
+        public string GSTRegistrationNo { get; set; }
         [Required]
         public DateTime StartDate { get; set; }
         [Required]

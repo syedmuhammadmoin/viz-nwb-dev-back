@@ -42,6 +42,11 @@ namespace Application.Mapper
                 .ForMember(dto => dto.Level3Name, core => core.MapFrom(a => a.Level3.Name));
             CreateMap<CreateLevel4Dto, Level4>();
 
+            // Level1 Mapping
+            CreateMap<Level1, Level1Dto>();
+            CreateMap<Level2, Level2Dto>();
+            CreateMap<Level3, Level3Dto>();
+
             // Category Mapping
             CreateMap<Category, CategoryDto>()
                 .ForMember(dto => dto.InventoryAccount, core => core.MapFrom(a => a.InventoryAccount.Name))

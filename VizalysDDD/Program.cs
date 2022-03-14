@@ -23,6 +23,7 @@ builder.Services.AddScoped<ILocationService, LocationService>();
 
 builder.Services.AddScoped<IBusinessPartnerService, BusinessPartnerService>();
 builder.Services.AddScoped<ILevel4Service, Level4Service>();
+builder.Services.AddScoped<ICOAService, COAService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IJournalEntryService, JournalEntryService>();
