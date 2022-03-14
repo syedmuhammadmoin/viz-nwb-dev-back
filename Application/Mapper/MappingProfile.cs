@@ -179,6 +179,9 @@ namespace Application.Mapper
 
             CreateMap<CreateBankStmtDto, BankStmtMaster>();
             CreateMap<CreateBankStmtLinesDto, BankStmtLines>();
+
+            //Bank Reconciliation
+            CreateMap<CreateBankReconDto, BankReconciliation>();
         }
     }
 }

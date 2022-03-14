@@ -15,6 +15,5 @@ namespace Domain.Interfaces
         Task<T> Add(T entity);
         Task<bool> Delete(TKey id);
         Task<int> TotalRecord();
-        IEnumerable<T> Find(ISpecification<T> specification = null);
     }
 }

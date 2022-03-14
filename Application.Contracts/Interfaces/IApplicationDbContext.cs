@@ -31,10 +31,11 @@ namespace Application.Interfaces
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Transactions> Transactions { get; set; }
         public DbSet<RecordLedger> RecordLedger { get; set; }
-        public DbSet<CashAccount> CashAccount { get; set; }
-        public DbSet<BankAccount> BankAccount { get; set; }
+        public DbSet<CashAccount> CashAccounts { get; set; }
+        public DbSet<BankAccount> BankAccounts { get; set; }
         public DbSet<BankStmtMaster> BankStmtMaster { get; set; }
         public DbSet<BankStmtLines> BankStmtLines { get; set; }
+        public DbSet<BankReconciliation> BankReconciliations { get; set; }
 
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);

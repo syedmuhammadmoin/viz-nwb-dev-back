@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IBankAccountRepository : IGenericRepository<BankAccount, int>
+    public interface IBankReconRepository : IGenericRepository<BankReconciliation, int>
     {
-        Task<BankAccount> GetByClearingAccountId(Guid id);
+        Task<decimal> GetReconciledAmountById(int id, bool isPaymetId);
     }
 }
