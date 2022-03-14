@@ -20,5 +20,13 @@ namespace Application.Contracts.Interfaces
         Task<Response<bool>> ResetUserPassword(string id, ResetPasswordDto data);
         Task<Response<bool>> ChangePassword(string id, ChangePasswordDto model);
 
+        //FOR ROLES
+        Task<Response<bool>> CreateRoleAsync(RegisterRoleDto model);
+        Task<Response<bool>> GetRolesAsync();
+        Task<Response<bool>> GetRoleAsync(string id);
+        Task<Response<bool>> UpdateRoleAsync(string id, RegisterRoleDto model);
+
+        //FOR CLAIMS 
+        Response<List<string>> GetClaimsAsync();
     }
 }
