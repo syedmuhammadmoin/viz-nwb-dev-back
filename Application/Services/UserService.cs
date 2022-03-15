@@ -439,9 +439,9 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.BankAccountClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.BankStatementClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.CashAccountClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.ChartOfAccountClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.CategoriesClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.ProductsClaims), id);
-            allPermissions.GetPermissions(typeof(Permissions.Level3Claims), id);
             allPermissions.GetPermissions(typeof(Permissions.Level4Claims), id);
             allPermissions.GetPermissions(typeof(Permissions.BankReconClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.TransactionReconClaims), id);
@@ -533,9 +533,9 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.BankAccountClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.BankStatementClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.CashAccountClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.ChartOfAccountClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.CategoriesClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.ProductsClaims), "12");
-            allPermissions.GetPermissions(typeof(Permissions.Level3Claims), "12");
             allPermissions.GetPermissions(typeof(Permissions.Level4Claims), "12");
             allPermissions.GetPermissions(typeof(Permissions.BankReconClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.TransactionReconClaims), "12");
