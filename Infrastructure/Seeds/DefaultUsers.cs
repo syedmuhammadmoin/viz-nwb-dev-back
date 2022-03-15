@@ -38,6 +38,26 @@ namespace Infrastructure.Seeds
         {
             var superAdmin = await roleManager.FindByNameAsync("SuperAdmin");
             await roleManager.AddPermissionClaim(superAdmin, "AuthClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "BusinessPartnerClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "OrganizationClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "DepartmentsClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "WarehouseClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "LocationClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "BankAccountClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "BankStatementClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "ChartOfAccountClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "CashAccountClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "CategoriesClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "ProductsClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "Level4Claims");
+            await roleManager.AddPermissionClaim(superAdmin, "BankReconClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "TransactionReconClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "InvoiceClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "BillClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "PaymentClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "CreditNoteClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "DebitNoteClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "JournalEntryClaims");
         }
         public static async Task AddPermissionClaim(this RoleManager<IdentityRole> roleManager, IdentityRole role, string module)
         {
