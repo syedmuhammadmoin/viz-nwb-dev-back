@@ -74,5 +74,15 @@ namespace Application.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task<Response<List<Level4Dto>>> GetLevel4DropDown()
+        {
+            var level4 = await _unitOfWork.Level4.GetAll();
+            if (!level4.Any())
+                return new Response<List<Level4Dto>>("List is empty");
+
+            return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
+
+        }
     }
 }

@@ -138,5 +138,13 @@ namespace Application.Services
             await _unitOfWork.SaveAsync();
         }
 
+        public async Task<Response<List<CashAccountDto>>> GetCashAccountDropDown()
+        {
+            var cashAccounts = await _unitOfWork.CashAccount.GetAll();
+            if (!cashAccounts.Any())
+                return new Response<List<CashAccountDto>>("List is empty");
+
+            return new Response<List<CashAccountDto>>(_mapper.Map<List<CashAccountDto>>(cashAccounts), "Returning List");
+        }
     }
 }

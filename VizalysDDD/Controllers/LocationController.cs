@@ -59,6 +59,12 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
+
+        [HttpGet("Dropdown")]
+        public async Task<ActionResult<Response<List<LocationDto>>>> GetLocationDropDown()
+        {
+            return Ok(await _locationService.GetLocationDropDown()); // Status Code : 200
+        }
     }
 
 }
