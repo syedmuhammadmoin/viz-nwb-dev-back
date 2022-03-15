@@ -367,11 +367,11 @@ namespace Application.Services
         }
 
         //For Roles
-        public async Task<Response<bool>> CreateRoleAsync(RegisterRoleDto model)
+        public async Task<Response<string>> CreateRoleAsync(RegisterRoleDto model)
         {
             if (model == null)
             {
-                return new Response<bool>("Role model is null");
+                return new Response<string>("Role model is null");
             }
 
             // with rollback Transaction
@@ -387,7 +387,7 @@ namespace Application.Services
 
                 //If role not created successfully
                 if (!createRole.Succeeded)
-                    return new Response<bool>("Role did not create");
+                    return new Response<string>("Role did not create");
 
                 //Getting and removing all claims for this role
                 var claims = await _roleManager.GetClaimsAsync(identityRole);
@@ -403,32 +403,31 @@ namespace Application.Services
                 }
 
                 _unitOfWork.Commit();
-
-                return new Response<bool>("Role created successfully");
+                return new Response<string>(identityRole.ToString(),"Role created successfully");
             }
             catch (Exception ex)
             {
                 _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
+                return new Response<string>(ex.Message);
             }
         }
 
-        public async Task<Response<bool>> GetRolesAsync()
+        public async Task<Response<IEnumerable<IdentityRole>>> GetRolesAsync()
         {
             IEnumerable<IdentityRole> roles = await _roleManager.Roles.ToListAsync();
             if (roles == null)
             {
-                return new Response<bool>("Role list cannot be found");
+                return new Response<IEnumerable<IdentityRole>>("Role list cannot be found");
             }
-            return new Response<bool>("Returning Roles");
+            return new Response<IEnumerable<IdentityRole>>(roles, "Returning Roles");
         }
 
-        public async Task<Response<bool>> GetRoleAsync(string id)
+        public async Task<Response<RegisterRoleDto>> GetRoleAsync(string id)
         {
             //Getting role by id
             var role = await _roleManager.FindByIdAsync(id);
             if (role == null)
-                return new Response<bool>("Cannot find role with the input id");
+                return new Response<RegisterRoleDto>("Cannot find role with the input id");
 
             var allPermissions = new List<RegisterRoleClaimsDto>();
             allPermissions.GetPermissions(typeof(Permissions.AuthClaims), id);
@@ -474,16 +473,16 @@ namespace Application.Services
             var model = new RegisterRoleDto();
             model.RoleName = role.Name;
             model.RoleClaims = allPermissions;
-            return new Response<bool>("Returning Roles");
+            return new Response<RegisterRoleDto>(model, "Returning Roles");
         }
 
-        public async Task<Response<bool>> UpdateRoleAsync(string id, RegisterRoleDto model)
+        public async Task<Response<RegisterRoleDto>> UpdateRoleAsync(string id, RegisterRoleDto model)
         {
             //Getting role by id
             var role = await _roleManager.FindByIdAsync(id);
 
             if (role == null)
-                return new Response<bool>("Role not found");
+                return new Response<RegisterRoleDto>("Role not found");
 
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
@@ -496,7 +495,7 @@ namespace Application.Services
                 if (!updateRole.Succeeded)
                 {
                     _unitOfWork.Rollback();
-                    return new Response<bool>(updateRole.Errors.Select(e => e.Description).FirstOrDefault());
+                    return new Response<RegisterRoleDto>(updateRole.Errors.Select(e => e.Description).FirstOrDefault());
                 }
                 //getting and removing all claims for this role
                 var claims = await _roleManager.GetClaimsAsync(role);
@@ -512,12 +511,12 @@ namespace Application.Services
                 }
 
                 _unitOfWork.Commit();
-                return new Response<bool>("Role updated successfully");
+                return new Response<RegisterRoleDto>(model, "Role updated successfully");
             }
             catch (Exception ex)
             {
                 _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
+                return new Response<RegisterRoleDto>(ex.Message);
             }
         }
 

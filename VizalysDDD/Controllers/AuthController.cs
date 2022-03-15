@@ -3,6 +3,7 @@ using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Vizalys.Api.Controllers
@@ -105,7 +106,7 @@ namespace Vizalys.Api.Controllers
 
         // For Roles
         [HttpPost("Roles")]
-        public async Task<ActionResult<Response<bool>>> CreateRoleAsync([FromBody] RegisterRoleDto model)
+        public async Task<ActionResult<Response<string>>> CreateRoleAsync([FromBody] RegisterRoleDto model)
         {
             var result = await _userService.CreateRoleAsync(model);
             if (result.IsSuccess)
@@ -115,7 +116,7 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpGet("Roles")]
-        public async Task<ActionResult<Response<bool>>> GetRolesAsync()
+        public async Task<ActionResult<Response<IEnumerable<IdentityRole>>>> GetRolesAsync()
         {
             var result = await _userService.GetRolesAsync();
 
@@ -126,7 +127,7 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpGet("Roles/{id:Guid}")]
-        public async Task<ActionResult<Response<bool>>> GetRolesAsync(string id)
+        public async Task<ActionResult<Response<RegisterRoleDto>>> GetRolesAsync(string id)
         {
             var result = await _userService.GetRoleAsync(id);
 
@@ -135,8 +136,8 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
-        [HttpGet("Roles/{id:Guid}")]
-        public async Task<ActionResult<Response<bool>>> UpdateRoleAsync(string id, RegisterRoleDto model)
+        [HttpPut("Roles/{id:Guid}")]
+        public async Task<ActionResult<Response<RegisterRoleDto>>> UpdateRoleAsync(string id, RegisterRoleDto model)
         {
             var result = await _userService.UpdateRoleAsync(id, model);
 
