@@ -27,6 +27,7 @@ namespace Domain.Constants
             };
         }
 
+        //Profiling forms
         public static class AuthClaims
         {
             public const string View = "Permissions.AuthClaims.View";
@@ -96,6 +97,11 @@ namespace Domain.Constants
             public const string Edit = "Permissions.CashAccountClaims.Edit";
             public const string Delete = "Permissions.CashAccountClaims.Delete";
         }
+        //Reporting Form
+        public static class ChartOfAccountClaims
+        {
+            public const string View = "Permissions.ChartOfAccountClaims.View";
+        }
 
         public static class CategoriesClaims
         {
@@ -113,14 +119,6 @@ namespace Domain.Constants
             public const string Delete = "Permissions.ProductsClaims.Delete";
         }
 
-        public static class Level3Claims
-        {
-            public const string View = "Permissions.Level3Claims.View";
-            public const string Create = "Permissions.Level3Claims.Create";
-            public const string Edit = "Permissions.Level3Claims.Edit";
-            public const string Delete = "Permissions.Level3Claims.Delete";
-        }
-
         public static class Level4Claims
         {
             public const string View = "Permissions.Level4Claims.View";
@@ -128,7 +126,6 @@ namespace Domain.Constants
             public const string Edit = "Permissions.Level4Claims.Edit";
             public const string Delete = "Permissions.Level4Claims.Delete";
         }
-
         public static class BankReconClaims
         {
             public const string View = "Permissions.BankReconClaims.View";
@@ -136,7 +133,6 @@ namespace Domain.Constants
             public const string Edit = "Permissions.BankReconClaims.Edit";
             public const string Delete = "Permissions.BankReconClaims.Delete";
         }
-
         public static class TransactionReconClaims
         {
             public const string View = "Permissions.TransactionReconClaims.View";
