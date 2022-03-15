@@ -1,7 +1,10 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +12,7 @@ namespace Vizalys.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class DepartmentController : ControllerBase
     {
         private readonly IDepartmentService _departmentService;
@@ -18,6 +22,7 @@ namespace Vizalys.Api.Controllers
             _departmentService = departmentService;
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.DepartmentsClaims.Create })]
         [HttpPost]
         public async Task<ActionResult<Response<DeptDto>>> CreateAsync(CreateDeptDto entity)
         {
@@ -28,6 +33,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.DepartmentsClaims.Create, Permissions.DepartmentsClaims.View, Permissions.DepartmentsClaims.Delete, Permissions.DepartmentsClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<DeptDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
@@ -38,6 +44,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(results); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.DepartmentsClaims.View, Permissions.DepartmentsClaims.Delete, Permissions.DepartmentsClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<DeptDto>>> GetByIdAsync(int id)
         {
@@ -48,6 +55,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.DepartmentsClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<DeptDto>>> UpdateAsync(int id, CreateDeptDto entity)
         {

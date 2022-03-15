@@ -1,14 +1,18 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Vizalys.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    [Authorize]
+    class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
 
@@ -17,6 +21,7 @@ namespace Vizalys.Api.Controllers
             _productService = productService;
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.ProductsClaims.Create, Permissions.ProductsClaims.View, Permissions.ProductsClaims.Delete, Permissions.ProductsClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<ProductDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
@@ -27,6 +32,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(products); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.ProductsClaims.Create })]
         [HttpPost]
         public async Task<ActionResult<Response<ProductDto>>> CreateAsync(CreateProductDto entity)
         {
@@ -37,6 +43,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(product); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.ProductsClaims.View, Permissions.ProductsClaims.Delete, Permissions.ProductsClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<ProductDto>>> GetByIdAsync(int id)
         {
@@ -47,6 +54,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.ProductsClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<ProductDto>>> UpdateAsync(int id, CreateProductDto entity)
         {

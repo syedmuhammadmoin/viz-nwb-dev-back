@@ -1,7 +1,10 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +12,7 @@ namespace Vizalys.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class InvoiceController : ControllerBase
     {
         private readonly IInvoiceService _invoiceService;
@@ -18,6 +22,7 @@ namespace Vizalys.Api.Controllers
             _invoiceService = invoiceService;
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.InvoiceClaims.Create })]
         [HttpPost]
         public async Task<ActionResult<Response<InvoiceDto>>> CreateAsync(CreateInvoiceDto entity)
         {
@@ -28,6 +33,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.InvoiceClaims.Create, Permissions.InvoiceClaims.View, Permissions.InvoiceClaims.Delete, Permissions.InvoiceClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<InvoiceDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
@@ -38,6 +44,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(results); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.InvoiceClaims.View, Permissions.InvoiceClaims.Delete, Permissions.InvoiceClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<InvoiceDto>>> GetByIdAsync(int id)
         {
@@ -48,6 +55,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.InvoiceClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<InvoiceDto>>> UpdateAsync(int id, CreateInvoiceDto entity)
         {

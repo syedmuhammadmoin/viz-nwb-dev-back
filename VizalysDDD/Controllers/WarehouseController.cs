@@ -1,7 +1,10 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +12,7 @@ namespace Vizalys.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class WarehouseController : ControllerBase
     {
         private readonly IWarehouseService _warehouseService;
@@ -18,6 +22,7 @@ namespace Vizalys.Api.Controllers
             _warehouseService = warehouseService;
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.WarehouseClaims.Create, Permissions.WarehouseClaims.View, Permissions.WarehouseClaims.Delete, Permissions.WarehouseClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<WarehouseDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
@@ -27,6 +32,8 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(warehouses); // Status code : 400
         }
+        
+        [ClaimRequirement("Permission", new string[] { Permissions.WarehouseClaims.Create })]
         [HttpPost]
         public async Task<ActionResult<Response<WarehouseDto>>> CreateAsync(CreateWarehouseDto entity)
         {
@@ -37,6 +44,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(warehouse); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.WarehouseClaims.View, Permissions.WarehouseClaims.Delete, Permissions.WarehouseClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<WarehouseDto>>> GetByIdAsync(int id)
         {
@@ -47,6 +55,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.WarehouseClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<WarehouseDto>>> UpdateAsync(int id, CreateWarehouseDto entity)
         {

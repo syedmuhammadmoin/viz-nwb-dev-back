@@ -3,6 +3,8 @@ using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
@@ -12,6 +14,7 @@ namespace Vizalys.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BankStmtController : ControllerBase
     {
         private readonly IBankStmtService _bankStmtService;
@@ -20,12 +23,15 @@ namespace Vizalys.Api.Controllers
         {
             _bankStmtService = bankStmtService;
         }
+        
+        [ClaimRequirement("Permission", new string[] { Permissions.BankStatementClaims.Create, Permissions.BankStatementClaims.View, Permissions.BankStatementClaims.Delete, Permissions.BankStatementClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<BankStmtDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
             return Ok(await _bankStmtService.GetAllAsync(filter)); // Status Code : 200
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<Response<BankStmtDto>>> CreateAsync([ModelBinder(BinderType = typeof(JsonModelBinder))] CreateBankStmtDto entity, IFormFile files)
         {
@@ -36,6 +42,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(bankStmt); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.BankStatementClaims.View, Permissions.BankStatementClaims.Delete, Permissions.BankStatementClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<BankStmtDto>>> GetByIdAsync(int id)
         {
@@ -46,6 +53,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.BankStatementClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<BankStmtDto>>> UpdateAsync(int id, CreateBankStmtDto entity)
         {
@@ -59,6 +67,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [AllowAnonymous]
         [HttpGet("getStmtFile")]
         public ActionResult ExportStmtFormat()
         {

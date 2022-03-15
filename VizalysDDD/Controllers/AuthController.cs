@@ -1,7 +1,10 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +13,8 @@ namespace Vizalys.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -19,6 +24,7 @@ namespace Vizalys.Api.Controllers
             _userService = userService;
         }
         // /api/auth/login
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<ActionResult<Response<bool>>> LoginAsync([FromBody] LoginDto model)
         {
@@ -32,6 +38,7 @@ namespace Vizalys.Api.Controllers
         }
 
         //  /api/auth/RegisterUser
+        [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.Create })]
         [HttpPost("Users")]
         public async Task<ActionResult<Response<bool>>> RegisterUserAsync([FromBody] RegisterUserDto model)
         {
@@ -43,6 +50,7 @@ namespace Vizalys.Api.Controllers
         }
 
         //  /api/auth/GetUser
+        [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.Create, Permissions.AuthClaims.View, Permissions.AuthClaims.Delete, Permissions.AuthClaims.Edit })]
         [HttpGet("Users")]
         public async Task<ActionResult<Response<IEnumerable<User>>>> GetUsersAsync()
         {
@@ -55,6 +63,7 @@ namespace Vizalys.Api.Controllers
         }
 
         //  /api/auth/GetUserByID
+        [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.View, Permissions.AuthClaims.Delete, Permissions.AuthClaims.Edit })]
         [HttpGet("Users/{id:Guid}")]
         public async Task<ActionResult<Response<EditUserDto>>> GetUserAsync(string id)
         {
@@ -69,6 +78,7 @@ namespace Vizalys.Api.Controllers
         }
 
         // /api/auth/UpdateUser
+        [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.Edit })]
         [HttpPut("Users/{id:Guid}")]
         public async Task<ActionResult<Response<bool>>> UpdateUserAsync(string id, EditUserDto model)
         {
@@ -81,6 +91,7 @@ namespace Vizalys.Api.Controllers
         }
 
         // /api/auth/User/ResetPass/id
+        [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.Edit })]
         [HttpPut("Users/ResetPass/{id:Guid}")]
         public async Task<ActionResult<Response<bool>>> ResetUserPassword(string id, ResetPasswordDto model)
         {
@@ -105,6 +116,7 @@ namespace Vizalys.Api.Controllers
         }
 
         // For Roles
+        [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.Create })]
         [HttpPost("Roles")]
         public async Task<ActionResult<Response<string>>> CreateRoleAsync([FromBody] RegisterRoleDto model)
         {
@@ -115,6 +127,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result);// Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.Create, Permissions.AuthClaims.View, Permissions.AuthClaims.Delete, Permissions.AuthClaims.Edit })]
         [HttpGet("Roles")]
         public async Task<ActionResult<Response<IEnumerable<IdentityRole>>>> GetRolesAsync()
         {
@@ -126,6 +139,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.View, Permissions.AuthClaims.Delete, Permissions.AuthClaims.Edit })]
         [HttpGet("Roles/{id:Guid}")]
         public async Task<ActionResult<Response<RegisterRoleDto>>> GetRolesAsync(string id)
         {
@@ -136,6 +150,8 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
+        
+        [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.Edit })]
         [HttpPut("Roles/{id:Guid}")]
         public async Task<ActionResult<Response<RegisterRoleDto>>> UpdateRoleAsync(string id, RegisterRoleDto model)
         {
