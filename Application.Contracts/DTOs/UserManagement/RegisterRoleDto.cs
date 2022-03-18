@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.DTOs
 {
-    public class RoleDto
+    public class RegisterRoleDto
     {
         [Required]
         public string RoleName { get; set; }
+        public IList<RegisterRoleClaimsDto> RoleClaims { get; set; }
+
     }
-    public class RoleClaimsVM
+    public class RegisterRoleClaimsDto
     {
         public string Type { get; set; }
         public string Value { get; set; }

@@ -1,6 +1,8 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Context;
@@ -362,6 +364,191 @@ namespace Application.Services
                 _unitOfWork.Rollback();
                 return new Response<bool>(ex.Message);
             }
+        }
+
+        //For Roles
+        public async Task<Response<string>> CreateRoleAsync(RegisterRoleDto model)
+        {
+            if (model == null)
+            {
+                return new Response<string>("Role model is null");
+            }
+
+            // with rollback Transaction
+            _unitOfWork.CreateTransaction();
+            try
+            {
+                //Add role in identity Role table
+                var identityRole = new IdentityRole
+                {
+                    Name = model.RoleName
+                };
+                var createRole = await _roleManager.CreateAsync(identityRole); ;
+
+                //If role not created successfully
+                if (!createRole.Succeeded)
+                    return new Response<string>("Role did not create");
+
+                //Getting and removing all claims for this role
+                var claims = await _roleManager.GetClaimsAsync(identityRole);
+                foreach (var claim in claims)
+                {
+                    await _roleManager.RemoveClaimAsync(identityRole, claim);
+                }
+                //Add selected claims in role
+                var selectedClaims = model.RoleClaims.Where(a => a.Selected).ToList();
+                foreach (var claim in selectedClaims)
+                {
+                    await _roleManager.AddPermissionClaim(identityRole, claim.Value);
+                }
+
+                _unitOfWork.Commit();
+                return new Response<string>(identityRole.ToString(),"Role created successfully");
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<string>(ex.Message);
+            }
+        }
+
+        public async Task<Response<IEnumerable<IdentityRole>>> GetRolesAsync()
+        {
+            IEnumerable<IdentityRole> roles = await _roleManager.Roles.ToListAsync();
+            if (roles == null)
+            {
+                return new Response<IEnumerable<IdentityRole>>("Role list cannot be found");
+            }
+            return new Response<IEnumerable<IdentityRole>>(roles, "Returning Roles");
+        }
+
+        public async Task<Response<RegisterRoleDto>> GetRoleAsync(string id)
+        {
+            //Getting role by id
+            var role = await _roleManager.FindByIdAsync(id);
+            if (role == null)
+                return new Response<RegisterRoleDto>("Cannot find role with the input id");
+
+            var allPermissions = new List<RegisterRoleClaimsDto>();
+            allPermissions.GetPermissions(typeof(Permissions.AuthClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.BusinessPartnerClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.OrganizationClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DepartmentsClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.WarehouseClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.LocationClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.BankAccountClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.BankStatementClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.CashAccountClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.ChartOfAccountClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.CategoriesClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.ProductsClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.Level4Claims), id);
+            allPermissions.GetPermissions(typeof(Permissions.BankReconClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.TransactionReconClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.InvoiceClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.BillClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.PaymentClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.CreditNoteClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DebitNoteClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.JournalEntryClaims), id);
+
+
+            //Getting all claims for this role
+            var claims = await _roleManager.GetClaimsAsync(role);
+            //Selecting claims value
+            var roleClaimValues = claims.Select(a => a.Value).ToList();
+            //Getting all claims from system
+            var allClaimValues = allPermissions.Select(a => a.Value).ToList();
+            //intersecting authorized claims valus
+            var authorizedClaims = allClaimValues.Intersect(roleClaimValues).ToList();
+            // setting isSelected true for authorized claims
+            foreach (var permission in allPermissions)
+            {
+                if (authorizedClaims.Any(a => a == permission.Value))
+                {
+                    permission.Selected = true;
+                }
+            }
+            //mapping to role model
+            var model = new RegisterRoleDto();
+            model.RoleName = role.Name;
+            model.RoleClaims = allPermissions;
+            return new Response<RegisterRoleDto>(model, "Returning Roles");
+        }
+
+        public async Task<Response<RegisterRoleDto>> UpdateRoleAsync(string id, RegisterRoleDto model)
+        {
+            //Getting role by id
+            var role = await _roleManager.FindByIdAsync(id);
+
+            if (role == null)
+                return new Response<RegisterRoleDto>("Role not found");
+
+            // with rollback Transaction
+            _unitOfWork.CreateTransaction();
+            try
+            {
+                //updating role values
+                role.Name = model.RoleName;
+                var updateRole = await _roleManager.UpdateAsync(role);
+
+                if (!updateRole.Succeeded)
+                {
+                    _unitOfWork.Rollback();
+                    return new Response<RegisterRoleDto>(updateRole.Errors.Select(e => e.Description).FirstOrDefault());
+                }
+                //getting and removing all claims for this role
+                var claims = await _roleManager.GetClaimsAsync(role);
+                foreach (var claim in claims)
+                {
+                    await _roleManager.RemoveClaimAsync(role, claim);
+                }
+                //adding selecting claims in this role
+                var selectedClaims = model.RoleClaims.Where(a => a.Selected).ToList();
+                foreach (var claim in selectedClaims)
+                {
+                    await _roleManager.AddPermissionClaim(role, claim.Value);
+                }
+
+                _unitOfWork.Commit();
+                return new Response<RegisterRoleDto>(model, "Role updated successfully");
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<RegisterRoleDto>(ex.Message);
+            }
+        }
+
+        //For Claims
+        public Response<List<string>> GetClaimsAsync()
+        {
+            var allPermissions = new List<RegisterRoleClaimsDto>();
+            allPermissions.GetPermissions(typeof(Permissions.AuthClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.BusinessPartnerClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.OrganizationClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.DepartmentsClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.WarehouseClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.LocationClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.BankAccountClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.BankStatementClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.CashAccountClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.ChartOfAccountClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.CategoriesClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.ProductsClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.Level4Claims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.BankReconClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.TransactionReconClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.InvoiceClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.BillClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.PaymentClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.CreditNoteClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.DebitNoteClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.JournalEntryClaims), "12");
+
+            var allClaimValues = allPermissions.Select(a => a.Value).ToList();
+            return new Response<List<string>>(allClaimValues,"Returning all claims");
+
         }
     }
 }

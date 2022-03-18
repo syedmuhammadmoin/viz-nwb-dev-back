@@ -1,13 +1,17 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Vizalys.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrganizationController : ControllerBase
     {
         private readonly IOrganizationService _organizationService;
@@ -17,6 +21,7 @@ namespace Vizalys.Api.Controllers
             _organizationService = organizationService;
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.OrganizationClaims.Create, Permissions.OrganizationClaims.View, Permissions.OrganizationClaims.Delete, Permissions.OrganizationClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<OrganizationDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
@@ -27,6 +32,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(orgs); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.OrganizationClaims.Create })]
         [HttpPost]
         public async Task<ActionResult<Response<OrganizationDto>>> CreateAsync(CreateOrganizationDto entity)
         {
@@ -37,6 +43,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(org); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.OrganizationClaims.View, Permissions.OrganizationClaims.Delete, Permissions.OrganizationClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<OrganizationDto>>> GetByIdAsync(int id)
         {
@@ -47,6 +54,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.OrganizationClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<OrganizationDto>>> UpdateAsync(int id, CreateOrganizationDto entity)
         {

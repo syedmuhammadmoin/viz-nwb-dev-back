@@ -1,7 +1,10 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +12,7 @@ namespace Vizalys.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BusinessPartnerController : ControllerBase
     {
         private readonly IBusinessPartnerService _businessPartnerService;
@@ -17,6 +21,8 @@ namespace Vizalys.Api.Controllers
         {
             _businessPartnerService = businessPartnerService;
         }
+        
+        [ClaimRequirement("Permission", new string[] { Permissions.BusinessPartnerClaims.Create, Permissions.BusinessPartnerClaims.View, Permissions.BusinessPartnerClaims.Delete, Permissions.BusinessPartnerClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<BusinessPartnerDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
@@ -27,6 +33,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(businessPartners); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.BusinessPartnerClaims.Create,})]
         [HttpPost]
         public async Task<ActionResult<Response<BusinessPartnerDto>>> CreateAsync(CreateBusinessPartnerDto entity)
         {
@@ -37,6 +44,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(businessPartner); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] {Permissions.BusinessPartnerClaims.View, Permissions.BusinessPartnerClaims.Delete, Permissions.BusinessPartnerClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<BusinessPartnerDto>>> GetByIdAsync(int id)
         {
@@ -47,6 +55,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.BusinessPartnerClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<BusinessPartnerDto>>> UpdateAsync(int id, CreateBusinessPartnerDto entity)
         {

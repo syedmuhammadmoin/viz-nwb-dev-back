@@ -1,7 +1,10 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +12,7 @@ namespace Vizalys.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class LocationController : ControllerBase
     {
         private readonly ILocationService _locationService;
@@ -18,6 +22,7 @@ namespace Vizalys.Api.Controllers
             _locationService = locationService;
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.LocationClaims.Create, Permissions.LocationClaims.View, Permissions.LocationClaims.Delete, Permissions.LocationClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<LocationDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
@@ -27,6 +32,8 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(location); // Status code : 400
         }
+
+        [ClaimRequirement("Permission", new string[] { Permissions.LocationClaims.Create})]
         [HttpPost]
         public async Task<ActionResult<Response<LocationDto>>> CreateAsync(CreateLocationDto entity)
         {
@@ -37,6 +44,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(location); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.LocationClaims.View, Permissions.LocationClaims.Delete, Permissions.LocationClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<LocationDto>>> GetByIdAsync(int id)
         {
@@ -47,6 +55,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.LocationClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<LocationDto>>> UpdateAsync(int id, CreateLocationDto entity)
         {

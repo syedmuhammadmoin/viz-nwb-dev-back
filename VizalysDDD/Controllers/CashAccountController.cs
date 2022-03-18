@@ -1,7 +1,10 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +12,7 @@ namespace Vizalys.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CashAccountController : ControllerBase
     {
 
@@ -18,12 +22,15 @@ namespace Vizalys.Api.Controllers
         {
             _cashAccountService = cashAccountService;
         }
+        
+        [ClaimRequirement("Permission", new string[] { Permissions.CashAccountClaims.Create, Permissions.CashAccountClaims.View, Permissions.CashAccountClaims.Delete, Permissions.CashAccountClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<CashAccountDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
             return Ok(await _cashAccountService.GetAllAsync(filter)); // Status Code : 200
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.CashAccountClaims.Create })]
         [HttpPost]
         public async Task<ActionResult<Response<CashAccountDto>>> CreateAsync(CreateCashAccountDto entity)
         {
@@ -34,6 +41,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(cashAccount); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.CashAccountClaims.View, Permissions.CashAccountClaims.Delete, Permissions.CashAccountClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<CashAccountDto>>> GetByIdAsync(int id)
         {
@@ -44,6 +52,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.CashAccountClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<CashAccountDto>>> UpdateAsync(int id, UpdateCashAccountDto entity)
         {

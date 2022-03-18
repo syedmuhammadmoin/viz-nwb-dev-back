@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Response;
 using Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +21,13 @@ namespace Application.Contracts.Interfaces
         Task<Response<bool>> ResetUserPassword(string id, ResetPasswordDto data);
         Task<Response<bool>> ChangePassword(string id, ChangePasswordDto model);
 
+        //FOR ROLES
+        Task<Response<string>> CreateRoleAsync(RegisterRoleDto model);
+        Task<Response<IEnumerable<IdentityRole>>> GetRolesAsync();
+        Task<Response<RegisterRoleDto>> GetRoleAsync(string id);
+        Task<Response<RegisterRoleDto>> UpdateRoleAsync(string id, RegisterRoleDto model);
+
+        //FOR CLAIMS 
+        Response<List<string>> GetClaimsAsync();
     }
 }

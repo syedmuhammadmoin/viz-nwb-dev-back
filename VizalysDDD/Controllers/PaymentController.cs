@@ -1,7 +1,10 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +12,7 @@ namespace Vizalys.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
@@ -18,6 +22,7 @@ namespace Vizalys.Api.Controllers
             _paymentService = paymentService;
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.PaymentClaims.Create, Permissions.PaymentClaims.View, Permissions.PaymentClaims.Delete, Permissions.PaymentClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<PaymentDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
@@ -28,6 +33,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(payments); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.PaymentClaims.Create })]
         [HttpPost]
         public async Task<ActionResult<Response<PaymentDto>>> CreateAsync(CreatePaymentDto entity)
         {
@@ -38,6 +44,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(payment); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.PaymentClaims.View, Permissions.PaymentClaims.Delete, Permissions.PaymentClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<PaymentDto>>> GetByIdAsync(int id)
         {
@@ -48,6 +55,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.PaymentClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<PaymentDto>>> UpdateAsync(int id, CreatePaymentDto entity)
         {

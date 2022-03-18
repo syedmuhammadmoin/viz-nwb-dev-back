@@ -1,7 +1,10 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +12,7 @@ namespace Vizalys.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BankAccountController : ControllerBase
     {
         private readonly IBankAccountService _bankAccountService;
@@ -17,12 +21,14 @@ namespace Vizalys.Api.Controllers
         {
             _bankAccountService = bankAccountService;
         }
+        [ClaimRequirement("Permission", new string[] { Permissions.BankAccountClaims.Create, Permissions.BankAccountClaims.View, Permissions.BankAccountClaims.Delete, Permissions.BankAccountClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<BankAccountDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
             return Ok(await _bankAccountService.GetAllAsync(filter)); // Status Code : 200
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.BankAccountClaims.Create})]
         [HttpPost]
         public async Task<ActionResult<Response<BankAccountDto>>> CreateAsync(CreateBankAccountDto entity)
         {
@@ -33,6 +39,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(bankAccount); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] {Permissions.BankAccountClaims.View, Permissions.BankAccountClaims.Delete, Permissions.BankAccountClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<BankAccountDto>>> GetByIdAsync(int id)
         {
@@ -43,6 +50,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] {Permissions.BankAccountClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<BankAccountDto>>> UpdateAsync(int id, UpdateBankAccountDto entity)
         {

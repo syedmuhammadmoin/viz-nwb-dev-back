@@ -1,7 +1,10 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +12,8 @@ namespace Vizalys.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class BillController : ControllerBase
     {
         private readonly IBillService _billService;
@@ -18,6 +23,7 @@ namespace Vizalys.Api.Controllers
             _billService = billService;
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.BillClaims.Create })]
         [HttpPost]
         public async Task<ActionResult<Response<BillDto>>> CreateAsync(CreateBillDto entity)
         {
@@ -28,6 +34,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(bill); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.BillClaims.Create, Permissions.BillClaims.View, Permissions.BillClaims.Delete, Permissions.BillClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<BillDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
@@ -38,6 +45,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(bills); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.BillClaims.View, Permissions.BillClaims.Delete, Permissions.BillClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<BillDto>>> GetByIdAsync(int id)
         {
@@ -48,6 +56,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.BillClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<BillDto>>> UpdateAsync(int id, CreateBillDto entity)
         {
