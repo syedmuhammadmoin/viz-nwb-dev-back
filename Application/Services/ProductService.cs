@@ -73,5 +73,14 @@ namespace Application.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task<Response<List<ProductDto>>> GetProductDropDown()
+        {
+            var products = await _unitOfWork.Product.GetAll();
+            if (!products.Any())
+                return new Response<List<ProductDto>>("List is empty");
+
+            return new Response<List<ProductDto>>(_mapper.Map<List<ProductDto>>(products), "Returning List");
+        }
     }
 }

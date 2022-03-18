@@ -45,7 +45,6 @@ namespace Application.Services
             var totalRecords = await _unitOfWork.Location.TotalRecord();
 
             return new PaginationResponse<List<LocationDto>>(_mapper.Map<List<LocationDto>>(location), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
-           
         }
 
         public async Task<Response<LocationDto>> GetByIdAsync(int id)
@@ -74,6 +73,15 @@ namespace Application.Services
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<Response<List<LocationDto>>> GetLocationDropDown()
+        {
+            var locations = await _unitOfWork.Location.GetAll();
+            if (!locations.Any())
+                return new Response<List<LocationDto>>("List is empty");
+
+            return new Response<List<LocationDto>>(_mapper.Map<List<LocationDto>>(locations), "Returning List");
         }
     }
 }

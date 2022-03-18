@@ -11,5 +11,6 @@ namespace Application.Contracts.Interfaces
 {
     public interface ICashAccountService : ICrudService<CreateCashAccountDto, UpdateCashAccountDto, CashAccountDto, int, PaginationFilter>
     {
+        Task<Response<List<CashAccountDto>>> GetCashAccountDropDown();
     }
 }

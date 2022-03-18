@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace Application.Contracts.Interfaces
 {
     public interface ILocationService : ICrudService<CreateLocationDto, LocationDto, int, PaginationFilter>
     {
+        Task<Response<List<LocationDto>>> GetLocationDropDown();
     }
 }

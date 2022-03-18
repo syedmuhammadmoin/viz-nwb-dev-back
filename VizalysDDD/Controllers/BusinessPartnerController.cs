@@ -60,5 +60,11 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [HttpGet("Dropdown")]
+        public async Task<ActionResult<Response<List<BusinessPartnerDto>>>> GetBusinessPartnerDropDown()
+        {
+            return Ok(await _businessPartnerService.GetBusinessPartnerDropDown()); // Status Code : 200
+        }
+
     }
 }

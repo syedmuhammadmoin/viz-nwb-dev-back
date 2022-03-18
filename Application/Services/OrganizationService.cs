@@ -52,6 +52,15 @@ namespace Application.Services
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
 
+        public async Task<Response<List<OrganizationDto>>> GetOrganizationDropDown()
+        {
+            var organizations = await _unitOfWork.Organization.GetAll();
+            if (!organizations.Any())
+                return new Response<List<OrganizationDto>>("List is empty");
+
+            return new Response<List<OrganizationDto>>(_mapper.Map<List<OrganizationDto>>(organizations), "Returning List");
+        }
+
         public async Task<Response<OrganizationDto>> GetByIdAsync(int id)
         {
             var specification = new OrganizationSpecs();

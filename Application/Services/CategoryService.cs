@@ -74,5 +74,13 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
+        public async Task<Response<List<CategoryDto>>> GetCategoryDropDown()
+        {
+            var categories = await _unitOfWork.Category.GetAll();
+            if (!categories.Any())
+                return new Response<List<CategoryDto>>("List is empty");
+
+            return new Response<List<CategoryDto>>(_mapper.Map<List<CategoryDto>>(categories), "Returning List");
+        }
     }
 }

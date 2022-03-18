@@ -146,5 +146,14 @@ namespace Application.Services
             await _unitOfWork.Ledger.Add(addBalanceInOpeningBalanceEquity);
             await _unitOfWork.SaveAsync();
         }
+
+        public async Task<Response<List<BankAccountDto>>> GetBankAccountDropDown()
+        {
+            var bankAccounts = await _unitOfWork.BankAccount.GetAll();
+            if (!bankAccounts.Any())
+                return new Response<List<BankAccountDto>>("List is empty");
+
+            return new Response<List<BankAccountDto>>(_mapper.Map<List<BankAccountDto>>(bankAccounts), "Returning List");
+        }
     }
 }

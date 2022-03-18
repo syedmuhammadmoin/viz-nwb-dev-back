@@ -61,6 +61,15 @@ namespace Application.Services
             return new Response<DeptDto>(_mapper.Map<DeptDto>(dept), "Returning value");
         }
 
+        public async Task<Response<List<DeptDto>>> GetDepartmentDropDown()
+        {
+            var departments = await _unitOfWork.Department.GetAll();
+            if (!departments.Any())
+                return new Response<List<DeptDto>>("List is empty");
+
+            return new Response<List<DeptDto>>(_mapper.Map<List<DeptDto>>(departments), "Returning List");
+        }
+
         public async Task<Response<DeptDto>> UpdateAsync(CreateDeptDto entity)
         {
             var dept = await _unitOfWork.Department.GetById((int)entity.Id);

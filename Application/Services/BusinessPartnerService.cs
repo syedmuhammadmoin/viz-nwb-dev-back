@@ -72,5 +72,14 @@ namespace Application.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task<Response<List<BusinessPartnerDto>>> GetBusinessPartnerDropDown()
+        {
+            var businessPartners = await _unitOfWork.BusinessPartner.GetAll();
+            if (!businessPartners.Any())
+                return new Response<List<BusinessPartnerDto>>("List is empty");
+
+            return new Response<List<BusinessPartnerDto>>(_mapper.Map<List<BusinessPartnerDto>>(businessPartners), "Returning List");
+        }
     }
 }
