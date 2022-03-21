@@ -33,6 +33,8 @@ namespace Domain.Interfaces
         IBankStmtRepository Bankstatement { get; }
         IBankStmtLinesRepository BankStmtLines { get; }
         IBankReconRepository BankReconciliation { get; }
+        IWorkFlowRepository WorkFlow { get; }
+        IWorkFlowStatusRepository WorkFlowStatus { get; }
 
         Task SaveAsync();
         void CreateTransaction();

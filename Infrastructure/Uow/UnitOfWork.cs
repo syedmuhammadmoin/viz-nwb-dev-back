@@ -43,6 +43,8 @@ namespace Infrastructure.Uow
         public IBankStmtRepository Bankstatement { get; private set; }
         public IBankStmtLinesRepository BankStmtLines { get; private set; }
         public IBankReconRepository BankReconciliation { get; private set; }
+        public IWorkFlowRepository WorkFlow { get; private set; }
+        public IWorkFlowStatusRepository WorkFlowStatus { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -69,6 +71,8 @@ namespace Infrastructure.Uow
             Bankstatement = new BankStmtRepository(context);
             BankStmtLines = new BankStmtLinesRepository(context);
             BankReconciliation = new BankReconRepository(context);
+            WorkFlow = new WorkFlowRepository(context);
+            WorkFlowStatus = new WorkFlowStatusRepository(context);
         }
 
         public async Task SaveAsync()
