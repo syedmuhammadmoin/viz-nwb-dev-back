@@ -48,6 +48,9 @@ namespace Infrastructure.Context
         public DbSet<BankStmtMaster> BankStmtMaster { get; set; }
         public DbSet<BankStmtLines> BankStmtLines { get; set; }
         public DbSet<BankReconciliation> BankReconciliations { get; set; }
+        public DbSet<WorkFlowMaster> WorkFlowMaster { get; set; }
+        public DbSet<WorkFlowTransition> WorkFlowTransition { get; set; }
+        public DbSet<WorkFlowStatus> WorkFlowStatus { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -93,6 +96,12 @@ namespace Infrastructure.Context
             modelBuilder.Entity<BankStmtLines>()
             .HasOne(tc => tc.BankStmtMaster)
             .WithMany(c => c.BankStmtLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //Workflow
+            modelBuilder.Entity<WorkFlowTransition>()
+            .HasOne(tc => tc.WorkflowMaster)
+            .WithMany(c => c.WorkflowTransitions)
             .OnDelete(DeleteBehavior.Cascade);
 
             //Changing Identity users and roles tables name
