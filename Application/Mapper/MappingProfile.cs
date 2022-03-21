@@ -102,7 +102,7 @@ namespace Application.Mapper
             CreateMap<BillMaster, BillDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
               .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
-            
+
             CreateMap<BillLines, BillLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
               .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
@@ -187,6 +187,22 @@ namespace Application.Mapper
 
             //Bank Reconciliation
             CreateMap<CreateBankReconDto, BankReconciliation>();
+
+            // WorkFlow Mapping
+            CreateMap<WorkFlowMaster, WorkFlowDto>();
+
+            CreateMap<WorkFlowTransition, WorkFlowTransitionDto>()
+            .ForMember(dto => dto.CurrentStatus, core => core.MapFrom(a => a.CurrentStatus.Status))
+            .ForMember(dto => dto.NextStatus, core => core.MapFrom(a => a.NextStatus.Status));
+
+            CreateMap<CreateWorkFlowDto, WorkFlowMaster>();
+
+            CreateMap<CreateWorkFlowTransitionDto, WorkFlowTransition>();
+
+            // WorkFlowStatus Mapping
+            CreateMap<WorkFlowStatus, WorkFlowStatusDto>();
+            CreateMap<CreateWorkFlowStatusDto, WorkFlowStatus>();
+
         }
     }
 }
