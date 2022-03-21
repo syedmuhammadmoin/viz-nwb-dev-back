@@ -30,7 +30,13 @@ namespace Domain.Constants
     public enum DocumentStatus
     {
         Draft,
-        Submitted
+        Rejected,
+        Unpaid,
+        Partial,
+        Paid,
+        Submitted,
+        Reviewed,
+        Cancelled
     }
     public enum PaymentType
     {
@@ -65,5 +71,16 @@ namespace Domain.Constants
         Unreconciled,
         Partial,
         Reconciled
+    }
+    public enum ActionButton
+    {
+        Approve,
+        Reject
+    }
+    public enum StatusType
+    {
+        Custom,
+        PreDefined,
+        PreDefinedInList,
     }
 }
