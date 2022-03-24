@@ -37,6 +37,8 @@ builder.Services.AddScoped<IBankAccountService, BankAccountService>();
 builder.Services.AddScoped<IBankStmtService, BankStmtService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IBankReconService, BankReconService>();
+builder.Services.AddScoped<IWorkFlowService, WorkFlowService>();
+builder.Services.AddScoped<ITransactionReconcileService, TransactionReconcileService>();
 
 //Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
