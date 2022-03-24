@@ -24,18 +24,21 @@ namespace Domain.Entities
         public decimal TotalTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; private set; }
-        public DocumentStatus Status { get; private set; }
+        public int StatusId { get; private set; }
+        [ForeignKey("StatusId")]
+        public WorkFlowStatus Status { get; private set; }
         public int? TransactionId { get; private set; }
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
         public virtual List<CreditNoteLines> CreditNoteLines { get; private set; }
+
         protected CreditNoteMaster()
         {
         }
 
-        public void setStatus(DocumentStatus status)
+        public void setStatus(int statusId)
         {
-            Status = status;
+            StatusId = statusId;
         }
         public void setTransactionId(int transactionId)
         {

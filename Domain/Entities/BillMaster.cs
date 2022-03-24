@@ -27,7 +27,9 @@ namespace Domain.Entities
         public decimal TotalAmount { get; private set; }
         [MaxLength(20)]
         public string Contact { get; private set; }
-        public DocumentStatus Status { get; private set; }
+        public int StatusId { get; private set; }
+        [ForeignKey("StatusId")]
+        public WorkFlowStatus Status { get; private set; }
         public int? TransactionId { get; private set; }
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
@@ -37,9 +39,9 @@ namespace Domain.Entities
         {
 
         }
-        public void setStatus(DocumentStatus status)
+        public void setStatus(int statusId)
         {
-            Status = status;
+            StatusId = statusId;
         }
 
         public void setTransactionId(int transactionId)
