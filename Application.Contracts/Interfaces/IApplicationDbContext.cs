@@ -38,7 +38,8 @@ namespace Application.Interfaces
         public DbSet<BankReconciliation> BankReconciliations { get; set; }
         public DbSet<WorkFlowStatus> WorkFlowStatus { get; set; }
         public DbSet<WorkFlowMaster> WorkFlowMaster { get; set; }
-        public DbSet<WorkFlowTransition> WorkFlowTransition { get; set; }
+        public DbSet<WorkFlowTransition> WorkFlowTransitions { get; set; }
+        public DbSet<TransactionReconcile> TransactionReconciles { get; set; }
 
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
