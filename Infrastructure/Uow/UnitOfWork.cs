@@ -14,7 +14,6 @@ namespace Infrastructure.Uow
     {
         private readonly ApplicationDbContext _context;
         private IDbContextTransaction _transaction;
-        public IClientRepository Client { get; private set; }
         public ICategoryRepository Category { get; private set; }
         public IOrganizationRepository Organization { get; private set; }
         public IDepartmentRepository Department { get; private set; }
@@ -50,7 +49,6 @@ namespace Infrastructure.Uow
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
-            Client = new ClientRepository(context);
             Organization = new OrganizationRepository(context);
             Department = new DepartmentRepository(context);
             Warehouse = new WarehouseRepository(context);

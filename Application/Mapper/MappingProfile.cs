@@ -13,13 +13,8 @@ namespace Application.Mapper
     {
         public MappingProfile()
         {
-            // Client Mapping
-            CreateMap<Client, ClientDto>();
-            CreateMap<CreateClientDto, Client>();
-
             // Orgnization Mapping
-            CreateMap<Organization, OrganizationDto>()
-                .ForMember(dto => dto.ClientName, core => core.MapFrom(a => a.Client.Name));
+            CreateMap<Organization, OrganizationDto>();
             CreateMap<CreateOrganizationDto, Organization>();
 
             // Department Mapping

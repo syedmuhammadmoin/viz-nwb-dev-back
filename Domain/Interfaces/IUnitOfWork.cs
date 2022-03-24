@@ -8,7 +8,6 @@ namespace Domain.Interfaces
 {
     public interface IUnitOfWork
     {
-        IClientRepository Client { get; }
         IOrganizationRepository Organization { get; }
         IDepartmentRepository Department { get; }
         ILocationRepository Location { get; }

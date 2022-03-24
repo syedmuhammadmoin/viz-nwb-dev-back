@@ -15,7 +15,6 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 //Add services
-builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IWarehouseService, WarehouseService>();

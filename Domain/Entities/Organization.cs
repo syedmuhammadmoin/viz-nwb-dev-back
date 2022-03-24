@@ -40,8 +40,6 @@ namespace Domain.Entities
         public string GSTRegistrationNo{ get; private set; }
         public DateTime StartDate { get; private set; }
         public DateTime FiscalYear { get; private set; }
-        public int ClientId { get; private set; }
-        public Client Client { get; private set; }
 
         protected Organization()
         {
