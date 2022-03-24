@@ -36,7 +36,9 @@ namespace Domain.Constants
         Paid,
         Submitted,
         Reviewed,
-        Cancelled
+        Cancelled,
+        Unreconciled,
+        Reconciled
     }
     public enum PaymentType
     {
@@ -65,12 +67,6 @@ namespace Domain.Constants
         InventoryAdjustment,
         Quotation,
         Requisition
-    }
-    public enum ReconStatus
-    {
-        Unreconciled,
-        Partial,
-        Reconciled
     }
     public enum ActionButton
     {
