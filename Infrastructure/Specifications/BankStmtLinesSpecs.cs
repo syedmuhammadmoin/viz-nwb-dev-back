@@ -10,7 +10,7 @@ namespace Infrastructure.Specifications
 {
     public class BankStmtLinesSpecs : BaseSpecification<BankStmtLines>
     {
-        public BankStmtLinesSpecs() : base(l => (l.BankReconStatus != ReconStatus.Reconciled))
+        public BankStmtLinesSpecs() : base(l => (l.BankReconStatus != DocumentStatus.Reconciled))
         {
         }
     }

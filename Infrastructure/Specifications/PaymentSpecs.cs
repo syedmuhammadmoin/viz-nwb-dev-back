@@ -27,8 +27,14 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.PaymentRegister);
         }
 
-        public PaymentSpecs(bool forRecon) : base(p => p.BankReconStatus != ReconStatus.Reconciled)
+        public PaymentSpecs(bool forRecon) : base(p => p.BankReconStatus != DocumentStatus.Reconciled)
         {
+        }
+        public PaymentSpecs(int transactionId) :
+            base(p => (p.Status.State == DocumentStatus.Unpaid
+            || p.Status.State == DocumentStatus.Partial) && (p.TransactionId == transactionId))
+        { 
+        
         }
     }
 }

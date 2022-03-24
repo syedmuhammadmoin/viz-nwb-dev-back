@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Filters;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,14 @@ namespace Infrastructure.Specifications
                 AddInclude("InvoiceLines.Location");
                 AddInclude("InvoiceLines.Item");
             }
+        }
 
+        public InvoiceSpecs(int transactionId) :
+          base(p => (p.Status.State == DocumentStatus.Unpaid
+           || p.Status.State == DocumentStatus.Partial) && (p.TransactionId == transactionId))
+        {
+
+            AddInclude(i => i.Status);
         }
     }
 }
