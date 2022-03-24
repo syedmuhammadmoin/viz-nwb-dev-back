@@ -27,7 +27,7 @@ namespace Application.Services
         {
             if (entity.IsActive)
             {
-                var checkingActiveWorkFlows = await _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(entity.DocType));
+                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(entity.DocType));
                 if (checkingActiveWorkFlows != null)
                 {
                     return new Response<WorkFlowDto>("Workflow already activated for this document");
