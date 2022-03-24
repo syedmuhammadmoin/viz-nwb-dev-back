@@ -34,7 +34,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.SaveINV(entity, DocumentStatus.Draft);
+                return await this.SaveINV(entity, 1);
             }
         }
 
@@ -70,7 +70,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.UpdateINV(entity, DocumentStatus.Draft);
+                return await this.UpdateINV(entity, 1);
             }
         }
 
@@ -85,15 +85,15 @@ namespace Application.Services
         {
             if (entity.Id == null)
             {
-                return await this.SaveINV(entity, DocumentStatus.Submitted);
+                return await this.SaveINV(entity, 6);
             }
             else
             {
-                return await this.UpdateINV(entity, DocumentStatus.Submitted);
+                return await this.UpdateINV(entity, 6);
             }
         }
 
-        private async Task<Response<InvoiceDto>> SaveINV(CreateInvoiceDto entity, DocumentStatus status)
+        private async Task<Response<InvoiceDto>> SaveINV(CreateInvoiceDto entity, int status)
         {
             if (entity.InvoiceLines.Count() == 0)
                 return new Response<InvoiceDto>("Lines are required");
@@ -114,12 +114,6 @@ namespace Application.Services
                 inv.CreateDocNo();
                 await _unitOfWork.SaveAsync();
 
-                //Adding Invoice to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(inv);
-                }
-
                 //Commiting the transaction 
                 _unitOfWork.Commit();
 
@@ -133,7 +127,7 @@ namespace Application.Services
             }
         }
 
-        private async Task<Response<InvoiceDto>> UpdateINV(CreateInvoiceDto entity, DocumentStatus status)
+        private async Task<Response<InvoiceDto>> UpdateINV(CreateInvoiceDto entity, int status)
         {
             if (entity.InvoiceLines.Count() == 0)
                 return new Response<InvoiceDto>("Lines are required");
@@ -144,8 +138,8 @@ namespace Application.Services
             if (inv == null)
                 return new Response<InvoiceDto>("Not found");
 
-            if (inv.Status == DocumentStatus.Submitted)
-                return new Response<InvoiceDto>("Invoice already submitted");
+            if (inv.StatusId != 1 && inv.StatusId != 2)
+                return new Response<InvoiceDto>("Only draft document can be edited");
 
             inv.setStatus(status);
 
@@ -156,12 +150,6 @@ namespace Application.Services
                 _mapper.Map<CreateInvoiceDto, InvoiceMaster>(entity, inv);
 
                 await _unitOfWork.SaveAsync();
-
-                //Adding Invoice to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(inv);
-                }
 
                 //Commiting the transaction
                 _unitOfWork.Commit();

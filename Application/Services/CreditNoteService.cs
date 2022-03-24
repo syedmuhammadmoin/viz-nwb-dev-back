@@ -33,7 +33,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.SaveCRN(entity, DocumentStatus.Draft);
+                return await this.SaveCRN(entity, 1);
             }
         }
 
@@ -69,7 +69,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.UpdateCRN(entity, DocumentStatus.Draft);
+                return await this.UpdateCRN(entity, 1);
             }
         }
         public Task<Response<int>> DeleteAsync(int id)
@@ -82,15 +82,15 @@ namespace Application.Services
         {
             if (entity.Id == null)
             {
-                return await this.SaveCRN(entity, DocumentStatus.Submitted);
+                return await this.SaveCRN(entity, 6);
             }
             else
             {
-                return await this.UpdateCRN(entity, DocumentStatus.Submitted);
+                return await this.UpdateCRN(entity, 6);
             }
         }
 
-        private async Task<Response<CreditNoteDto>> SaveCRN(CreateCreditNoteDto entity, DocumentStatus status)
+        private async Task<Response<CreditNoteDto>> SaveCRN(CreateCreditNoteDto entity, int status)
         {
             if (entity.CreditNoteLines.Count() == 0)
                 return new Response<CreditNoteDto>("Lines are required");
@@ -111,12 +111,6 @@ namespace Application.Services
                 crn.CreateDocNo();
                 await _unitOfWork.SaveAsync();
 
-                //Adding CreditNote to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(crn);
-                }
-
                 //Commiting the transaction 
                 _unitOfWork.Commit();
 
@@ -130,7 +124,7 @@ namespace Application.Services
             }
         }
 
-        private async Task<Response<CreditNoteDto>> UpdateCRN(CreateCreditNoteDto entity, DocumentStatus status)
+        private async Task<Response<CreditNoteDto>> UpdateCRN(CreateCreditNoteDto entity, int status)
         {
             if (entity.CreditNoteLines.Count() == 0)
                 return new Response<CreditNoteDto>("Lines are required");
@@ -141,8 +135,8 @@ namespace Application.Services
             if (crn == null)
                 return new Response<CreditNoteDto>("Not found");
 
-            if (crn.Status == DocumentStatus.Submitted)
-                return new Response<CreditNoteDto>("CreditNote already submitted");
+            if (crn.StatusId != 1 && crn.StatusId != 2)
+                return new Response<CreditNoteDto>("Only draft document can be edited");
 
             crn.setStatus(status);
 
@@ -154,11 +148,6 @@ namespace Application.Services
 
                 await _unitOfWork.SaveAsync();
 
-                //Adding CreditNote to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(crn);
-                }
                 //Commiting the transaction
                 _unitOfWork.Commit();
 

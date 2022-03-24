@@ -34,7 +34,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.SavePay(entity, DocumentStatus.Draft);
+                return await this.SavePay(entity, 1);
             }
         }
 
@@ -74,24 +74,31 @@ namespace Application.Services
             }
             else
             {
-                return await this.UpdatePay(entity, DocumentStatus.Draft);
+                return await this.UpdatePay(entity, 1);
             }
         }
 
 
         private async Task<Response<PaymentDto>> SubmitPay(CreatePaymentDto entity)
         {
+            var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Payment)).FirstOrDefault();
+           
+            if (checkingActiveWorkFlows == null)
+            {
+                return new Response<PaymentDto>("No workflow found for this document");
+            }
+
             if (entity.Id == null)
             {
-                return await this.SavePay(entity, DocumentStatus.Submitted);
+                return await this.SavePay(entity, 6);
             }
             else
             {
-                return await this.UpdatePay(entity, DocumentStatus.Submitted);
+                return await this.UpdatePay(entity, 6);
             }
         }
 
-        private async Task<Response<PaymentDto>> SavePay(CreatePaymentDto entity, DocumentStatus status)
+        private async Task<Response<PaymentDto>> SavePay(CreatePaymentDto entity, int status)
         {
             var payment = _mapper.Map<Payment>(entity);
 
@@ -109,12 +116,6 @@ namespace Application.Services
                 payment.CreateDocNo();
                 await _unitOfWork.SaveAsync();
 
-                //Adding Invoice to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(payment);
-                }
-
                 //Commiting the transaction 
                 _unitOfWork.Commit();
 
@@ -128,15 +129,15 @@ namespace Application.Services
             }
         }
 
-        private async Task<Response<PaymentDto>> UpdatePay(CreatePaymentDto entity, DocumentStatus status)
+        private async Task<Response<PaymentDto>> UpdatePay(CreatePaymentDto entity, int status)
         {
             var payment = await _unitOfWork.Payment.GetById((int)entity.Id);
 
             if (payment == null)
                 return new Response<PaymentDto>("Not found");
 
-            if (payment.Status == DocumentStatus.Submitted)
-                return new Response<PaymentDto>("Payment already submitted");
+            if (payment.StatusId != 1 && payment.StatusId != 2)
+                return new Response<PaymentDto>("Only draft payments can be edited");
 
             payment.setStatus(status);
 
@@ -146,13 +147,8 @@ namespace Application.Services
                 //For updating data
                 _mapper.Map<CreatePaymentDto, Payment>(entity, payment);
 
+                //saving into database
                 await _unitOfWork.SaveAsync();
-
-                //Adding Invoice to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(payment);
-                }
 
                 //Commiting the transaction
                 _unitOfWork.Commit();

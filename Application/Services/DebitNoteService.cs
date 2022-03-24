@@ -34,7 +34,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.SaveDBN(entity, DocumentStatus.Draft);
+                return await this.SaveDBN(entity, 1);
             }
         }
 
@@ -70,7 +70,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.UpdateDBN(entity, DocumentStatus.Draft);
+                return await this.UpdateDBN(entity, 1);
             }
         }
 
@@ -85,15 +85,15 @@ namespace Application.Services
         {
             if (entity.Id == null)
             {
-                return await this.SaveDBN(entity, DocumentStatus.Submitted);
+                return await this.SaveDBN(entity, 6);
             }
             else
             {
-                return await this.UpdateDBN(entity, DocumentStatus.Submitted);
+                return await this.UpdateDBN(entity, 6);
             }
         }
 
-        private async Task<Response<DebitNoteDto>> SaveDBN(CreateDebitNoteDto entity, DocumentStatus status)
+        private async Task<Response<DebitNoteDto>> SaveDBN(CreateDebitNoteDto entity, int status)
         {
             if (entity.DebitNoteLines.Count() == 0)
                 return new Response<DebitNoteDto>("Lines are required");
@@ -114,12 +114,6 @@ namespace Application.Services
                 dbn.CreateDocNo();
                 await _unitOfWork.SaveAsync();
 
-                //Adding DebitNote to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(dbn);
-                }
-
                 //Commiting the transaction 
                 _unitOfWork.Commit();
 
@@ -133,7 +127,7 @@ namespace Application.Services
             }
         }
 
-        private async Task<Response<DebitNoteDto>> UpdateDBN(CreateDebitNoteDto entity, DocumentStatus status)
+        private async Task<Response<DebitNoteDto>> UpdateDBN(CreateDebitNoteDto entity, int status)
         {
             if (entity.DebitNoteLines.Count() == 0)
                 return new Response<DebitNoteDto>("Lines are required");
@@ -144,8 +138,8 @@ namespace Application.Services
             if (dbn == null)
                 return new Response<DebitNoteDto>("Not found");
 
-            if (dbn.Status == DocumentStatus.Submitted)
-                return new Response<DebitNoteDto>("DebitNote already submitted");
+            if (dbn.StatusId != 1 && dbn.StatusId != 2)
+                return new Response<DebitNoteDto>("Only draft document can be edited");
 
             dbn.setStatus(status);
 
@@ -156,12 +150,6 @@ namespace Application.Services
                 _mapper.Map<CreateDebitNoteDto, DebitNoteMaster>(entity, dbn);
 
                 await _unitOfWork.SaveAsync();
-
-                //Adding DebitNote to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(dbn);
-                }
 
                 //Commiting the transaction
                 _unitOfWork.Commit();

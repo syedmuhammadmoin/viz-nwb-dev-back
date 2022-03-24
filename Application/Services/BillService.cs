@@ -34,7 +34,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.SaveBILL(entity, DocumentStatus.Draft);
+                return await this.SaveBILL(entity, 1);
             }
         }
 
@@ -70,7 +70,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.UpdateBILL(entity, DocumentStatus.Draft);
+                return await this.UpdateBILL(entity, 1);
             }
         }
         public Task<Response<int>> DeleteAsync(int id)
@@ -83,15 +83,15 @@ namespace Application.Services
         {
             if (entity.Id == null)
             {
-                return await this.SaveBILL(entity, DocumentStatus.Submitted);
+                return await this.SaveBILL(entity, 6);
             }
             else
             {
-                return await this.UpdateBILL(entity, DocumentStatus.Submitted);
+                return await this.UpdateBILL(entity, 6);
             }
         }
 
-        private async Task<Response<BillDto>> SaveBILL(CreateBillDto entity, DocumentStatus status)
+        private async Task<Response<BillDto>> SaveBILL(CreateBillDto entity, int status)
         {
             if (entity.BillLines.Count() == 0)
                 return new Response<BillDto>("Lines are required");
@@ -112,12 +112,6 @@ namespace Application.Services
                 bill.CreateDocNo();
                 await _unitOfWork.SaveAsync();
 
-                //Adding bill to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(bill);
-                }
-
                 //Commiting the transaction 
                 _unitOfWork.Commit();
 
@@ -130,7 +124,7 @@ namespace Application.Services
                 return new Response<BillDto>(ex.Message);
             }
         }
-        private async Task<Response<BillDto>> UpdateBILL(CreateBillDto entity, DocumentStatus status)
+        private async Task<Response<BillDto>> UpdateBILL(CreateBillDto entity, int status)
         {
             if (entity.BillLines.Count() == 0)
                 return new Response<BillDto>("Lines are required");
@@ -141,8 +135,8 @@ namespace Application.Services
             if (bill == null)
                 return new Response<BillDto>("Not found");
 
-            if (bill.Status == DocumentStatus.Submitted)
-                return new Response<BillDto>("Bill already submitted");
+            if (bill.StatusId != 1 && bill.StatusId != 2)
+                return new Response<BillDto>("Only draft document can be edited");
 
             bill.setStatus(status);
 
@@ -153,12 +147,6 @@ namespace Application.Services
                 _mapper.Map<CreateBillDto, BillMaster>(entity, bill);
 
                 await _unitOfWork.SaveAsync();
-
-                //Adding bill to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(bill);
-                }
 
                 //Commiting the transaction
                 _unitOfWork.Commit();
