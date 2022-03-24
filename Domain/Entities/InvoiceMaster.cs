@@ -21,6 +21,9 @@ namespace Domain.Entities
         public DateTime DueDate { get; private set; }
         [MaxLength(20)]
         public string Contact { get; private set; }
+        public Guid ReceivableAccountId { get; private set; }
+        [ForeignKey("ReceivableAccountId")]
+        public Level4 ReceivableAccount { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalBeforeTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
@@ -47,6 +50,10 @@ namespace Domain.Entities
         public void setTransactionId(int transactionId)
         {
             TransactionId = transactionId;
+        }
+        public void setReceivableAccount(Guid receivableAccountId)
+        {
+            ReceivableAccountId = receivableAccountId;
         }
         public void CreateDocNo()
         {

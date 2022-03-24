@@ -19,6 +19,9 @@ namespace Domain.Entities
         public string DocNo { get; private set; }
         public DateTime BillDate { get; private set; }
         public DateTime DueDate { get; private set; }
+        public Guid PayableAccountId { get; private set; }
+        [ForeignKey("PayableAccountId")]
+        public Level4 PayableAccount { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalBeforeTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
@@ -48,7 +51,10 @@ namespace Domain.Entities
         {
             TransactionId = transactionId;
         }
-
+        public void setPayableAccountId(Guid payableAccountId)
+        {
+            PayableAccountId = payableAccountId;
+        }
         public void CreateDocNo()
         {
             //Creating doc no..
