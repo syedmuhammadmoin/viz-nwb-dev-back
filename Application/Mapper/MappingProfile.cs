@@ -203,6 +203,9 @@ namespace Application.Mapper
             CreateMap<WorkFlowStatus, WorkFlowStatusDto>();
             CreateMap<CreateWorkFlowStatusDto, WorkFlowStatus>();
 
+            // TransactionRecon Mapping
+            CreateMap<CreateTransactionReconcileDto, TransactionReconcile>();
+
         }
     }
 }
