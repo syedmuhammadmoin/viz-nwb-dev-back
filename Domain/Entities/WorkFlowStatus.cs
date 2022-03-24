@@ -11,9 +11,7 @@ namespace Domain.Entities
 {
     public class WorkFlowStatus : BaseEntity<int>
     {
-        [Required]
         public string Status { get; private set; }
-        [Required]
         public DocumentStatus State { get; private set; }
         public StatusType Type { get; private set; }
 

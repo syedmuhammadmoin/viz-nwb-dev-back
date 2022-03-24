@@ -11,15 +11,11 @@ namespace Domain.Entities
 {
     public class WorkFlowMaster : BaseEntity<int>
     {
-        [Required]
         [MaxLength(100)]
         public string Name { get; private set; }
-        [Required]
         public DocType DocType { get; private set; }
-        [Required]
         public bool IsActive { get; private set; }
         public virtual List<WorkFlowTransition> WorkflowTransitions { get; private set; }
-
 
         protected WorkFlowMaster()
         {
