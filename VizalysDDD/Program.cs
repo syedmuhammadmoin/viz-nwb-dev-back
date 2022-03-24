@@ -55,7 +55,8 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         builder =>
         {
-            builder.WithOrigins("http://localhost:4200")
+            builder.WithOrigins("http://localhost:4200",
+                                "http://nwbtest.vizalys.com")
                                         .AllowAnyHeader()
                                         .AllowAnyMethod();
         });
