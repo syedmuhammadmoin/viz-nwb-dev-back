@@ -19,5 +19,13 @@ namespace Domain.Entities
         {
 
         }
+
+        public WorkFlowStatus(int id, string status, DocumentStatus state, StatusType type)
+        {
+            Id = id;
+            Status = status;
+            State = state;
+            Type = type;
+        }
     }
 }
