@@ -9,11 +9,9 @@ namespace Domain.Interfaces
 {
     public interface IWorkFlowRepository : IGenericRepository<WorkFlowMaster, int>
     {
-        Task<WorkFlowMaster> Find(ISpecification<WorkFlowMaster> specification);
     }
 
     public interface IWorkFlowStatusRepository : IGenericRepository<WorkFlowStatus, int>
     {
-
     }
 }
