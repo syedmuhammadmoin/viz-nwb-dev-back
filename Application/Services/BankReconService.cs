@@ -77,11 +77,11 @@ namespace Application.Services
                 {
                     if (stmtAmount == reconciledTotalStmtAmount)
                     {
-                        bankStmtLine.updateStatus(ReconStatus.Reconciled);
+                        bankStmtLine.updateStatus(DocumentStatus.Reconciled);
                     }
                     else
                     {
-                        bankStmtLine.updateStatus(ReconStatus.Partial);
+                        bankStmtLine.updateStatus(DocumentStatus.Partial);
                     }
                 }
 
@@ -90,7 +90,7 @@ namespace Application.Services
 
                 if (paymentTotalAmount == reconciledTotalPayment)
                 {
-                    payment.setReconStatus(ReconStatus.Reconciled);
+                    payment.setReconStatus(DocumentStatus.Reconciled);
 
                     var bankAccount = await _unitOfWork.BankAccount.GetByClearingAccountId(payment.PaymentRegisterId);
                     if (payment.PaymentType == PaymentType.Inflow)
@@ -152,7 +152,7 @@ namespace Application.Services
                 }
                 else
                 {
-                    payment.setReconStatus(ReconStatus.Partial);
+                    payment.setReconStatus(DocumentStatus.Partial);
                 }
                 await _unitOfWork.SaveAsync();
                 _unitOfWork.Commit();

@@ -45,7 +45,7 @@ namespace Application.Services
                         line.Reference,
                         line.StmtDate,
                         line.Label,
-                        ReconStatus.Unreconciled,
+                        DocumentStatus.Unreconciled,
                         line.Debit,
                         line.Credit);
                         
@@ -116,7 +116,7 @@ namespace Application.Services
 
             foreach (var line in bankStmt.BankStmtLines)
             {
-                if (line.BankReconStatus != ReconStatus.Unreconciled)
+                if (line.BankReconStatus != DocumentStatus.Unreconciled)
                 {
                     return new Response<BankStmtDto>("Statement lines already reconciled");
                 }
@@ -164,7 +164,7 @@ namespace Application.Services
                             (int)Convert.ToSingle(worksheet.Cells[row, 1].Value),
                             (DateTime)worksheet.Cells[row, 2].Value,
                             worksheet.Cells[row, 3].Value.ToString().Trim(),
-                            ReconStatus.Unreconciled,
+                            DocumentStatus.Unreconciled,
                             Convert.ToDecimal(worksheet.Cells[row, 4].Value),
                             Convert.ToDecimal(worksheet.Cells[row, 5].Value)
                             ));
