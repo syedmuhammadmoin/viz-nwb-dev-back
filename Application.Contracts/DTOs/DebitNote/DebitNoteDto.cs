@@ -13,8 +13,12 @@ namespace Application.Contracts.DTOs
         public string DocNo { get; set; }
         public int VendorId { get; set; }
         public string VendorName { get; set; }
+        public Guid PayableAccountId { get; set; }
+        public string PayableAccountName { get; set; }
         public DateTime NoteDate { get; set; }
         public DocumentStatus Status { get; set; }
+        public int CampusId { get; set; }
+        public string CampusName { get; set; }
         public decimal TotalBeforeTax { get; set; }
         public decimal TotalTax { get; set; }
         public decimal TotalAmount { get; set; }
