@@ -183,7 +183,7 @@ namespace Application.Services
                     transaction.Id,
                     line.AccountId,
                     dbn.VendorId,
-                    line.LocationId,
+                    line.WarehouseId,
                     line.Description,
                     'C',
                     amount + tax

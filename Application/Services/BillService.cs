@@ -179,7 +179,7 @@ namespace Application.Services
                     transaction.Id,
                     line.AccountId,
                     bill.VendorId,
-                    line.LocationId,
+                    line.WarehouseId,
                     line.Description,
                     'D',
                     amount + tax

@@ -180,7 +180,7 @@ namespace Application.Services
                     transaction.Id,
                     line.AccountId,
                     inv.CustomerId,
-                    line.LocationId,
+                    line.WarehouseId,
                     line.Description,
                     'C',
                     line.Price * line.Quantity
@@ -197,7 +197,7 @@ namespace Application.Services
                         transaction.Id,
                         line.AccountId,
                         inv.CustomerId,
-                        line.LocationId,
+                        line.WarehouseId,
                         line.Description,
                         'C',
                         tax

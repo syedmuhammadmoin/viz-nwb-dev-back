@@ -49,8 +49,7 @@ namespace Application.Services
 
         public async Task<Response<WarehouseDto>> GetByIdAsync(int id)
         {
-            var specification = new WarehouseSpecs();
-            var warehouse = await _unitOfWork.Warehouse.GetById(id, specification);
+            var warehouse = await _unitOfWork.Warehouse.GetById(id);
             if (warehouse == null)
                 return new Response<WarehouseDto>("Not found");
 

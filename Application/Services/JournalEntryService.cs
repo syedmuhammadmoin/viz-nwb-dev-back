@@ -197,7 +197,7 @@ namespace Application.Services
                     transaction.Id,
                     line.AccountId,
                     line.BusinessPartnerId,
-                    line.LocationId,
+                    line.WarehouseId,
                     line.Description,
                     line.Debit > 0 && line.Credit <= 0 ? 'D' : 'C',
                     line.Debit > 0 && line.Credit <= 0 ? line.Debit : line.Credit

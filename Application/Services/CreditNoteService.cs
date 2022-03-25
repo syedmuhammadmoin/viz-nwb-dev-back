@@ -177,7 +177,7 @@ namespace Application.Services
                     transaction.Id,
                     line.AccountId,
                     crn.CustomerId,
-                    line.LocationId,
+                    line.WarehouseId,
                     line.Description,
                     'D',
                     line.Price * line.Quantity
@@ -194,7 +194,7 @@ namespace Application.Services
                         transaction.Id,
                         line.AccountId,
                         crn.CustomerId,
-                        line.LocationId,
+                        line.WarehouseId,
                         line.Description,
                         'D',
                         tax
