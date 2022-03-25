@@ -16,11 +16,12 @@ namespace Application.Contracts.DTOs
         public string Branch { get; set; }
         public decimal OpeningBalance { get; set; }
         public DateTime OpeningBalanceDate { get; set; }
-        public string Currency { get; set; }
         public Guid ChAccountId { get; set; }
         public string ChAccountName { get; set; }
         public Guid ClearingAccountId { get; set; }
         public string ClearingAccount { get; set; }
+        public int CampusId { get; set; }
+        public string CampusName { get; set; }
         public int TransactionId { get; set; }
     }
 }
