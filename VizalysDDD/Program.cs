@@ -16,9 +16,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 //Add services
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
-builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IWarehouseService, WarehouseService>();
-builder.Services.AddScoped<ILocationService, LocationService>();
 
 builder.Services.AddScoped<IBusinessPartnerService, BusinessPartnerService>();
 builder.Services.AddScoped<ILevel4Service, Level4Service>();
