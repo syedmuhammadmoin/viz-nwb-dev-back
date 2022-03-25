@@ -16,6 +16,8 @@ namespace Application.Contracts.DTOs
         public DocumentStatus Status { get; set; }
         public decimal TotalDebit { get; set; }
         public decimal TotalCredit { get; set; }
+        public int CampusId { get; set; }
+        public string CampusName { get; set; }
         public int TransactionId { get; set; }
         public virtual List<JournalEntryLinesDto> JournalEntryLines { get; set; }
     }

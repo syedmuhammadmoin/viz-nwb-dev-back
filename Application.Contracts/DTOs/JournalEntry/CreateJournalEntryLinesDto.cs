@@ -23,6 +23,6 @@ namespace Application.Contracts.DTOs
         [Range(0, double.MaxValue, ErrorMessage = "Please enter a positive value")]
         public decimal Credit { get; set; }
         [Required]
-        public int LocationId { get; set; }
+        public int WarehouseId { get; set; }
     }
 }

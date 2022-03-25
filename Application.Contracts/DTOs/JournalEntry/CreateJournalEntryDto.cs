@@ -14,6 +14,8 @@ namespace Application.Contracts.DTOs
         [MaxLength(200)]
         public string Description { get; set; }
         [Required]
+        public int CampusId { get; set; }
+        [Required]
         public bool isSubmit { get; set; }
         [Required]
         public virtual List<CreateJournalEntryLinesDto> JournalEntryLines { get; set; }
