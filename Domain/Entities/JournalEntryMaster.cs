@@ -23,6 +23,9 @@ namespace Domain.Entities
         public decimal TotalDebit { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalCredit { get; private set; }
+        public int CampusId { get; private set; }
+        [ForeignKey("CampusId")]
+        public Campus Campus { get; private set; }
         public int? TransactionId { get; private set; }
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }

@@ -30,6 +30,9 @@ namespace Domain.Entities
         public int StatusId { get; private set; }
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get; private set; }
+        public int CampusId { get; private set; }
+        [ForeignKey("CampusId")]
+        public Campus Campus { get; private set; }
         public int? TransactionId { get; private set; }
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }

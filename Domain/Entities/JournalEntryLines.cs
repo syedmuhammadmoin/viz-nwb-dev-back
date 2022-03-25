@@ -23,9 +23,9 @@ namespace Domain.Entities
         public decimal Debit { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Credit { get; private set; }
-        public int LocationId { get; private set; }
-        [ForeignKey("LocationId")]
-        public Location Location { get; private set; }
+        public int? WarehouseId { get; private set; }
+        [ForeignKey("WarehouseId")]
+        public Warehouse Warehouse { get; private set; }
         public int MasterId { get; private set; }
         [ForeignKey("MasterId ")]
         public JournalEntryMaster JournalEntryMaster { get; private set; }

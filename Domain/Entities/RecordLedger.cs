@@ -14,7 +14,8 @@ namespace Domain.Entities
         public int TransactionId { get; private set; }
         public Guid Level4_id { get; private set; }
         public int? BusinessPartnerId { get; private set; }
-        public int? LocationId { get; private set; }
+        public int? WarehouseId { get; private set; }
+        public int? CampusId { get; private set; }
         [MaxLength(500)]
         public string Description { get; private set; }
         
@@ -28,8 +29,11 @@ namespace Domain.Entities
         [ForeignKey("BusinessPartnerId")]
         public BusinessPartner BusinessPartner { get; private set; }
 
-        [ForeignKey("LocationId")]
-        public Location Location { get; private set; }
+        [ForeignKey("WarehouseId")]
+        public Warehouse Warehouse { get; private set; }
+
+        [ForeignKey("CampusId")]
+        public Campus Campus { get; private set; }
 
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
@@ -38,12 +42,12 @@ namespace Domain.Entities
         {
 
         }
-        public RecordLedger(int transactionId, Guid level4_id, int? businessPartnerId, int? locationId, string description, char sign, decimal amount)
+        public RecordLedger(int transactionId, Guid level4_id, int? businessPartnerId, int? warehouseId, string description, char sign, decimal amount)
         {
             TransactionId = transactionId;
             Level4_id = level4_id;
             BusinessPartnerId = businessPartnerId;
-            LocationId = locationId;
+            WarehouseId = warehouseId;
             Description = description;
             Sign = sign;
             Amount = amount;

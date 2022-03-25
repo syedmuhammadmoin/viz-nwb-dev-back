@@ -13,18 +13,10 @@ namespace Domain.Entities
     public class BusinessPartner : BaseEntity<int>
     {
         public BusinessPartnerType BusinessPartnerType { get; private set; }
-        [MaxLength(150)]
-        public string Entity { get; private set; }
         [MaxLength(100)]
         public string Name { get; private set; }
         [MaxLength(20)]
         public string CNIC { get; private set; }
-        [MaxLength(50)]
-        public string Country { get; private set; }
-        [MaxLength(50)]
-        public string State { get; private set; }
-        [MaxLength(50)]
-        public string City { get; private set; }
         [MaxLength(200)]
         public string Address { get; private set; }
         [MaxLength(20)]
@@ -52,7 +44,6 @@ namespace Domain.Entities
 
         protected BusinessPartner()
         {
-
         }
     }
 }
