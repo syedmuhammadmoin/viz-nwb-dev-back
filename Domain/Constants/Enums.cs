@@ -17,15 +17,11 @@ namespace Domain.Constants
         Vendor,
         Employee
     }
-    public enum PurchasedOrSold
-    { 
-        Purchased,
-        Sold
-    }
     public enum ProductType
     {
         Consumable,
-        Service
+        Service,
+        Asset
     }
     public enum DocumentStatus
     {
