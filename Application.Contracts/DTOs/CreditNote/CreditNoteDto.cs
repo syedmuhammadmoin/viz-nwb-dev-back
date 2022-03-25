@@ -14,6 +14,10 @@ namespace Application.Contracts.DTOs
         public int CustomerId { get; set; }
         public string CustomerName { get; set; }
         public DateTime NoteDate { get; set; }
+        public Guid ReceivableAccountId { get;  set; }
+        public string ReceivableAccountName { get;  set; }
+        public int CampusId { get; set; }
+        public string CampusName { get; set; }
         public DocumentStatus Status { get; set; }
         public decimal TotalBeforeTax { get; set; }
         public decimal TotalTax { get; set; }

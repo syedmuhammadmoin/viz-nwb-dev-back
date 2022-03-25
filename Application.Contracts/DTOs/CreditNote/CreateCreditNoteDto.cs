@@ -15,6 +15,8 @@ namespace Application.Contracts.DTOs
         [Required]
         public DateTime NoteDate { get; set; }
         [Required]
+        public int CampusId { get; set; }
+        [Required]
         public bool isSubmit { get; set; }
         public virtual List<CreateCreditNoteLinesDto> CreditNoteLines { get; set; }
     }
