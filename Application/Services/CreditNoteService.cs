@@ -96,6 +96,10 @@ namespace Application.Services
                 return new Response<CreditNoteDto>("Lines are required");
 
             var crn = _mapper.Map<CreditNoteMaster>(entity);
+            
+            //setting BusinessPartnerReceivable
+            var er = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
+            crn.setReceivableAccount(er.AccountReceivableId);
 
             //Setting status
             crn.setStatus(status);
@@ -138,6 +142,10 @@ namespace Application.Services
             if (crn.StatusId != 1 && crn.StatusId != 2)
                 return new Response<CreditNoteDto>("Only draft document can be edited");
 
+            //setting BusinessPartnerReceivable
+            var er = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
+            crn.setReceivableAccount(er.AccountReceivableId);
+            
             crn.setStatus(status);
 
             _unitOfWork.CreateTransaction();

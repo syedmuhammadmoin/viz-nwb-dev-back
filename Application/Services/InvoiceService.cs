@@ -100,6 +100,10 @@ namespace Application.Services
 
             var inv = _mapper.Map<InvoiceMaster>(entity);
 
+            //setting BusinessPartnerReceivable
+            var er = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
+            inv.setReceivableAccount(er.AccountReceivableId); 
+
             //Setting status
             inv.setStatus(status);
 
@@ -140,6 +144,10 @@ namespace Application.Services
 
             if (inv.StatusId != 1 && inv.StatusId != 2)
                 return new Response<InvoiceDto>("Only draft document can be edited");
+
+            //setting BusinessPartnerReceivable
+            var er = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
+            inv.setReceivableAccount(er.AccountReceivableId);
 
             inv.setStatus(status);
 
