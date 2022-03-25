@@ -16,8 +16,10 @@ namespace Infrastructure.Specifications
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
             AddInclude(i=> i.Vendor);
+            AddInclude(i => i.PayableAccount);
+            AddInclude(i => i.Campus);
             AddInclude("BillLines.Account");
-            AddInclude("BillLines.Location");
+            AddInclude("BillLines.Warehouse");
             AddInclude("BillLines.Item");
         }
         public BillSpecs(bool forEdit)
@@ -29,8 +31,10 @@ namespace Infrastructure.Specifications
             else
             {
                 AddInclude(i=> i.Vendor);
+                AddInclude(i => i.Campus);
+                AddInclude(i => i.PayableAccount);
                 AddInclude("BillLines.Account");
-                AddInclude("BillLines.Location");
+                AddInclude("BillLines.Warehouse");
                 AddInclude("BillLines.Item");
             }
         }

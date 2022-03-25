@@ -16,8 +16,10 @@ namespace Infrastructure.Specifications
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
             AddInclude(i => i.Vendor);
+            AddInclude(i => i.PayableAccount);
+            AddInclude(i => i.Campus);
             AddInclude("DebitNoteLines.Account");
-            AddInclude("DebitNoteLines.Location");
+            AddInclude("DebitNoteLines.Warehouse");
             AddInclude("DebitNoteLines.Item");
         }
 
@@ -30,8 +32,10 @@ namespace Infrastructure.Specifications
             else
             {
                 AddInclude(i => i.Vendor);
+                AddInclude(i => i.PayableAccount);
+                AddInclude(i => i.Campus);
                 AddInclude("DebitNoteLines.Account");
-                AddInclude("DebitNoteLines.Location");
+                AddInclude("DebitNoteLines.Warehouse");
                 AddInclude("DebitNoteLines.Item");
             }
         }
