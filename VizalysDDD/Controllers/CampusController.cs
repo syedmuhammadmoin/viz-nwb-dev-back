@@ -1,7 +1,9 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +22,7 @@ namespace Vizalys.Api.Controllers
             _campusService = campusService;
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.CampusClaims.Create, Permissions.CampusClaims.View, Permissions.CampusClaims.Delete, Permissions.CampusClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<CampusDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
@@ -30,6 +33,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(campuses); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.CampusClaims.Create })]
         [HttpPost]
         public async Task<ActionResult<Response<CampusDto>>> CreateAsync(CampusDto entity)
         {
@@ -40,6 +44,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(campus); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.CampusClaims.View, Permissions.CampusClaims.Delete, Permissions.CampusClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<CampusDto>>> GetByIdAsync(int id)
         {
@@ -50,6 +55,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.CampusClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<CampusDto>>> UpdateAsync(int id, CampusDto entity)
         {
