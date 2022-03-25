@@ -12,7 +12,7 @@ namespace Vizalys.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    class ProductController : ControllerBase
+    public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
 
