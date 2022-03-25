@@ -17,7 +17,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 //Add services
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 builder.Services.AddScoped<IWarehouseService, WarehouseService>();
-
+builder.Services.AddScoped<ICampusService, CampusService>();
 builder.Services.AddScoped<IBusinessPartnerService, BusinessPartnerService>();
 builder.Services.AddScoped<ILevel4Service, Level4Service>();
 builder.Services.AddScoped<ICOAService, COAService>();
