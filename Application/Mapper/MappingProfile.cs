@@ -73,6 +73,7 @@ namespace Application.Mapper
             CreateMap<InvoiceMaster, InvoiceDto>()
               .ForMember(dto => dto.CustomerName, core => core.MapFrom(a => a.Customer.Name))
               .ForMember(dto => dto.ReceivableAccountName, core => core.MapFrom(a => a.ReceivableAccount.Name))
+              .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                 .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
 
             CreateMap<InvoiceLines, InvoiceLinesDto>()
@@ -91,6 +92,7 @@ namespace Application.Mapper
             CreateMap<BillMaster, BillDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
               .ForMember(dto => dto.PayableAccountName, core => core.MapFrom(a => a.PayableAccount.Name))
+              .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
               .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
 
             CreateMap<BillLines, BillLinesDto>()
@@ -108,8 +110,9 @@ namespace Application.Mapper
             // CreditNote Mapping
             CreateMap<CreditNoteMaster, CreditNoteDto>()
               .ForMember(dto => dto.CustomerName, core => core.MapFrom(a => a.Customer.Name))
-              .ForMember(dto => dto.ReceivableAccountName, core => core.MapFrom(a => a.ReceivableAccount.Name))
-              .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+               .ForMember(dto => dto.ReceivableAccountName, core => core.MapFrom(a => a.ReceivableAccount.Name))
+               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
+               .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
 
             CreateMap<CreditNoteLines, CreditNoteLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
@@ -127,6 +130,7 @@ namespace Application.Mapper
             CreateMap<DebitNoteMaster, DebitNoteDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
               .ForMember(dto => dto.PayableAccountName, core => core.MapFrom(a => a.PayableAccount.Name))
+              .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
               .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
 
             CreateMap<DebitNoteLines, DebitNoteLinesDto>()
@@ -161,6 +165,7 @@ namespace Application.Mapper
             // BankAccount Mapping
             CreateMap<BankAccount, BankAccountDto>()
                 .ForMember(dto => dto.ChAccountName, core => core.MapFrom(a => a.ChAccount.Name))
+                .ForMember(dto => dto.ClearingAccount, core => core.MapFrom(a => a.ClearingAccount.Name))
                 .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                 .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
             CreateMap<CreateBankAccountDto, BankAccount>();
