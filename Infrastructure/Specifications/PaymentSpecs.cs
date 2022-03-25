@@ -17,6 +17,7 @@ namespace Infrastructure.Specifications
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
             AddInclude(i => i.BusinessPartner);
             AddInclude(i => i.Account);
+            AddInclude(i => i.Campus);
             AddInclude(i => i.PaymentRegister);
         }
 
@@ -24,6 +25,7 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.BusinessPartner);
             AddInclude(i => i.Account);
+            AddInclude(i => i.Campus);
             AddInclude(i => i.PaymentRegister);
         }
 
