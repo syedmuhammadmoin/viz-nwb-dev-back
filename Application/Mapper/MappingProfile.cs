@@ -17,20 +17,15 @@ namespace Application.Mapper
             CreateMap<Organization, OrganizationDto>();
             CreateMap<CreateOrganizationDto, Organization>();
 
-            // Department Mapping
-            CreateMap<Department, DeptDto>()
-                .ForMember(dto => dto.OrgnizationName, core => core.MapFrom(a => a.Orgnization.Name));
-            CreateMap<CreateDeptDto, Department>();
+            // Campus Mapping
+            CreateMap<Campus, CampusDto>();
+            CreateMap<CampusDto, Campus>()
+                .ForMember(core => core.OrganizationId, dto => dto.MapFrom(a => 1));
 
             // Warehouse Mapping
             CreateMap<Warehouse, WarehouseDto>()
-                .ForMember(dto => dto.DepartmentName, core => core.MapFrom(a => a.Department.Name));
+                .ForMember(dto => dto.Campus, core => core.MapFrom(a => a.Campus.Name));
             CreateMap<CreateWarehouseDto, Warehouse>();
-
-            // Location Mapping
-            CreateMap<Location, LocationDto>()
-                .ForMember(dto => dto.WarehouseName, core => core.MapFrom(a => a.Warehouse.Name));
-            CreateMap<CreateLocationDto, Location>();
 
             // Level4 Mapping
             CreateMap<Level4, Level4Dto>()
@@ -66,8 +61,7 @@ namespace Application.Mapper
 
             CreateMap<JournalEntryLines, JournalEntryLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
-              .ForMember(dto => dto.BusinessPartnerName, core => core.MapFrom(a => a.BusinessPartner.Name))
-              .ForMember(dto => dto.LocationName, core => core.MapFrom(a => a.Location.Name));
+              .ForMember(dto => dto.BusinessPartnerName, core => core.MapFrom(a => a.BusinessPartner.Name));
 
             CreateMap<CreateJournalEntryDto, JournalEntryMaster>()
                .ForMember(core => core.TotalDebit, dto => dto.MapFrom(a => a.JournalEntryLines.Sum(i => i.Debit)))
@@ -78,12 +72,12 @@ namespace Application.Mapper
             // Invoice Mapping
             CreateMap<InvoiceMaster, InvoiceDto>()
               .ForMember(dto => dto.CustomerName, core => core.MapFrom(a => a.Customer.Name))
+              .ForMember(dto => dto.ReceivableAccountName, core => core.MapFrom(a => a.ReceivableAccount.Name))
                 .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
 
             CreateMap<InvoiceLines, InvoiceLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
-              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
-              .ForMember(dto => dto.LocationName, core => core.MapFrom(a => a.Location.Name));
+              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName));
 
             CreateMap<CreateInvoiceDto, InvoiceMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.InvoiceLines.Sum(e => e.Quantity * e.Price)))
@@ -96,12 +90,12 @@ namespace Application.Mapper
             // Bill Mapping
             CreateMap<BillMaster, BillDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
+              .ForMember(dto => dto.PayableAccountName, core => core.MapFrom(a => a.PayableAccount.Name))
               .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
 
             CreateMap<BillLines, BillLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
-              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
-              .ForMember(dto => dto.LocationName, core => core.MapFrom(a => a.Location.Name));
+              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName));
 
             CreateMap<CreateBillDto, BillMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.BillLines.Sum(e => e.Quantity * e.Cost)))
@@ -114,12 +108,12 @@ namespace Application.Mapper
             // CreditNote Mapping
             CreateMap<CreditNoteMaster, CreditNoteDto>()
               .ForMember(dto => dto.CustomerName, core => core.MapFrom(a => a.Customer.Name))
+              .ForMember(dto => dto.ReceivableAccountName, core => core.MapFrom(a => a.ReceivableAccount.Name))
               .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
 
             CreateMap<CreditNoteLines, CreditNoteLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
-              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
-              .ForMember(dto => dto.LocationName, core => core.MapFrom(a => a.Location.Name));
+              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName));
 
             CreateMap<CreateCreditNoteDto, CreditNoteMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.CreditNoteLines.Sum(e => e.Quantity * e.Price)))
@@ -132,12 +126,12 @@ namespace Application.Mapper
             // DebitNote Mapping
             CreateMap<DebitNoteMaster, DebitNoteDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
+              .ForMember(dto => dto.PayableAccountName, core => core.MapFrom(a => a.PayableAccount.Name))
               .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
 
             CreateMap<DebitNoteLines, DebitNoteLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
-              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
-              .ForMember(dto => dto.LocationName, core => core.MapFrom(a => a.Location.Name));
+              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName));
 
             CreateMap<CreateDebitNoteDto, DebitNoteMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => e.Quantity * e.Cost)))
