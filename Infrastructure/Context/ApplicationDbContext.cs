@@ -19,8 +19,6 @@ namespace Infrastructure.Context
 
         }
         public DbSet<Organization> Organizations { get; set; }
-        public DbSet<Department> Departments { get; set; }
-        public DbSet<Location> Locations { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
         public DbSet<Level1> Level1 { get; set; }
         public DbSet<Level2> Level2 { get; set; }
@@ -36,6 +34,7 @@ namespace Infrastructure.Context
         public DbSet<BankStmtMaster> BankStmtMaster { get; set; }
         public DbSet<BankStmtLines> BankStmtLines { get; set; }
         public DbSet<WorkFlowStatus> WorkFlowStatus { get; set; }
+        public DbSet<Campus> Campuses { get; set; }
 
         public DbSet<JournalEntryMaster> JournalEntryMaster { get; set; }
         public DbSet<JournalEntryLines> JournalEntryLines { get; set; }

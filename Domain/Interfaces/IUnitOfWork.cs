@@ -9,8 +9,6 @@ namespace Domain.Interfaces
     public interface IUnitOfWork
     {
         IOrganizationRepository Organization { get; }
-        IDepartmentRepository Department { get; }
-        ILocationRepository Location { get; }
         IWarehouseRepository Warehouse { get; }
         ICategoryRepository Category { get; }
         IBusinessPartnerRepository BusinessPartner { get; }
@@ -35,6 +33,7 @@ namespace Domain.Interfaces
         IWorkFlowRepository WorkFlow { get; }
         IWorkFlowStatusRepository WorkFlowStatus { get; }
         ITransactionReconcileRepository TransactionReconcile { get; }
+        ICampusRepository Campus { get; }
 
         Task SaveAsync();
         void CreateTransaction();

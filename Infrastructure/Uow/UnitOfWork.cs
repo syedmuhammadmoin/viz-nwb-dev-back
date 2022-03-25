@@ -16,9 +16,7 @@ namespace Infrastructure.Uow
         private IDbContextTransaction _transaction;
         public ICategoryRepository Category { get; private set; }
         public IOrganizationRepository Organization { get; private set; }
-        public IDepartmentRepository Department { get; private set; }
         public IWarehouseRepository Warehouse { get; private set; }
-        public ILocationRepository Location { get; private set; }
 
         public IBusinessPartnerRepository BusinessPartner { get; private set; }
         public IProductRepository Product { get; private set; }
@@ -45,14 +43,13 @@ namespace Infrastructure.Uow
         public IWorkFlowRepository WorkFlow { get; private set; }
         public IWorkFlowStatusRepository WorkFlowStatus { get; private set; }
         public ITransactionReconcileRepository TransactionReconcile { get; private set; }
+        public ICampusRepository Campus { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
             Organization = new OrganizationRepository(context);
-            Department = new DepartmentRepository(context);
             Warehouse = new WarehouseRepository(context);
-            Location = new LocationRepository(context);
             Category = new CategoryRepository(context);
             BusinessPartner = new BusinessPartnerRepository(context);
             Level4 = new Level4Repository(context);
@@ -73,6 +70,7 @@ namespace Infrastructure.Uow
             WorkFlow = new WorkFlowRepository(context);
             WorkFlowStatus = new WorkFlowStatusRepository(context);
             TransactionReconcile = new TransactionReconcileRepository(context);
+            Campus = new CampusRepository(context);
         }
 
         public async Task SaveAsync()
