@@ -15,15 +15,13 @@ namespace Application.Contracts.DTOs
         [MaxLength(100)]
         public string ProductName { get; set; }
         [Required]
-        public PurchasedOrSold PurchasedOrSold { get; set; }
-        [Required]
         public ProductType ProductType { get; set; }
         [Required]
         public int CategoryId { get; set; }
         [Required]
         public decimal SalesPrice { get; set; }
         [Required]
-        public decimal Cost { get; set; }
+        public decimal PurchasePrice { get; set; }
         [Required]
         public decimal SalesTax { get; set; }
         [MaxLength(100)]
