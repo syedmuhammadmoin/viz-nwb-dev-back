@@ -47,7 +47,7 @@ namespace Application.Services
             if (campus.Count() == 0)
                 return new PaginationResponse<List<CampusDto>>("List is empty");
 
-            var totalRecords = await _unitOfWork.Warehouse.TotalRecord();
+            var totalRecords = await _unitOfWork.Campus.TotalRecord();
 
             return new PaginationResponse<List<CampusDto>>(_mapper.Map<List<CampusDto>>(campus), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
