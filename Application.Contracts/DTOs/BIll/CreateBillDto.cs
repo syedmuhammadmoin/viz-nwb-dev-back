@@ -18,6 +18,8 @@ namespace Application.Contracts.DTOs
         public DateTime DueDate { get; set; }
         public string Contact { get; set; }
         [Required]
+        public int CampusId { get; set; }
+        [Required]
         public bool isSubmit { get; set; }
         [Required]
         public virtual List<CreateBillLinesDto> BillLines { get; set; }
