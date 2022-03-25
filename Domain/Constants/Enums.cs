@@ -21,7 +21,7 @@ namespace Domain.Constants
     {
         Consumable,
         Service,
-        Asset
+        FixedAsset
     }
     public enum DocumentStatus
     {
