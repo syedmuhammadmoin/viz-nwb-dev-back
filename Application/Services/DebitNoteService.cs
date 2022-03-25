@@ -100,6 +100,10 @@ namespace Application.Services
 
             var dbn = _mapper.Map<DebitNoteMaster>(entity);
 
+            //setting BusinessPartnerPayable
+            var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
+            dbn.setPayableAccountId(er.AccountPayableId);
+            
             //Setting status
             dbn.setStatus(status);
 
@@ -141,6 +145,10 @@ namespace Application.Services
             if (dbn.StatusId != 1 && dbn.StatusId != 2)
                 return new Response<DebitNoteDto>("Only draft document can be edited");
 
+            //setting BusinessPartnerPayable
+            var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
+            dbn.setPayableAccountId(er.AccountPayableId);
+            
             dbn.setStatus(status);
 
             _unitOfWork.CreateTransaction();

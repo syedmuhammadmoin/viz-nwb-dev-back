@@ -98,6 +98,10 @@ namespace Application.Services
 
             var bill = _mapper.Map<BillMaster>(entity);
 
+            //setting BusinessPartnerPayable
+            var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
+            bill.setPayableAccountId(er.AccountPayableId);
+            
             //Setting status
             bill.setStatus(status);
 
@@ -137,6 +141,10 @@ namespace Application.Services
 
             if (bill.StatusId != 1 && bill.StatusId != 2)
                 return new Response<BillDto>("Only draft document can be edited");
+
+            //setting BusinessPartnerPayable
+            var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
+            bill.setPayableAccountId(er.AccountPayableId);
 
             bill.setStatus(status);
 
