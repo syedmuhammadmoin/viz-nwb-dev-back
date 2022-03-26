@@ -20,6 +20,7 @@ builder.Services.AddScoped<IWarehouseService, WarehouseService>();
 builder.Services.AddScoped<ICampusService, CampusService>();
 builder.Services.AddScoped<IBusinessPartnerService, BusinessPartnerService>();
 builder.Services.AddScoped<ILevel4Service, Level4Service>();
+builder.Services.AddScoped<ILevel3Service, Level3Service>();
 builder.Services.AddScoped<ICOAService, COAService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
