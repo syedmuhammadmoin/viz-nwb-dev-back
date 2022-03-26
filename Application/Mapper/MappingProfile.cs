@@ -32,6 +32,9 @@ namespace Application.Mapper
                 .ForMember(dto => dto.Level3Name, core => core.MapFrom(a => a.Level3.Name));
             CreateMap<CreateLevel4Dto, Level4>();
 
+            // Level3 Mapping
+            CreateMap<Level3, Level3DropDownDto>();
+
             // Level1 Mapping
             CreateMap<Level1, Level1Dto>()
                 .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level2));
