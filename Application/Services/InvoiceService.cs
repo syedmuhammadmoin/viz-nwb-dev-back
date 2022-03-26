@@ -145,9 +145,7 @@ namespace Application.Services
             if (inv.StatusId != 1 && inv.StatusId != 2)
                 return new Response<InvoiceDto>("Only draft document can be edited");
 
-            //setting BusinessPartnerReceivable
-            var er = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
-            inv.setReceivableAccount(er.AccountReceivableId);
+            
 
             inv.setStatus(status);
 
@@ -157,6 +155,9 @@ namespace Application.Services
                 //For updating data
                 _mapper.Map<CreateInvoiceDto, InvoiceMaster>(entity, inv);
 
+                //setting BusinessPartnerReceivable
+                var er = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
+                inv.setReceivableAccount(er.AccountReceivableId);
                 await _unitOfWork.SaveAsync();
 
                 //Commiting the transaction
