@@ -33,9 +33,12 @@ namespace Application.Mapper
             CreateMap<CreateLevel4Dto, Level4>();
 
             // Level1 Mapping
-            CreateMap<Level1, Level1Dto>();
-            CreateMap<Level2, Level2Dto>();
-            CreateMap<Level3, Level3Dto>();
+            CreateMap<Level1, Level1Dto>()
+                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level2));
+            CreateMap<Level2, Level2Dto>()
+                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level3));
+            CreateMap<Level3, Level3Dto>()
+                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level4));
 
             // Category Mapping
             CreateMap<Category, CategoryDto>()
