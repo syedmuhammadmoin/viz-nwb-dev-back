@@ -46,8 +46,8 @@ namespace Application.Services
             var bankStmtLine = await _unitOfWork.BankStmtLines.GetById(entity.BankStmtId, new BankStmtLinesSpecs());
             decimal stmtAmount = bankStmtLine != null ? (bankStmtLine.Credit - bankStmtLine.Debit) < 0 ? (bankStmtLine.Credit - bankStmtLine.Debit) * -1
                 : bankStmtLine.Credit - bankStmtLine.Debit : 0;
-            
-            var reconciledStmtAmount = await _unitOfWork.BankReconciliation.GetReconciledAmountById(entity.BankStmtId, false);
+
+            var reconciledStmtAmount = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(entity.BankStmtId, false)).Sum(i => i.Amount);
             var unreconciledStmtAmount = stmtAmount - reconciledStmtAmount;
             
             if (entity.Amount > unreconciledStmtAmount)
@@ -56,7 +56,7 @@ namespace Application.Services
             // FOR PAYMENT
             var payment = await _unitOfWork.Payment.GetById(entity.PaymentId, new PaymentSpecs(true));
             decimal paymentTotalAmount = payment.GrossPayment - payment.Discount - payment.IncomeTax - payment.SalesTax;
-            var reconciledPaymentAmount = await _unitOfWork.BankReconciliation.GetReconciledAmountById(entity.PaymentId, true);
+            var reconciledPaymentAmount = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(entity.PaymentId, true)).Sum(i => i.Amount);
             decimal unreconciledPaymentAmount = paymentTotalAmount - reconciledPaymentAmount;
 
             if (entity.Amount > unreconciledPaymentAmount)
@@ -70,29 +70,30 @@ namespace Application.Services
                 await _unitOfWork.SaveAsync();
 
                 //FOR BANK STATEMENT STATUS
-                decimal reconciledTotalStmtAmount = await _unitOfWork.BankReconciliation.GetReconciledAmountById(entity.BankStmtId, true); ;
+                decimal reconciledTotalStmtAmount = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(entity.BankStmtId, false)).Sum(i => i.Amount);
                 var bankStmtLineforUpdate = await _unitOfWork.BankStmtLines.GetById(entity.BankStmtId);
 
                 if (bankStmtLineforUpdate != null)
                 {
                     if (stmtAmount == reconciledTotalStmtAmount)
                     {
-                        bankStmtLine.updateStatus(ReconStatus.Reconciled);
+                        bankStmtLine.updateStatus(DocumentStatus.Reconciled);
                     }
                     else
                     {
-                        bankStmtLine.updateStatus(ReconStatus.Partial);
+                        bankStmtLine.updateStatus(DocumentStatus.Partial);
                     }
                 }
 
                 //FOR PAYMENT STATUS
-                decimal reconciledTotalPayment = await _unitOfWork.BankReconciliation.GetReconciledAmountById(entity.PaymentId, true); ;
+                decimal reconciledTotalPayment = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(entity.PaymentId, true)).Sum(i => i.Amount);
 
                 if (paymentTotalAmount == reconciledTotalPayment)
                 {
-                    payment.setReconStatus(ReconStatus.Reconciled);
+                    payment.setReconStatus(DocumentStatus.Reconciled);
 
-                    var bankAccount = await _unitOfWork.BankAccount.GetByClearingAccountId(payment.PaymentRegisterId);
+                    var bankAccount = _unitOfWork.BankAccount.Find(new BankAccountSpecs(payment.PaymentRegisterId)).FirstOrDefault();
+                    
                     if (payment.PaymentType == PaymentType.Inflow)
                     {
                         //Add total payment in originalBank Account Ledger
@@ -152,7 +153,7 @@ namespace Application.Services
                 }
                 else
                 {
-                    payment.setReconStatus(ReconStatus.Partial);
+                    payment.setReconStatus(DocumentStatus.Partial);
                 }
                 await _unitOfWork.SaveAsync();
                 _unitOfWork.Commit();

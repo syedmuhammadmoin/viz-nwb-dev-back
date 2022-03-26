@@ -63,8 +63,7 @@ namespace Application.Services
 
         public async Task<Response<OrganizationDto>> GetByIdAsync(int id)
         {
-            var specification = new OrganizationSpecs();
-            var org = await _unitOfWork.Organization.GetById(id, specification);
+            var org = await _unitOfWork.Organization.GetById(id);
             if (org == null)
                 return new Response<OrganizationDto>("Not found");
 

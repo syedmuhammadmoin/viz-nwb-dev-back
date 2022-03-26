@@ -18,30 +18,42 @@ namespace Domain.Entities
         [MaxLength(20)]
         public string DocNo { get; private set; }
         public DateTime NoteDate { get; private set; }
+        public Guid PayableAccountId { get; private set; }
+        [ForeignKey("PayableAccountId")]
+        public Level4 PayableAccount { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalBeforeTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; private set; }
-        public DocumentStatus Status { get; private set; }
+        public int StatusId { get; set; }
+        [ForeignKey("StatusId")]
+        public WorkFlowStatus Status { get; set; }
+        public int CampusId { get; private set; }
+        [ForeignKey("CampusId")]
+        public Campus Campus { get; private set; }
         public int? TransactionId { get; private set; }
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
         public virtual List<DebitNoteLines> DebitNoteLines { get; private set; }
+
         protected DebitNoteMaster()
         {
         }
-        public void setStatus(DocumentStatus status)
-        {
-            Status = status;
-        }
 
+        public void setStatus(int statusId)
+        {
+            StatusId = statusId;
+        }
         public void setTransactionId(int transactionId)
         {
             TransactionId = transactionId;
         }
-
+        public void setPayableAccountId(Guid payableAccountId)
+        {
+            PayableAccountId = payableAccountId;
+        }
         public void CreateDocNo()
         {
             //Creating doc no..

@@ -15,14 +15,12 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 //Add services
-builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
-builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IWarehouseService, WarehouseService>();
-builder.Services.AddScoped<ILocationService, LocationService>();
-
+builder.Services.AddScoped<ICampusService, CampusService>();
 builder.Services.AddScoped<IBusinessPartnerService, BusinessPartnerService>();
 builder.Services.AddScoped<ILevel4Service, Level4Service>();
+builder.Services.AddScoped<ILevel3Service, Level3Service>();
 builder.Services.AddScoped<ICOAService, COAService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -37,7 +35,9 @@ builder.Services.AddScoped<IBankAccountService, BankAccountService>();
 builder.Services.AddScoped<IBankStmtService, BankStmtService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IBankReconService, BankReconService>();
-builder.Services.AddScoped<IBudgetService, BudgetService>();
+builder.Services.AddScoped<IWorkFlowService, WorkFlowService>();
+builder.Services.AddScoped<IWorkFlowStatusService, WorkFlowStatusService>();
+builder.Services.AddScoped<ITransactionReconcileService, TransactionReconcileService>();
 
 //Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -56,7 +56,8 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         builder =>
         {
-            builder.WithOrigins("http://localhost:4200")
+            builder.WithOrigins("http://localhost:4200",
+                                "http://nwbtest.vizalys.com")
                                         .AllowAnyHeader()
                                         .AllowAnyMethod();
         });

@@ -14,18 +14,10 @@ namespace Application.Contracts.DTOs
         [Required]
         public BusinessPartnerType BusinessPartnerType { get; set; }
         [Required]
-        public string Entity { get; set; }
-        [Required]
         public string Name { get; set; }
         [Required]
         public string CNIC { get; set; }
         public string Address { get; set; }
-        [Required]
-        public string Country { get; set; }
-        [Required]
-        public string State { get; set; }
-        [Required]
-        public string City { get; set; }
         public string Phone { get; set; }
         public string Mobile { get; set; }
         public string Email { get; set; }

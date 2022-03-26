@@ -14,18 +14,19 @@ namespace Infrastructure.Uow
     {
         private readonly ApplicationDbContext _context;
         private IDbContextTransaction _transaction;
-        public IClientRepository Client { get; private set; }
         public ICategoryRepository Category { get; private set; }
         public IOrganizationRepository Organization { get; private set; }
-        public IDepartmentRepository Department { get; private set; }
         public IWarehouseRepository Warehouse { get; private set; }
-        public ILocationRepository Location { get; private set; }
+
         public IBusinessPartnerRepository BusinessPartner { get; private set; }
         public IProductRepository Product { get; private set; }
         public ILevel4Repository Level4 { get; private set; }
+
         public ILevel1Repository Level1 { get; private set; }
         public ILevel2Repository Level2 { get; private set; }
+
         public ILevel3Repository Level3 { get; private set; }
+
         public IJournalEntryRepository JournalEntry { get; private set; }
         public IInvoiceRepository Invoice { get; private set; }
         public IBillRepository Bill{ get; private set; }
@@ -39,19 +40,22 @@ namespace Infrastructure.Uow
         public IBankStmtRepository Bankstatement { get; private set; }
         public IBankStmtLinesRepository BankStmtLines { get; private set; }
         public IBankReconRepository BankReconciliation { get; private set; }
-        public IBudgetRepository Budget { get; private set; }
+        public IWorkFlowRepository WorkFlow { get; private set; }
+        public IWorkFlowStatusRepository WorkFlowStatus { get; private set; }
+        public ITransactionReconcileRepository TransactionReconcile { get; private set; }
+        public ICampusRepository Campus { get; private set; }
+        public IWorkFlowTransitionRepository WorkFlowTransition { get; private set; }
+
 
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
-            Client = new ClientRepository(context);
             Organization = new OrganizationRepository(context);
-            Department = new DepartmentRepository(context);
             Warehouse = new WarehouseRepository(context);
-            Location = new LocationRepository(context);
             Category = new CategoryRepository(context);
             BusinessPartner = new BusinessPartnerRepository(context);
             Level4 = new Level4Repository(context);
+            Level3 = new Level3Repository(context);
             Product = new ProductRepository(context);
             JournalEntry = new JournalEntryRepository(context);
             Invoice = new InvoiceRepository(context);
@@ -66,7 +70,11 @@ namespace Infrastructure.Uow
             Bankstatement = new BankStmtRepository(context);
             BankStmtLines = new BankStmtLinesRepository(context);
             BankReconciliation = new BankReconRepository(context);
-            Budget = new BudgetRepository(context);
+            WorkFlow = new WorkFlowRepository(context);
+            WorkFlowStatus = new WorkFlowStatusRepository(context);
+            WorkFlowTransition = new WorkFlowTransitionRepository(context);
+            TransactionReconcile = new TransactionReconcileRepository(context);
+            Campus = new CampusRepository(context);
         }
 
         public async Task SaveAsync()

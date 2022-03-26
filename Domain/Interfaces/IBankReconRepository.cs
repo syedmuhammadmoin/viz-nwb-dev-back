@@ -9,6 +9,5 @@ namespace Domain.Interfaces
 {
     public interface IBankReconRepository : IGenericRepository<BankReconciliation, int>
     {
-        Task<decimal> GetReconciledAmountById(int id, bool isPaymetId);
     }
 }

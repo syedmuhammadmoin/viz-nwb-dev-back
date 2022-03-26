@@ -17,6 +17,8 @@ namespace Infrastructure.Specifications
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
             AddInclude(i => i.BusinessPartner);
             AddInclude(i => i.Account);
+            AddInclude(i => i.Campus);
+            AddInclude(i => i.Status);
             AddInclude(i => i.PaymentRegister);
         }
 
@@ -24,11 +26,23 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.BusinessPartner);
             AddInclude(i => i.Account);
+            AddInclude(i => i.Campus);
+            AddInclude(i => i.Status);
             AddInclude(i => i.PaymentRegister);
         }
 
-        public PaymentSpecs(bool forRecon) : base(p => p.BankReconStatus != ReconStatus.Reconciled)
+        public PaymentSpecs(bool forRecon) : base(p => p.BankReconStatus != DocumentStatus.Reconciled)
         {
+        }
+        public PaymentSpecs(int transactionId) :
+            base(p => (p.Status.State == DocumentStatus.Unpaid
+            || p.Status.State == DocumentStatus.Partial) && (p.TransactionId == transactionId))
+        { 
+        
+        }
+        public PaymentSpecs(string forWorkFlow) : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
+        {
+            AddInclude(i => i.Status);
         }
     }
 }

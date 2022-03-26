@@ -17,20 +17,24 @@ namespace Domain.Constants
         Vendor,
         Employee
     }
-    public enum PurchasedOrSold
-    { 
-        Purchased,
-        Sold
-    }
     public enum ProductType
     {
         Consumable,
-        Service
+        Service,
+        FixedAsset
     }
     public enum DocumentStatus
     {
         Draft,
-        Submitted
+        Rejected,
+        Unpaid,
+        Partial,
+        Paid,
+        Submitted,
+        Reviewed,
+        Cancelled,
+        Unreconciled,
+        Reconciled
     }
     public enum PaymentType
     {
@@ -60,10 +64,15 @@ namespace Domain.Constants
         Quotation,
         Requisition
     }
-    public enum ReconStatus
+    public enum ActionButton
     {
-        Unreconciled,
-        Partial,
-        Reconciled
+        Approve,
+        Reject
+    }
+    public enum StatusType
+    {
+        Custom,
+        PreDefined,
+        PreDefinedInList,
     }
 }

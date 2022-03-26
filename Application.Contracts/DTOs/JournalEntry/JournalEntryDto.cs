@@ -13,10 +13,15 @@ namespace Application.Contracts.DTOs
         public string DocNo { get; set; }
         public DateTime Date { get; set; }
         public string Description { get; set; }
-        public DocumentStatus Status { get; set; }
+        public int StatusId { get; set; }
+        public string Status { get; set; }
+        public DocumentStatus State { get; set; }
         public decimal TotalDebit { get; set; }
         public decimal TotalCredit { get; set; }
+        public int CampusId { get; set; }
+        public string CampusName { get; set; }
         public int TransactionId { get; set; }
         public virtual List<JournalEntryLinesDto> JournalEntryLines { get; set; }
+        public bool IsAllowedRole { get; set; }
     }
 }

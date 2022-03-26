@@ -23,12 +23,16 @@ namespace Domain.Entities
         public Level4()
         {
         }
-
         public Level4(string name, Guid level3_id, Guid level1_id)
         {
             Name = name;
             Level3_id = level3_id;
             Level1_id = level1_id;
+        }
+
+        public void setLevel1Id(Guid level1Id) 
+        {
+            Level1_id = level1Id;
         }
     }
 }

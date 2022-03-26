@@ -140,14 +140,21 @@ namespace Domain.Constants
             public const string Edit = "Permissions.TransactionReconClaims.Edit";
             public const string Delete = "Permissions.TransactionReconClaims.Delete";
         }
-        public static class BudgetClaims
+        public static class WorkflowClaims
         {
-            public const string View = "Permissions.BudgetClaims.View";
-            public const string Create = "Permissions.BudgetClaims.Create";
-            public const string Edit = "Permissions.BudgetClaims.Edit";
-            public const string Delete = "Permissions.BudgetClaims.Delete";
+            public const string View = "Permissions.WorkflowClaims.View";
+            public const string Create = "Permissions.WorkflowClaims.Create";
+            public const string Edit = "Permissions.WorkflowClaims.Edit";
+            public const string Delete = "Permissions.WorkflowClaims.Delete";
         }
 
+        public static class WorkflowStatusClaims
+        {
+            public const string View = "Permissions.WorkflowStatusClaims.View";
+            public const string Create = "Permissions.WorkflowStatusClaims.Create";
+            public const string Edit = "Permissions.WorkflowStatusClaims.Edit";
+            public const string Delete = "Permissions.WorkflowStatusClaims.Delete";
+        }
         //Transaction Forms
         public static class InvoiceClaims
         {
@@ -171,6 +178,14 @@ namespace Domain.Constants
             public const string Create = "Permissions.PaymentClaims.Create";
             public const string Edit = "Permissions.PaymentClaims.Edit";
             public const string Delete = "Permissions.PaymentClaims.Delete";
+        }
+
+        public static class CampusClaims
+        {
+            public const string View = "Permissions.CampusClaims.View";
+            public const string Create = "Permissions.CampusClaims.Create";
+            public const string Edit = "Permissions.CampusClaims.Edit";
+            public const string Delete = "Permissions.CampusClaims.Delete";
         }
 
         public static class CreditNoteClaims

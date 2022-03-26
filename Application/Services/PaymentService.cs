@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
@@ -7,6 +8,7 @@ using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +21,13 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public PaymentService(IUnitOfWork unitOfWork, IMapper mapper)
+        public PaymentService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Response<PaymentDto>> CreateAsync(CreatePaymentDto entity)
@@ -34,7 +38,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.SavePay(entity, DocumentStatus.Draft);
+                return await this.SavePay(entity, 1);
             }
         }
 
@@ -63,7 +67,30 @@ namespace Application.Services
             if (payment == null)
                 return new Response<PaymentDto>("Not found");
 
-            return new Response<PaymentDto>(_mapper.Map<PaymentDto>(payment), "Returning value");
+            var paymentDto = _mapper.Map<PaymentDto>(payment);
+
+            paymentDto.IsAllowedRole = false;
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Payment)).FirstOrDefault();
+
+
+            if (workflow != null)
+            {
+                var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == paymentDto.StatusId));
+
+                if (transition != null)
+                {
+                    var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+                    foreach (var role in currentUserRoles)
+                    {
+                        if (transition.AllowedRole.Name == role)
+                        {
+                            paymentDto.IsAllowedRole = true;
+                        }
+                    }
+                }
+            }
+            return new Response<PaymentDto>(paymentDto, "Returning value");
         }
 
         public async Task<Response<PaymentDto>> UpdateAsync(CreatePaymentDto entity)
@@ -74,24 +101,30 @@ namespace Application.Services
             }
             else
             {
-                return await this.UpdatePay(entity, DocumentStatus.Draft);
+                return await this.UpdatePay(entity, 1);
             }
         }
-
 
         private async Task<Response<PaymentDto>> SubmitPay(CreatePaymentDto entity)
         {
+            var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Payment)).FirstOrDefault();
+           
+            if (checkingActiveWorkFlows == null)
+            {
+                return new Response<PaymentDto>("No workflow found for this document");
+            }
+
             if (entity.Id == null)
             {
-                return await this.SavePay(entity, DocumentStatus.Submitted);
+                return await this.SavePay(entity, 6);
             }
             else
             {
-                return await this.UpdatePay(entity, DocumentStatus.Submitted);
+                return await this.UpdatePay(entity, 6);
             }
         }
 
-        private async Task<Response<PaymentDto>> SavePay(CreatePaymentDto entity, DocumentStatus status)
+        private async Task<Response<PaymentDto>> SavePay(CreatePaymentDto entity, int status)
         {
             var payment = _mapper.Map<Payment>(entity);
 
@@ -109,12 +142,6 @@ namespace Application.Services
                 payment.CreateDocNo();
                 await _unitOfWork.SaveAsync();
 
-                //Adding Invoice to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(payment);
-                }
-
                 //Commiting the transaction 
                 _unitOfWork.Commit();
 
@@ -128,15 +155,15 @@ namespace Application.Services
             }
         }
 
-        private async Task<Response<PaymentDto>> UpdatePay(CreatePaymentDto entity, DocumentStatus status)
+        private async Task<Response<PaymentDto>> UpdatePay(CreatePaymentDto entity, int status)
         {
             var payment = await _unitOfWork.Payment.GetById((int)entity.Id);
 
             if (payment == null)
                 return new Response<PaymentDto>("Not found");
 
-            if (payment.Status == DocumentStatus.Submitted)
-                return new Response<PaymentDto>("Payment already submitted");
+            if (payment.StatusId != 1 && payment.StatusId != 2)
+                return new Response<PaymentDto>("Only draft payments can be edited");
 
             payment.setStatus(status);
 
@@ -146,13 +173,8 @@ namespace Application.Services
                 //For updating data
                 _mapper.Map<CreatePaymentDto, Payment>(entity, payment);
 
+                //saving into database
                 await _unitOfWork.SaveAsync();
-
-                //Adding Invoice to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(payment);
-                }
 
                 //Commiting the transaction
                 _unitOfWork.Commit();
@@ -315,6 +337,68 @@ namespace Application.Services
             }
 
             await _unitOfWork.SaveAsync();
+        }
+
+        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
+        {
+            var getPayment = await _unitOfWork.Payment.GetById(data.DocId, new PaymentSpecs());
+
+            if (getPayment == null)
+            {
+                return new Response<bool>("Payment with the input id not found");
+            }
+            if (getPayment.Status.State == DocumentStatus.Unpaid || getPayment.Status.State == DocumentStatus.Partial || getPayment.Status.State == DocumentStatus.Paid)
+            {
+                return new Response<bool>("Payment already approved");
+            }
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Payment)).FirstOrDefault();
+
+            if (workflow == null)
+            {
+                return new Response<bool>("No activated workflow found for this document");
+            }
+            var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == getPayment.StatusId && x.Action == data.Action));
+
+            if (transition == null)
+            {
+                return new Response<bool>("No transition found");
+            }
+            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+            _unitOfWork.CreateTransaction();
+            try
+            {
+                foreach (var role in currentUserRoles)
+                {
+                    if (transition.AllowedRole.Name == role)
+                    {
+                        getPayment.setStatus(transition.NextStatusId);
+                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                        {
+                            await AddToLedger(getPayment);
+                            _unitOfWork.Commit();
+                            return new Response<bool>(true, "Payment Approved");
+                        }
+                        if (transition.NextStatus.State == DocumentStatus.Rejected)
+                        {
+                            await _unitOfWork.SaveAsync();
+                            _unitOfWork.Commit();
+                            return new Response<bool>(true, "Payment Rejected");
+                        }
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Payment Reviewed");
+                    }
+                }
+
+                return new Response<bool>("User does not have allowed role");
+
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<bool>(ex.Message);
+            }
         }
     }
 }

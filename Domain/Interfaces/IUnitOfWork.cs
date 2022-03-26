@@ -8,10 +8,7 @@ namespace Domain.Interfaces
 {
     public interface IUnitOfWork
     {
-        IClientRepository Client { get; }
         IOrganizationRepository Organization { get; }
-        IDepartmentRepository Department { get; }
-        ILocationRepository Location { get; }
         IWarehouseRepository Warehouse { get; }
         ICategoryRepository Category { get; }
         IBusinessPartnerRepository BusinessPartner { get; }
@@ -33,7 +30,11 @@ namespace Domain.Interfaces
         IBankStmtRepository Bankstatement { get; }
         IBankStmtLinesRepository BankStmtLines { get; }
         IBankReconRepository BankReconciliation { get; }
-        IBudgetRepository Budget { get; }
+        IWorkFlowRepository WorkFlow { get; }
+        IWorkFlowStatusRepository WorkFlowStatus { get; }
+        ITransactionReconcileRepository TransactionReconcile { get; }
+        ICampusRepository Campus { get; }
+        IWorkFlowTransitionRepository WorkFlowTransition { get; }
 
         Task SaveAsync();
         void CreateTransaction();

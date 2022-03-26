@@ -23,14 +23,15 @@ namespace Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal OpeningBalance { get; private set; }
         public DateTime OpeningBalanceDate { get; private set; }
-        [MaxLength(30)]
-        public string Currency { get; private set; }
         public Guid ChAccountId { get; private set; }
         [ForeignKey("ChAccountId")]
         public Level4 ChAccount { get; private set; }
         public Guid ClearingAccountId { get; private set; }
         [ForeignKey("ClearingAccountId")]
         public Level4 ClearingAccount { get; private set; }
+        public int CampusId { get; private set; }
+        [ForeignKey("CampusId")]
+        public Campus Campus { get; private set; }
         public int TransactionId { get; private set; }
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }

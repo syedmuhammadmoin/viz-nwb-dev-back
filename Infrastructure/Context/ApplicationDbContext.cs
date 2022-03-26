@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Domain.Constants;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -17,19 +18,24 @@ namespace Infrastructure.Context
         {
 
         }
-
-        public DbSet<Client> Clients { get; set; }
         public DbSet<Organization> Organizations { get; set; }
-        public DbSet<Department> Departments { get; set; }
-        public DbSet<Location> Locations { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
         public DbSet<Level1> Level1 { get; set; }
         public DbSet<Level2> Level2 { get; set; }
         public DbSet<Level3> Level3 { get; set; }
         public DbSet<Level4> Level4 { get; set; }
-        public DbSet<Category> Categories { get; set; }
         public DbSet<BusinessPartner> BusinessPartners { get; set; }
+        public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<CashAccount> CashAccounts { get; set; }
+        public DbSet<BankAccount> BankAccounts { get; set; }
+        public DbSet<Transactions> Transactions { get; set; }
+        public DbSet<RecordLedger> RecordLedger { get; set; }
+        public DbSet<BankStmtMaster> BankStmtMaster { get; set; }
+        public DbSet<BankStmtLines> BankStmtLines { get; set; }
+        public DbSet<WorkFlowStatus> WorkFlowStatus { get; set; }
+        public DbSet<Campus> Campuses { get; set; }
+
         public DbSet<JournalEntryMaster> JournalEntryMaster { get; set; }
         public DbSet<JournalEntryLines> JournalEntryLines { get; set; }
         public DbSet<InvoiceMaster> InvoiceMaster { get; set; }
@@ -41,16 +47,10 @@ namespace Infrastructure.Context
         public DbSet<DebitNoteMaster> DebitNoteMaster { get; set; }
         public DbSet<DebitNoteLines> DebitNoteLines { get; set; }
         public DbSet<Payment> Payments { get; set; }
-        public DbSet<Transactions> Transactions { get; set; }
-        public DbSet<RecordLedger> RecordLedger { get; set; }
-        public DbSet<CashAccount> CashAccounts { get; set; }
-        public DbSet<BankAccount> BankAccounts { get; set; }
-        public DbSet<BankStmtMaster> BankStmtMaster { get; set; }
-        public DbSet<BankStmtLines> BankStmtLines { get; set; }
-        public DbSet<BudgetMaster> BudgetMaster { get; set; }
-        public DbSet<BudgetLines> BudgetLines { get; set; }
-
         public DbSet<BankReconciliation> BankReconciliations { get; set; }
+        public DbSet<WorkFlowMaster> WorkFlowMaster { get; set; }
+        public DbSet<WorkFlowTransition> WorkFlowTransitions { get; set; }
+        public DbSet<TransactionReconcile> TransactionReconciles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -61,7 +61,14 @@ namespace Infrastructure.Context
             {
                 foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
             }
-            
+
+            //BankStmt
+            modelBuilder.Entity<BankStmtLines>()
+            .HasOne(tc => tc.BankStmtMaster)
+            .WithMany(c => c.BankStmtLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+
             //JournalEntry
             modelBuilder.Entity<JournalEntryLines>()
             .HasOne(tc => tc.JournalEntryMaster)
@@ -92,16 +99,10 @@ namespace Infrastructure.Context
             .WithMany(c => c.DebitNoteLines)
             .OnDelete(DeleteBehavior.Cascade);
 
-            //DebitNote
-            modelBuilder.Entity<BankStmtLines>()
-            .HasOne(tc => tc.BankStmtMaster)
-            .WithMany(c => c.BankStmtLines)
-            .OnDelete(DeleteBehavior.Cascade);
-
-            //Budget
-            modelBuilder.Entity<BudgetLines>()
-            .HasOne(tc => tc.BudgetMaster)
-            .WithMany(c => c.BudgetLines)
+            //Workflow
+            modelBuilder.Entity<WorkFlowTransition>()
+            .HasOne(tc => tc.WorkflowMaster)
+            .WithMany(c => c.WorkflowTransitions)
             .OnDelete(DeleteBehavior.Cascade);
 
             //Changing Identity users and roles tables name
@@ -133,6 +134,24 @@ namespace Infrastructure.Context
             {
                 entity.ToTable("UserTokens");
             });
+
+            //Adding seeds in organization table
+            modelBuilder.Entity<Organization>()
+                .HasData(
+                    new Organization(1, "SBBU")
+                );
+
+            //Adding seeds in workflow status
+            modelBuilder.Entity<WorkFlowStatus>()
+                .HasData(
+                    new WorkFlowStatus(1, "Draft", DocumentStatus.Draft, StatusType.PreDefined),
+                    new WorkFlowStatus(2, "Rejected", DocumentStatus.Rejected, StatusType.PreDefinedInList),
+                    new WorkFlowStatus(3, "Unpaid", DocumentStatus.Unpaid, StatusType.PreDefined),
+                    new WorkFlowStatus(4, "Partial Paid", DocumentStatus.Partial, StatusType.PreDefined),
+                    new WorkFlowStatus(5, "Paid", DocumentStatus.Paid, StatusType.PreDefined),
+                    new WorkFlowStatus(6, "Submitted", DocumentStatus.Submitted, StatusType.PreDefinedInList),
+                    new WorkFlowStatus(7, "Cancelled", DocumentStatus.Cancelled, StatusType.PreDefined)
+                );
 
             //Adding seeds of Chart of Account 
             //Adding in Level 1

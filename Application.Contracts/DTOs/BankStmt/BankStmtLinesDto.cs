@@ -17,7 +17,7 @@ namespace Application.Contracts.DTOs
         public string Label { get; set; }
         public decimal Debit { get; set; }
         public decimal Credit { get; set; }
-        public ReconStatus ReconStatus { get; set; }
+        public DocumentStatus ReconStatus { get; set; }
         public int MasterId { get; set; }
 
     }

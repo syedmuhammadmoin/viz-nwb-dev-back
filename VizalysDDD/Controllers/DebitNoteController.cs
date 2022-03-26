@@ -68,5 +68,15 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
+
+        [ClaimRequirement("Permission", new string[] { Permissions.DebitNoteClaims.View })]
+        [HttpPost("workflow")]
+        public async Task<ActionResult<Response<bool>>> CheckWorkFlow([FromBody] ApprovalDto data)
+        {
+            var result = await _debitNoteService.CheckWorkFlow(data);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+            return BadRequest(result);
+        }
     }
 }

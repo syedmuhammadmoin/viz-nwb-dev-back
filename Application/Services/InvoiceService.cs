@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
@@ -7,6 +8,7 @@ using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +21,13 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public InvoiceService(IUnitOfWork unitOfWork, IMapper mapper)
+        public InvoiceService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Response<InvoiceDto>> CreateAsync(CreateInvoiceDto entity)
@@ -34,7 +38,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.SaveINV(entity, DocumentStatus.Draft);
+                return await this.SaveINV(entity, 1);
             }
         }
 
@@ -59,7 +63,30 @@ namespace Application.Services
             if (inv == null)
                 return new Response<InvoiceDto>("Not found");
 
-            return new Response<InvoiceDto>(_mapper.Map<InvoiceDto>(inv), "Returning value");
+            var invoiceDto = _mapper.Map<InvoiceDto>(inv);
+
+           invoiceDto.IsAllowedRole = false;
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Invoice)).FirstOrDefault();
+
+
+            if (workflow != null)
+            {
+                var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == invoiceDto.StatusId));
+
+                if (transition != null)
+                {
+                    var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+                    foreach (var role in currentUserRoles)
+                    {
+                        if (transition.AllowedRole.Name == role)
+                        {
+                            invoiceDto.IsAllowedRole = true;
+                        }
+                    }
+                }
+            }
+            return new Response<InvoiceDto>(invoiceDto, "Returning value");
         }
 
         public async Task<Response<InvoiceDto>> UpdateAsync(CreateInvoiceDto entity)
@@ -70,7 +97,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.UpdateINV(entity, DocumentStatus.Draft);
+                return await this.UpdateINV(entity, 1);
             }
         }
 
@@ -79,26 +106,97 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
+        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
+        {
+            var getInvoice = await _unitOfWork.Invoice.GetById(data.DocId, new InvoiceSpecs(true));
+
+            if (getInvoice == null)
+            {
+                return new Response<bool>("Invoice with the input id not found");
+            }
+            if (getInvoice.Status.State == DocumentStatus.Unpaid || getInvoice.Status.State == DocumentStatus.Partial || getInvoice.Status.State == DocumentStatus.Paid)
+            {
+                return new Response<bool>("Invoice already approved");
+            }
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Invoice)).FirstOrDefault();
+
+            if (workflow == null)
+            {
+                return new Response<bool>("No activated workflow found for this document");
+            }
+            var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == getInvoice.StatusId && x.Action == data.Action));
+
+            if (transition == null)
+            {
+                return new Response<bool>("No transition found");
+            }
+            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+            _unitOfWork.CreateTransaction();
+            try 
+            {
+                foreach (var role in currentUserRoles)
+                {
+                    if (transition.AllowedRole.Name == role)
+                    {
+                        getInvoice.setStatus(transition.NextStatusId);
+                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                        {
+                            await AddToLedger(getInvoice);
+                            _unitOfWork.Commit();
+                            return new Response<bool>(true, "Invoice Approved");
+                        }
+                        if (transition.NextStatus.State == DocumentStatus.Rejected)
+                        {
+                            await _unitOfWork.SaveAsync();
+                            _unitOfWork.Commit();
+                            return new Response<bool>(true, "Invoice Rejected");
+                        }
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Invoice Reviewed");
+                    }
+                }
+                
+                return new Response<bool> ("User does not have allowed role" );
+               
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<bool>(ex.Message);
+            }
+        }
 
         //Private Methods for Invoice
         private async Task<Response<InvoiceDto>> SubmitINV(CreateInvoiceDto entity)
         {
+            var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Invoice)).FirstOrDefault();
+
+            if (checkingActiveWorkFlows == null)
+            {
+                return new Response<InvoiceDto>("No workflow found for Invoice");
+            }
             if (entity.Id == null)
             {
-                return await this.SaveINV(entity, DocumentStatus.Submitted);
+                return await this.SaveINV(entity, 6);
             }
             else
             {
-                return await this.UpdateINV(entity, DocumentStatus.Submitted);
+                return await this.UpdateINV(entity, 6);
             }
         }
 
-        private async Task<Response<InvoiceDto>> SaveINV(CreateInvoiceDto entity, DocumentStatus status)
+        private async Task<Response<InvoiceDto>> SaveINV(CreateInvoiceDto entity, int status)
         {
             if (entity.InvoiceLines.Count() == 0)
                 return new Response<InvoiceDto>("Lines are required");
 
             var inv = _mapper.Map<InvoiceMaster>(entity);
+
+            //setting BusinessPartnerReceivable
+            var er = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
+            inv.setReceivableAccount(er.AccountReceivableId);
 
             //Setting status
             inv.setStatus(status);
@@ -114,12 +212,6 @@ namespace Application.Services
                 inv.CreateDocNo();
                 await _unitOfWork.SaveAsync();
 
-                //Adding Invoice to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(inv);
-                }
-
                 //Commiting the transaction 
                 _unitOfWork.Commit();
 
@@ -133,7 +225,7 @@ namespace Application.Services
             }
         }
 
-        private async Task<Response<InvoiceDto>> UpdateINV(CreateInvoiceDto entity, DocumentStatus status)
+        private async Task<Response<InvoiceDto>> UpdateINV(CreateInvoiceDto entity, int status)
         {
             if (entity.InvoiceLines.Count() == 0)
                 return new Response<InvoiceDto>("Lines are required");
@@ -144,8 +236,10 @@ namespace Application.Services
             if (inv == null)
                 return new Response<InvoiceDto>("Not found");
 
-            if (inv.Status == DocumentStatus.Submitted)
-                return new Response<InvoiceDto>("Invoice already submitted");
+            if (inv.StatusId != 1 && inv.StatusId != 2)
+                return new Response<InvoiceDto>("Only draft document can be edited");
+
+
 
             inv.setStatus(status);
 
@@ -155,13 +249,10 @@ namespace Application.Services
                 //For updating data
                 _mapper.Map<CreateInvoiceDto, InvoiceMaster>(entity, inv);
 
+                //setting BusinessPartnerReceivable
+                var er = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
+                inv.setReceivableAccount(er.AccountReceivableId);
                 await _unitOfWork.SaveAsync();
-
-                //Adding Invoice to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(inv);
-                }
 
                 //Commiting the transaction
                 _unitOfWork.Commit();
@@ -192,7 +283,7 @@ namespace Application.Services
                     transaction.Id,
                     line.AccountId,
                     inv.CustomerId,
-                    line.LocationId,
+                    line.WarehouseId,
                     line.Description,
                     'C',
                     line.Price * line.Quantity
@@ -209,7 +300,7 @@ namespace Application.Services
                         transaction.Id,
                         line.AccountId,
                         inv.CustomerId,
-                        line.LocationId,
+                        line.WarehouseId,
                         line.Description,
                         'C',
                         tax
@@ -232,5 +323,6 @@ namespace Application.Services
             await _unitOfWork.Ledger.Add(addReceivableInLedger);
             await _unitOfWork.SaveAsync();
         }
+
     }
 }

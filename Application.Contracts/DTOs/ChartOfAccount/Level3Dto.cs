@@ -10,6 +10,6 @@ namespace Application.Contracts.DTOs
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public IEnumerable<Level4Dto> Level4 { get; set; }
+        public IEnumerable<Level4Dto> children { get; set; }
     }
 }

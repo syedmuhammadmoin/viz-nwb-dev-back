@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
@@ -7,6 +8,7 @@ using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +21,14 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public BillService(IUnitOfWork unitOfWork, IMapper mapper)
+        public BillService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
+
         }
 
         public async Task<Response<BillDto>> CreateAsync(CreateBillDto entity)
@@ -34,7 +39,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.SaveBILL(entity, DocumentStatus.Draft);
+                return await this.SaveBILL(entity, 1);
             }
         }
 
@@ -58,8 +63,30 @@ namespace Application.Services
             var bill = await _unitOfWork.Bill.GetById(id, specification);
             if (bill == null)
                 return new Response<BillDto>("Not found");
+            var billDto = _mapper.Map<BillDto>(bill);
 
-            return new Response<BillDto>(_mapper.Map<BillDto>(bill), "Returning value");
+            billDto.IsAllowedRole = false;
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Bill)).FirstOrDefault();
+
+
+            if (workflow != null)
+            {
+                var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == billDto.StatusId));
+
+                if (transition != null)
+                {
+                    var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+                    foreach (var role in currentUserRoles)
+                    {
+                        if (transition.AllowedRole.Name == role)
+                        {
+                            billDto.IsAllowedRole = true;
+                        }
+                    }
+                }
+            }
+            return new Response<BillDto>(billDto, "Returning value");
         }
 
         public async Task<Response<BillDto>> UpdateAsync(CreateBillDto entity)
@@ -70,7 +97,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.UpdateBILL(entity, DocumentStatus.Draft);
+                return await this.UpdateBILL(entity, 1);
             }
         }
         public Task<Response<int>> DeleteAsync(int id)
@@ -81,23 +108,33 @@ namespace Application.Services
         //Private Methods for Bills
         private async Task<Response<BillDto>> SubmitBILL(CreateBillDto entity)
         {
+            var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Bill)).FirstOrDefault();
+
+            if (checkingActiveWorkFlows == null)
+            {
+                return new Response<BillDto>("No workflow found for Bill");
+            }
+
             if (entity.Id == null)
             {
-                return await this.SaveBILL(entity, DocumentStatus.Submitted);
+                return await this.SaveBILL(entity, 6);
             }
             else
             {
-                return await this.UpdateBILL(entity, DocumentStatus.Submitted);
+                return await this.UpdateBILL(entity, 6);
             }
         }
-
-        private async Task<Response<BillDto>> SaveBILL(CreateBillDto entity, DocumentStatus status)
+        private async Task<Response<BillDto>> SaveBILL(CreateBillDto entity, int status)
         {
             if (entity.BillLines.Count() == 0)
                 return new Response<BillDto>("Lines are required");
 
             var bill = _mapper.Map<BillMaster>(entity);
 
+            //setting BusinessPartnerPayable
+            var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
+            bill.setPayableAccountId(er.AccountPayableId);
+            
             //Setting status
             bill.setStatus(status);
 
@@ -112,12 +149,6 @@ namespace Application.Services
                 bill.CreateDocNo();
                 await _unitOfWork.SaveAsync();
 
-                //Adding bill to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(bill);
-                }
-
                 //Commiting the transaction 
                 _unitOfWork.Commit();
 
@@ -130,7 +161,7 @@ namespace Application.Services
                 return new Response<BillDto>(ex.Message);
             }
         }
-        private async Task<Response<BillDto>> UpdateBILL(CreateBillDto entity, DocumentStatus status)
+        private async Task<Response<BillDto>> UpdateBILL(CreateBillDto entity, int status)
         {
             if (entity.BillLines.Count() == 0)
                 return new Response<BillDto>("Lines are required");
@@ -141,8 +172,8 @@ namespace Application.Services
             if (bill == null)
                 return new Response<BillDto>("Not found");
 
-            if (bill.Status == DocumentStatus.Submitted)
-                return new Response<BillDto>("Bill already submitted");
+            if (bill.StatusId != 1 && bill.StatusId != 2)
+                return new Response<BillDto>("Only draft document can be edited");
 
             bill.setStatus(status);
 
@@ -152,13 +183,11 @@ namespace Application.Services
                 //For updating data
                 _mapper.Map<CreateBillDto, BillMaster>(entity, bill);
 
-                await _unitOfWork.SaveAsync();
+                //setting BusinessPartnerPayable
+                var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
+                bill.setPayableAccountId(er.AccountPayableId);
 
-                //Adding bill to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(bill);
-                }
+                await _unitOfWork.SaveAsync();
 
                 //Commiting the transaction
                 _unitOfWork.Commit();
@@ -191,7 +220,7 @@ namespace Application.Services
                     transaction.Id,
                     line.AccountId,
                     bill.VendorId,
-                    line.LocationId,
+                    line.WarehouseId,
                     line.Description,
                     'D',
                     amount + tax
@@ -215,6 +244,68 @@ namespace Application.Services
 
             await _unitOfWork.Ledger.Add(addPayableInLedger);
             await _unitOfWork.SaveAsync();
+        }
+
+        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
+        {
+            var getBill = await _unitOfWork.Bill.GetById(data.DocId, new BillSpecs(true));
+
+            if (getBill == null)
+            {
+                return new Response<bool>("Bill with the input id not found");
+            }
+            if (getBill.Status.State == DocumentStatus.Unpaid || getBill.Status.State == DocumentStatus.Partial || getBill.Status.State == DocumentStatus.Paid)
+            {
+                return new Response<bool>("Bill already approved");
+            }
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Bill)).FirstOrDefault();
+
+            if (workflow == null)
+            {
+                return new Response<bool>("No activated workflow found for this document");
+            }
+            var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == getBill.StatusId && x.Action == data.Action));
+
+            if (transition == null)
+            {
+                return new Response<bool>("No transition found");
+            }
+            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+            _unitOfWork.CreateTransaction();
+            try
+            {
+                foreach (var role in currentUserRoles)
+                {
+                    if (transition.AllowedRole.Name == role)
+                    {
+                        getBill.setStatus(transition.NextStatusId);
+                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                        {
+                            await AddToLedger(getBill);
+                            _unitOfWork.Commit();
+                            return new Response<bool>(true, "Bill Approved");
+                        }
+                        if (transition.NextStatus.State == DocumentStatus.Rejected)
+                        {
+                            await _unitOfWork.SaveAsync();
+                            _unitOfWork.Commit();
+                            return new Response<bool>(true, "Bill Rejected");
+                        }
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Bill Reviewed");
+                    }
+                }
+
+                return new Response<bool>("User does not have allowed role");
+
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<bool>(ex.Message);
+            }
         }
     }
 }

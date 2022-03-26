@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
@@ -7,6 +8,7 @@ using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +21,13 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public DebitNoteService(IUnitOfWork unitOfWork, IMapper mapper)
+        public DebitNoteService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor; 
         }
 
         public async Task<Response<DebitNoteDto>> CreateAsync(CreateDebitNoteDto entity)
@@ -34,7 +38,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.SaveDBN(entity, DocumentStatus.Draft);
+                return await this.SaveDBN(entity, 1);
             }
         }
 
@@ -59,7 +63,30 @@ namespace Application.Services
             if (dbn == null)
                 return new Response<DebitNoteDto>("Not found");
 
-            return new Response<DebitNoteDto>(_mapper.Map<DebitNoteDto>(dbn), "Returning value");
+            var debitNoteDto = _mapper.Map<DebitNoteDto>(dbn);
+
+            debitNoteDto.IsAllowedRole = false;
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.DebitNote)).FirstOrDefault();
+
+
+            if (workflow != null)
+            {
+                var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == debitNoteDto.StatusId));
+
+                if (transition != null)
+                {
+                    var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+                    foreach (var role in currentUserRoles)
+                    {
+                        if (transition.AllowedRole.Name == role)
+                        {
+                            debitNoteDto.IsAllowedRole = true;
+                        }
+                    }
+                }
+            }
+            return new Response<DebitNoteDto>(debitNoteDto, "Returning value");
         }
 
         public async Task<Response<DebitNoteDto>> UpdateAsync(CreateDebitNoteDto entity)
@@ -70,7 +97,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.UpdateDBN(entity, DocumentStatus.Draft);
+                return await this.UpdateDBN(entity, 1);
             }
         }
 
@@ -83,23 +110,34 @@ namespace Application.Services
 
         private async Task<Response<DebitNoteDto>> SubmitDBN(CreateDebitNoteDto entity)
         {
+            var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.DebitNote)).FirstOrDefault();
+
+            if (checkingActiveWorkFlows == null)
+            {
+                return new Response<DebitNoteDto>("No workflow found for Debit Note");
+            }
+
             if (entity.Id == null)
             {
-                return await this.SaveDBN(entity, DocumentStatus.Submitted);
+                return await this.SaveDBN(entity, 6);
             }
             else
             {
-                return await this.UpdateDBN(entity, DocumentStatus.Submitted);
+                return await this.UpdateDBN(entity, 6);
             }
         }
 
-        private async Task<Response<DebitNoteDto>> SaveDBN(CreateDebitNoteDto entity, DocumentStatus status)
+        private async Task<Response<DebitNoteDto>> SaveDBN(CreateDebitNoteDto entity, int status)
         {
             if (entity.DebitNoteLines.Count() == 0)
                 return new Response<DebitNoteDto>("Lines are required");
 
             var dbn = _mapper.Map<DebitNoteMaster>(entity);
 
+            //setting BusinessPartnerPayable
+            var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
+            dbn.setPayableAccountId(er.AccountPayableId);
+            
             //Setting status
             dbn.setStatus(status);
 
@@ -114,12 +152,6 @@ namespace Application.Services
                 dbn.CreateDocNo();
                 await _unitOfWork.SaveAsync();
 
-                //Adding DebitNote to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(dbn);
-                }
-
                 //Commiting the transaction 
                 _unitOfWork.Commit();
 
@@ -133,7 +165,7 @@ namespace Application.Services
             }
         }
 
-        private async Task<Response<DebitNoteDto>> UpdateDBN(CreateDebitNoteDto entity, DocumentStatus status)
+        private async Task<Response<DebitNoteDto>> UpdateDBN(CreateDebitNoteDto entity, int status)
         {
             if (entity.DebitNoteLines.Count() == 0)
                 return new Response<DebitNoteDto>("Lines are required");
@@ -144,9 +176,13 @@ namespace Application.Services
             if (dbn == null)
                 return new Response<DebitNoteDto>("Not found");
 
-            if (dbn.Status == DocumentStatus.Submitted)
-                return new Response<DebitNoteDto>("DebitNote already submitted");
+            if (dbn.StatusId != 1 && dbn.StatusId != 2)
+                return new Response<DebitNoteDto>("Only draft document can be edited");
 
+            //setting BusinessPartnerPayable
+            var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
+            dbn.setPayableAccountId(er.AccountPayableId);
+            
             dbn.setStatus(status);
 
             _unitOfWork.CreateTransaction();
@@ -156,12 +192,6 @@ namespace Application.Services
                 _mapper.Map<CreateDebitNoteDto, DebitNoteMaster>(entity, dbn);
 
                 await _unitOfWork.SaveAsync();
-
-                //Adding DebitNote to Ledger
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(dbn);
-                }
 
                 //Commiting the transaction
                 _unitOfWork.Commit();
@@ -195,7 +225,7 @@ namespace Application.Services
                     transaction.Id,
                     line.AccountId,
                     dbn.VendorId,
-                    line.LocationId,
+                    line.WarehouseId,
                     line.Description,
                     'C',
                     amount + tax
@@ -217,6 +247,68 @@ namespace Application.Services
 
             await _unitOfWork.Ledger.Add(addPayableInLedger);
             await _unitOfWork.SaveAsync();
+        }
+
+        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
+        {
+           var getDebitNote = await _unitOfWork.DebitNote.GetById(data.DocId, new DebitNoteSpecs(true));
+
+            if (getDebitNote == null)
+            {
+                return new Response<bool>("DebitNote with the input id not found");
+            }
+            if (getDebitNote.Status.State == DocumentStatus.Unpaid || getDebitNote.Status.State == DocumentStatus.Partial || getDebitNote.Status.State == DocumentStatus.Paid)
+            {
+                return new Response<bool>("DebitNote already approved");
+            }
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.DebitNote)).FirstOrDefault();
+
+            if (workflow == null)
+            {
+                return new Response<bool>("No activated workflow found for this document");
+            }
+            var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == getDebitNote.StatusId && x.Action == data.Action));
+
+            if (transition == null)
+            {
+                return new Response<bool>("No transition found");
+            }
+            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+            _unitOfWork.CreateTransaction();
+            try 
+            {
+                foreach (var role in currentUserRoles)
+                {
+                    if (transition.AllowedRole.Name == role)
+                    {
+                        getDebitNote.setStatus(transition.NextStatusId);
+                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                        {
+                            await AddToLedger(getDebitNote);
+                            _unitOfWork.Commit();
+                            return new Response<bool>(true, "DebitNote Approved");
+                        }
+                        if (transition.NextStatus.State == DocumentStatus.Rejected)
+                        {
+                            await _unitOfWork.SaveAsync();
+                            _unitOfWork.Commit();
+                            return new Response<bool>(true, "DebitNote Rejected");
+                        }
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "DebitNote Reviewed");
+                    }
+                }
+                
+                return new Response<bool> ("User does not have allowed role" );
+               
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<bool>(ex.Message);
+            }
         }
     }
 }

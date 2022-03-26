@@ -17,12 +17,17 @@ namespace Domain.Entities
         public DateTime Date { get; private set; }
         [MaxLength(500)]
         public string Description { get; private set; }
-        [Required]
-        public DocumentStatus Status { get; private set; }
+       
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalDebit { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalCredit { get; private set; }
+        public int StatusId { get; private set; }
+        [ForeignKey("StatusId")]
+        public WorkFlowStatus Status { get; private set; }
+        public int CampusId { get; private set; }
+        [ForeignKey("CampusId")]
+        public Campus Campus { get; private set; }
         public int? TransactionId { get; private set; }
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
@@ -32,9 +37,9 @@ namespace Domain.Entities
         {
         }
 
-        public void setStatus(DocumentStatus status)
+        public void setStatus(int statusId)
         {
-            Status = status;
+            StatusId = statusId;
         }
 
         public void setTransactionId(int transactionId)

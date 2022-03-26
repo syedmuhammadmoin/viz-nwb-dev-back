@@ -24,6 +24,6 @@ namespace Application.Contracts.DTOs
         public string Description { get; set; }
         [Required]
         public Guid AccountId { get; set; }
-        public int? LocationId { get; set; }
+        public int? WarehouseId { get; set; }
     }
 }

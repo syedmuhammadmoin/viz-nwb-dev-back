@@ -14,7 +14,6 @@ namespace Domain.Entities
     {
         [MaxLength(100)]
         public string ProductName { get; private set; }
-        public PurchasedOrSold PurchasedOrSold { get; private set; }
         public ProductType ProductType { get; private set; }
         public int CategoryId { get; private set; }
         [ForeignKey("CategoryId")]
@@ -22,7 +21,7 @@ namespace Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal SalesPrice { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Cost { get; private set; }
+        public decimal PurchasePrice { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal SalesTax { get; private set; }
         [MaxLength(100)]

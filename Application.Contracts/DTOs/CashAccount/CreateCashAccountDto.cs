@@ -18,6 +18,9 @@ namespace Application.Contracts.DTOs
         [Required]
         [Range(0.00, double.MaxValue, ErrorMessage = "Please enter a positive value")]
         public decimal OpeningBalance { get; set; }
-        public string Currency { get; set; }
+        [Required]
+        public DateTime OpeningBalanceDate { get; set; }
+        [Required]
+        public int CampusId { get; set; }
     }
 }

@@ -17,6 +17,6 @@ namespace Application.Contracts.DTOs
         //public decimal Amount { get; set; }
         //public decimal ReconciledAmount { get; set; }
         //public decimal UnreconciledAmount { get; set; }
-        public ReconStatus BankReconStatus { get; set; }
+        public DocumentStatus BankReconStatus { get; set; }
     }
 }

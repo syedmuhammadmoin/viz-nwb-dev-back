@@ -211,7 +211,7 @@ namespace Application.Services
                 UserId = id,
                 UserName = user.UserName,
                 Email = user.Email,
-                UserRole = viewModel
+                UserRoles = viewModel
             };
             return new Response<EditUserDto>(model, "Returning Roles");
         }
@@ -243,7 +243,7 @@ namespace Application.Services
                 // Removing all roles from user
                 var updateRole = await _userManager.RemoveFromRolesAsync(user, roles);
                 //Updating roles for user
-                updateRole = await _userManager.AddToRolesAsync(user, model.UserRole.Where(x => x.Selected).Select(y => y.RoleName));
+                updateRole = await _userManager.AddToRolesAsync(user, model.UserRoles.Where(x => x.Selected).Select(y => y.RoleName));
 
                 if (!updateRole.Succeeded)
                 {
@@ -534,6 +534,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.BankStatementClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.CashAccountClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.ChartOfAccountClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.CampusClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.CategoriesClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.ProductsClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.Level4Claims), "12");
@@ -545,6 +546,8 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.CreditNoteClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.DebitNoteClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.JournalEntryClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.WorkflowStatusClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.WorkflowClaims), "12");
 
             var allClaimValues = allPermissions.Select(a => a.Value).ToList();
             return new Response<List<string>>(allClaimValues,"Returning all claims");

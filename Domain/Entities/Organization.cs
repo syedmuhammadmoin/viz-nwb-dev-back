@@ -38,14 +38,17 @@ namespace Domain.Entities
         public string IncomeTaxId { get; private set; }
         [MaxLength(100)]
         public string GSTRegistrationNo{ get; private set; }
-        public DateTime StartDate { get; private set; }
-        public DateTime FiscalYear { get; private set; }
-        public int ClientId { get; private set; }
-        public Client Client { get; private set; }
+        public DateTime? StartDate { get; private set; }
+        public DateTime? FiscalYear { get; private set; }
 
         protected Organization()
         {
 
+        }
+        public Organization(int id, string name)
+        {
+            Id = id;
+            Name = name;
         }
     }
 }
