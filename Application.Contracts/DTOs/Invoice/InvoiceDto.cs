@@ -21,6 +21,7 @@ namespace Application.Contracts.DTOs
         public string Contact { get; set; }
         public int StatusId { get; set; }
         public string Status { get; set; }
+        public DocumentStatus State { get; set; }
         public int CampusId { get; set; }
         public string CampusName { get; set; }
         public decimal TotalBeforeTax { get; private set; }
@@ -28,5 +29,6 @@ namespace Application.Contracts.DTOs
         public decimal TotalAmount { get; set; }
         public int TransactionId { get; set; }
         public virtual List<InvoiceLinesDto> InvoiceLines { get; set; }
+        public bool IsAllowedRole { get; set; }
     }
 }

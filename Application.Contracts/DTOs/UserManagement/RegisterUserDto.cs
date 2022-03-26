@@ -35,7 +35,7 @@ namespace Application.Contracts.DTOs
         [StringLength(50)]
         [EmailAddress]
         public string Email { get; set; }
-        public IList<UserRolesDto> UserRole { get; set; }
+        public IList<UserRolesDto> UserRoles { get; set; }
     }
     public class UserRolesDto
     {
