@@ -26,8 +26,14 @@ namespace Application.Services
         }
         public async Task<Response<Level4Dto>> CreateAsync(CreateLevel4Dto entity)
         {
-
+            var level3 = _unitOfWork.Level3.Find(new Level3Specs(entity.Level3_id)).FirstOrDefault();
+            if (level3 == null)
+            {
+                return new Response<Level4Dto>("Invalid Level3 Account");
+            }
             var level4 = _mapper.Map<Level4>(entity);
+
+            level4.setLevel1Id(level3.Level2.Level1_id);
             var result = await _unitOfWork.Level4.Add(level4);
             await _unitOfWork.SaveAsync();
             return new Response<Level4Dto>(_mapper.Map<Level4Dto>(result), "Created successfully");
