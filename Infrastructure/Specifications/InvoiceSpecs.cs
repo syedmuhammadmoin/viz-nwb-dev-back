@@ -18,6 +18,7 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Customer);
             AddInclude(i => i.ReceivableAccount);
             AddInclude(i => i.Campus);
+            AddInclude(i => i.Status);
             AddInclude("InvoiceLines.Account");
             AddInclude("InvoiceLines.Warehouse");
             AddInclude("InvoiceLines.Item");
@@ -32,8 +33,9 @@ namespace Infrastructure.Specifications
             else
             {
                 AddInclude(i => i.Customer);
+                AddInclude(i => i.Status);
                 AddInclude(i => i.Campus);
-                AddInclude(i => i.ReceivableAccount); 
+                AddInclude(i => i.ReceivableAccount);
                 AddInclude("InvoiceLines.Account");
                 AddInclude("InvoiceLines.Warehouse");
                 AddInclude("InvoiceLines.Item");
@@ -45,6 +47,10 @@ namespace Infrastructure.Specifications
            || p.Status.State == DocumentStatus.Partial) && (p.TransactionId == transactionId))
         {
 
+            AddInclude(i => i.Status);
+        }
+        public InvoiceSpecs() : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
+        {
             AddInclude(i => i.Status);
         }
     }

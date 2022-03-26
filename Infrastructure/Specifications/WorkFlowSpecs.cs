@@ -15,7 +15,8 @@ namespace Infrastructure.Specifications
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            AddInclude("WorkflowTransitions.WorkFlowStatus");
+            AddInclude("WorkflowTransitions.CurrentStatus");
+            AddInclude("WorkflowTransitions.NextStatus");
         }
         public WorkFlowSpecs(bool forEdit)
         {
@@ -25,11 +26,16 @@ namespace Infrastructure.Specifications
             }
             else
             {
-                AddInclude("WorkflowTransitions.WorkFlowStatus");
+                AddInclude("WorkflowTransitions.CurrentStatus");
+                AddInclude("WorkflowTransitions.NextStatus");
             }
         }
 
         public WorkFlowSpecs(DocType docType) : base(e => (e.DocType == docType) && (e.IsActive == true))
+        {
+        }
+
+        public WorkFlowSpecs(DocType docType, int id) : base(e => (e.DocType == docType) && (e.IsActive == true) && (e.Id != id))
         {
         }
     }
