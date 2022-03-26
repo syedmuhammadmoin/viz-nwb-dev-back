@@ -3,6 +3,7 @@ using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
+using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
@@ -27,7 +28,7 @@ namespace Application.Services
         {
             if (entity.IsActive)
             {
-                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(entity.DocType));
+                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(entity.DocType)).FirstOrDefault();
                 if (checkingActiveWorkFlows != null)
                 {
                     return new Response<WorkFlowDto>("Workflow already activated for this document");
@@ -65,9 +66,33 @@ namespace Application.Services
             return new Response<WorkFlowDto>(_mapper.Map<WorkFlowDto>(WorkFlow), "Returning value");
         }
 
-        public Task<Response<WorkFlowDto>> UpdateAsync(CreateWorkFlowDto entity)
+        public async Task<Response<WorkFlowDto>> UpdateAsync(CreateWorkFlowDto entity)
         {
-            throw new NotImplementedException();
+            var WorkFlow = await _unitOfWork.WorkFlow.GetById((int)entity.Id, new WorkFlowSpecs(true));
+
+            if (WorkFlow == null)
+                return new Response<WorkFlowDto>("Not found");
+
+            if (entity.IsActive)
+            {
+                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(entity.DocType, (int)entity.Id)).FirstOrDefault();
+                if (checkingActiveWorkFlows != null)
+                {
+                    return new Response<WorkFlowDto>("Workflow already activated for this document");
+                }
+            }
+
+            if (entity.DocType == DocType.Invoice)
+            {
+                var checkingInvoice = _unitOfWork.Invoice.Find(new InvoiceSpecs()).ToList();
+                
+                if (checkingInvoice.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Invoice is pending for this workflow");
+                }
+            }
+
+            return new Response<WorkFlowDto>(_mapper.Map<WorkFlowDto>(WorkFlow), "Created successfully");
         }
 
         public Task<Response<int>> DeleteAsync(int id)
