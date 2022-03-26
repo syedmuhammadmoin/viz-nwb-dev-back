@@ -52,6 +52,7 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaim(superAdmin, "CategoriesClaims");
             await roleManager.AddPermissionClaim(superAdmin, "ProductsClaims");
             await roleManager.AddPermissionClaim(superAdmin, "WorkflowStatusClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "WorkflowClaims");
             await roleManager.AddPermissionClaim(superAdmin, "Level4Claims");
             await roleManager.AddPermissionClaim(superAdmin, "BankReconClaims");
             await roleManager.AddPermissionClaim(superAdmin, "TransactionReconClaims");

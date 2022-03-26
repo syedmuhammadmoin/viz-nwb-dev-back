@@ -547,6 +547,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.DebitNoteClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.JournalEntryClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.WorkflowStatusClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.WorkflowClaims), "12");
 
             var allClaimValues = allPermissions.Select(a => a.Value).ToList();
             return new Response<List<string>>(allClaimValues,"Returning all claims");
