@@ -28,11 +28,15 @@ namespace Infrastructure.Specifications
             {
                 AddInclude("WorkflowTransitions.CurrentStatus");
                 AddInclude("WorkflowTransitions.NextStatus");
+                AddInclude("WorkflowTransitions.AllowedRole");
             }
         }
 
         public WorkFlowSpecs(DocType docType) : base(e => (e.DocType == docType) && (e.IsActive == true))
         {
+            AddInclude("WorkflowTransitions.AllowedRole");
+            AddInclude("WorkflowTransitions.CurrentStatus");
+            AddInclude("WorkflowTransitions.NextStatus");
         }
 
         public WorkFlowSpecs(DocType docType, int id) : base(e => (e.DocType == docType) && (e.IsActive == true) && (e.Id != id))
