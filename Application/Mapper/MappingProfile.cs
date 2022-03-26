@@ -24,7 +24,7 @@ namespace Application.Mapper
 
             // Warehouse Mapping
             CreateMap<Warehouse, WarehouseDto>()
-                .ForMember(dto => dto.Campus, core => core.MapFrom(a => a.Campus.Name));
+                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name));
             CreateMap<CreateWarehouseDto, Warehouse>();
 
             // Level4 Mapping

@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Specifications
 {
-    public class WorkflowStatusSpecs : BaseSpecification<WorkFlowStatus>
+    public class WorkFlowStatusSpecs : BaseSpecification<WorkFlowStatus>
     {
-        public WorkflowStatusSpecs(PaginationFilter filter)
+        public WorkFlowStatusSpecs(PaginationFilter filter)
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

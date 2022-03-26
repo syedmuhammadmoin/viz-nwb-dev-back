@@ -40,7 +40,7 @@ namespace Application.Services
 
             return new Response<WorkFlowDto>(_mapper.Map<WorkFlowDto>(result), "Created successfully");
         }
-        
+
         public async Task<PaginationResponse<List<WorkFlowDto>>> GetAllAsync(PaginationFilter filter)
         {
             var specification = new WorkFlowSpecs(filter);
@@ -69,6 +69,7 @@ namespace Application.Services
         {
             throw new NotImplementedException();
         }
+
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
