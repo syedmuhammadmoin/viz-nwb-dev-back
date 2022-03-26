@@ -11,8 +11,4 @@ namespace Application.Contracts.Interfaces
     public interface IWorkFlowService : ICrudService<CreateWorkFlowDto, WorkFlowDto, int, PaginationFilter>
     {
     }
-
-    public interface IWorkFlowStatusService : ICrudService<CreateWorkFlowStatusDto, WorkFlowStatusDto, int, PaginationFilter>
-    {
-    }
 }
