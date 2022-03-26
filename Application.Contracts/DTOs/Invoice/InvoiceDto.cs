@@ -19,7 +19,8 @@ namespace Application.Contracts.DTOs
         public DateTime InvoiceDate { get; set; }
         public DateTime DueDate { get; set; }
         public string Contact { get; set; }
-        public DocumentStatus Status { get; set; }
+        public int StatusId { get; set; }
+        public string Status { get; set; }
         public int CampusId { get; set; }
         public string CampusName { get; set; }
         public decimal TotalBeforeTax { get; private set; }
