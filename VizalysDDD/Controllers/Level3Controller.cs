@@ -9,6 +9,7 @@ namespace Vizalys.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class Level3Controller : ControllerBase
     {
         private readonly ILevel3Service _level3Service;
