@@ -187,6 +187,15 @@ namespace Application.Mapper
 
             //Bank Reconciliation
             CreateMap<CreateBankReconDto, BankReconciliation>();
+
+
+            // Budget Mapping
+            CreateMap<BudgetMaster, BudgetDto>();
+            CreateMap<BudgetLines, BudgetLinesDto>()
+              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
+
+            CreateMap<CreateBudgetDto, BudgetMaster>();
+            CreateMap<CreateBudgetLinesDto, BudgetLines>();
         }
     }
 }

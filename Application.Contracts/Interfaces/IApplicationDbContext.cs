@@ -36,7 +36,8 @@ namespace Application.Interfaces
         public DbSet<BankStmtMaster> BankStmtMaster { get; set; }
         public DbSet<BankStmtLines> BankStmtLines { get; set; }
         public DbSet<BankReconciliation> BankReconciliations { get; set; }
-
+        public DbSet<BudgetMaster> BudgetMaster { get; set; }
+        public DbSet<BudgetLines> BudgetLines { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
