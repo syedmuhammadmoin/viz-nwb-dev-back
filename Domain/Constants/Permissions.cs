@@ -140,7 +140,21 @@ namespace Domain.Constants
             public const string Edit = "Permissions.TransactionReconClaims.Edit";
             public const string Delete = "Permissions.TransactionReconClaims.Delete";
         }
+        public static class WorkflowClaims
+        {
+            public const string View = "Permissions.WorkflowClaims.View";
+            public const string Create = "Permissions.WorkflowClaims.Create";
+            public const string Edit = "Permissions.WorkflowClaims.Edit";
+            public const string Delete = "Permissions.WorkflowClaims.Delete";
+        }
 
+        public static class WorkflowStatusClaims
+        {
+            public const string View = "Permissions.WorkflowStatusClaims.View";
+            public const string Create = "Permissions.WorkflowStatusClaims.Create";
+            public const string Edit = "Permissions.WorkflowStatusClaims.Edit";
+            public const string Delete = "Permissions.WorkflowStatusClaims.Delete";
+        }
         //Transaction Forms
         public static class InvoiceClaims
         {
