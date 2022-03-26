@@ -341,7 +341,7 @@ namespace Application.Services
 
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
-            var getPayment = await _unitOfWork.Payment.GetById(data.DocId, new PaymentSpecs(true));
+            var getPayment = await _unitOfWork.Payment.GetById(data.DocId, new PaymentSpecs());
 
             if (getPayment == null)
             {
