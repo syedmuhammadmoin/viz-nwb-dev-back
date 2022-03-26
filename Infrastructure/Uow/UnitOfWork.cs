@@ -53,6 +53,7 @@ namespace Infrastructure.Uow
             Category = new CategoryRepository(context);
             BusinessPartner = new BusinessPartnerRepository(context);
             Level4 = new Level4Repository(context);
+            Level3 = new Level3Repository(context);
             Product = new ProductRepository(context);
             JournalEntry = new JournalEntryRepository(context);
             Invoice = new InvoiceRepository(context);
