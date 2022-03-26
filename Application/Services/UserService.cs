@@ -534,6 +534,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.BankStatementClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.CashAccountClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.ChartOfAccountClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.CampusClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.CategoriesClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.ProductsClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.Level4Claims), "12");
