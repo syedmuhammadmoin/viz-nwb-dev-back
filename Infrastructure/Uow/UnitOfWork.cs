@@ -44,6 +44,8 @@ namespace Infrastructure.Uow
         public IWorkFlowStatusRepository WorkFlowStatus { get; private set; }
         public ITransactionReconcileRepository TransactionReconcile { get; private set; }
         public ICampusRepository Campus { get; private set; }
+        public IWorkFlowTransitionRepository WorkFlowTransition { get; private set; }
+
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -70,6 +72,7 @@ namespace Infrastructure.Uow
             BankReconciliation = new BankReconRepository(context);
             WorkFlow = new WorkFlowRepository(context);
             WorkFlowStatus = new WorkFlowStatusRepository(context);
+            WorkFlowTransition = new WorkFlowTransitionRepository(context);
             TransactionReconcile = new TransactionReconcileRepository(context);
             Campus = new CampusRepository(context);
         }
