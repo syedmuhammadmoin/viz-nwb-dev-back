@@ -22,6 +22,7 @@ namespace Application.Contracts.DTOs
         [Required]
         [StringLength(50, MinimumLength = 5)]
         public string ConfirmPassword { get; set; }
+        [Required]
         public IList<UserRolesDto> UserRoles { get; set; }
     }
     public class EditUserDto
