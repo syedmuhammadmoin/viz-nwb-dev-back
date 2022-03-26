@@ -29,6 +29,7 @@ namespace Infrastructure.Specifications
             if (forEdit)
             {
                 AddInclude(i => i.DebitNoteLines);
+                AddInclude(i => i.Status);
             }
             else
             {
