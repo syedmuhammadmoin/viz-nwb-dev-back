@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,6 @@ namespace Application.Contracts.Interfaces
 {
     public interface ICreditNoteService : ICrudService<CreateCreditNoteDto, CreditNoteDto, int, PaginationFilter>
     {
-
+        Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
     }
 }

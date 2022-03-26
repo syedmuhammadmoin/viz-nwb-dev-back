@@ -68,9 +68,9 @@ namespace Application.Services
 
         public async Task<Response<WorkFlowDto>> UpdateAsync(CreateWorkFlowDto entity)
         {
-            var WorkFlow = await _unitOfWork.WorkFlow.GetById((int)entity.Id, new WorkFlowSpecs(true));
+            var workFlow = await _unitOfWork.WorkFlow.GetById((int)entity.Id, new WorkFlowSpecs(true));
 
-            if (WorkFlow == null)
+            if (workFlow == null)
                 return new Response<WorkFlowDto>("Not found");
 
             if (entity.IsActive)
@@ -92,7 +92,61 @@ namespace Application.Services
                 }
             }
 
-            return new Response<WorkFlowDto>(_mapper.Map<WorkFlowDto>(WorkFlow), "Created successfully");
+            if (entity.DocType == DocType.Bill)
+            {
+                var checkingInvoice = _unitOfWork.Bill.Find(new BillSpecs()).ToList();
+
+                if (checkingInvoice.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Bill is pending for this workflow");
+                }
+            }
+
+            if (entity.DocType == DocType.CreditNote)
+            {
+                var checkingInvoice = _unitOfWork.CreditNote.Find(new CreditNoteSpecs()).ToList();
+
+                if (checkingInvoice.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("CreditNote is pending for this workflow");
+                }
+            }
+
+            if (entity.DocType == DocType.DebitNote)
+            {
+                var checkingInvoice = _unitOfWork.DebitNote.Find(new DebitNoteSpecs()).ToList();
+
+                if (checkingInvoice.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("DebitNote is pending for this workflow");
+                }
+            }
+
+            if (entity.DocType == DocType.JournalEntry)
+            {
+                var checkingInvoice = _unitOfWork.JournalEntry.Find(new JournalEntrySpecs()).ToList();
+
+                if (checkingInvoice.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("JournalEntry is pending for this workflow");
+                }
+            }
+
+            if (entity.DocType == DocType.Payment)
+            {
+                var checkingInvoice = _unitOfWork.Payment.Find(new PaymentSpecs("")).ToList();
+
+                if (checkingInvoice.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("JournalEntry is pending for this workflow");
+                }
+            }
+
+            //For updating data
+            _mapper.Map<CreateWorkFlowDto, WorkFlowMaster>(entity, workFlow);
+            await _unitOfWork.SaveAsync();
+
+            return new Response<WorkFlowDto>(_mapper.Map<WorkFlowDto>(workFlow), "Updated successfully");
         }
 
         public Task<Response<int>> DeleteAsync(int id)

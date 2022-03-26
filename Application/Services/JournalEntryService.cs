@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
@@ -7,6 +8,7 @@ using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +21,14 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public JournalEntryService(IUnitOfWork unitOfWork, IMapper mapper)
+
+        public JournalEntryService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Response<JournalEntryDto>> CreateAsync(CreateJournalEntryDto entity)
@@ -34,7 +39,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.SaveJV(entity, DocumentStatus.Draft);
+                return await this.SaveJV(entity, 1);
             }
         }
 
@@ -46,7 +51,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.UpdateJV(entity, DocumentStatus.Draft);
+                return await this.UpdateJV(entity, 1);
             }
         }
 
@@ -66,12 +71,36 @@ namespace Application.Services
 
         public async Task<Response<JournalEntryDto>> GetByIdAsync(int id)
         {
-            var specification = new JournalEntrySpecs();
+            var specification = new JournalEntrySpecs(false);
             var jv = await _unitOfWork.JournalEntry.GetById(id, specification);
             if (jv == null)
                 return new Response<JournalEntryDto>("Not found");
 
-            return new Response<JournalEntryDto>(_mapper.Map<JournalEntryDto>(jv), "Returning value");
+
+            var jVDto = _mapper.Map<JournalEntryDto>(jv);
+
+            jVDto.IsAllowedRole = false;
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.JournalEntry)).FirstOrDefault();
+
+
+            if (workflow != null)
+            {
+                var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == jVDto.StatusId));
+
+                if (transition != null)
+                {
+                    var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+                    foreach (var role in currentUserRoles)
+                    {
+                        if (transition.AllowedRole.Name == role)
+                        {
+                            jVDto.IsAllowedRole = true;
+                        }
+                    }
+                }
+            }
+            return new Response<JournalEntryDto>(jVDto, "Returning value");
         }
 
         public Task<Response<int>> DeleteAsync(int id)
@@ -82,17 +111,23 @@ namespace Application.Services
         //Private Methods for JournalEntry
         private async Task<Response<JournalEntryDto>> SubmitJV(CreateJournalEntryDto entity)
         {
+            var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.JournalEntry)).FirstOrDefault();
+           
+            if (checkingActiveWorkFlows == null)
+            {
+                return new Response<JournalEntryDto>("No workflow found for journal voucher");
+            }
             if (entity.Id == null)
             {
-                return await this.SaveJV(entity, DocumentStatus.Submitted);
+                return await this.SaveJV(entity, 6);
             }
             else
             {
-                return await this.UpdateJV(entity, DocumentStatus.Submitted);
+                return await this.UpdateJV(entity, 6);
             }
         }
 
-        private async Task<Response<JournalEntryDto>> SaveJV(CreateJournalEntryDto entity, DocumentStatus status)
+        private async Task<Response<JournalEntryDto>> SaveJV(CreateJournalEntryDto entity, int status)
         {
             if (entity.JournalEntryLines.Count() == 0)
                 return new Response<JournalEntryDto>("Lines are required");
@@ -116,10 +151,6 @@ namespace Application.Services
                 jv.CreateDocNo();
                 await _unitOfWork.SaveAsync();
 
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(jv);
-                }
 
                 //Commiting the transaction
                 _unitOfWork.Commit();
@@ -134,7 +165,7 @@ namespace Application.Services
             }
         }
 
-        private async Task<Response<JournalEntryDto>> UpdateJV(CreateJournalEntryDto entity, DocumentStatus status)
+        private async Task<Response<JournalEntryDto>> UpdateJV(CreateJournalEntryDto entity, int status)
         {
             if (entity.JournalEntryLines.Count() == 0)
                 return new Response<JournalEntryDto>("Lines are required");
@@ -145,13 +176,13 @@ namespace Application.Services
             if (totalDebit != totalCredit)
                 return new Response<JournalEntryDto>("Sum of debit and credit must be equal");
 
-            var specification = new JournalEntrySpecs();
+            var specification = new JournalEntrySpecs(true);
             var jv = await _unitOfWork.JournalEntry.GetById((int)entity.Id, specification);
 
             if (jv == null)
                 return new Response<JournalEntryDto>("Not found");
 
-            if (jv.Status == DocumentStatus.Submitted)
+            if (jv.StatusId != 1 && jv.StatusId != 2)
                 return new Response<JournalEntryDto>("Journal voucher already submitted");
 
             jv.setStatus(status);
@@ -163,11 +194,6 @@ namespace Application.Services
                 _mapper.Map<CreateJournalEntryDto, JournalEntryMaster>(entity, jv);
 
                 await _unitOfWork.SaveAsync();
-
-                if (status == DocumentStatus.Submitted)
-                {
-                    await AddToLedger(jv);
-                }
 
                 //Commiting the transaction
                 _unitOfWork.Commit();
@@ -205,6 +231,68 @@ namespace Application.Services
 
             await _unitOfWork.Ledger.AddRange(recordLedger);
             await _unitOfWork.SaveAsync();
+        }
+
+        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
+        {
+            var getJournalEntry = await _unitOfWork.JournalEntry.GetById(data.DocId, new JournalEntrySpecs(true));
+
+            if (getJournalEntry == null)
+            {
+                return new Response<bool>("JournalEntry with the input id not found");
+            }
+            if (getJournalEntry.Status.State == DocumentStatus.Unpaid || getJournalEntry.Status.State == DocumentStatus.Partial || getJournalEntry.Status.State == DocumentStatus.Paid)
+            {
+                return new Response<bool>("JournalEntry already approved");
+            }
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.JournalEntry)).FirstOrDefault();
+
+            if (workflow == null)
+            {
+                return new Response<bool>("No activated workflow found for this document");
+            }
+            var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == getJournalEntry.StatusId && x.Action == data.Action));
+
+            if (transition == null)
+            {
+                return new Response<bool>("No transition found");
+            }
+            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+            _unitOfWork.CreateTransaction();
+            try
+            {
+                foreach (var role in currentUserRoles)
+                {
+                    if (transition.AllowedRole.Name == role)
+                    {
+                        getJournalEntry.setStatus(transition.NextStatusId);
+                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                        {
+                            await AddToLedger(getJournalEntry);
+                            _unitOfWork.Commit();
+                            return new Response<bool>(true, "JournalEntry Approved");
+                        }
+                        if (transition.NextStatus.State == DocumentStatus.Rejected)
+                        {
+                            await _unitOfWork.SaveAsync();
+                            _unitOfWork.Commit();
+                            return new Response<bool>(true, "JournalEntry Rejected");
+                        }
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "JournalEntry Reviewed");
+                    }
+                }
+
+                return new Response<bool>("User does not have allowed role");
+
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<bool>(ex.Message);
+            }
         }
     }
 }

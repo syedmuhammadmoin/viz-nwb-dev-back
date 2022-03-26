@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
@@ -7,6 +8,7 @@ using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +21,13 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CreditNoteService(IUnitOfWork unitOfWork, IMapper mapper)
+        public CreditNoteService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<Response<CreditNoteDto>> CreateAsync(CreateCreditNoteDto entity)
         {
@@ -57,8 +61,30 @@ namespace Application.Services
             var crn = await _unitOfWork.CreditNote.GetById(id, specification);
             if (crn == null)
                 return new Response<CreditNoteDto>("Not found");
+            
+            var creditNoteDto = _mapper.Map<CreditNoteDto>(crn);
 
-            return new Response<CreditNoteDto>(_mapper.Map<CreditNoteDto>(crn), "Returning value");
+            creditNoteDto.IsAllowedRole = false;
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.CreditNote)).FirstOrDefault();
+
+            if (workflow != null)
+            {
+                var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == creditNoteDto.StatusId));
+
+                if (transition != null)
+                {
+                    var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+                    foreach (var role in currentUserRoles)
+                    {
+                        if (transition.AllowedRole.Name == role)
+                        {
+                            creditNoteDto.IsAllowedRole = true;
+                        }
+                    }
+                }
+            }
+            return new Response<CreditNoteDto>(creditNoteDto, "Returning value");
         }
 
         public async Task<Response<CreditNoteDto>> UpdateAsync(CreateCreditNoteDto entity)
@@ -72,6 +98,7 @@ namespace Application.Services
                 return await this.UpdateCRN(entity, 1);
             }
         }
+
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
@@ -80,6 +107,13 @@ namespace Application.Services
         //Private methods for CreditNote
         private async Task<Response<CreditNoteDto>> SubmitCRN(CreateCreditNoteDto entity)
         {
+            var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.CreditNote)).FirstOrDefault();
+
+            if (checkingActiveWorkFlows == null)
+            {
+                return new Response<CreditNoteDto>("No workflow found for Credit Note");
+            }
+
             if (entity.Id == null)
             {
                 return await this.SaveCRN(entity, 6);
@@ -226,5 +260,66 @@ namespace Application.Services
             await _unitOfWork.SaveAsync();
         }
 
+        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
+        {
+            var getCreditNote = await _unitOfWork.CreditNote.GetById(data.DocId, new CreditNoteSpecs(true));
+
+            if (getCreditNote == null)
+            {
+                return new Response<bool>("CreditNote with the input id not found");
+            }
+            if (getCreditNote.Status.State == DocumentStatus.Unpaid || getCreditNote.Status.State == DocumentStatus.Partial || getCreditNote.Status.State == DocumentStatus.Paid)
+            {
+                return new Response<bool>("CreditNote already approved");
+            }
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.CreditNote)).FirstOrDefault();
+
+            if (workflow == null)
+            {
+                return new Response<bool>("No activated workflow found for this document");
+            }
+            var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == getCreditNote.StatusId && x.Action == data.Action));
+
+            if (transition == null)
+            {
+                return new Response<bool>("No transition found");
+            }
+            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+            _unitOfWork.CreateTransaction();
+            try
+            {
+                foreach (var role in currentUserRoles)
+                {
+                    if (transition.AllowedRole.Name == role)
+                    {
+                        getCreditNote.setStatus(transition.NextStatusId);
+                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                        {
+                            await AddToLedger(getCreditNote);
+                            _unitOfWork.Commit();
+                            return new Response<bool>(true, "CreditNote Approved");
+                        }
+                        if (transition.NextStatus.State == DocumentStatus.Rejected)
+                        {
+                            await _unitOfWork.SaveAsync();
+                            _unitOfWork.Commit();
+                            return new Response<bool>(true, "CreditNote Rejected");
+                        }
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "CreditNote Reviewed");
+                    }
+                }
+
+                return new Response<bool>("User does not have allowed role");
+
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<bool>(ex.Message);
+            }
+        }
     }
 }

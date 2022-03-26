@@ -211,7 +211,7 @@ namespace Application.Services
                 UserId = id,
                 UserName = user.UserName,
                 Email = user.Email,
-                UserRole = viewModel
+                UserRoles = viewModel
             };
             return new Response<EditUserDto>(model, "Returning Roles");
         }
@@ -243,7 +243,7 @@ namespace Application.Services
                 // Removing all roles from user
                 var updateRole = await _userManager.RemoveFromRolesAsync(user, roles);
                 //Updating roles for user
-                updateRole = await _userManager.AddToRolesAsync(user, model.UserRole.Where(x => x.Selected).Select(y => y.RoleName));
+                updateRole = await _userManager.AddToRolesAsync(user, model.UserRoles.Where(x => x.Selected).Select(y => y.RoleName));
 
                 if (!updateRole.Succeeded)
                 {

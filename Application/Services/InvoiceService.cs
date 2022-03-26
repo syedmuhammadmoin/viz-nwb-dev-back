@@ -63,7 +63,30 @@ namespace Application.Services
             if (inv == null)
                 return new Response<InvoiceDto>("Not found");
 
-            return new Response<InvoiceDto>(_mapper.Map<InvoiceDto>(inv), "Returning value");
+            var invoiceDto = _mapper.Map<InvoiceDto>(inv);
+
+           invoiceDto.IsAllowedRole = false;
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Invoice)).FirstOrDefault();
+
+
+            if (workflow != null)
+            {
+                var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == invoiceDto.StatusId));
+
+                if (transition != null)
+                {
+                    var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+                    foreach (var role in currentUserRoles)
+                    {
+                        if (transition.AllowedRole.Name == role)
+                        {
+                            invoiceDto.IsAllowedRole = true;
+                        }
+                    }
+                }
+            }
+            return new Response<InvoiceDto>(invoiceDto, "Returning value");
         }
 
         public async Task<Response<InvoiceDto>> UpdateAsync(CreateInvoiceDto entity)
@@ -82,6 +105,7 @@ namespace Application.Services
         {
             throw new NotImplementedException();
         }
+
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
             var getInvoice = await _unitOfWork.Invoice.GetById(data.DocId, new InvoiceSpecs(true));
@@ -147,6 +171,12 @@ namespace Application.Services
         //Private Methods for Invoice
         private async Task<Response<InvoiceDto>> SubmitINV(CreateInvoiceDto entity)
         {
+            var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Invoice)).FirstOrDefault();
+
+            if (checkingActiveWorkFlows == null)
+            {
+                return new Response<InvoiceDto>("No workflow found for Invoice");
+            }
             if (entity.Id == null)
             {
                 return await this.SaveINV(entity, 6);
