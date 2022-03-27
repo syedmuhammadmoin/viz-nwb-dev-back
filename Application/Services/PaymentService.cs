@@ -257,7 +257,7 @@ namespace Application.Services
                 }
                 var addNetPaymentInRecordLedger = new RecordLedger(
                     transaction.Id,
-                    payment.AccountId,
+                    payment.PaymentRegisterId,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -326,7 +326,7 @@ namespace Application.Services
                 }
                 var addNetPaymentInRecordLedger = new RecordLedger(
                     transaction.Id,
-                    payment.AccountId,
+                    payment.PaymentRegisterId,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
