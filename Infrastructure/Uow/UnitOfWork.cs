@@ -45,7 +45,7 @@ namespace Infrastructure.Uow
         public ITransactionReconcileRepository TransactionReconcile { get; private set; }
         public ICampusRepository Campus { get; private set; }
         public IWorkFlowTransitionRepository WorkFlowTransition { get; private set; }
-
+        public IBudgetRepository Budget { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -75,6 +75,7 @@ namespace Infrastructure.Uow
             WorkFlowTransition = new WorkFlowTransitionRepository(context);
             TransactionReconcile = new TransactionReconcileRepository(context);
             Campus = new CampusRepository(context);
+            Budget = new BudgetRepository(context);
         }
 
         public async Task SaveAsync()

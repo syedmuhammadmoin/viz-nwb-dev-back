@@ -440,6 +440,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.BankStatementClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.CashAccountClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.ChartOfAccountClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.CampusClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.CategoriesClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.ProductsClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.Level4Claims), id);
@@ -451,6 +452,9 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.CreditNoteClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.DebitNoteClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.JournalEntryClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.WorkflowStatusClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.WorkflowClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.BudgetClaims), id);
 
 
             //Getting all claims for this role
@@ -548,6 +552,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.JournalEntryClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.WorkflowStatusClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.WorkflowClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.BudgetClaims), "12");
 
             var allClaimValues = allPermissions.Select(a => a.Value).ToList();
             return new Response<List<string>>(allClaimValues,"Returning all claims");
