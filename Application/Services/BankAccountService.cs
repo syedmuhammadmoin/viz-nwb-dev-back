@@ -33,14 +33,14 @@ namespace Application.Services
             {
                 var ChAccount = new Level4(
                     entity.BankName,
-                    new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00"),
+                    new Guid("12100000-5566-7788-99AA-BBCCDDEEFF00"),
                     new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"));
 
                 await _unitOfWork.Level4.Add(ChAccount);
 
                 var ClAccount = new Level4(
                     $"{entity.BankName} Clearing Account",
-                    new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00"),
+                    new Guid("12100000-5566-7788-99AA-BBCCDDEEFF00"),
                     new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"));
 
                 await _unitOfWork.Level4.Add(ClAccount);
