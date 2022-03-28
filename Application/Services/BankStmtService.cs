@@ -33,42 +33,27 @@ namespace Application.Services
             _unitOfWork.CreateTransaction();
             try
             {
-            var bankStmtLinesArray = new List<BankStmtLines>();
-                
+                var bankStmtLinesArray = new List<BankStmtLines>();
+
                 if (file != null)
                 {
-                    var bankStmtLines = await ImportStmtLines(file);
+                    entity.BankStmtLines = await ImportStmtLines(file);
                 }
-                else
+
+                foreach (var line in entity.BankStmtLines)
                 {
-                    foreach (var line in entity.BankStmtLines)
+                    if (line.Credit == 0 && line.Debit == 0)
                     {
-                        var bankStmtLine = new BankStmtLines(
-                        line.Reference,
-                        line.StmtDate,
-                        line.Label,
-                        DocumentStatus.Unreconciled,
-                        line.Debit,
-                        line.Credit);
-                        
-                        if (bankStmtLine.Credit == 0 && bankStmtLine.Debit == 0)
-                        {
-                            return new Response<BankStmtDto>("Amount can't be saved with zero value");
-                        }
+                        return new Response<BankStmtDto>("Amount can't be saved with zero value");
+                    }
 
-                        if (bankStmtLine.Credit == bankStmtLine.Debit)
-                        {
-                            return new Response<BankStmtDto>("Only one entry should be entered at a time");
-                        }
-                        bankStmtLinesArray.Add(bankStmtLine);
-
+                    if (line.Credit == line.Debit)
+                    {
+                        return new Response<BankStmtDto>("Only one entry should be entered at a time");
                     }
                 }
-                //var totalDebit = entity.BankStmtLines.Sum(i => i.Debit);
-                //var totalCredit = entity.BankStmtLines.Sum(i => i.Credit);
-                var bankStmt = _mapper.Map<BankStmtMaster>(entity);
-                bankStmt.MapLines(bankStmtLinesArray);
 
+                var bankStmt = _mapper.Map<BankStmtMaster>(entity);
                 await _unitOfWork.Bankstatement.Add(bankStmt);
                 await _unitOfWork.SaveAsync();
 
@@ -123,24 +108,13 @@ namespace Application.Services
                 }
             }
 
-            _unitOfWork.CreateTransaction();
-            try
-            {
-                //For updating data
-                _mapper.Map<CreateBankStmtDto, BankStmtMaster>(entity, bankStmt);
+            //For updating data
+            _mapper.Map<CreateBankStmtDto, BankStmtMaster>(entity, bankStmt);
+            await _unitOfWork.SaveAsync();
 
-                await _unitOfWork.SaveAsync();
+            //returning response
+            return new Response<BankStmtDto>(_mapper.Map<BankStmtDto>(bankStmt), "Updated successfully");
 
-                _unitOfWork.Commit();
-
-                //returning response
-                return new Response<BankStmtDto>(_mapper.Map<BankStmtDto>(bankStmt), "Updated successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<BankStmtDto>(ex.Message);
-            }
         }
 
         public Task<Response<int>> DeleteAsync(int id)
@@ -149,9 +123,9 @@ namespace Application.Services
         }
 
         //Private methods for importing BankStmtLines
-        private async Task<List<BankStmtLines>> ImportStmtLines(IFormFile file)
+        private async Task<List<CreateBankStmtLinesDto>> ImportStmtLines(IFormFile file)
         {
-            var list = new List<BankStmtLines>();
+            var list = new List<CreateBankStmtLinesDto>();
             using (var stream = new MemoryStream())
             {
                 await file.CopyToAsync(stream);
@@ -161,14 +135,14 @@ namespace Application.Services
                     var rowCount = worksheet.Dimension.Rows;
                     for (int row = 2; row <= rowCount; row++)
                     {
-                        list.Add(new BankStmtLines(
-                            (int)Convert.ToSingle(worksheet.Cells[row, 1].Value),
-                            (DateTime)worksheet.Cells[row, 2].Value,
-                            worksheet.Cells[row, 3].Value.ToString().Trim(),
-                            DocumentStatus.Unreconciled,
-                            Convert.ToDecimal(worksheet.Cells[row, 4].Value),
-                            Convert.ToDecimal(worksheet.Cells[row, 5].Value)
-                            ));
+                        list.Add(new CreateBankStmtLinesDto()
+                        {
+                            Reference = (int)Convert.ToSingle(worksheet.Cells[row, 1].Value),
+                            StmtDate = (DateTime)worksheet.Cells[row, 2].Value,
+                            Label = worksheet.Cells[row, 3].Value.ToString().Trim(),
+                            Debit = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
+                            Credit = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
+                        });
                     }
                 }
             }
