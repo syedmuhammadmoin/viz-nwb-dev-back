@@ -33,6 +33,8 @@ namespace Application.Services
             _unitOfWork.CreateTransaction();
             try
             {
+            var bankStmtLinesArray = new List<BankStmtLines>();
+                
                 if (file != null)
                 {
                     var bankStmtLines = await ImportStmtLines(file);
@@ -41,7 +43,7 @@ namespace Application.Services
                 {
                     foreach (var line in entity.BankStmtLines)
                     {
-                        var bankStmtLines = new BankStmtLines(
+                        var bankStmtLine = new BankStmtLines(
                         line.Reference,
                         line.StmtDate,
                         line.Label,
@@ -49,24 +51,23 @@ namespace Application.Services
                         line.Debit,
                         line.Credit);
                         
-                        if (bankStmtLines.Credit == 0 && bankStmtLines.Debit == 0)
+                        if (bankStmtLine.Credit == 0 && bankStmtLine.Debit == 0)
                         {
                             return new Response<BankStmtDto>("Amount can't be saved with zero value");
                         }
 
-                        if (bankStmtLines.Credit == bankStmtLines.Debit)
+                        if (bankStmtLine.Credit == bankStmtLine.Debit)
                         {
                             return new Response<BankStmtDto>("Only one entry should be entered at a time");
                         }
+                        bankStmtLinesArray.Add(bankStmtLine);
+
                     }
                 }
-                var totalDebit = entity.BankStmtLines.Sum(i => i.Debit);
-                var totalCredit = entity.BankStmtLines.Sum(i => i.Credit);
-
-                if (totalDebit != totalCredit)
-                    return new Response<BankStmtDto>("Sum of debit and credit must be equal");
-
+                //var totalDebit = entity.BankStmtLines.Sum(i => i.Debit);
+                //var totalCredit = entity.BankStmtLines.Sum(i => i.Credit);
                 var bankStmt = _mapper.Map<BankStmtMaster>(entity);
+                bankStmt.MapLines(bankStmtLinesArray);
 
                 await _unitOfWork.Bankstatement.Add(bankStmt);
                 await _unitOfWork.SaveAsync();
@@ -178,5 +179,7 @@ namespace Application.Services
         {
             throw new NotImplementedException();
         }
+
+        private Task<List>
     }
 }
