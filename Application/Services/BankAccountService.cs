@@ -32,14 +32,14 @@ namespace Application.Services
             try
             {
                 var ChAccount = new Level4(
-                    entity.BankName,
+                    entity.AccountTitle,
                     new Guid("12100000-5566-7788-99AA-BBCCDDEEFF00"),
                     new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"));
 
                 await _unitOfWork.Level4.Add(ChAccount);
 
                 var ClAccount = new Level4(
-                    $"{entity.BankName} Clearing Account",
+                    $"{entity.AccountTitle} Clearing Account",
                     new Guid("12100000-5566-7788-99AA-BBCCDDEEFF00"),
                     new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"));
 
@@ -52,7 +52,7 @@ namespace Application.Services
                 var bankAccount = _mapper.Map<BankAccount>(entity);
 
                 bankAccount.setChAccountId(ChAccount.Id);
-                bankAccount.setClAccountId(ChAccount.Id);
+                bankAccount.setClAccountId(ClAccount.Id);
                 bankAccount.setTransactionId(transaction.Id);
 
                 await _unitOfWork.BankAccount.Add(bankAccount);
@@ -104,15 +104,42 @@ namespace Application.Services
 
         public async Task<Response<BankAccountDto>> UpdateAsync(UpdateBankAccountDto entity)
         {
-            var bankAccount = await _unitOfWork.BankAccount.GetById((int)entity.Id);
+            _unitOfWork.CreateTransaction();
+            try 
+            {
+                var bankAccount = await _unitOfWork.BankAccount.GetById((int)entity.Id);
 
-            if (bankAccount == null)
-                return new Response<BankAccountDto>("Not found");
+                if (bankAccount == null)
+                    return new Response<BankAccountDto>("Not found");
 
-            //For updating data
-            _mapper.Map<UpdateBankAccountDto, BankAccount>(entity, bankAccount);
-            await _unitOfWork.SaveAsync();
-            return new Response<BankAccountDto>(_mapper.Map<BankAccountDto>(bankAccount), "Updated successfully");
+                //For updating data
+                _mapper.Map<UpdateBankAccountDto, BankAccount>(entity, bankAccount);
+
+                // Getting account detail in COA
+                var account = await _unitOfWork.Level4.GetById(bankAccount.ChAccountId);
+                if (account == null)
+                    return new Response<BankAccountDto>("Account not found in Chart Of Account");
+
+                //Updating account name in chart of account
+                account.setAccountName(entity.AccountTitle);
+
+                // Getting clearing account detail in COA
+                var clearingAccount = await _unitOfWork.Level4.GetById(bankAccount.ClearingAccountId);
+                if (clearingAccount == null)
+                    return new Response<BankAccountDto>("Clearing account not found in Chart Of Account");
+
+                //Updating clearing account name in chart of account
+                clearingAccount.setAccountName($"{entity.AccountTitle} Clearing Account");
+
+                await _unitOfWork.SaveAsync();
+                _unitOfWork.Commit();
+                return new Response<BankAccountDto>(_mapper.Map<BankAccountDto>(bankAccount), "Updated successfully");
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<BankAccountDto>(ex.Message);
+            }
         }
 
         public Task<Response<int>> DeleteAsync(int id)
