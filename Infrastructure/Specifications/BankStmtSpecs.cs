@@ -21,8 +21,6 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.BankAccount);
             AddInclude(i => i.BankStmtLines);
-
-
         }
     }
 }
