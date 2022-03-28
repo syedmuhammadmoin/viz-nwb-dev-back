@@ -180,7 +180,7 @@ namespace Application.Mapper
 
             // CashAccount Mapping
             CreateMap<CashAccount, CashAccountDto>()
-                .ForMember(dto => dto.ChAccountName, core => core.MapFrom(a => a.ChAccountName.Name))
+                .ForMember(dto => dto.ChAccountName, core => core.MapFrom(a => a.ChAccount.Name))
                 .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                 .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
             CreateMap<CreateCashAccountDto, CashAccount>();
