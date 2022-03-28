@@ -18,5 +18,8 @@ namespace Application.Contracts.DTOs
         //public decimal ReconciledAmount { get; set; }
         //public decimal UnreconciledAmount { get; set; }
         public DocumentStatus BankReconStatus { get; set; }
+        public decimal OpeningBalance { get; set; }
+        public string Description { get; set; }
+        public virtual List<BankStmtLinesDto> BankStmtLines { get; set; }
     }
 }
