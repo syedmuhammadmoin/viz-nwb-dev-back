@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using AutoMapper;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -203,7 +204,8 @@ namespace Application.Mapper
             CreateMap<BankStmtLines, BankStmtLinesDto>();
 
             CreateMap<CreateBankStmtDto, BankStmtMaster>();
-            CreateMap<CreateBankStmtLinesDto, BankStmtLines>();
+            CreateMap<CreateBankStmtLinesDto, BankStmtLines>()
+                .ForMember(core => core.BankReconStatus, dto => dto.MapFrom(a => DocumentStatus.Unreconciled));
 
             //Bank Reconciliation
             CreateMap<CreateBankReconDto, BankReconciliation>();
