@@ -227,6 +227,14 @@ namespace Application.Mapper
             // TransactionRecon Mapping
             CreateMap<CreateTransactionReconcileDto, TransactionReconcile>();
 
+            // Budget Mapping
+            CreateMap<BudgetMaster, BudgetDto>();
+            CreateMap<BudgetLines, BudgetLinesDto>()
+              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
+
+            CreateMap<CreateBudgetDto, BudgetMaster>();
+            CreateMap<CreateBudgetLinesDto, BudgetLines>();
+
         }
     }
 }
