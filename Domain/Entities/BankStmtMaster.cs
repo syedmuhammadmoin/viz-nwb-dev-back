@@ -26,5 +26,10 @@ namespace Domain.Entities
 
         }
 
+        public void MapLines(List<BankStmtLines> bankStmtLines)
+        {
+            BankStmtLines = bankStmtLines;
+        }
+
     }
 }
