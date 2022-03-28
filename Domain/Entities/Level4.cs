@@ -30,6 +30,11 @@ namespace Domain.Entities
             Level1_id = level1_id;
         }
 
+        public void setAccountName(string name)
+        {
+            Name = name;
+        }
+
         public void setLevel1Id(Guid level1Id) 
         {
             Level1_id = level1Id;
