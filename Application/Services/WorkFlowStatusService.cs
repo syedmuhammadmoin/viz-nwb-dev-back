@@ -63,6 +63,10 @@ namespace Application.Services
             if (status == null)
                 return new Response<WorkFlowStatusDto>("Not found");
 
+            if (status.Type != Domain.Constants.StatusType.Custom)
+                return new Response<WorkFlowStatusDto>("Only user defined can be edited");
+
+
             //For updating data
             _mapper.Map<CreateWorkFlowStatusDto, WorkFlowStatus>(entity, status);
             await _unitOfWork.SaveAsync();
