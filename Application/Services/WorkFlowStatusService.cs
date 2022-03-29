@@ -42,7 +42,7 @@ namespace Application.Services
             if (!status.Any())
                 return new PaginationResponse<List<WorkFlowStatusDto>>("List is empty");
 
-            var totalRecords = await _unitOfWork.WorkFlowStatus.TotalRecord();
+            var totalRecords = await _unitOfWork.WorkFlowStatus.TotalRecord(new WorkFlowStatusSpecs());
 
             return new PaginationResponse<List<WorkFlowStatusDto>>(_mapper.Map<List<WorkFlowStatusDto>>(status), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
@@ -62,6 +62,10 @@ namespace Application.Services
 
             if (status == null)
                 return new Response<WorkFlowStatusDto>("Not found");
+
+            if (status.Type != Domain.Constants.StatusType.Custom)
+                return new Response<WorkFlowStatusDto>("Only user defined can be edited");
+
 
             //For updating data
             _mapper.Map<CreateWorkFlowStatusDto, WorkFlowStatus>(entity, status);

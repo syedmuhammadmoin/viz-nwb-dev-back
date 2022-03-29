@@ -48,9 +48,12 @@ namespace Infrastructure.Repositories
                                     .FirstOrDefaultAsync();
         }
 
-        public async Task<int> TotalRecord()
+        public async Task<int> TotalRecord(ISpecification<T> specification = null)
         {
-            return await _context.Set<T>().CountAsync();
+            return await SpecificationEvaluator<T, TKey>.GetQuery(_context.Set<T>()
+                                    .AsQueryable(), specification)
+                                    .AsNoTracking()
+                                    .CountAsync();
         }
 
         public IEnumerable<T> Find(ISpecification<T> specification)

@@ -19,7 +19,6 @@ namespace Application.Contracts.DTOs
         public string Description { get; set; }
         [Required]
         public decimal OpeningBalance { get; set; }
-        [Required]
         public virtual List<CreateBankStmtLinesDto> BankStmtLines { get; set; }
     }
 }

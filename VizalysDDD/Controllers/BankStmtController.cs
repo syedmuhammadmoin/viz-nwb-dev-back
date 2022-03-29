@@ -30,12 +30,12 @@ namespace Vizalys.Api.Controllers
         {
             return Ok(await _bankStmtService.GetAllAsync(filter)); // Status Code : 200
         }
-
-        [AllowAnonymous]
+        
+        [ClaimRequirement("Permission", new string[] { Permissions.BankStatementClaims.Create })]
         [HttpPost]
-        public async Task<ActionResult<Response<BankStmtDto>>> CreateAsync([ModelBinder(BinderType = typeof(JsonModelBinder))] CreateBankStmtDto entity, IFormFile files)
+        public async Task<ActionResult<Response<BankStmtDto>>> CreateAsync([ModelBinder(BinderType = typeof(JsonModelBinder))] CreateBankStmtDto data, IFormFile? files)
         {
-            var bankStmt = await _bankStmtService.CreateAsync(entity, files);
+            var bankStmt = await _bankStmtService.CreateAsync(data, files);
             if (bankStmt.IsSuccess)
                 return Ok(bankStmt); // Status Code : 200
 

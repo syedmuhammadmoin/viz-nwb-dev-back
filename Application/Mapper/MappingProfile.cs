@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using AutoMapper;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -180,7 +181,7 @@ namespace Application.Mapper
 
             // CashAccount Mapping
             CreateMap<CashAccount, CashAccountDto>()
-                .ForMember(dto => dto.ChAccountName, core => core.MapFrom(a => a.ChAccountName.Name))
+                .ForMember(dto => dto.ChAccountName, core => core.MapFrom(a => a.ChAccount.Name))
                 .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                 .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
             CreateMap<CreateCashAccountDto, CashAccount>();
@@ -203,7 +204,8 @@ namespace Application.Mapper
             CreateMap<BankStmtLines, BankStmtLinesDto>();
 
             CreateMap<CreateBankStmtDto, BankStmtMaster>();
-            CreateMap<CreateBankStmtLinesDto, BankStmtLines>();
+            CreateMap<CreateBankStmtLinesDto, BankStmtLines>()
+                .ForMember(core => core.BankReconStatus, dto => dto.MapFrom(a => DocumentStatus.Unreconciled));
 
             //Bank Reconciliation
             CreateMap<CreateBankReconDto, BankReconciliation>();
@@ -226,6 +228,14 @@ namespace Application.Mapper
 
             // TransactionRecon Mapping
             CreateMap<CreateTransactionReconcileDto, TransactionReconcile>();
+
+            // Budget Mapping
+            CreateMap<BudgetMaster, BudgetDto>();
+            CreateMap<BudgetLines, BudgetLinesDto>()
+              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
+
+            CreateMap<CreateBudgetDto, BudgetMaster>();
+            CreateMap<CreateBudgetLinesDto, BudgetLines>();
 
         }
     }

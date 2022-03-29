@@ -33,7 +33,7 @@ namespace Application.Services
             {
                 var ChAccount = new Level4(
                     entity.CashAccountName,
-                    new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00"),
+                    new Guid("12100000-5566-7788-99AA-BBCCDDEEFF00"),
                     new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"));
 
                 await _unitOfWork.Level4.Add(ChAccount);
@@ -102,15 +102,36 @@ namespace Application.Services
         
         public async Task<Response<CashAccountDto>> UpdateAsync(UpdateCashAccountDto entity)
         {
-            var cashAccount = await _unitOfWork.CashAccount.GetById((int)entity.Id);
+            _unitOfWork.CreateTransaction();
+            try 
+            {
 
-            if (cashAccount == null)
-                return new Response<CashAccountDto>("Not found");
+                var cashAccount = await _unitOfWork.CashAccount.GetById((int)entity.Id);
 
-            //For updating data
-            _mapper.Map<UpdateCashAccountDto, CashAccount>(entity, cashAccount);
-            await _unitOfWork.SaveAsync();
-            return new Response<CashAccountDto>(_mapper.Map<CashAccountDto>(cashAccount), "Updated successfully");
+                if (cashAccount == null)
+                    return new Response<CashAccountDto>("Not found");
+
+                //For updating data
+                _mapper.Map<UpdateCashAccountDto, CashAccount>(entity, cashAccount);
+
+                // Getting account detail in COA
+                var account = await _unitOfWork.Level4.GetById(cashAccount.ChAccountId);
+                if (account == null)
+                    return new Response<CashAccountDto>("Account not found in Chart Of Account");
+
+                //Updating account name in chart of account
+                account.setAccountName(entity.CashAccountName);
+
+
+                await _unitOfWork.SaveAsync();
+                _unitOfWork.Commit();
+                return new Response<CashAccountDto>(_mapper.Map<CashAccountDto>(cashAccount), "Updated successfully");
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<CashAccountDto>(ex.Message);
+            }
         }
         private async Task AddToLedger(CashAccount cashAccount)
         {

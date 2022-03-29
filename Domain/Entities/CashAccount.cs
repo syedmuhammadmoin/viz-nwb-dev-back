@@ -22,7 +22,7 @@ namespace Domain.Entities
         public string DocNo { get; private set; }
         public Guid ChAccountId { get; private set; }
         [ForeignKey("ChAccountId")]
-        public Level4 ChAccountName { get; private set; }
+        public Level4 ChAccount { get; private set; }
         public int CampusId { get; private set; }
         [ForeignKey("CampusId")]
         public Campus Campus { get; private set; }

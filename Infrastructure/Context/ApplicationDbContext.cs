@@ -51,6 +51,8 @@ namespace Infrastructure.Context
         public DbSet<WorkFlowMaster> WorkFlowMaster { get; set; }
         public DbSet<WorkFlowTransition> WorkFlowTransitions { get; set; }
         public DbSet<TransactionReconcile> TransactionReconciles { get; set; }
+        public DbSet<BudgetMaster> BudgetMaster { get; set; }
+        public DbSet<BudgetLines> BudgetLines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -103,6 +105,12 @@ namespace Infrastructure.Context
             modelBuilder.Entity<WorkFlowTransition>()
             .HasOne(tc => tc.WorkflowMaster)
             .WithMany(c => c.WorkflowTransitions)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //Budget
+            modelBuilder.Entity<BudgetLines>()
+            .HasOne(tc => tc.BudgetMaster)
+            .WithMany(c => c.BudgetLines)
             .OnDelete(DeleteBehavior.Cascade);
 
             //Changing Identity users and roles tables name

@@ -35,6 +35,7 @@ namespace Domain.Interfaces
         ITransactionReconcileRepository TransactionReconcile { get; }
         ICampusRepository Campus { get; }
         IWorkFlowTransitionRepository WorkFlowTransition { get; }
+        IBudgetRepository Budget { get; }
 
         Task SaveAsync();
         void CreateTransaction();
