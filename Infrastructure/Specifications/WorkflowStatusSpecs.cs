@@ -15,7 +15,10 @@ namespace Infrastructure.Specifications
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-        
+        }
+
+        public WorkFlowStatusSpecs() : base(a => a.Type != StatusType.PreDefined && a.IsDelete == false)
+        {
         }
     }
 }
