@@ -1,6 +1,9 @@
-﻿using Domain.Entities;
+﻿using Application.Contracts.DTOs;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Context;
+using Infrastructure.Specifications;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +23,13 @@ namespace Infrastructure.Repositories
         public async Task AddRange(List<RecordLedger> list)
         {
             await _context.RecordLedger.AddRangeAsync(list);
+        }
+
+
+        public new IEnumerable<RecordLedger> Find(ISpecification<RecordLedger> specification)
+        {
+            return SpecificationEvaluator<RecordLedger, int>.GetQuery(_context.RecordLedger
+                                    .AsQueryable(), specification).AsNoTracking();
         }
     }
 }
