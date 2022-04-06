@@ -37,12 +37,13 @@ namespace Domain.Entities
 
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
+        public DateTime TransactionDate { get; private set; }
 
         protected RecordLedger()
         {
 
         }
-        public RecordLedger(int transactionId, Guid level4_id, int? businessPartnerId, int? warehouseId, string description, char sign, decimal amount)
+        public RecordLedger(int transactionId, Guid level4_id, int? businessPartnerId, int? warehouseId, string description, char sign, decimal amount, int campusId, DateTime transactionDate)
         {
             TransactionId = transactionId;
             Level4_id = level4_id;
@@ -51,6 +52,8 @@ namespace Domain.Entities
             Description = description;
             Sign = sign;
             Amount = amount;
+            CampusId = campusId;
+            TransactionDate = transactionDate;
         }
     }
 }
