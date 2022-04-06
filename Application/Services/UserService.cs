@@ -26,16 +26,14 @@ namespace Application.Services
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
-        private readonly ApplicationDbContext _context;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(UserManager<User> userManager, IUnitOfWork unitOfWork, IConfiguration configuration, ApplicationDbContext context,
+        public UserService(UserManager<User> userManager, IUnitOfWork unitOfWork, IConfiguration configuration,
             RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
-            _context = context;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
             _roleManager = roleManager;
@@ -455,6 +453,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.WorkflowStatusClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.WorkflowClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.BudgetClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.GeneralLedgerClaims), id);
 
 
             //Getting all claims for this role

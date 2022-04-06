@@ -218,6 +218,9 @@ namespace Domain.Constants
             public const string Edit = "Permissions.JournalEntryClaims.Edit";
             public const string Delete = "Permissions.JournalEntryClaims.Delete";
         }
-
+        public static class GeneralLedgerClaims
+        {
+            public const string View = "Permissions.GeneralLedgerClaims.View";
+        }
     }
 }
