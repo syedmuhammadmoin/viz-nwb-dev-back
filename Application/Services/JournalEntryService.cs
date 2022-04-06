@@ -226,7 +226,9 @@ namespace Application.Services
                     line.WarehouseId,
                     line.Description,
                     line.Debit > 0 && line.Credit <= 0 ? 'D' : 'C',
-                    line.Debit > 0 && line.Credit <= 0 ? line.Debit : line.Credit
+                    line.Debit > 0 && line.Credit <= 0 ? line.Debit : line.Credit,
+                    jv.CampusId,
+                    jv.Date
                     )).ToList();
 
             await _unitOfWork.Ledger.AddRange(recordLedger);

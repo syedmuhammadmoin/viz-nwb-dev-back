@@ -65,7 +65,7 @@ namespace Application.Services
 
             var invoiceDto = _mapper.Map<InvoiceDto>(inv);
 
-           invoiceDto.IsAllowedRole = false;
+            invoiceDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Invoice)).FirstOrDefault();
 
 
@@ -133,7 +133,7 @@ namespace Application.Services
             }
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-            try 
+            try
             {
                 foreach (var role in currentUserRoles)
                 {
@@ -157,9 +157,9 @@ namespace Application.Services
                         return new Response<bool>(true, "Invoice Reviewed");
                     }
                 }
-                
-                return new Response<bool> ("User does not have allowed role" );
-               
+
+                return new Response<bool>("User does not have allowed role");
+
             }
             catch (Exception ex)
             {
@@ -286,7 +286,9 @@ namespace Application.Services
                     line.WarehouseId,
                     line.Description,
                     'C',
-                    line.Price * line.Quantity
+                    line.Price * line.Quantity,
+                    inv.CampusId,
+                    inv.InvoiceDate
                     );
 
                 await _unitOfWork.Ledger.Add(addSalesAmountInRecordLedger);
@@ -303,7 +305,9 @@ namespace Application.Services
                         line.WarehouseId,
                         line.Description,
                         'C',
-                        tax
+                        tax,
+                        inv.CampusId,
+                        inv.InvoiceDate
                     );
                     await _unitOfWork.Ledger.Add(addSalesTaxInRecordLedger);
                     await _unitOfWork.SaveAsync();
@@ -317,7 +321,9 @@ namespace Application.Services
                         null,
                         inv.DocNo,
                         'D',
-                        inv.TotalAmount
+                        inv.TotalAmount,
+                        inv.CampusId,
+                        inv.InvoiceDate
                     );
 
             await _unitOfWork.Ledger.Add(addReceivableInLedger);

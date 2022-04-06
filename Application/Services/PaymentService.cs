@@ -108,7 +108,7 @@ namespace Application.Services
         private async Task<Response<PaymentDto>> SubmitPay(CreatePaymentDto entity)
         {
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Payment)).FirstOrDefault();
-           
+
             if (checkingActiveWorkFlows == null)
             {
                 return new Response<PaymentDto>("No workflow found for this document");
@@ -207,7 +207,9 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'C',
-                    payment.GrossPayment
+                    payment.GrossPayment,
+                    payment.CampusId,
+                    payment.PaymentDate
                     );
 
                 await _unitOfWork.Ledger.Add(addGrossAmountInRecordLedger);
@@ -221,10 +223,12 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'D',
-                    payment.Discount
+                    payment.Discount,
+                    payment.CampusId,
+                    payment.PaymentDate
                         );
 
-                    await _unitOfWork.Ledger.Add(addDiscountInRecordLedger); 
+                    await _unitOfWork.Ledger.Add(addDiscountInRecordLedger);
                 }
 
                 if (payment.SalesTax > 0)
@@ -237,7 +241,9 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'D',
-                    payment.SalesTax
+                    payment.SalesTax,
+                    payment.CampusId,
+                    payment.PaymentDate
                         );
                     await _unitOfWork.Ledger.Add(addSalesTaxInRecordLedger);
                 }
@@ -252,7 +258,9 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'D',
-                    payment.IncomeTax);
+                    payment.IncomeTax,
+                    payment.CampusId,
+                    payment.PaymentDate);
                     await _unitOfWork.Ledger.Add(addIncomeTaxInRecordLedger);
                 }
                 var addNetPaymentInRecordLedger = new RecordLedger(
@@ -262,8 +270,10 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'D',
-                    (payment.GrossPayment - payment.Discount - payment.SalesTax - payment.IncomeTax));
-                
+                    (payment.GrossPayment - payment.Discount - payment.SalesTax - payment.IncomeTax),
+                    payment.CampusId,
+                    payment.PaymentDate);
+
                 await _unitOfWork.Ledger.Add(addNetPaymentInRecordLedger);
             }
 
@@ -276,7 +286,9 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'D',
-                    payment.GrossPayment
+                    payment.GrossPayment,
+                    payment.CampusId,
+                    payment.PaymentDate
                     );
 
                 await _unitOfWork.Ledger.Add(addGrossAmountInRecordLedger);
@@ -290,7 +302,9 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'C',
-                    payment.Discount
+                    payment.Discount,
+                    payment.CampusId,
+                    payment.PaymentDate
                         );
 
                     await _unitOfWork.Ledger.Add(addDiscountInRecordLedger);
@@ -306,7 +320,9 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'C',
-                    payment.SalesTax
+                    payment.SalesTax,
+                    payment.CampusId,
+                    payment.PaymentDate
                         );
                     await _unitOfWork.Ledger.Add(addSalesTaxInRecordLedger);
                 }
@@ -321,7 +337,9 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'C',
-                    payment.IncomeTax);
+                    payment.IncomeTax,
+                    payment.CampusId,
+                    payment.PaymentDate);
                     await _unitOfWork.Ledger.Add(addIncomeTaxInRecordLedger);
                 }
                 var addNetPaymentInRecordLedger = new RecordLedger(
@@ -331,7 +349,9 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'C',
-                    (payment.GrossPayment - payment.Discount - payment.SalesTax - payment.IncomeTax));
+                    (payment.GrossPayment - payment.Discount - payment.SalesTax - payment.IncomeTax),
+                    payment.CampusId,
+                    payment.PaymentDate);
 
                 await _unitOfWork.Ledger.Add(addNetPaymentInRecordLedger);
             }

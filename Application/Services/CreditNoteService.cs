@@ -61,7 +61,7 @@ namespace Application.Services
             var crn = await _unitOfWork.CreditNote.GetById(id, specification);
             if (crn == null)
                 return new Response<CreditNoteDto>("Not found");
-            
+
             var creditNoteDto = _mapper.Map<CreditNoteDto>(crn);
 
             creditNoteDto.IsAllowedRole = false;
@@ -130,7 +130,7 @@ namespace Application.Services
                 return new Response<CreditNoteDto>("Lines are required");
 
             var crn = _mapper.Map<CreditNoteMaster>(entity);
-            
+
             //setting BusinessPartnerReceivable
             var er = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
             crn.setReceivableAccount(er.AccountReceivableId);
@@ -179,7 +179,7 @@ namespace Application.Services
             //setting BusinessPartnerReceivable
             var er = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
             crn.setReceivableAccount(er.AccountReceivableId);
-            
+
             crn.setStatus(status);
 
             _unitOfWork.CreateTransaction();
@@ -222,7 +222,9 @@ namespace Application.Services
                     line.WarehouseId,
                     line.Description,
                     'D',
-                    line.Price * line.Quantity
+                    line.Price * line.Quantity,
+                    crn.CampusId,
+                    crn.NoteDate
                     );
 
                 await _unitOfWork.Ledger.Add(addSalesAmountInRecordLedger);
@@ -239,8 +241,10 @@ namespace Application.Services
                         line.WarehouseId,
                         line.Description,
                         'D',
-                        tax
-                    );
+                        tax,
+                        crn.CampusId,
+                        crn.NoteDate
+                        );
                     await _unitOfWork.Ledger.Add(addSalesTaxInRecordLedger);
                     await _unitOfWork.SaveAsync();
                 }
@@ -253,7 +257,9 @@ namespace Application.Services
                         null,
                         crn.DocNo,
                         'C',
-                        crn.TotalAmount
+                        crn.TotalAmount,
+                        crn.CampusId,
+                        crn.NoteDate
                     );
 
             await _unitOfWork.Ledger.Add(addReceivableInLedger);
