@@ -177,7 +177,7 @@ namespace Application.Mapper
              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
 
             CreateMap<CreatePaymentDto, Payment>()
-                .ForMember(core => core.NetPayment, dto => dto.MapFrom(a => (a.GrossPayment - a.Discount - a.IncomeTax - a.SalesTax)));
+                .ForMember(core => core.NetPayment, dto => dto.MapFrom(a => (a.GrossPayment - a.Discount - a.IncomeTax - a.SalesTax - a.SRBTax)));
 
             // CashAccount Mapping
             CreateMap<CashAccount, CashAccountDto>()
