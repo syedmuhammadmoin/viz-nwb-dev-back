@@ -10,7 +10,6 @@ namespace Application.Contracts.DTOs
 {
     public class CreateBankAccountDto
     {
-        public int? Id { get; set; }
         [Required]
         public long AccountNumber { get; set; }
         [Required]
