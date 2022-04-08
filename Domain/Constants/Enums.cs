@@ -15,7 +15,10 @@ namespace Domain.Constants
     {
         Customer,
         Vendor,
-        Employee
+        Employee,
+        Supplier, 
+        Consultant, 
+        Contractor
     }
     public enum ProductType
     {
@@ -74,5 +77,10 @@ namespace Domain.Constants
         Custom,
         PreDefined,
         PreDefinedInList,
+    }
+    public enum BankAccountType
+    {
+        Current,
+        Saving,
     }
 }
