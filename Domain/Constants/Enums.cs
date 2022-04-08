@@ -81,6 +81,6 @@ namespace Domain.Constants
     public enum BankAccountType
     {
         Current,
-        Saving,
+        Saving
     }
 }
