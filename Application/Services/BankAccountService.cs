@@ -95,7 +95,8 @@ namespace Application.Services
 
         public  async Task<Response<BankAccountDto>> GetByIdAsync(int id)
         {
-            var backAccount = await _unitOfWork.BankAccount.GetById(id);
+            var specification = new BankAccountSpecs();
+            var backAccount = await _unitOfWork.BankAccount.GetById(id, specification);
             if (backAccount == null)
                 return new Response<BankAccountDto>("Not found");
 
