@@ -14,7 +14,7 @@ namespace Domain.Entities
         [MaxLength(100)]
         public string Name { get; private set; }
         [MaxLength(50)]
-        public string Manager { get; private set; }
+        public string StoreManager { get; private set; }
         public int CampusId { get; private set; }
         [ForeignKey("CampusId")]
         public Campus Campus { get; private set; }
