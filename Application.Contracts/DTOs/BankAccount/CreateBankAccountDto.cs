@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Constants;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace Application.Contracts.DTOs
         [MaxLength(100)]
         public string AccountTitle { get; set; }
         [Required]
+        public BankAccountType BankAccountType { get; set; }
+        [Required]
         [MaxLength(100)]
         public string BankName { get; set; }
         [MaxLength(50)]
@@ -25,6 +28,8 @@ namespace Application.Contracts.DTOs
         public decimal OpeningBalance { get; set; }
         [Required]
         public DateTime OpeningBalanceDate { get; set; }
+        [MaxLength(200)]
+        public string Purpose { get; set; }
         [Required]
         public int CampusId { get; set; }
     }
