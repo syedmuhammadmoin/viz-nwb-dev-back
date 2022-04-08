@@ -20,6 +20,12 @@ namespace Infrastructure.Specifications
 
         }
 
+        public BankAccountSpecs()
+        {
+            AddInclude(i => i.Campus);
+            AddInclude(i => i.ChAccount);
+            AddInclude(i => i.ClearingAccount);
+        }
         public BankAccountSpecs(Guid clearingAccountId) : base(e => e.ClearingAccountId == clearingAccountId)
         {
         }
