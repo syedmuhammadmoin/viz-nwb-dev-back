@@ -1,4 +1,5 @@
 ﻿using Domain.Base;
+using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,6 +17,7 @@ namespace Domain.Entities
         public long AccountNumber { get; private set; }
         [MaxLength(50)]
         public string AccountTitle { get; private set; }
+        public BankAccountType BankAccountType { get; private set; }
         [MaxLength(50)]
         public string BankName { get; private set; }
         [MaxLength(50)]
@@ -23,6 +25,8 @@ namespace Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal OpeningBalance { get; private set; }
         public DateTime OpeningBalanceDate { get; private set; }
+        [MaxLength(200)]
+        public string Purpose { get; private set; }
         public Guid ChAccountId { get; private set; }
         [ForeignKey("ChAccountId")]
         public Level4 ChAccount { get; private set; }
