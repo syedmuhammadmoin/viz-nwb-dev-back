@@ -433,7 +433,8 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.AuthClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.BusinessPartnerClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.OrganizationClaims), id);
-            allPermissions.GetPermissions(typeof(Permissions.DepartmentsClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DepartmentClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DesignationClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.WarehouseClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.LocationClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.BankAccountClaims), id);
@@ -531,7 +532,8 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.AuthClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.BusinessPartnerClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.OrganizationClaims), "12");
-            allPermissions.GetPermissions(typeof(Permissions.DepartmentsClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.DepartmentClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.DesignationClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.WarehouseClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.LocationClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.BankAccountClaims), "12");
