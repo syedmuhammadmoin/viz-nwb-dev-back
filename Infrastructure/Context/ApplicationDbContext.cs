@@ -53,6 +53,8 @@ namespace Infrastructure.Context
         public DbSet<TransactionReconcile> TransactionReconciles { get; set; }
         public DbSet<BudgetMaster> BudgetMaster { get; set; }
         public DbSet<BudgetLines> BudgetLines { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Designation> Designations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
