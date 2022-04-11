@@ -36,6 +36,8 @@ namespace Domain.Interfaces
         ICampusRepository Campus { get; }
         IWorkFlowTransitionRepository WorkFlowTransition { get; }
         IBudgetRepository Budget { get; }
+        IDepartmentRepository Department { get; }
+        IDesignationRepository Designation { get; }
 
         Task SaveAsync();
         void CreateTransaction();
