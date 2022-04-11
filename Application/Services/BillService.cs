@@ -100,6 +100,7 @@ namespace Application.Services
                 return await this.UpdateBILL(entity, 1);
             }
         }
+
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
@@ -124,6 +125,7 @@ namespace Application.Services
                 return await this.UpdateBILL(entity, 6);
             }
         }
+
         private async Task<Response<BillDto>> SaveBILL(CreateBillDto entity, int status)
         {
             if (entity.BillLines.Count() == 0)
@@ -134,7 +136,7 @@ namespace Application.Services
             //setting BusinessPartnerPayable
             var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
             bill.setPayableAccountId(er.AccountPayableId);
-            
+
             //Setting status
             bill.setStatus(status);
 
@@ -161,6 +163,7 @@ namespace Application.Services
                 return new Response<BillDto>(ex.Message);
             }
         }
+
         private async Task<Response<BillDto>> UpdateBILL(CreateBillDto entity, int status)
         {
             if (entity.BillLines.Count() == 0)
@@ -201,6 +204,7 @@ namespace Application.Services
                 return new Response<BillDto>(ex.Message);
             }
         }
+
         private async Task AddToLedger(BillMaster bill)
         {
             var transaction = new Transactions(bill.DocNo, DocType.Bill);
@@ -223,7 +227,9 @@ namespace Application.Services
                     line.WarehouseId,
                     line.Description,
                     'D',
-                    amount + tax
+                    amount + tax,
+                    bill.CampusId,
+                    bill.BillDate
                     );
 
                 await _unitOfWork.Ledger.Add(addSalesAmountInRecordLedger);
@@ -239,7 +245,9 @@ namespace Application.Services
                         null,
                         bill.DocNo,
                         'C',
-                        bill.TotalAmount
+                        bill.TotalAmount,
+                        bill.CampusId,
+                        bill.BillDate
                     );
 
             await _unitOfWork.Ledger.Add(addPayableInLedger);

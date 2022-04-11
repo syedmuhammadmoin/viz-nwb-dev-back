@@ -9,7 +9,6 @@ namespace Domain.Interfaces
 {
     public interface ILedgerRepository : IGenericRepository<RecordLedger, int>
     {
-
         Task AddRange(List<RecordLedger> list);
     }
 }

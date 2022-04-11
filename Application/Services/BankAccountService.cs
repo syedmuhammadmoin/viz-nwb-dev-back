@@ -93,7 +93,7 @@ namespace Application.Services
 
         }
 
-        public  async Task<Response<BankAccountDto>> GetByIdAsync(int id)
+        public async Task<Response<BankAccountDto>> GetByIdAsync(int id)
         {
             var backAccount = await _unitOfWork.BankAccount.GetById(id);
             if (backAccount == null)
@@ -105,7 +105,7 @@ namespace Application.Services
         public async Task<Response<BankAccountDto>> UpdateAsync(UpdateBankAccountDto entity)
         {
             _unitOfWork.CreateTransaction();
-            try 
+            try
             {
                 var bankAccount = await _unitOfWork.BankAccount.GetById((int)entity.Id);
 
@@ -146,7 +146,7 @@ namespace Application.Services
         {
             throw new NotImplementedException();
         }
-        
+
         //AddLedger in Bank Account
         private async Task AddToLedger(BankAccount bankAccount)
         {
@@ -157,7 +157,10 @@ namespace Application.Services
                 null,
                 "Opening Balance",
                 'D',
-                bankAccount.OpeningBalance);
+                bankAccount.OpeningBalance,
+                bankAccount.CampusId,
+                bankAccount.OpeningBalanceDate
+                );
 
             await _unitOfWork.Ledger.Add(addBalanceInBankAccount);
 
@@ -168,7 +171,10 @@ namespace Application.Services
                null,
                "Opening Balance",
                'C',
-               bankAccount.OpeningBalance);
+               bankAccount.OpeningBalance,
+               bankAccount.CampusId,
+               bankAccount.OpeningBalanceDate
+                );
 
             await _unitOfWork.Ledger.Add(addBalanceInOpeningBalanceEquity);
             await _unitOfWork.SaveAsync();
