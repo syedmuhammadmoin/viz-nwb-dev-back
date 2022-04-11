@@ -40,7 +40,8 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaim(superAdmin, "AuthClaims");
             await roleManager.AddPermissionClaim(superAdmin, "BusinessPartnerClaims");
             await roleManager.AddPermissionClaim(superAdmin, "OrganizationClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "DepartmentsClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "DepartmentClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "DesignationClaims");
             await roleManager.AddPermissionClaim(superAdmin, "CampusClaims");
             await roleManager.AddPermissionClaim(superAdmin, "WarehouseClaims");
             await roleManager.AddPermissionClaim(superAdmin, "LocationClaims");
