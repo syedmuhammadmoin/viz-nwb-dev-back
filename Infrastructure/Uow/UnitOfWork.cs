@@ -47,8 +47,8 @@ namespace Infrastructure.Uow
         public IWorkFlowTransitionRepository WorkFlowTransition { get; private set; }
         public IBudgetRepository Budget { get; private set; }
         public IDepartmentRepository Department { get; private set; }
-
         public IDesignationRepository Designation { get; private set; }
+        public IEmployeeRepository Employee { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -81,6 +81,7 @@ namespace Infrastructure.Uow
             Budget = new BudgetRepository(context);
             Department = new DepartmentRepository(context);
             Designation = new DesignationRepository(context);
+            Employee = new EmployeeRepository(context);
         }
 
         public async Task SaveAsync()

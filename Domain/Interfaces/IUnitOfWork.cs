@@ -38,6 +38,7 @@ namespace Domain.Interfaces
         IBudgetRepository Budget { get; }
         IDepartmentRepository Department { get; }
         IDesignationRepository Designation { get; }
+        IEmployeeRepository Employee { get; }
 
         Task SaveAsync();
         void CreateTransaction();
