@@ -64,6 +64,13 @@ namespace Domain.Constants
             public const string Edit = "Permissions.DesignationClaims.Edit";
             public const string Delete = "Permissions.DesignationClaims.Delete";
         }
+        public static class EmployeeClaims
+        {
+            public const string View = "Permissions.EmployeeClaims.View";
+            public const string Create = "Permissions.EmployeeClaims.Create";
+            public const string Edit = "Permissions.EmployeeClaims.Edit";
+            public const string Delete = "Permissions.EmployeeClaims.Delete";
+        }
 
         public static class LocationClaims
         {

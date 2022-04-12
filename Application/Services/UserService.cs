@@ -456,6 +456,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.WorkflowStatusClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.WorkflowClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.BudgetClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.EmployeeClaims), id);
 
 
             //Getting all claims for this role
@@ -555,6 +556,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.WorkflowStatusClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.WorkflowClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.BudgetClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.EmployeeClaims), "12");
 
             var allClaimValues = allPermissions.Select(a => a.Value).ToList();
             return new Response<List<string>>(allClaimValues,"Returning all claims");
