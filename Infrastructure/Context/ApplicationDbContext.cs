@@ -55,6 +55,7 @@ namespace Infrastructure.Context
         public DbSet<BudgetLines> BudgetLines { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Designation> Designations { get; set; }
+        public DbSet<Employee> Employees { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -71,7 +72,6 @@ namespace Infrastructure.Context
             .HasOne(tc => tc.BankStmtMaster)
             .WithMany(c => c.BankStmtLines)
             .OnDelete(DeleteBehavior.Cascade);
-
 
             //JournalEntry
             modelBuilder.Entity<JournalEntryLines>()

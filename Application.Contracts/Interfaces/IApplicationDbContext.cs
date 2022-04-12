@@ -47,6 +47,7 @@ namespace Application.Interfaces
         public DbSet<BudgetLines> BudgetLines { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Designation> Designations { get; set; }
+        public DbSet<Employee> Employees { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
