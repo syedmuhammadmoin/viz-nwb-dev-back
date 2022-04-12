@@ -14,6 +14,7 @@ namespace Domain.Entities
     {
         [MaxLength(20)]
         public string DocNo { get; private set; }
+        public DocType PaymentFormType { get; private set; }
         public PaymentType PaymentType { get; private set; }
         public int BusinessPartnerId { get; private set; }
         [ForeignKey("BusinessPartnerId")]
