@@ -31,10 +31,10 @@ namespace Domain.Entities
         public string Gender { get; private set; }
         [MaxLength(50)]
         public string PlaceofBirth { get; private set; }
-        public string DesignationId { get; private set; }
+        public int DesignationId { get; private set; }
         [ForeignKey("DesignationId")] 
         public Designation Designation { get; private set; }
-        public string DepartmentId { get; private set; }
+        public int DepartmentId { get; private set; }
         [ForeignKey("DepartmentId")]
         public Department Department { get; private set; }
         [MaxLength(300)]
