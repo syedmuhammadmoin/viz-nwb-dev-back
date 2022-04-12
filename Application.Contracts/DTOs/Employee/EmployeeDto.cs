@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Contracts.DTOs.Employee
+namespace Application.Contracts.DTOs
 {
     public class EmployeeDto
     {
+        public int Id { get; set; }
         public string Name { get; private set; }
         public string FatherName { get; private set; }
         public string CNIC { get; private set; }

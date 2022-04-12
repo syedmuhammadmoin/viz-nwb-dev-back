@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Contracts.DTOs.Employee
+namespace Application.Contracts.DTOs
 {
     public class CreateEmployeeDto
     {
+        public int? Id { get; set; }
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }
@@ -18,22 +19,16 @@ namespace Application.Contracts.DTOs.Employee
         [Required]
         [MaxLength(20)]
         public string CNIC { get; set; }
-        [Required]
         [MaxLength(100)]
         public string Domicile { get; set; }
-        [Required]
         [MaxLength(20)]
         public string Contact { get; set; }
-        [Required]
         [MaxLength(20)]
         public string Religion { get; set; }
-        [Required]
         [MaxLength(50)]
         public string Nationality { get; set; }
-        [Required]
         [MaxLength(50)]
         public string Maritalstatus { get; set; }
-        [Required]
         [MaxLength(20)]
         public string Gender { get; set; }
         [MaxLength(50)]
@@ -51,18 +46,13 @@ namespace Application.Contracts.DTOs.Employee
         public DateTime? DateofBirth { get; set; }
         public int? EarnedLeaves { get; set; }
         public int? CasualLeaves { get; set; }
-        [Required]
         [MaxLength(30)]
         public string Status { get; set; }
-        [Required]
         [MaxLength(50)]
         public string Role { get; set; }
-        [Required]
         [MaxLength(80)]
         public string Faculty { get; set; }
-        [Required]
         [MaxLength(80)]
         public string DutyShift { get; set; }
-
     }
 }
