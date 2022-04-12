@@ -12,6 +12,7 @@ namespace Application.Contracts.DTOs
         public int Id { get; set; }
         public string DocNo { get; set; }
         public PaymentType PaymentType { get; set; }
+        public DocType PaymentFormType { get; set; }
         public int BusinessPartnerId { get; set; }
         public string BusinessPartnerName { get; set; }
         public Guid AccountId { get; set; }
