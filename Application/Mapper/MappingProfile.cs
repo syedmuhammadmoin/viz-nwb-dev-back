@@ -32,6 +32,13 @@ namespace Application.Mapper
             CreateMap<Designation, DesignationDto>();
             CreateMap<DesignationDto, Designation>();
 
+            // Employee Mapping
+            CreateMap<Employee, EmployeeDto>()
+                .ForMember(dto => dto.DepartmentName, core => core.MapFrom(a => a.Department.Name))
+                .ForMember(dto => dto.DepartmentName, core => core.MapFrom(a => a.Designation.Name));
+
+            CreateMap<CreateEmployeeDto, Employee>();
+
             // Warehouse Mapping
             CreateMap<Warehouse, WarehouseDto>()
                 .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name));
