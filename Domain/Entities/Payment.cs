@@ -14,7 +14,7 @@ namespace Domain.Entities
     {
         [MaxLength(20)]
         public string DocNo { get; private set; }
-        public PaymentType PaymentType { get; private set; }
+        public PaymentType PaymentType { get; private set; } // 0 = Inflow, 1 = Outflow
         public int BusinessPartnerId { get; private set; }
         [ForeignKey("BusinessPartnerId")]
         public BusinessPartner BusinessPartner { get; private set; }
@@ -22,7 +22,7 @@ namespace Domain.Entities
         [ForeignKey("AccountId")]
         public Level4 Account { get; private set; }
         public DateTime PaymentDate { get; private set; }
-        public PaymentRegisterType PaymentRegisterType { get; private set; }
+        public PaymentRegisterType PaymentRegisterType { get; private set; } // 0 = CashAccount, 1 = BankAccount
         public Guid PaymentRegisterId { get; private set; }
         [ForeignKey("PaymentRegisterId")]
         public Level4 PaymentRegister { get; private set; }
@@ -37,6 +37,8 @@ namespace Domain.Entities
         public decimal Discount { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal SalesTax { get; private set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal SRBTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal IncomeTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]

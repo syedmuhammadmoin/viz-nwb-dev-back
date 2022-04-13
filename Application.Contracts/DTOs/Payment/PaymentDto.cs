@@ -27,6 +27,7 @@ namespace Application.Contracts.DTOs
         public decimal Discount { get; set; }
         public decimal SalesTax { get; set; }
         public decimal IncomeTax { get; set; }
+        public decimal SRBTax { get; set; }
         public decimal NetPayment { get; set; }
         public int StatusId { get; set; }
         public string Status { get; set; }

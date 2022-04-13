@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Constants;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ namespace Application.Contracts.DTOs
         public string DocNo { get; set; }
         public long AccountNumber { get; set; }
         public string AccountTitle { get; set; }
+        public BankAccountType BankAccountType { get; set; }
         public string BankName { get; set; }
         public string Branch { get; set; }
         public decimal OpeningBalance { get; set; }
@@ -22,6 +24,7 @@ namespace Application.Contracts.DTOs
         public string ClearingAccount { get; set; }
         public int CampusId { get; set; }
         public string CampusName { get; set; }
+        public string Purpose { get; set; }
         public int TransactionId { get; set; }
     }
 }

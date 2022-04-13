@@ -10,7 +10,7 @@ namespace Application.Contracts.DTOs
         public string Name { get; set; }
         [Required]
         [MaxLength(100)]
-        public string Manager { get; set; }
+        public string StoreManager { get; set; }
         [Required]
         public int CampusId { get; set; }
     }
