@@ -13,33 +13,34 @@ namespace Vizalys.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class PaymentController : ControllerBase
+
+    public class ReceiptController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
 
-        public PaymentController(IPaymentService paymentService)
+        public ReceiptController(IPaymentService paymentService)
         {
             _paymentService = paymentService;
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.PaymentClaims.Create, Permissions.PaymentClaims.View, Permissions.PaymentClaims.Delete, Permissions.PaymentClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.ReceiptClaims.Create, Permissions.ReceiptClaims.View, Permissions.ReceiptClaims.Delete, Permissions.ReceiptClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<PaymentDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
-            var payments = await _paymentService.GetAllAsync(filter, PaymentType.Outflow );
+            var payments = await _paymentService.GetAllAsync(filter, PaymentType.Inflow);
             if (payments.IsSuccess)
                 return Ok(payments); // Status Code : 200
 
             return BadRequest(payments); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.PaymentClaims.Create })]
+        [ClaimRequirement("Permission", new string[] { Permissions.ReceiptClaims.Create })]
         [HttpPost]
         public async Task<ActionResult<Response<PaymentDto>>> CreateAsync(CreatePaymentDto entity)
         {
-            if (entity.PaymentType != PaymentType.Outflow)
+            if (entity.PaymentType != PaymentType.Inflow)
             {
-                return new Response<PaymentDto>("Invalid API");
+               return new Response<PaymentDto>("Invalid API");
             }
 
             var payment = await _paymentService.CreateAsync(entity);
@@ -49,28 +50,29 @@ namespace Vizalys.Api.Controllers
             return BadRequest(payment); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.PaymentClaims.View, Permissions.PaymentClaims.Delete, Permissions.PaymentClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.ReceiptClaims.View, Permissions.ReceiptClaims.Delete, Permissions.ReceiptClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<PaymentDto>>> GetByIdAsync(int id)
         {
-            var result = await _paymentService.GetByIdAsync(id, PaymentType.Outflow);
+            var result = await _paymentService.GetByIdAsync(id, PaymentType.Inflow);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 
             return BadRequest(result); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.PaymentClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.ReceiptClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<PaymentDto>>> UpdateAsync(int id, CreatePaymentDto entity)
         {
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
 
-            if (entity.PaymentType != PaymentType.Outflow)
+            if (entity.PaymentType != PaymentType.Inflow)
             {
                 return new Response<PaymentDto>("Invalid API");
             }
+
             var result = await _paymentService.UpdateAsync(entity);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
@@ -78,7 +80,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.PaymentClaims.View })]
+        [ClaimRequirement("Permission", new string[] { Permissions.ReceiptClaims.View })]
         [HttpPost("workflow")]
         public async Task<ActionResult<Response<bool>>> CheckWorkFlow([FromBody] ApprovalDto data)
         {
@@ -87,5 +89,6 @@ namespace Vizalys.Api.Controllers
                 return Ok(result); // Status Code : 200
             return BadRequest(result);
         }
+
     }
 }
