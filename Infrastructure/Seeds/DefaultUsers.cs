@@ -65,6 +65,7 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaim(superAdmin, "BudgetClaims");
             await roleManager.AddPermissionClaim(superAdmin, "ReceiptClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "GeneralLedgerClaims");
+            await roleManager.AddPermissionClaimReport(superAdmin, "TrailBalanceClaims");
         }
         public static async Task AddPermissionClaim(this RoleManager<IdentityRole> roleManager, IdentityRole role, string module)
         {
