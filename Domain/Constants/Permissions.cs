@@ -187,6 +187,14 @@ namespace Domain.Constants
             public const string Delete = "Permissions.PaymentClaims.Delete";
         }
 
+        public static class ReceiptClaims
+        {
+            public const string View = "Permissions.ReceiptClaims.View";
+            public const string Create = "Permissions.ReceiptClaims.Create";
+            public const string Edit = "Permissions.ReceiptClaims.Edit";
+            public const string Delete = "Permissions.PaymentClaims.Delete";
+        }
+
         public static class CampusClaims
         {
             public const string View = "Permissions.CampusClaims.View";

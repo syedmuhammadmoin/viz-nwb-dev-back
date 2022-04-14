@@ -453,6 +453,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.WorkflowStatusClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.WorkflowClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.BudgetClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.ReceiptClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.GeneralLedgerClaims), id);
 
 
@@ -551,6 +552,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.JournalEntryClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.WorkflowStatusClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.WorkflowClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.ReceiptClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.BudgetClaims), "12");
 
             var allClaimValues = allPermissions.Select(a => a.Value).ToList();

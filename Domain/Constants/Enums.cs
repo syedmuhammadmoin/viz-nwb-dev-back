@@ -65,7 +65,8 @@ namespace Domain.Constants
         GDN,
         InventoryAdjustment,
         Quotation,
-        Requisition
+        Requisition,
+        Receipt
     }
     public enum ActionButton
     {

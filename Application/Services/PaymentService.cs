@@ -47,22 +47,22 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public async Task<PaginationResponse<List<PaymentDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<PaymentDto>>> GetAllAsync(PaginationFilter filter, PaymentType paymentType)
         {
-            var specification = new PaymentSpecs(filter);
+            var specification = new PaymentSpecs(filter, paymentType);
             var payment = await _unitOfWork.Payment.GetAll(specification);
 
             if (payment.Count() == 0)
                 return new PaginationResponse<List<PaymentDto>>("List is empty");
 
-            var totalRecords = await _unitOfWork.Payment.TotalRecord();
+            var totalRecords = await _unitOfWork.Payment.TotalRecord(new PaymentSpecs(paymentType));
 
             return new PaginationResponse<List<PaymentDto>>(_mapper.Map<List<PaymentDto>>(payment), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
 
-        public async Task<Response<PaymentDto>> GetByIdAsync(int id)
+        public async Task<Response<PaymentDto>> GetByIdAsync(int id, PaymentType paymentType)
         {
-            var specification = new PaymentSpecs();
+            var specification = new PaymentSpecs(false, paymentType);
             var payment = await _unitOfWork.Payment.GetById(id, specification);
             if (payment == null)
                 return new Response<PaymentDto>("Not found");
@@ -107,7 +107,9 @@ namespace Application.Services
 
         private async Task<Response<PaymentDto>> SubmitPay(CreatePaymentDto entity)
         {
-            var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Payment)).FirstOrDefault();
+
+            var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(
+                new WorkFlowSpecs(entity.PaymentType == PaymentType.Inflow ? DocType.Receipt : DocType.Payment)).FirstOrDefault();
 
             if (checkingActiveWorkFlows == null)
             {
@@ -157,7 +159,8 @@ namespace Application.Services
 
         private async Task<Response<PaymentDto>> UpdatePay(CreatePaymentDto entity, int status)
         {
-            var payment = await _unitOfWork.Payment.GetById((int)entity.Id);
+            var specification = new PaymentSpecs(true, entity.PaymentType);
+            var payment = await _unitOfWork.Payment.GetById((int)entity.Id, specification);
 
             if (payment == null)
                 return new Response<PaymentDto>("Not found");
@@ -419,6 +422,17 @@ namespace Application.Services
                 _unitOfWork.Rollback();
                 return new Response<bool>(ex.Message);
             }
+        }
+
+        //Overrided method
+        public Task<PaginationResponse<List<PaymentDto>>> GetAllAsync(PaginationFilter filter)
+        {
+            throw new NotImplementedException();
+        }
+        //Overrided method
+        public Task<Response<PaymentDto>> GetByIdAsync(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
