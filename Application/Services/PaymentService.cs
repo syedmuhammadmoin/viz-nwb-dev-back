@@ -55,7 +55,7 @@ namespace Application.Services
             if (payment.Count() == 0)
                 return new PaginationResponse<List<PaymentDto>>("List is empty");
 
-            var totalRecords = await _unitOfWork.Payment.TotalRecord();
+            var totalRecords = await _unitOfWork.Payment.TotalRecord(new PaymentSpecs(paymentType));
 
             return new PaginationResponse<List<PaymentDto>>(_mapper.Map<List<PaymentDto>>(payment), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

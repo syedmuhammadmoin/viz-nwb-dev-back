@@ -50,6 +50,9 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.Status);
         }
-        
+        public PaymentSpecs(PaymentType paymentType) : base(e => (e.PaymentType == paymentType))
+        {
+        }
+
     }
 }
