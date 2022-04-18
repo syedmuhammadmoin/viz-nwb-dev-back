@@ -40,6 +40,7 @@ builder.Services.AddScoped<IWorkFlowStatusService, WorkFlowStatusService>();
 builder.Services.AddScoped<ITransactionReconcileService, TransactionReconcileService>();
 builder.Services.AddScoped<IBudgetService, BudgetService>();
 builder.Services.AddScoped<IGeneralLedgerReportService, GeneralLedgerReportService>();
+builder.Services.AddScoped<IBalanceSheetReportService, BalanceSheetReportService>();
 
 //Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
