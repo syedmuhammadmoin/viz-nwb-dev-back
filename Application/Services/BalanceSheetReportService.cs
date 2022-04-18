@@ -23,10 +23,6 @@ namespace Application.Services
         public Response<List<BalanceSheetDto>> GetBalanceSheet(BalanceSheetFilters balanceSheet)
         {
             balanceSheet.DocDate = balanceSheet.DocDate.Date;
-            if (balanceSheet.AccountName == null)
-            {
-                balanceSheet.AccountName = "";
-            }
 
             if (balanceSheet.CampusName == null)
             {

@@ -9,7 +9,6 @@ namespace Application.Contracts.Filters
     public class BalanceSheetFilters
     {
         public DateTime DocDate { get; set; }
-        public string AccountName { get; set; }
         public string CampusName { get; set; }
     }
 }
