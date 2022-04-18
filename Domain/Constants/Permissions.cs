@@ -97,12 +97,6 @@ namespace Domain.Constants
             public const string Edit = "Permissions.CashAccountClaims.Edit";
             public const string Delete = "Permissions.CashAccountClaims.Delete";
         }
-        //Reporting Form
-        public static class ChartOfAccountClaims
-        {
-            public const string View = "Permissions.ChartOfAccountClaims.View";
-        }
-
         public static class CategoriesClaims
         {
             public const string View = "Permissions.CategoriesClaims.View";
@@ -226,9 +220,19 @@ namespace Domain.Constants
             public const string Edit = "Permissions.JournalEntryClaims.Edit";
             public const string Delete = "Permissions.JournalEntryClaims.Delete";
         }
+
+        //Reporting Form
+        public static class ChartOfAccountClaims
+        {
+            public const string View = "Permissions.ChartOfAccountClaims.View";
+        }
         public static class GeneralLedgerClaims
         {
             public const string View = "Permissions.GeneralLedgerClaims.View";
+        }
+        public static class BalanceSheetClaims
+        {
+            public const string View = "Permissions.BalanceSheetClaims.View";
         }
     }
 }
