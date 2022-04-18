@@ -10,7 +10,6 @@ namespace Application.Contracts.DTOs
     {
         public string Nature { get; set; } // Level1 Name
         public string Transactional { get; set; } // Level4 Name
-        public string Campus { get; set; }
         public decimal Debit { get; set; }
         public decimal Credit { get; set; }
         public decimal Balance { get; set; }
