@@ -52,7 +52,7 @@ namespace Application.Services
                     BId = i.BusinessPartnerId,
                     BusinessPartnerName = i.BusinessPartner != null ? i.BusinessPartner.Name : "N/A",
                     WarehouseName = i.Warehouse != null ? i.Warehouse.Name : "N/A",
-                    CampusName = i.Campus != null ? i.Campus.Name : "N/A",
+                    CampusName = i.Campus.Name != null ? i.Campus.Name : "N/A",
                     Balance = i.Sign == 'D' ? i.Amount : (-1) * i.Amount
                 });
 
@@ -117,7 +117,7 @@ namespace Application.Services
                           || glv.Level1Id == new Guid("30000000-5566-7788-99AA-BBCCDDEEFF00"))
                           select new
                           {
-                              glv,
+                              glv
                               
                           } into t1
                           group t1 by new
@@ -129,6 +129,7 @@ namespace Application.Services
                           orderby iGroup.Key.Level1Id descending, iGroup.Key.Transactional
                           select new BalanceSheetDto
                           {
+                              Nature = iGroup.Key.Nature,
                               Transactional = iGroup.Key.Transactional,
                               Debit = iGroup.Sum(e => e.glv.Debit),
                               Credit = iGroup.Sum(e => e.glv.Credit),
