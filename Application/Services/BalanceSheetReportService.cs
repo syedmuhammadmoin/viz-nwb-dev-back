@@ -104,6 +104,7 @@ namespace Application.Services
 
             var pNl = new BalanceSheetDto()
             {
+                Nature = "DEFICIT/SURPLUS",
                 Transactional = "N/A",
                 Debit = 0,
                 Credit = 0,
