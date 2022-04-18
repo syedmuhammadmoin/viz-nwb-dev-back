@@ -48,7 +48,7 @@ namespace Application.Services
                     BId = i.BusinessPartnerId,
                     BusinessPartnerName = i.BusinessPartner != null ? i.BusinessPartner.Name : "N/A",
                     WarehouseName = i.Warehouse != null ? i.Warehouse.Name : "N/A",
-                    CampusName = i.Campus.Name != null ? i.Campus.Name : "N/A",
+                    CampusName = i.Campus != null ? i.Campus.Name : "N/A",
                     Balance = i.Sign == 'D' ? i.Amount : (-1) * i.Amount
                 });
 
