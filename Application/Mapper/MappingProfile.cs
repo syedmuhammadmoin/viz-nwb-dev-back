@@ -247,6 +247,7 @@ namespace Application.Mapper
             CreateMap<PurchaseOrderLines, PurchaseOrderLinesDto>()
               .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId))
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
+              .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
               .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
 
             CreateMap<CreatePurchaseOrderDto, PurchaseOrderMaster>()

@@ -60,11 +60,11 @@ namespace Application.Services
         public async Task<Response<PurchaseOrderDto>> GetByIdAsync(int id)
         {
             var specification = new PurchaseOrderSpecs(false);
-            var dbn = await _unitOfWork.PurchaseOrder.GetById(id, specification);
-            if (dbn == null)
+            var po = await _unitOfWork.PurchaseOrder.GetById(id, specification);
+            if (po == null)
                 return new Response<PurchaseOrderDto>("Not found");
 
-            var debitNoteDto = _mapper.Map<PurchaseOrderDto>(dbn);
+            var debitNoteDto = _mapper.Map<PurchaseOrderDto>(po);
 
             debitNoteDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PurchaseOrder)).FirstOrDefault();
@@ -133,20 +133,17 @@ namespace Application.Services
             if (entity.PurchaseOrderLines.Count() == 0)
                 return new Response<PurchaseOrderDto>("Lines are required");
 
-            var dbn = _mapper.Map<PurchaseOrderMaster>(entity);
-
-            //setting BusinessPartnerPayable
-            var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
+            var po = _mapper.Map<PurchaseOrderMaster>(entity);
 
             _unitOfWork.CreateTransaction();
             try
             {
                 //Saving in table
-                var result = await _unitOfWork.PurchaseOrder.Add(dbn);
+                var result = await _unitOfWork.PurchaseOrder.Add(po);
                 await _unitOfWork.SaveAsync();
 
                 //For creating docNo
-                dbn.CreateDocNo();
+                po.CreateDocNo();
                 await _unitOfWork.SaveAsync();
 
                 //Commiting the transaction 
@@ -168,22 +165,19 @@ namespace Application.Services
                 return new Response<PurchaseOrderDto>("Lines are required");
 
             var specification = new PurchaseOrderSpecs(true);
-            var dbn = await _unitOfWork.PurchaseOrder.GetById((int)entity.Id, specification);
+            var po = await _unitOfWork.PurchaseOrder.GetById((int)entity.Id, specification);
 
-            if (dbn == null)
+            if (po == null)
                 return new Response<PurchaseOrderDto>("Not found");
 
-            if (dbn.StatusId != 1 && dbn.StatusId != 2)
+            if (po.StatusId != 1 && po.StatusId != 2)
                 return new Response<PurchaseOrderDto>("Only draft document can be edited");
-
-            //setting BusinessPartnerPayable
-            var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
 
             _unitOfWork.CreateTransaction();
             try
             {
                 //For updating data
-                _mapper.Map<CreatePurchaseOrderDto, PurchaseOrderMaster>(entity, dbn);
+                _mapper.Map<CreatePurchaseOrderDto, PurchaseOrderMaster>(entity, po);
 
                 await _unitOfWork.SaveAsync();
 
@@ -191,7 +185,7 @@ namespace Application.Services
                 _unitOfWork.Commit();
 
                 //returning response
-                return new Response<PurchaseOrderDto>(_mapper.Map<PurchaseOrderDto>(dbn), "Created successfully");
+                return new Response<PurchaseOrderDto>(_mapper.Map<PurchaseOrderDto>(po), "Created successfully");
             }
             catch (Exception ex)
             {
