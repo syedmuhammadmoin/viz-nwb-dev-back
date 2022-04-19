@@ -19,6 +19,8 @@ namespace Application.Contracts.DTOs
         [StringLength(20)]
         public string Contact { get; set; }
         [Required]
+        public int CampusId { get; set; }
+        [Required]
         public bool isSubmit { get; set; }
         public virtual List<CreatePurchaseOrderLinesDto> PurchaseOrderLines { get; set; }
     }
