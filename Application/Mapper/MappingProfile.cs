@@ -237,6 +237,25 @@ namespace Application.Mapper
             CreateMap<CreateBudgetDto, BudgetMaster>();
             CreateMap<CreateBudgetLinesDto, BudgetLines>();
 
+            // PurchaseOrder Mapping
+            CreateMap<PurchaseOrderMaster, PurchaseOrderDto>()
+              .ForMember(dto => dto.Vendor, core => core.MapFrom(a => a.Vendor.Name))
+               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
+               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+
+            CreateMap<PurchaseOrderLines, PurchaseOrderLinesDto>()
+              .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId))
+              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
+              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
+
+            CreateMap<CreatePurchaseOrderDto, PurchaseOrderMaster>()
+               .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.PurchaseOrderLines.Sum(e => e.Quantity * e.Cost)))
+               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.PurchaseOrderLines.Sum(e => e.Quantity * e.Cost * e.Tax / 100)))
+               .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.PurchaseOrderLines.Sum(e => (e.Quantity * e.Cost) + (e.Quantity * e.Cost * e.Tax / 100))));
+
+            CreateMap<CreatePurchaseOrderLinesDto, PurchaseOrderLines>()
+               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
         }
     }
 }
