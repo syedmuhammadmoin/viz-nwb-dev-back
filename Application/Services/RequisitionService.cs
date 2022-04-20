@@ -131,6 +131,7 @@ namespace Application.Services
                         getRequisition.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
+                            await _unitOfWork.SaveAsync();
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "Requisition Approved");
                         }
@@ -182,6 +183,9 @@ namespace Application.Services
 
             var requisition = _mapper.Map<RequisitionMaster>(entity);
 
+            //Setting status
+            requisition.setStatus(status);
+
             _unitOfWork.CreateTransaction();
             try
             {
@@ -212,19 +216,22 @@ namespace Application.Services
                 return new Response<RequisitionDto>("Lines are required");
 
             var specification = new RequisitionSpecs(true);
-            var po = await _unitOfWork.Requisition.GetById((int)entity.Id, specification);
+            var requisition = await _unitOfWork.Requisition.GetById((int)entity.Id, specification);
 
-            if (po == null)
+            if (requisition == null)
                 return new Response<RequisitionDto>("Not found");
 
-            if (po.StatusId != 1 && po.StatusId != 2)
+            if (requisition.StatusId != 1 && requisition.StatusId != 2)
                 return new Response<RequisitionDto>("Only draft document can be edited");
+
+            //Setting status
+            requisition.setStatus(status);
 
             _unitOfWork.CreateTransaction();
             try
             {
                 //For updating data
-                _mapper.Map<CreateRequisitionDto, RequisitionMaster>(entity, po);
+                _mapper.Map<CreateRequisitionDto, RequisitionMaster>(entity, requisition);
 
                 await _unitOfWork.SaveAsync();
 
@@ -232,7 +239,7 @@ namespace Application.Services
                 _unitOfWork.Commit();
 
                 //returning response
-                return new Response<RequisitionDto>(_mapper.Map<RequisitionDto>(po), "Created successfully");
+                return new Response<RequisitionDto>(_mapper.Map<RequisitionDto>(requisition), "Created successfully");
             }
             catch (Exception ex)
             {

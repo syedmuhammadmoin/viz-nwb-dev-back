@@ -138,6 +138,7 @@ namespace Application.Services
                         getPurchaseOrder.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
+                            await _unitOfWork.SaveAsync();
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "Purchase Order Approved");
                         }
@@ -191,6 +192,9 @@ namespace Application.Services
 
             var po = _mapper.Map<PurchaseOrderMaster>(entity);
 
+            //Setting status
+            po.setStatus(status);
+
             _unitOfWork.CreateTransaction();
             try
             {
@@ -228,6 +232,8 @@ namespace Application.Services
 
             if (po.StatusId != 1 && po.StatusId != 2)
                 return new Response<PurchaseOrderDto>("Only draft document can be edited");
+
+            po.setStatus(status);
 
             _unitOfWork.CreateTransaction();
             try
