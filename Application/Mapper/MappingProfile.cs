@@ -257,6 +257,23 @@ namespace Application.Mapper
 
             CreateMap<CreatePurchaseOrderLinesDto, PurchaseOrderLines>()
                .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
+
+            // Requisition Mapping
+            CreateMap<RequisitionMaster, RequisitionDto>()
+              .ForMember(dto => dto.BusinessPartner, core => core.MapFrom(a => a.BusinessPartner.Name))
+               .ForMember(dto => dto.Campus, core => core.MapFrom(a => a.Campus.Name))
+               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+
+            CreateMap<RequisitionLines, RequisitionLinesDto>()
+              .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId))
+              .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
+              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
+
+            CreateMap<CreateRequisitionDto, RequisitionMaster>();
+
+            CreateMap<CreateRequisitionLinesDto, RequisitionLines>();
+
         }
     }
 }
