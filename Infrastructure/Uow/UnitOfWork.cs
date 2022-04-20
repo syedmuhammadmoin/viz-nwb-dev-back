@@ -48,6 +48,8 @@ namespace Infrastructure.Uow
         public IBudgetRepository Budget { get; private set; }
         public IPurchaseOrderRepository PurchaseOrder { get; private set; }
 
+        public IRequisitionRepository Requisition { get; private set; }
+
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
@@ -78,6 +80,7 @@ namespace Infrastructure.Uow
             Campus = new CampusRepository(context);
             Budget = new BudgetRepository(context);
             PurchaseOrder = new PurchaseOrderRepository(context);
+            Requisition = new RequisitionRepository(context);
         }
 
         public async Task SaveAsync()

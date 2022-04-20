@@ -37,6 +37,7 @@ namespace Domain.Interfaces
         IWorkFlowTransitionRepository WorkFlowTransition { get; }
         IBudgetRepository Budget { get; }
         IPurchaseOrderRepository PurchaseOrder { get; }
+        IRequisitionRepository Requisition { get; }
 
         Task SaveAsync();
         void CreateTransaction();

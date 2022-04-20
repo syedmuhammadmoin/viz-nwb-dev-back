@@ -55,6 +55,8 @@ namespace Infrastructure.Context
         public DbSet<BudgetLines> BudgetLines { get; set; }
         public DbSet<PurchaseOrderMaster> PurchaseOrderMaster { get; set; }
         public DbSet<PurchaseOrderLines> PurchaseOrderLines { get; set; }
+        public DbSet<PurchaseOrderMaster> RequisitionMaster { get; set; }
+        public DbSet<PurchaseOrderLines> RequisitionLines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -120,7 +122,11 @@ namespace Infrastructure.Context
             .HasOne(tc => tc.PurchaseOrderMaster)
             .WithMany(c => c.PurchaseOrderLines)
             .OnDelete(DeleteBehavior.Cascade);
-
+            //Purchase Order
+            modelBuilder.Entity<RequisitionLines>()
+            .HasOne(tc => tc.RequisitionMaster)
+            .WithMany(c => c.RequisitionLines)
+            .OnDelete(DeleteBehavior.Cascade);
             //Changing Identity users and roles tables name
             modelBuilder.Entity<User>(entity =>
             {
