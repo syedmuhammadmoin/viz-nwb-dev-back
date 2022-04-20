@@ -8,18 +8,18 @@ namespace Application.Contracts.DTOs
 {
     public class PurchaseOrderLinesDto
     {
-        public int Id { get; private set; }
-        public int ItemId { get; private set; }
-        public string Item { get; private set; }
-        public string Description { get; private set; }
-        public int Quantity { get; private set; }
-        public decimal Cost { get; private set; }
-        public decimal Tax { get; private set; }
+        public int Id { get; set; }
+        public int ItemId { get; set; }
+        public string Item { get; set; }
+        public string Description { get; set; }
+        public int Quantity { get; set; }
+        public decimal Cost { get; set; }
+        public decimal Tax { get; set; }
         public decimal SubTotal { get; set; }
-        public Guid AccountId { get; private set; }
-        public string AccountName { get; private set; }
-        public int? WarehouseId { get; private set; }
-        public string Warehouse { get; private set; }
-        public int MasterId { get; private set; }
+        public Guid AccountId { get; set; }
+        public string AccountName { get; set; }
+        public int? WarehouseId { get; set; }
+        public string Warehouse { get; set; }
+        public int MasterId { get; set; }
     }
 }
