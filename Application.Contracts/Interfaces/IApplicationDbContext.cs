@@ -47,8 +47,8 @@ namespace Application.Interfaces
         public DbSet<BudgetLines> BudgetLines { get; set; }
         public DbSet<PurchaseOrderMaster> PurchaseOrderMaster { get; set; }
         public DbSet<PurchaseOrderLines> PurchaseOrderLines { get; set; }
-        public DbSet<PurchaseOrderMaster> RequisitionMaster { get; set; }
-        public DbSet<PurchaseOrderLines> RequisitionLines { get; set; }
+        public DbSet<RequisitionMaster> RequisitionMaster { get; set; }
+        public DbSet<RequisitionLines> RequisitionLines { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
