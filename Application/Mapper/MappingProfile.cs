@@ -245,7 +245,6 @@ namespace Application.Mapper
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<PurchaseOrderLines, PurchaseOrderLinesDto>()
-              .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId))
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
               .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
@@ -266,7 +265,6 @@ namespace Application.Mapper
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<RequisitionLines, RequisitionLinesDto>()
-              .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId))
               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
               .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
 
@@ -274,6 +272,24 @@ namespace Application.Mapper
 
             CreateMap<CreateRequisitionLinesDto, RequisitionLines>();
 
+            // GRN Mapping
+            CreateMap<GRNMaster, GRNDto>()
+              .ForMember(dto => dto.Vendor, core => core.MapFrom(a => a.Vendor.Name))
+               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
+               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+
+            CreateMap<GRNLines, GRNLinesDto>()
+              .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
+              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
+
+            CreateMap<CreateGRNDto, GRNMaster>()
+               .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.GRNLines.Sum(e => e.Quantity * e.Cost)))
+               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.GRNLines.Sum(e => e.Quantity * e.Cost * e.Tax / 100)))
+               .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.GRNLines.Sum(e => (e.Quantity * e.Cost) + (e.Quantity * e.Cost * e.Tax / 100))));
+
+            CreateMap<CreateGRNLinesDto, GRNLines>()
+               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
         }
     }
 }
