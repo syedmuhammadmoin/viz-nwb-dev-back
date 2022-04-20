@@ -13,9 +13,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public int VendorId { get; set; }
         [Required]
-        public DateTime PODate { get; set; }
-        [Required]
-        public DateTime DueDate { get; set; }
+        public DateTime GrnDate { get; set; }
         [StringLength(20)]
         public string Contact { get; set; }
         [Required]

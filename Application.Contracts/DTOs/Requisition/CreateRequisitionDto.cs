@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -10,10 +11,17 @@ namespace Application.Contracts.DTOs
     public class CreateRequisitionDto
     {
         public int? Id { get; set; }
+        [Required]
         public int BusinessPartnerId { get; set; }
+        [Required]
         public DateTime RequisitionDate { get; set; }
+        [Required]
         public string Contact { get; set; }
+        [Required]
         public int CampusId { get; set; }
+        [Required]
+        public int StatusId { get; set; }
+        [Required]
         public bool isSubmit { get; set; }
         public virtual List<CreateRequisitionLinesDto> RequisitionLines { get; set; }
     }
