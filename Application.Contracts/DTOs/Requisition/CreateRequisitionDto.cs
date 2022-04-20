@@ -16,8 +16,6 @@ namespace Application.Contracts.DTOs
         [Required]
         public DateTime RequisitionDate { get; set; }
         [Required]
-        public string Contact { get; set; }
-        [Required]
         public int CampusId { get; set; }
         [Required]
         public int StatusId { get; set; }

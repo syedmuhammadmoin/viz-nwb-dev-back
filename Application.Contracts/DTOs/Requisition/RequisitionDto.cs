@@ -19,7 +19,6 @@ namespace Application.Contracts.DTOs
         public string CampusId { get; set; }
         public DocumentStatus State { get; set; }
         public DateTime RequisitionDate { get; set; }
-        public string Contact { get; set; }
         public virtual List<RequisitionLinesDto> RequisitionLines { get; set; }
         public bool IsAllowedRole { get; set; }
     }

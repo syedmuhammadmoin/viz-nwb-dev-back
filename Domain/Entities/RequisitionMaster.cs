@@ -20,8 +20,6 @@ namespace Domain.Entities
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get; private set; }
         public DateTime RequisitionDate { get; private set; }
-        [MaxLength(20)]
-        public string Contact { get; private set; }
         public int CampusId { get; private set; }
         [ForeignKey("CampusId")]
         public Campus Campus { get; private set; }

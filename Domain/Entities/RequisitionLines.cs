@@ -11,7 +11,7 @@ namespace Domain.Entities
 {
     public class RequisitionLines : BaseEntity<int>
     {
-        public int? ItemId { get; private set; }
+        public int ItemId { get; private set; }
         [ForeignKey("ItemId")]
         public Product Item { get; private set; }
         [MaxLength(100)]
