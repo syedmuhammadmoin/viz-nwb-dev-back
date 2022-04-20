@@ -25,5 +25,10 @@ namespace Domain.Entities
         public int MasterId { get; private set; }
         [ForeignKey("MasterId")]
         public RequisitionMaster RequisitionMaster { get; private set; }
+
+        protected RequisitionLines()
+        {
+
+        }
     }
 }
