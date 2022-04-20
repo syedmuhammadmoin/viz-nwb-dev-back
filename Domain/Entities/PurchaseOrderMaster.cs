@@ -38,6 +38,10 @@ namespace Domain.Entities
         {
 
         }
+        public void setStatus(int statusId)
+        {
+            StatusId = statusId;
+        }
         public void CreateDocNo()
         {
             //Creating doc no..
