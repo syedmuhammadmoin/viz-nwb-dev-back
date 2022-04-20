@@ -16,6 +16,6 @@ namespace Application.Contracts.Filters
         public DateTime DocDate2 { get; set; }
         public string BusinessPartner { get; set; }
         public string Warehouse { get; set; }
-        public string Location { get; set; }
+        public string Campus { get; set; }
     }
 }
