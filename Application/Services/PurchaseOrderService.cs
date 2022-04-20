@@ -45,14 +45,14 @@ namespace Application.Services
         public async Task<PaginationResponse<List<PurchaseOrderDto>>> GetAllAsync(PaginationFilter filter)
         {
             var specification = new PurchaseOrderSpecs(filter);
-            var jvs = await _unitOfWork.PurchaseOrder.GetAll(specification);
+            var po = await _unitOfWork.PurchaseOrder.GetAll(specification);
 
-            if (jvs.Count() == 0)
+            if (po.Count() == 0)
                 return new PaginationResponse<List<PurchaseOrderDto>>("List is empty");
 
             var totalRecords = await _unitOfWork.PurchaseOrder.TotalRecord();
 
-            return new PaginationResponse<List<PurchaseOrderDto>>(_mapper.Map<List<PurchaseOrderDto>>(jvs),
+            return new PaginationResponse<List<PurchaseOrderDto>>(_mapper.Map<List<PurchaseOrderDto>>(po),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
 
         }
