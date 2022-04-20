@@ -47,8 +47,8 @@ namespace Infrastructure.Uow
         public IWorkFlowTransitionRepository WorkFlowTransition { get; private set; }
         public IBudgetRepository Budget { get; private set; }
         public IPurchaseOrderRepository PurchaseOrder { get; private set; }
-
         public IRequisitionRepository Requisition { get; private set; }
+        public IGRNRepository GRN { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -81,6 +81,7 @@ namespace Infrastructure.Uow
             Budget = new BudgetRepository(context);
             PurchaseOrder = new PurchaseOrderRepository(context);
             Requisition = new RequisitionRepository(context);
+            GRN = new GRNRepository(context);
         }
 
         public async Task SaveAsync()

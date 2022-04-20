@@ -38,6 +38,7 @@ namespace Domain.Interfaces
         IBudgetRepository Budget { get; }
         IPurchaseOrderRepository PurchaseOrder { get; }
         IRequisitionRepository Requisition { get; }
+        IGRNRepository GRN { get; }
 
         Task SaveAsync();
         void CreateTransaction();
