@@ -42,6 +42,7 @@ builder.Services.AddScoped<IBudgetService, BudgetService>();
 builder.Services.AddScoped<IGeneralLedgerReportService, GeneralLedgerReportService>();
 builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
 builder.Services.AddScoped<IRequisitionService, RequisitionService>();
+builder.Services.AddScoped<IGRNService, GRNService>();
 
 //Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
