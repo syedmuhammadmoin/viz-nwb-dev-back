@@ -21,10 +21,10 @@ namespace Application.Contracts.DTOs
         public int StatusId { get; set; }
         public string Status { get; set; }
         public DocumentStatus State { get; set; }
-          public decimal TotalBeforeTax { get; set; }
+        public decimal TotalBeforeTax { get; set; }
         public decimal TotalTax { get; set; }
-        public decimal Total { get; set; }
-        public  virtual List<PurchaseOrderLinesDto> PurchaseOrderLines { get; set; }
+        public decimal TotalAmount { get; set; }
+        public virtual List<PurchaseOrderLinesDto> PurchaseOrderLines { get; set; }
         public bool IsAllowedRole { get; set; }
     }
 }
