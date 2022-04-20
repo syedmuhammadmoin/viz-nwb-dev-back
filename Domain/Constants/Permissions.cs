@@ -230,5 +230,9 @@ namespace Domain.Constants
         {
             public const string View = "Permissions.GeneralLedgerClaims.View";
         }
+        public static class ProfitLossClaims
+        {
+            public const string View = "Permissions.ProfitLossClaims.View";
+        }
     }
 }
