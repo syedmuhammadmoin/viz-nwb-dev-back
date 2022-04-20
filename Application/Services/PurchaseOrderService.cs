@@ -64,16 +64,16 @@ namespace Application.Services
             if (po == null)
                 return new Response<PurchaseOrderDto>("Not found");
 
-            var debitNoteDto = _mapper.Map<PurchaseOrderDto>(po);
+            var requisitionDto = _mapper.Map<PurchaseOrderDto>(po);
 
-            debitNoteDto.IsAllowedRole = false;
+            requisitionDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PurchaseOrder)).FirstOrDefault();
 
 
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
-                    .FirstOrDefault(x => (x.CurrentStatusId == debitNoteDto.StatusId));
+                    .FirstOrDefault(x => (x.CurrentStatusId == requisitionDto.StatusId));
 
                 if (transition != null)
                 {
@@ -82,12 +82,12 @@ namespace Application.Services
                     {
                         if (transition.AllowedRole.Name == role)
                         {
-                            debitNoteDto.IsAllowedRole = true;
+                            requisitionDto.IsAllowedRole = true;
                         }
                     }
                 }
             }
-            return new Response<PurchaseOrderDto>(debitNoteDto, "Returning value");
+            return new Response<PurchaseOrderDto>(requisitionDto, "Returning value");
         }
 
         public async Task<Response<PurchaseOrderDto>> UpdateAsync(CreatePurchaseOrderDto entity)
@@ -102,9 +102,65 @@ namespace Application.Services
             }
         }
 
-        public Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
+        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
-            throw new NotImplementedException();
+            var getPurchaseOrder = await _unitOfWork.PurchaseOrder.GetById(data.DocId, new PurchaseOrderSpecs(true));
+
+            if (getPurchaseOrder == null)
+            {
+                return new Response<bool>("Purchase Order with the input id not found");
+            }
+            if (getPurchaseOrder.Status.State == DocumentStatus.Unpaid || getPurchaseOrder.Status.State == DocumentStatus.Partial || getPurchaseOrder.Status.State == DocumentStatus.Paid)
+            {
+                return new Response<bool>("Purchase Order already approved");
+            }
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PurchaseOrder)).FirstOrDefault();
+
+            if (workflow == null)
+            {
+                return new Response<bool>("No activated workflow found for this document");
+            }
+            var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == getPurchaseOrder.StatusId && x.Action == data.Action));
+
+            if (transition == null)
+            {
+                return new Response<bool>("No transition found");
+            }
+            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+            _unitOfWork.CreateTransaction();
+            try
+            {
+                foreach (var role in currentUserRoles)
+                {
+                    if (transition.AllowedRole.Name == role)
+                    {
+                        getPurchaseOrder.setStatus(transition.NextStatusId);
+                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                        {
+                            _unitOfWork.Commit();
+                            return new Response<bool>(true, "Purchase Order Approved");
+                        }
+                        if (transition.NextStatus.State == DocumentStatus.Rejected)
+                        {
+                            await _unitOfWork.SaveAsync();
+                            _unitOfWork.Commit();
+                            return new Response<bool>(true, "Purchase Order Rejected");
+                        }
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Purchase Order Reviewed");
+                    }
+                }
+
+                return new Response<bool>("User does not have allowed role");
+
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<bool>(ex.Message);
+            }
         }
 
         //Privte Methods for PurchaseOrder
