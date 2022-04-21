@@ -11,6 +11,8 @@ namespace Application.Contracts.DTOs
     {
         public int LedgerId { get; set; }
         public int CampusId { get; set; }
+        public Guid Level1Id { get; set; }
+        public string Nature { get; set; }
         public Guid AccountId { get; set; }
         public string AccountName { get; set; }
         public int TransactionId { get; set; }
