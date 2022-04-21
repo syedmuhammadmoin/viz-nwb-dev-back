@@ -65,10 +65,11 @@ namespace Application.Services
 
             var result = from glv in generalLedgerView
                          join l4 in _context.Level4 on glv.AccountId equals l4.Id
-                         where (glv.BusinessPartnerName.Contains(pnl.BusinessPartner) &&
+                         where (glv.AccountName.Contains(pnl.AccountName) &&
+                         (glv.BusinessPartnerName.Contains(pnl.BusinessPartner) &&
                          glv.WarehouseName.Contains(pnl.Warehouse) &&
                          glv.CampusName.Contains(pnl.Campus) &&
-                         (glv.DocDate >= pnl.DocDate && glv.DocDate <= pnl.DocDate2))
+                         (glv.DocDate >= pnl.DocDate && glv.DocDate <= pnl.DocDate2)))
                          select new
                          {
                              glv,
