@@ -16,7 +16,5 @@ namespace Application.Contracts.DTOs
         public decimal Debit { get; set; }
         public decimal Credit { get; set; }
         public decimal Balance { get; set; }
-        public DateTime DocDate { get; set; }
-        public DateTime DocDate2 { get; set; }
     }
 }
