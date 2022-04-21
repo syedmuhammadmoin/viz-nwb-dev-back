@@ -15,18 +15,18 @@ namespace Vizalys.Api.Controllers
     [Authorize]
     public class RequisitionController : ControllerBase
     {
-        private readonly IRequisitionService _purchaseOrderService;
+        private readonly IRequisitionService _requisitionService;
 
-        public RequisitionController(IRequisitionService purchaseOrderService)
+        public RequisitionController(IRequisitionService requisitionService)
         {
-            _purchaseOrderService = purchaseOrderService;
+            _requisitionService = requisitionService;
         }
 
         [ClaimRequirement("Permission", new string[] { Permissions.RequisitionClaims.Create })]
         [HttpPost]
         public async Task<ActionResult<Response<RequisitionDto>>> CreateAsync(CreateRequisitionDto entity)
         {
-            var result = await _purchaseOrderService.CreateAsync(entity);
+            var result = await _requisitionService.CreateAsync(entity);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 
@@ -37,7 +37,7 @@ namespace Vizalys.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<RequisitionDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
-            var results = await _purchaseOrderService.GetAllAsync(filter);
+            var results = await _requisitionService.GetAllAsync(filter);
             if (results.IsSuccess)
                 return Ok(results); // Status Code : 200
 
@@ -48,7 +48,7 @@ namespace Vizalys.Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<RequisitionDto>>> GetByIdAsync(int id)
         {
-            var result = await _purchaseOrderService.GetByIdAsync(id);
+            var result = await _requisitionService.GetByIdAsync(id);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 
@@ -62,7 +62,7 @@ namespace Vizalys.Api.Controllers
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
 
-            var result = await _purchaseOrderService.UpdateAsync(entity);
+            var result = await _requisitionService.UpdateAsync(entity);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 
@@ -73,7 +73,7 @@ namespace Vizalys.Api.Controllers
         [HttpPost("workflow")]
         public async Task<ActionResult<Response<bool>>> CheckWorkFlow([FromBody] ApprovalDto data)
         {
-            var result = await _purchaseOrderService.CheckWorkFlow(data);
+            var result = await _requisitionService.CheckWorkFlow(data);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
             return BadRequest(result);
