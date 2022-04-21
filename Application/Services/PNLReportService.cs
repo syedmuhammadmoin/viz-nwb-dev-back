@@ -82,6 +82,7 @@ namespace Application.Services
                          orderby iGroup.Key.Transactional
                          select new PNLDto
                          {
+                             Nature = iGroup.Key.Nature,
                              BusinessPartnerName = iGroup.Select(x => x.glv.BusinessPartnerName).FirstOrDefault(),
                              WarehouseName = iGroup.Select(x => x.glv.WarehouseName).FirstOrDefault(),
                              CampusName = iGroup.Select(x => x.glv.CampusName).FirstOrDefault(),
