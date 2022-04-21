@@ -33,6 +33,8 @@ namespace Application.Services
                     LedgerId = i.Id,
                     AccountId = i.Level4_id,
                     AccountName = i.Level4.Name,
+                    Level1Id = i.Level4.Level1_id,
+                    Nature = i.Level4.Level1.Name,
                     TransactionId = i.Id,
                     CampusId = i.Id,
                     DocDate = i.TransactionDate,
@@ -77,7 +79,7 @@ namespace Application.Services
                          group t1 by new
                          {
                              Level1Id = t1.l4.Level1_id,
-                             Nature = t1.l4.Level1.Name,
+                             Nature = t1.glv.Nature,
                              Transactional = t1.l4.Name,
                          } into iGroup
                          orderby iGroup.Key.Transactional
