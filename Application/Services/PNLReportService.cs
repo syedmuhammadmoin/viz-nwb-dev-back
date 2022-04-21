@@ -76,7 +76,8 @@ namespace Application.Services
 
                          group t1 by new
                          {
-                             Nature = t1.l4.Level1_id,
+                             Level1Id = t1.l4.Level1_id,
+                             Nature = t1.l4.Level1.Name,
                              Transactional = t1.l4.Name,
                          } into iGroup
                          orderby iGroup.Key.Transactional
@@ -89,7 +90,7 @@ namespace Application.Services
                              Transactional = iGroup.Key.Transactional,
                              Debit = iGroup.Sum(e => e.glv.Debit),
                              Credit = iGroup.Sum(e => e.glv.Credit),
-                             Balance = iGroup.Key.Nature == new Guid("40000000-5566-7788-99AA-BBCCDDEEFF00") ? (iGroup.Sum(e => e.glv.Credit) - iGroup.Sum(e => e.glv.Debit)) : (iGroup.Sum(e => e.glv.Debit) - iGroup.Sum(e => e.glv.Credit))
+                             Balance = iGroup.Key.Level1Id == new Guid("40000000-5566-7788-99AA-BBCCDDEEFF00") ? (iGroup.Sum(e => e.glv.Credit) - iGroup.Sum(e => e.glv.Debit)) : (iGroup.Sum(e => e.glv.Debit) - iGroup.Sum(e => e.glv.Credit))
                          };
             return new Response<List<PNLDto>>(result.ToList(), "Return Profit and Loss");
         }

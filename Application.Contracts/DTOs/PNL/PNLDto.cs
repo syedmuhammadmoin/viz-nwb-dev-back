@@ -8,7 +8,7 @@ namespace Application.Contracts.DTOs
 {
     public class PNLDto
     {
-        public Guid Nature { get; set; }
+        public string Nature { get; set; }
         public string Transactional { get; set; }
         public string BusinessPartnerName { get; set; }
         public string WarehouseName { get; set; }
