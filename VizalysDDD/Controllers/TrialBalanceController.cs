@@ -22,7 +22,7 @@ namespace Vizalys.Api.Controllers
             _trialBalanceReportService = trialBalanceReportService;
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.TrailBalanceClaims.View })]
+        [ClaimRequirement("Permission", new string[] { Permissions.TrialBalanceClaims.View })]
         [HttpPost]
         public ActionResult<Response<List<TrialBalanceDto>>> GetTrialBalance(TrialBalanceFilters filters)
         {
