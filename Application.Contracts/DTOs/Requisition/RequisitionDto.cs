@@ -17,7 +17,7 @@ namespace Application.Contracts.DTOs
         public int StatusId { get; set; }
         public string Status { get; set; }
         public string Campus { get; set; }
-        public string CampusId { get; set; }
+        public int CampusId { get; set; }
         public DocumentStatus State { get; set; }
         public DateTime RequisitionDate { get; set; }
         public virtual List<RequisitionLinesDto> RequisitionLines { get; set; }
