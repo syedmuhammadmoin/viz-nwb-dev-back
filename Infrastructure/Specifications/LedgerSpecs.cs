@@ -16,7 +16,7 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Campus);
             AddInclude(i => i.BusinessPartner);
             AddInclude(i => i.Warehouse);
-            AddInclude("Level4.Level1");
+            AddInclude(i => i.Level4.Level1);
         }
     }
 }
