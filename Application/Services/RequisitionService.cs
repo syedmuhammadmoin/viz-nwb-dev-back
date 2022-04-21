@@ -46,14 +46,14 @@ namespace Application.Services
         public async Task<PaginationResponse<List<RequisitionDto>>> GetAllAsync(PaginationFilter filter)
         {
             var specification = new RequisitionSpecs(filter);
-            var Requisitions = await _unitOfWork.Requisition.GetAll(specification);
+            var requisition = await _unitOfWork.Requisition.GetAll(specification);
 
-            if (Requisitions.Count() == 0)
+            if (requisition.Count() == 0)
                 return new PaginationResponse<List<RequisitionDto>>("List is empty");
 
             var totalRecords = await _unitOfWork.Requisition.TotalRecord();
 
-            return new PaginationResponse<List<RequisitionDto>>(_mapper.Map<List<RequisitionDto>>(Requisitions),
+            return new PaginationResponse<List<RequisitionDto>>(_mapper.Map<List<RequisitionDto>>(requisition),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
 

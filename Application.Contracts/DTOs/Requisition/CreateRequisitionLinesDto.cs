@@ -9,7 +9,7 @@ namespace Application.Contracts.DTOs
 {
     public class CreateRequisitionLinesDto
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
         [Required]
         public int ItemId { get; set; }
         [Required]

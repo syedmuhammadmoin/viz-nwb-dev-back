@@ -10,6 +10,7 @@ namespace Application.Contracts.DTOs
 {
     public class RequisitionDto
     {
+        public int Id { get; set; }
         public int BusinessPartnerId { get; set; }
         public string BusinessPartner { get; set; }
         public string DocNo { get; set; }
