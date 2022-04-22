@@ -187,10 +187,19 @@ namespace Application.Services
 
         private async Task<Response<GRNDto>> SaveGRN(CreateGRNDto entity, int status)
         {
+            //setting PurchaseOrderId
+            var getPO = await _unitOfWork.PurchaseOrder.GetById(entity.PurchaseOrderId);
+
+            if (getPO == null)
+                return new Response<GRNDto>("Purchase Order is required");
+
             if (entity.GRNLines.Count() == 0)
                 return new Response<GRNDto>("Lines are required");
 
             var gRN = _mapper.Map<GRNMaster>(entity);
+
+            //Setting PurchaseId
+            gRN.setPurchaseOrderId(getPO.Id);
 
             //Setting status
             gRN.setStatus(status);
@@ -221,6 +230,12 @@ namespace Application.Services
 
         private async Task<Response<GRNDto>> UpdateGRN(CreateGRNDto entity, int status)
         {
+            //setting PurchaseOrderId
+            var getPO = await _unitOfWork.PurchaseOrder.GetById(entity.PurchaseOrderId);
+
+            if (getPO == null)
+                return new Response<GRNDto>("Purchase Order not found");
+
             if (entity.GRNLines.Count() == 0)
                 return new Response<GRNDto>("Lines are required");
 
@@ -232,7 +247,10 @@ namespace Application.Services
 
             if (gRN.StatusId != 1 && gRN.StatusId != 2)
                 return new Response<GRNDto>("Only draft document can be edited");
+            //Setting PurchaseId
+            gRN.setPurchaseOrderId(getPO.Id);
 
+            //Setting status
             gRN.setStatus(status);
 
             _unitOfWork.CreateTransaction();
