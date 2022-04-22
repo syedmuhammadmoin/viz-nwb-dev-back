@@ -28,6 +28,9 @@ namespace Domain.Entities
         public int CampusId { get; private set; }
         [ForeignKey("CampusId")]
         public Campus Campus { get; private set; }
+        public int PurchaseOrderId { get; private set; }
+        [ForeignKey("PurchaseOrderId")]
+        public PurchaseOrderMaster PurchaseOrder { get; private set; }
         public int StatusId { get; private set; }
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get; private set; }
@@ -40,6 +43,11 @@ namespace Domain.Entities
         public void setStatus(int statusId)
         {
             StatusId = statusId;
+        }
+
+        public void setPurchaseOrderId(int purchaseId)
+        {
+            PurchaseOrderId = purchaseId;
         }
         public void CreateDocNo()
         {
