@@ -20,6 +20,7 @@ namespace Application.Contracts.DTOs
         public string Contact { get; set; }
         public int StatusId { get; set; }
         public string Status { get; set; }
+        public int PurchaseOrderId { get; set; }
         public DocumentStatus State { get; set; }
         public decimal TotalBeforeTax { get; set; }
         public decimal TotalTax { get; set; }

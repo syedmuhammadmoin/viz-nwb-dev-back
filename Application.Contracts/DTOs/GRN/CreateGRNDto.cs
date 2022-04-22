@@ -19,6 +19,8 @@ namespace Application.Contracts.DTOs
         [Required]
         public int CampusId { get; set; }
         [Required]
+        public int PurchaseOrderId { get; set; }
+        [Required]
         public bool isSubmit { get; set; }
         public virtual List<CreateGRNLinesDto> GRNLines { get; set; }
     }
