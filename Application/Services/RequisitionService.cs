@@ -90,9 +90,16 @@ namespace Application.Services
             return new Response<RequisitionDto>(requisitionDto, "Returning value");
         }
 
-        public Task<Response<RequisitionDto>> UpdateAsync(CreateRequisitionDto entity)
+        public async Task<Response<RequisitionDto>> UpdateAsync(CreateRequisitionDto entity)
         {
-            throw new NotImplementedException();
+            if (entity.isSubmit)
+            {
+                return await this.SubmitRequisition(entity);
+            }
+            else
+            {
+                return await this.SaveRequisition(entity, 1);
+            }
         }
 
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
