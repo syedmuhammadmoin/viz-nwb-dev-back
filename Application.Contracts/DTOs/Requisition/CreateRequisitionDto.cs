@@ -18,8 +18,6 @@ namespace Application.Contracts.DTOs
         [Required]
         public int CampusId { get; set; }
         [Required]
-        public int StatusId { get; set; }
-        [Required]
         public bool isSubmit { get; set; }
         public virtual List<CreateRequisitionLinesDto> RequisitionLines { get; set; }
     }
