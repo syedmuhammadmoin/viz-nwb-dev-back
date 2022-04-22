@@ -98,7 +98,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.SaveRequisition(entity, 1);
+                return await this.UpdateRequisition(entity, 1);
             }
         }
 
