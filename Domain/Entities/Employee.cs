@@ -46,8 +46,6 @@ namespace Domain.Entities
         public int CasualLeaves { get; private set; }
         [MaxLength(30)]
         public string Status { get; private set; }
-        [MaxLength(50)]
-        public string Role { get; private set; }
         [MaxLength(80)]
         public string Faculty { get; private set; }
         [MaxLength(80)]
