@@ -237,6 +237,13 @@ namespace Application.Mapper
             CreateMap<CreateBudgetDto, BudgetMaster>();
             CreateMap<CreateBudgetLinesDto, BudgetLines>();
 
+            // EstimatedBudget Mapping
+            CreateMap<EstimatedBudgetMaster, EstimatedBudgetDto>();
+            CreateMap<EstimatedBudgetLines, EstimatedBudgetLinesDto>()
+              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.AccountName.Name));
+
+            CreateMap<CreateEstimatedBudgetDto, EstimatedBudgetMaster>();
+            CreateMap<CreateEstimatedBudgetLinesDto, EstimatedBudgetLines>();
         }
     }
 }
