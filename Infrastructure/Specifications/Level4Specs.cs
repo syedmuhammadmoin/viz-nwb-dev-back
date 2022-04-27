@@ -21,5 +21,10 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.Level3);
         }
+
+        public Level4Specs(bool isBudget) : base(i => i.Level1_id == new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00")
+                                                    || i.Level1_id == new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00"))
+        {
+        }
     }
 }
