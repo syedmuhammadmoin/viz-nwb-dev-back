@@ -90,5 +90,14 @@ namespace Application.Services
             return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
 
         }
+        public async Task<Response<List<Level4Dto>>> GetBudgetAccounts()
+        {
+            var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs(true));
+            if (!level4.Any())
+                return new Response<List<Level4Dto>>("List is empty");
+
+            return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
+
+        }
     }
 }
