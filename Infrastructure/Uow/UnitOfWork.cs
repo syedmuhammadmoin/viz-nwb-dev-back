@@ -76,6 +76,7 @@ namespace Infrastructure.Uow
             WorkFlowTransition = new WorkFlowTransitionRepository(context);
             TransactionReconcile = new TransactionReconcileRepository(context);
             Campus = new CampusRepository(context);
+            Budget = new BudgetRepository(context);
             EstimatedBudget = new EstimatedBudgetRepository(context);
         }
 
