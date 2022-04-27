@@ -74,5 +74,10 @@ namespace Vizalys.Api.Controllers
         {
             return Ok(await _level4Service.GetLevel4DropDown()); // Status Code : 200
         }
+        [HttpGet("budgetAccounts")]
+        public async Task<ActionResult<Response<List<Level4Dto>>>> GetBudgetAccounts()
+        {
+            return Ok(await _level4Service.GetBudgetAccounts()); // Status Code : 200
+        }
     }
 }
