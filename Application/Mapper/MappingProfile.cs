@@ -240,10 +240,14 @@ namespace Application.Mapper
             // EstimatedBudget Mapping
             CreateMap<EstimatedBudgetMaster, EstimatedBudgetDto>();
             CreateMap<EstimatedBudgetLines, EstimatedBudgetLinesDto>()
-              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.AccountName.Name));
+              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
 
             CreateMap<CreateEstimatedBudgetDto, EstimatedBudgetMaster>();
-            CreateMap<CreateEstimatedBudgetLinesDto, EstimatedBudgetLines>();
+            CreateMap<CreateEstimatedBudgetLinesDto, EstimatedBudgetLines>()
+                .ForMember(core => core.EstimatedValue,
+                dto => dto.MapFrom(a =>
+                a.CalculationType == CalculationType.Percentage ? ((a.Amount * a.Value / 100) + (a.Amount)) 
+                : (a.Amount + a.Value)));
         }
     }
 }
