@@ -1,6 +1,8 @@
 ﻿using Application.Interfaces;
+using Domain.Base;
 using Domain.Constants;
 using Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +16,10 @@ namespace Infrastructure.Context
 {
     public class ApplicationDbContext : IdentityDbContext<User>, IApplicationDbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
         {
-
+            _httpContextAccessor = httpContextAccessor;
         }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
@@ -53,11 +56,17 @@ namespace Infrastructure.Context
         public DbSet<TransactionReconcile> TransactionReconciles { get; set; }
         public DbSet<BudgetMaster> BudgetMaster { get; set; }
         public DbSet<BudgetLines> BudgetLines { get; set; }
+        public DbSet<PurchaseOrderMaster> PurchaseOrderMaster { get; set; }
+        public DbSet<PurchaseOrderLines> PurchaseOrderLines { get; set; }
+        public DbSet<RequisitionMaster> RequisitionMaster { get; set; }
+        public DbSet<RequisitionLines> RequisitionLines { get; set; }
+        public DbSet<GRNMaster> GRNMaster { get; set; }
+        public DbSet<GRNLines> GRNLines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
+
             //changing cascade delete behavior
             foreach (var foreignKey in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
             {
@@ -113,6 +122,23 @@ namespace Infrastructure.Context
             .WithMany(c => c.BudgetLines)
             .OnDelete(DeleteBehavior.Cascade);
 
+            //Purchase Order
+            modelBuilder.Entity<PurchaseOrderLines>()
+            .HasOne(tc => tc.PurchaseOrderMaster)
+            .WithMany(c => c.PurchaseOrderLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //Requisition
+            modelBuilder.Entity<RequisitionLines>()
+            .HasOne(tc => tc.RequisitionMaster)
+            .WithMany(c => c.RequisitionLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //GRN
+            modelBuilder.Entity<GRNLines>()
+            .HasOne(tc => tc.GRNMaster)
+            .WithMany(c => c.GRNLines)
+            .OnDelete(DeleteBehavior.Cascade);
             //Changing Identity users and roles tables name
             modelBuilder.Entity<User>(entity =>
             {
@@ -669,6 +695,60 @@ namespace Infrastructure.Context
                 Level3_id = new Guid("52200000-5566-7788-99AA-BBCCDDEEFF00"),
                 Level1_id = new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00")
             });
+        }
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            OnBeforeSaving();
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
+
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            OnBeforeSaving();
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        private void OnBeforeSaving()
+        {
+            var entries = ChangeTracker.Entries();
+            foreach (var entry in entries)
+            {
+                if (entry.Entity is BaseEntity<int> trackable)
+                {
+                    var now = DateTime.UtcNow;
+                    var user = GetCurrentUser();
+                    switch (entry.State)
+                    {
+                        case EntityState.Modified:
+                            trackable.ModifiedDate = now;
+                            trackable.ModifiedBy = user;
+                            break;
+
+                        case EntityState.Added:
+                            trackable.CreatedDate = now;
+                            trackable.CreatedBy = user;
+                            trackable.ModifiedDate = now;
+                            trackable.ModifiedBy = user;
+                            break;
+                    }
+                }
+            }
+        }
+        private string GetCurrentUser()
+        {
+            //return "UserName"; // TODO implement your own logic
+            // If you are using ASP.NET Core, you should look at this answer on StackOverflow
+            // https://stackoverflow.com/a/48554738/2996339
+            var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext != null)
+            {
+                var authenticatedUserName = httpContext.User.Identity.Name;
+                return authenticatedUserName;
+                // If it returns null, even when the user was authenticated, you may try to get the value of a specific claim 
+                //var authenticatedUserId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                // var authenticatedUserId = _httpContextAccessor.HttpContext.User.FindFirst("sub").Value
+            }
+            return "UserName";
         }
     }
 }
