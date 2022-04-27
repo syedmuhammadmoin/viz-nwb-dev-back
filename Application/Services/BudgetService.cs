@@ -29,8 +29,16 @@ namespace Application.Services
         {
             if (entity.BudgetLines.Count() == 0)
                 return new Response<BudgetDto>("Lines are required");
+            
+            if (entity.From > entity.To)
+                return new Response<BudgetDto>("End date must be greater than Start Date");
 
             var budget = _mapper.Map<BudgetMaster>(entity);
+
+            var checkExistingBudget = _unitOfWork.Budget.Find(new BudgetSpecs(entity.From)).FirstOrDefault();
+            if (checkExistingBudget != null)
+                return new Response<BudgetDto>("Budget already consist in this span");
+            
 
             var result = await _unitOfWork.Budget.Add(budget);
             await _unitOfWork.SaveAsync();
@@ -63,21 +71,27 @@ namespace Application.Services
 
         public async Task<Response<BudgetDto>> UpdateAsync(CreateBudgetDto entity)
         {
-            var budget = await _unitOfWork.Budget.GetById((int)entity.Id);
+            var specification = new BudgetSpecs(true);
+            var budget = await _unitOfWork.Budget.GetById((int)entity.Id, specification);
 
             if (budget == null)
                 return new Response<BudgetDto>("Not found");
+
+            if (entity.From > entity.To)
+                return new Response<BudgetDto>("End date must be greater than Start Date");
+
+            var checkExistingBudget = _unitOfWork.Budget.Find(new BudgetSpecs(entity.From)).FirstOrDefault(i=> i.Id != entity.Id);
+            if (checkExistingBudget != null)
+                return new Response<BudgetDto>("Budget already consist in this span");
+            
+            if (entity.BudgetLines.Count() == 0)
+                return new Response<BudgetDto>("Lines are required");
 
             //For updating data
             _mapper.Map<CreateBudgetDto, BudgetMaster>(entity, budget);
             await _unitOfWork.SaveAsync();
             return new Response<BudgetDto>(_mapper.Map<BudgetDto>(budget), "Updated successfully");
 
-        }
-
-        public Task<Response<int>> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<Response<List<BudgetDto>>> GetBudgetDropDown()
@@ -87,6 +101,11 @@ namespace Application.Services
                 return new Response<List<BudgetDto>>("List is empty");
 
             return new Response<List<BudgetDto>>(_mapper.Map<List<BudgetDto>>(budgets), "Returning List");
+        }
+
+        public Task<Response<int>> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
