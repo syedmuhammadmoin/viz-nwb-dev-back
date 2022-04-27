@@ -13,12 +13,14 @@ namespace Domain.Entities
     {
         public Guid AccountId { get; private set; }
         [ForeignKey("AccountId")]
-        public Level4 AccountName { get; private set; }
+        public Level4 Account { get; private set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Amount { get; private set; }
         public CalculationType CalculationType { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal? Amount { get; private set; }
+        public decimal Value { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal? Percentage { get; private set; }
+        public decimal EstimatedValue { get; private set; }
         public int MasterId { get; private set; }
         [ForeignKey("MasterId")]
         public EstimatedBudgetMaster EstimatedBudgetMaster { get; private set; }
