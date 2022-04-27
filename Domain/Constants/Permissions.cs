@@ -156,6 +156,13 @@ namespace Domain.Constants
             public const string Edit = "Permissions.BudgetClaims.Edit";
             public const string Delete = "Permissions.BudgetClaims.Delete";
         }
+        public static class EstimatedBudgetClaims
+        {
+            public const string View = "Permissions.EstimatedBudgetClaims.View";
+            public const string Create = "Permissions.EstimatedBudgetClaims.Create";
+            public const string Edit = "Permissions.EstimatedBudgetClaims.Edit";
+            public const string Delete = "Permissions.EstimatedBudgetClaims.Delete";
+        }
         //Transaction Forms
         public static class InvoiceClaims
         {
