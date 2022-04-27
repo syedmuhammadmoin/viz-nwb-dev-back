@@ -12,9 +12,10 @@ namespace Application.Contracts.DTOs
         public int Id { get; set; }
         public Guid AccountId { get; set; }
         public string AccountName { get; set; }
-        public CalculationType CalculationType { get; private set; }
-        public decimal? Amount { get; private set; }
-        public decimal? Percentage { get; private set; }
+        public decimal Amount { get; set; }
+        public CalculationType CalculationType { get; set; }
+        public decimal Value { get; set; }
+        public decimal EstimatedValue { get; set; }
         public int MasterId { get; set; }
     }
 }

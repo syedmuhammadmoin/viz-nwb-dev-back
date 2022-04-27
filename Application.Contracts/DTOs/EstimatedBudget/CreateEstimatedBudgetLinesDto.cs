@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Domain.Constants;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,5 +19,10 @@ namespace Application.Contracts.DTOs
         [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Amount { get; set; }
+        [Required]
+        public CalculationType CalculationType { get; set; }
+        [Required]
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Value { get; set; }
     }
 }

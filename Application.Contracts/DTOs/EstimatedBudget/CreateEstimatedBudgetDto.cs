@@ -14,17 +14,10 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
+        public int BudgetId { get; set; }
+        [Required]
         [MaxLength(100)]
-        public string BudgetName { get; set; }
-        public CalculationType CalculationType { get; private set; }
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal? Amount { get; private set; }
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal? Percentage { get; private set; }
-        [Required]
-        public DateTime From { get; set; }
-        [Required]
-        public DateTime To { get; set; }
-        public virtual List<CreateEstimatedBudgetLinesDto> BudgetLines { get; set; }
+        public string EstimatedBudgetName { get; set; }
+        public virtual List<CreateEstimatedBudgetLinesDto> EstimatedBudgetLines { get; set; }
     }
 }
