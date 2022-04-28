@@ -6,6 +6,7 @@ using Application.Contracts.Response;
 using Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Vizalys.Api.Controllers
@@ -22,10 +23,16 @@ namespace Vizalys.Api.Controllers
         {
             _employeeService = employeeService;
         }
-        [ClaimRequirement("Permission", new string[] { Permissions.EmployeeClaims.Create, Permissions.EmployeeClaims.View, Permissions.EmployeeClaims.Delete, Permissions.EmployeeClaims.Edit })]
+
+        [EnableCors("PayrollModule")]
+        [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<EmployeeDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<EmployeeDto>>>> GetAllAsync([FromHeader(Name = "key")] string key, [FromQuery] PaginationFilter filter)
         {
+            if (key != "b4!V47w^e3QhItW_XY:jHgWQp%$&93nMS|h)Bj~R0&Q#J1m%lI^;b4C,&]Gf2(H_fu]5&X@1Oy~")
+            {
+                return BadRequest("Invalid Key");
+            }
             var employees = await _employeeService.GetAllAsync(filter);
             if (employees.IsSuccess)
                 return Ok(employees); // Status Code : 200
@@ -33,10 +40,15 @@ namespace Vizalys.Api.Controllers
             return BadRequest(employees); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.EmployeeClaims.Create })]
+        [EnableCors("PayrollModule")]
+        [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult<Response<EmployeeDto>>> CreateAsync(CreateEmployeeDto entity)
+        public async Task<ActionResult<Response<EmployeeDto>>> CreateAsync([FromHeader(Name = "key")] string key, CreateEmployeeDto entity)
         {
+            if (key != "b4!V47w^e3QhItW_XY:jHgWQp%$&93nMS|h)Bj~R0&Q#J1m%lI^;b4C,&]Gf2(H_fu]5&X@1Oy~")
+            {
+                return BadRequest("Invalid Key");
+            }
             var employee = await _employeeService.CreateAsync(entity);
             if (employee.IsSuccess)
                 return Ok(employee); // Status Code : 200
