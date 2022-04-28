@@ -40,6 +40,9 @@ namespace Domain.Interfaces
         IRequisitionRepository Requisition { get; }
         IGRNRepository GRN { get; }
         IEstimatedBudgetRepository EstimatedBudget { get; }
+        IDepartmentRepository Department { get; }
+        IDesignationRepository Designation { get; }
+        IEmployeeRepository Employee { get; }
 
         Task SaveAsync();
         void CreateTransaction();

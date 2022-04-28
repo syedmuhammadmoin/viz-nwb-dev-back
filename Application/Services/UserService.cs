@@ -431,7 +431,8 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.AuthClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.BusinessPartnerClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.OrganizationClaims), id);
-            allPermissions.GetPermissions(typeof(Permissions.DepartmentsClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DepartmentClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DesignationClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.WarehouseClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.LocationClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.BankAccountClaims), id);
@@ -459,6 +460,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.TrialBalanceClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.BalanceSheetClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.ProfitLossClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.EmployeeClaims), id);
 
 
             //Getting all claims for this role
@@ -535,7 +537,8 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.AuthClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.BusinessPartnerClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.OrganizationClaims), "12");
-            allPermissions.GetPermissions(typeof(Permissions.DepartmentsClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.DepartmentClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.DesignationClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.WarehouseClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.LocationClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.BankAccountClaims), "12");
@@ -562,6 +565,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.TrialBalanceClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.BalanceSheetClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.ProfitLossClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.EmployeeClaims), "12");
 
             var allClaimValues = allPermissions.Select(a => a.Value).ToList();
             return new Response<List<string>>(allClaimValues,"Returning all claims");

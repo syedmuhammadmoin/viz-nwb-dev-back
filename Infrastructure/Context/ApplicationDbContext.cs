@@ -64,6 +64,9 @@ namespace Infrastructure.Context
         public DbSet<RequisitionLines> RequisitionLines { get; set; }
         public DbSet<GRNMaster> GRNMaster { get; set; }
         public DbSet<GRNLines> GRNLines { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Designation> Designations { get; set; }
+        public DbSet<Employee> Employees { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -80,7 +83,6 @@ namespace Infrastructure.Context
             .HasOne(tc => tc.BankStmtMaster)
             .WithMany(c => c.BankStmtLines)
             .OnDelete(DeleteBehavior.Cascade);
-
 
             //JournalEntry
             modelBuilder.Entity<JournalEntryLines>()
@@ -176,6 +178,17 @@ namespace Infrastructure.Context
             {
                 entity.ToTable("UserTokens");
             });
+
+            // Removing IdentityId for assistance in integeration
+
+            modelBuilder.Entity<Department>()
+            .Property(et => et.Id)
+            .ValueGeneratedNever();
+
+            modelBuilder.Entity<Designation>()
+           .Property(et => et.Id)
+           .ValueGeneratedNever();
+
 
             //Adding seeds in organization table
             modelBuilder.Entity<Organization>()

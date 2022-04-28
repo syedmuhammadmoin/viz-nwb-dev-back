@@ -50,6 +50,9 @@ namespace Infrastructure.Uow
         public IRequisitionRepository Requisition { get; private set; }
         public IGRNRepository GRN { get; private set; }
         public IEstimatedBudgetRepository EstimatedBudget { get; private set; }
+        public IDepartmentRepository Department { get; private set; }
+        public IDesignationRepository Designation { get; private set; }
+        public IEmployeeRepository Employee { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -84,6 +87,9 @@ namespace Infrastructure.Uow
             Requisition = new RequisitionRepository(context);
             GRN = new GRNRepository(context);
             EstimatedBudget = new EstimatedBudgetRepository(context);
+            Department = new DepartmentRepository(context);
+            Designation = new DesignationRepository(context);
+            Employee = new EmployeeRepository(context);
         }
 
         public async Task SaveAsync()

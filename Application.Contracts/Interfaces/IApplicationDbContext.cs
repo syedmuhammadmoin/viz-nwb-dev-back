@@ -53,6 +53,9 @@ namespace Application.Interfaces
         public DbSet<GRNLines> GRNLines { get; set; }
         public DbSet<EstimatedBudgetMaster> EstimatedBudgetMaster { get; set; }
         public DbSet<EstimatedBudgetLines> EstimatedBudgetLines { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Designation> Designations { get; set; }
+        public DbSet<Employee> Employees { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

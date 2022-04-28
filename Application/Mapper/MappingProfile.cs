@@ -23,6 +23,22 @@ namespace Application.Mapper
             CreateMap<CampusDto, Campus>()
                 .ForMember(core => core.OrganizationId, dto => dto.MapFrom(a => 1));
 
+            // Department Mapping
+            CreateMap<Department, DepartmentDto>();
+            CreateMap<DepartmentDto, Department>();
+
+
+            // Designation Mapping
+            CreateMap<Designation, DesignationDto>();
+            CreateMap<DesignationDto, Designation>();
+
+            // Employee Mapping
+            CreateMap<Employee, EmployeeDto>()
+                .ForMember(dto => dto.DepartmentName, core => core.MapFrom(a => a.Department.Name))
+                .ForMember(dto => dto.DepartmentName, core => core.MapFrom(a => a.Designation.Name));
+
+            CreateMap<CreateEmployeeDto, Employee>();
+
             // Warehouse Mapping
             CreateMap<Warehouse, WarehouseDto>()
                 .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name));
