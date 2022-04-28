@@ -54,20 +54,6 @@ namespace Vizalys.Api
             return BadRequest(result); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.DesignationClaims.Edit })]
-        [HttpPut("{id:int}")]
-        public async Task<ActionResult<Response<DesignationDto>>> UpdateAsync(int id, DesignationDto entity)
-        {
-            if (id != entity.Id)
-                return BadRequest("ID mismatch");
-
-            var result = await _departmentService.UpdateAsync(entity);
-            if (result.IsSuccess)
-                return Ok(result); // Status Code : 200
-
-            return BadRequest(result); // Status code : 400
-        }
-
         [HttpGet("Dropdown")]
         public async Task<ActionResult<Response<List<DesignationDto>>>> GetDesignationDropDown()
         {

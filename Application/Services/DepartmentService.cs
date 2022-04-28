@@ -28,10 +28,23 @@ namespace Application.Services
         public async Task<Response<DepartmentDto>> CreateAsync(DepartmentDto entity)
         {
             var department = _mapper.Map<Department>(entity);
-            var result = await _unitOfWork.Department.Add(department);
-            await _unitOfWork.SaveAsync();
 
-            return new Response<DepartmentDto>(_mapper.Map<DepartmentDto>(result), "Created successfully");
+            var getDepartment = await _unitOfWork.Department.GetById((int)entity.Id);
+
+            if (getDepartment != null)
+            {
+                _mapper.Map<DepartmentDto, Department>(entity, getDepartment);
+                await _unitOfWork.SaveAsync();
+
+                return new Response<DepartmentDto>(_mapper.Map<DepartmentDto>(getDepartment), "Updated successfully");
+            }
+            else
+            {
+                await _unitOfWork.Department.Add(department);
+                await _unitOfWork.SaveAsync();
+            }
+
+            return new Response<DepartmentDto>(_mapper.Map<DepartmentDto>(getDepartment), "Created successfully");
         }
 
         public async Task<PaginationResponse<List<DepartmentDto>>> GetAllAsync(PaginationFilter filter)
@@ -65,17 +78,9 @@ namespace Application.Services
             return new Response<List<DepartmentDto>>(_mapper.Map<List<DepartmentDto>>(departments), "Returning List");
         }
 
-        public async Task<Response<DepartmentDto>> UpdateAsync(DepartmentDto entity)
+        public Task<Response<DepartmentDto>> UpdateAsync(DepartmentDto entity)
         {
-            var department = await _unitOfWork.Department.GetById((int)entity.Id);
-
-            if (department == null)
-                return new Response<DepartmentDto>("Not found");
-
-            //For updating data
-            _mapper.Map<DepartmentDto, Department>(entity, department);
-            await _unitOfWork.SaveAsync();
-            return new Response<DepartmentDto>(_mapper.Map<DepartmentDto>(department), "Updated successfully");
+            throw new NotImplementedException();
         }
         public Task<Response<int>> DeleteAsync(int id)
         {

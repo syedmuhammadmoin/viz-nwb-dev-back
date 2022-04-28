@@ -28,10 +28,22 @@ namespace Application.Services
         public async Task<Response<DesignationDto>> CreateAsync(DesignationDto entity)
         {
             var designation = _mapper.Map<Designation>(entity);
-            var result = await _unitOfWork.Designation.Add(designation);
-            await _unitOfWork.SaveAsync();
+            var getDesignation = await _unitOfWork.Designation.GetById((int)entity.Id);
 
-            return new Response<DesignationDto>(_mapper.Map<DesignationDto>(result), "Created successfully");
+            if (getDesignation != null)
+            {
+                _mapper.Map<DesignationDto, Designation>(entity, getDesignation);
+                await _unitOfWork.SaveAsync();
+
+                return new Response<DesignationDto>(_mapper.Map<DesignationDto>(getDesignation), "Updated successfully");
+            }
+            else
+            {
+                await _unitOfWork.Designation.Add(designation);
+                await _unitOfWork.SaveAsync();
+            }
+
+            return new Response<DesignationDto>(_mapper.Map<DesignationDto>(getDesignation), "Created successfully");
         }
 
         public async Task<PaginationResponse<List<DesignationDto>>> GetAllAsync(PaginationFilter filter)
@@ -65,17 +77,9 @@ namespace Application.Services
             return new Response<List<DesignationDto>>(_mapper.Map<List<DesignationDto>>(designations), "Returning List");
         }
 
-        public async Task<Response<DesignationDto>> UpdateAsync(DesignationDto entity)
+        public Task<Response<DesignationDto>> UpdateAsync(DesignationDto entity)
         {
-            var designation = await _unitOfWork.Designation.GetById((int)entity.Id);
-
-            if (designation == null)
-                return new Response<DesignationDto>("Not found");
-
-            //For updating data
-            _mapper.Map<DesignationDto, Designation>(entity, designation);
-            await _unitOfWork.SaveAsync();
-            return new Response<DesignationDto>(_mapper.Map<DesignationDto>(designation), "Updated successfully");
+            throw new NotImplementedException();
         }
         public Task<Response<int>> DeleteAsync(int id)
         {
