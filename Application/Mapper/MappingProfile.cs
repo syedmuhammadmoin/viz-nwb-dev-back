@@ -238,7 +238,9 @@ namespace Application.Mapper
             CreateMap<CreateBudgetLinesDto, BudgetLines>();
 
             // EstimatedBudget Mapping
-            CreateMap<EstimatedBudgetMaster, EstimatedBudgetDto>();
+            CreateMap<EstimatedBudgetMaster, EstimatedBudgetDto>()
+                .ForMember(dto => dto.From, core => core.MapFrom(a => a.PreviousBudget.From))
+                .ForMember(dto => dto.To, core => core.MapFrom(a => a.PreviousBudget.To));
             CreateMap<EstimatedBudgetLines, EstimatedBudgetLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
 
