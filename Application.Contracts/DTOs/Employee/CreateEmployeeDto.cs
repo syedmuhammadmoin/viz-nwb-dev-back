@@ -9,7 +9,6 @@ namespace Application.Contracts.DTOs
 {
     public class CreateEmployeeDto
     {
-        public int? Id { get; set; }
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }
@@ -48,8 +47,6 @@ namespace Application.Contracts.DTOs
         public int? CasualLeaves { get; set; }
         [MaxLength(30)]
         public string Status { get; set; }
-        [MaxLength(50)]
-        public string Role { get; set; }
         [MaxLength(80)]
         public string Faculty { get; set; }
         [MaxLength(80)]
