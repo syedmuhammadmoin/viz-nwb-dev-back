@@ -28,10 +28,23 @@ namespace Application.Services
         public async Task<Response<EmployeeDto>> CreateAsync(CreateEmployeeDto entity)
         {
             var employee = _mapper.Map<Employee>(entity);
-            var result = await _unitOfWork.Employee.Add(employee);
-            await _unitOfWork.SaveAsync();
 
-            return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(result), "Created successfully");
+            var checkCNIC = _unitOfWork.Employee.Find(new EmployeeSpecs(entity.CNIC)).FirstOrDefault();
+
+            if (checkCNIC == null)
+            {
+                await _unitOfWork.Employee.Add(employee);
+                await _unitOfWork.SaveAsync();
+
+                return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(checkCNIC), "Created successfully");
+            }
+            else
+            {
+                _mapper.Map<CreateEmployeeDto, Employee>(entity, checkCNIC);
+                await _unitOfWork.SaveAsync();
+            }
+
+            return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(checkCNIC), "updated successfully");
         }
 
         public async Task<PaginationResponse<List<EmployeeDto>>> GetAllAsync(PaginationFilter filter)
@@ -66,22 +79,14 @@ namespace Application.Services
             return new Response<List<EmployeeDto>>(_mapper.Map<List<EmployeeDto>>(employees), "Returning List");
         }
 
-        public async Task<Response<EmployeeDto>> UpdateAsync(CreateEmployeeDto entity)
-        {
-            var employee = await _unitOfWork.Employee.GetById((int)entity.Id);
-
-            if (employee == null)
-                return new Response<EmployeeDto>("Not found");
-
-            //For updating data
-            _mapper.Map<CreateEmployeeDto, Employee>(entity, employee);
-            await _unitOfWork.SaveAsync();
-            return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(employee), "Updated successfully");
-        }
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
 
+        public Task<Response<EmployeeDto>> UpdateAsync(CreateEmployeeDto entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
