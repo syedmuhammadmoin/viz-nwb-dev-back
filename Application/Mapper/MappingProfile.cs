@@ -290,6 +290,19 @@ namespace Application.Mapper
 
             CreateMap<CreateGRNLinesDto, GRNLines>()
                .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
+            // EstimatedBudget Mapping
+            CreateMap<EstimatedBudgetMaster, EstimatedBudgetDto>()
+                .ForMember(dto => dto.From, core => core.MapFrom(a => a.PreviousBudget.From))
+                .ForMember(dto => dto.To, core => core.MapFrom(a => a.PreviousBudget.To));
+            CreateMap<EstimatedBudgetLines, EstimatedBudgetLinesDto>()
+              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
+
+            CreateMap<CreateEstimatedBudgetDto, EstimatedBudgetMaster>();
+            CreateMap<CreateEstimatedBudgetLinesDto, EstimatedBudgetLines>()
+                .ForMember(core => core.EstimatedValue,
+                dto => dto.MapFrom(a =>
+                a.CalculationType == CalculationType.Percentage ? ((a.Amount * a.Value / 100) + (a.Amount)) 
+                : (a.Amount + a.Value)));
         }
     }
 }

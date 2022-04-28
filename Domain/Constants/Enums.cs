@@ -84,4 +84,9 @@ namespace Domain.Constants
         Current,
         Saving
     }
+    public enum CalculationType
+    {
+        Percentage,
+        FixedAmount
+    }
 }

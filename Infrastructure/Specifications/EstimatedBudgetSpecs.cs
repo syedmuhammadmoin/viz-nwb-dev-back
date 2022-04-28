@@ -8,26 +8,26 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Specifications
 {
-    public class BudgetSpecs : BaseSpecification<BudgetMaster>
+    public class EstimatedBudgetSpecs : BaseSpecification<EstimatedBudgetMaster>
     {
-        public BudgetSpecs(PaginationFilter filter)
+        public EstimatedBudgetSpecs(PaginationFilter filter)
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+            AddInclude(i=> i.PreviousBudget);
         }
-        public BudgetSpecs(bool forEdit)
+        public EstimatedBudgetSpecs(bool forEdit)
         {
             if (forEdit)
             {
-                AddInclude(i => i.BudgetLines);
+                AddInclude(i => i.PreviousBudget);
+                AddInclude(i => i.EstimatedBudgetLines);
             }
             else
             {
-                AddInclude("BudgetLines.Account");
+                AddInclude(i => i.PreviousBudget);
+                AddInclude("EstimatedBudgetLines.Account");
             }
-        }
-        public BudgetSpecs(DateTime date) : base( a => date >= a.From && date <= a.To)
-        {
         }
     }
 }

@@ -49,6 +49,7 @@ namespace Infrastructure.Uow
         public IPurchaseOrderRepository PurchaseOrder { get; private set; }
         public IRequisitionRepository Requisition { get; private set; }
         public IGRNRepository GRN { get; private set; }
+        public IEstimatedBudgetRepository EstimatedBudget { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -82,6 +83,7 @@ namespace Infrastructure.Uow
             PurchaseOrder = new PurchaseOrderRepository(context);
             Requisition = new RequisitionRepository(context);
             GRN = new GRNRepository(context);
+            EstimatedBudget = new EstimatedBudgetRepository(context);
         }
 
         public async Task SaveAsync()

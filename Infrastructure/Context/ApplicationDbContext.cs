@@ -56,6 +56,8 @@ namespace Infrastructure.Context
         public DbSet<TransactionReconcile> TransactionReconciles { get; set; }
         public DbSet<BudgetMaster> BudgetMaster { get; set; }
         public DbSet<BudgetLines> BudgetLines { get; set; }
+        public DbSet<EstimatedBudgetMaster> EstimatedBudgetMaster { get; set; }
+        public DbSet<EstimatedBudgetLines> EstimatedBudgetLines { get; set; }
         public DbSet<PurchaseOrderMaster> PurchaseOrderMaster { get; set; }
         public DbSet<PurchaseOrderLines> PurchaseOrderLines { get; set; }
         public DbSet<RequisitionMaster> RequisitionMaster { get; set; }
@@ -120,6 +122,12 @@ namespace Infrastructure.Context
             modelBuilder.Entity<BudgetLines>()
             .HasOne(tc => tc.BudgetMaster)
             .WithMany(c => c.BudgetLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //EstimatedBudget
+            modelBuilder.Entity<EstimatedBudgetLines>()
+            .HasOne(tc => tc.EstimatedBudgetMaster)
+            .WithMany(c => c.EstimatedBudgetLines)
             .OnDelete(DeleteBehavior.Cascade);
 
             //Purchase Order

@@ -51,6 +51,8 @@ namespace Application.Interfaces
         public DbSet<RequisitionLines> RequisitionLines { get; set; }
         public DbSet<GRNMaster> GRNMaster { get; set; }
         public DbSet<GRNLines> GRNLines { get; set; }
+        public DbSet<EstimatedBudgetMaster> EstimatedBudgetMaster { get; set; }
+        public DbSet<EstimatedBudgetLines> EstimatedBudgetLines { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
