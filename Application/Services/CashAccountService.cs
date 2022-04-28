@@ -99,11 +99,11 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        
+
         public async Task<Response<CashAccountDto>> UpdateAsync(UpdateCashAccountDto entity)
         {
             _unitOfWork.CreateTransaction();
-            try 
+            try
             {
 
                 var cashAccount = await _unitOfWork.CashAccount.GetById((int)entity.Id);
@@ -142,7 +142,10 @@ namespace Application.Services
                 null,
                 "Opening Balance",
                 'D',
-                cashAccount.OpeningBalance);
+                cashAccount.OpeningBalance,
+                cashAccount.CampusId,
+                cashAccount.OpeningBalanceDate
+                );
 
             await _unitOfWork.Ledger.Add(addBalanceInCashAccount);
 
@@ -153,7 +156,10 @@ namespace Application.Services
                null,
                "Opening Balance",
                'C',
-               cashAccount.OpeningBalance);
+               cashAccount.OpeningBalance,
+                cashAccount.CampusId,
+                cashAccount.OpeningBalanceDate
+                );
 
             await _unitOfWork.Ledger.Add(addBalanceInOpeningBalanceEquity);
             await _unitOfWork.SaveAsync();

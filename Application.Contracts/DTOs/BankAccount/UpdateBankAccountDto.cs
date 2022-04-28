@@ -20,5 +20,7 @@ namespace Application.Contracts.DTOs
         public string BankName { get; set; }
         [MaxLength(80)]
         public string Branch { get; set; }
+        [MaxLength(80)]
+        public string Purpose { get; set; }
     }
 }

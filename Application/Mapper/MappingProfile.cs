@@ -154,11 +154,11 @@ namespace Application.Mapper
 
             CreateMap<CreateBillDto, BillMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.BillLines.Sum(e => e.Quantity * e.Cost)))
-               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.BillLines.Sum(e => e.Quantity * e.Cost * e.Tax / 100)))
-               .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.BillLines.Sum(e => (e.Quantity * e.Cost) + (e.Quantity * e.Cost * e.Tax / 100))));
+               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.BillLines.Sum(e => (e.Quantity * e.Cost * e.Tax / 100)+(e.AnyOtherTax))))
+               .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.BillLines.Sum(e => (e.Quantity * e.Cost) + (e.Quantity * e.Cost * e.Tax / 100) + (e.AnyOtherTax))));
 
             CreateMap<CreateBillLinesDto, BillLines>()
-               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
+               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)+ (a.AnyOtherTax)));
 
 
             // DebitNote Mapping
@@ -193,7 +193,7 @@ namespace Application.Mapper
              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
 
             CreateMap<CreatePaymentDto, Payment>()
-                .ForMember(core => core.NetPayment, dto => dto.MapFrom(a => (a.GrossPayment - a.Discount - a.IncomeTax - a.SalesTax)));
+                .ForMember(core => core.NetPayment, dto => dto.MapFrom(a => (a.GrossPayment - a.Discount - a.IncomeTax - a.SalesTax - a.SRBTax)));
 
             // CashAccount Mapping
             CreateMap<CashAccount, CashAccountDto>()
@@ -253,6 +253,72 @@ namespace Application.Mapper
             CreateMap<CreateBudgetDto, BudgetMaster>();
             CreateMap<CreateBudgetLinesDto, BudgetLines>();
 
+            // PurchaseOrder Mapping
+            CreateMap<PurchaseOrderMaster, PurchaseOrderDto>()
+              .ForMember(dto => dto.Vendor, core => core.MapFrom(a => a.Vendor.Name))
+               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
+               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+
+            CreateMap<PurchaseOrderLines, PurchaseOrderLinesDto>()
+              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
+              .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
+              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
+
+            CreateMap<CreatePurchaseOrderDto, PurchaseOrderMaster>()
+               .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.PurchaseOrderLines.Sum(e => e.Quantity * e.Cost)))
+               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.PurchaseOrderLines.Sum(e => e.Quantity * e.Cost * e.Tax / 100)))
+               .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.PurchaseOrderLines.Sum(e => (e.Quantity * e.Cost) + (e.Quantity * e.Cost * e.Tax / 100))));
+
+            CreateMap<CreatePurchaseOrderLinesDto, PurchaseOrderLines>()
+               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
+
+            // Requisition Mapping
+            CreateMap<RequisitionMaster, RequisitionDto>()
+              .ForMember(dto => dto.BusinessPartner, core => core.MapFrom(a => a.BusinessPartner.Name))
+               .ForMember(dto => dto.Campus, core => core.MapFrom(a => a.Campus.Name))
+               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+
+            CreateMap<RequisitionLines, RequisitionLinesDto>()
+              .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
+              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
+
+            CreateMap<CreateRequisitionDto, RequisitionMaster>();
+
+            CreateMap<CreateRequisitionLinesDto, RequisitionLines>();
+
+            // GRN Mapping
+            CreateMap<GRNMaster, GRNDto>()
+              .ForMember(dto => dto.Vendor, core => core.MapFrom(a => a.Vendor.Name))
+               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
+               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+
+            CreateMap<GRNLines, GRNLinesDto>()
+              .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
+              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
+
+            CreateMap<CreateGRNDto, GRNMaster>()
+               .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.GRNLines.Sum(e => e.Quantity * e.Cost)))
+               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.GRNLines.Sum(e => e.Quantity * e.Cost * e.Tax / 100)))
+               .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.GRNLines.Sum(e => (e.Quantity * e.Cost) + (e.Quantity * e.Cost * e.Tax / 100))));
+
+            CreateMap<CreateGRNLinesDto, GRNLines>()
+               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
+            // EstimatedBudget Mapping
+            CreateMap<EstimatedBudgetMaster, EstimatedBudgetDto>()
+                .ForMember(dto => dto.From, core => core.MapFrom(a => a.PreviousBudget.From))
+                .ForMember(dto => dto.To, core => core.MapFrom(a => a.PreviousBudget.To));
+            CreateMap<EstimatedBudgetLines, EstimatedBudgetLinesDto>()
+              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
+
+            CreateMap<CreateEstimatedBudgetDto, EstimatedBudgetMaster>();
+            CreateMap<CreateEstimatedBudgetLinesDto, EstimatedBudgetLines>()
+                .ForMember(core => core.EstimatedValue,
+                dto => dto.MapFrom(a =>
+                a.CalculationType == CalculationType.Percentage ? ((a.Amount * a.Value / 100) + (a.Amount)) 
+                : (a.Amount + a.Value)));
         }
     }
 }

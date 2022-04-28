@@ -49,7 +49,7 @@ namespace Application.Services
 
             var reconciledStmtAmount = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(entity.BankStmtId, false)).Sum(i => i.Amount);
             var unreconciledStmtAmount = stmtAmount - reconciledStmtAmount;
-            
+
             if (entity.Amount > unreconciledStmtAmount)
                 return new Response<int>("Amount is greater than Unreconciled Statment Amount");
 
@@ -93,7 +93,7 @@ namespace Application.Services
                     payment.setReconStatus(DocumentStatus.Reconciled);
 
                     var bankAccount = _unitOfWork.BankAccount.Find(new BankAccountSpecs(payment.PaymentRegisterId)).FirstOrDefault();
-                    
+
                     if (payment.PaymentType == PaymentType.Inflow)
                     {
                         //Add total payment in originalBank Account Ledger
@@ -104,7 +104,9 @@ namespace Application.Services
                             null,
                             payment.Description,
                             'D',
-                            paymentTotalAmount
+                            paymentTotalAmount,
+                            payment.CampusId,
+                            payment.PaymentDate
                             );
 
                         await _unitOfWork.Ledger.Add(addNetPaymentInRecordLedgerChAccount);
@@ -117,7 +119,9 @@ namespace Application.Services
                            null,
                            payment.Description,
                            'C',
-                           paymentTotalAmount
+                           paymentTotalAmount,
+                            payment.CampusId,
+                            payment.PaymentDate
                            );
 
                         await _unitOfWork.Ledger.Add(addNetPaymentInRecordLedgerClrAccount);
@@ -125,15 +129,17 @@ namespace Application.Services
                     if (payment.PaymentType == PaymentType.Outflow)
                     {
                         //Add total payment in originalBank Account Ledger
-                         var addNetPaymentInRecordLedgerChAccount = new RecordLedger(
-                             (int)payment.TransactionId,
-                             bankAccount.ChAccountId,
-                             payment.BusinessPartnerId,
-                             null,
-                             payment.Description,
-                             'C',
-                             paymentTotalAmount
-                             );
+                        var addNetPaymentInRecordLedgerChAccount = new RecordLedger(
+                            (int)payment.TransactionId,
+                            bankAccount.ChAccountId,
+                            payment.BusinessPartnerId,
+                            null,
+                            payment.Description,
+                            'C',
+                            paymentTotalAmount,
+                           payment.CampusId,
+                           payment.PaymentDate
+                            );
 
                         await _unitOfWork.Ledger.Add(addNetPaymentInRecordLedgerChAccount);
 
@@ -145,7 +151,9 @@ namespace Application.Services
                           null,
                           payment.Description,
                           'D',
-                          paymentTotalAmount
+                          paymentTotalAmount,
+                            payment.CampusId,
+                            payment.PaymentDate
                           );
 
                         await _unitOfWork.Ledger.Add(addNetPaymentInRecordLedgerClrAccount);

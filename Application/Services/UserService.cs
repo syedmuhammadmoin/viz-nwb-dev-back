@@ -26,16 +26,14 @@ namespace Application.Services
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
-        private readonly ApplicationDbContext _context;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(UserManager<User> userManager, IUnitOfWork unitOfWork, IConfiguration configuration, ApplicationDbContext context,
+        public UserService(UserManager<User> userManager, IUnitOfWork unitOfWork, IConfiguration configuration,
             RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
-            _context = context;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
             _roleManager = roleManager;
@@ -455,7 +453,13 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.JournalEntryClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.WorkflowStatusClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.WorkflowClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.EstimatedBudgetClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.BudgetClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.ReceiptClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.GeneralLedgerClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.TrialBalanceClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.BalanceSheetClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.ProfitLossClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.EmployeeClaims), id);
 
 
@@ -555,7 +559,12 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.JournalEntryClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.WorkflowStatusClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.WorkflowClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.ReceiptClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.BudgetClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.EstimatedBudgetClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.TrialBalanceClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.BalanceSheetClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.ProfitLossClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.EmployeeClaims), "12");
 
             var allClaimValues = allPermissions.Select(a => a.Value).ToList();

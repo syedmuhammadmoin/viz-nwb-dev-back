@@ -27,7 +27,7 @@ namespace Application.Services
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _httpContextAccessor = httpContextAccessor; 
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Response<DebitNoteDto>> CreateAsync(CreateDebitNoteDto entity)
@@ -137,7 +137,7 @@ namespace Application.Services
             //setting BusinessPartnerPayable
             var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
             dbn.setPayableAccountId(er.AccountPayableId);
-            
+
             //Setting status
             dbn.setStatus(status);
 
@@ -182,7 +182,7 @@ namespace Application.Services
             //setting BusinessPartnerPayable
             var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
             dbn.setPayableAccountId(er.AccountPayableId);
-            
+
             dbn.setStatus(status);
 
             _unitOfWork.CreateTransaction();
@@ -228,7 +228,9 @@ namespace Application.Services
                     line.WarehouseId,
                     line.Description,
                     'C',
-                    amount + tax
+                    amount + tax,
+                    dbn.CampusId,
+                    dbn.NoteDate
                     );
 
                 await _unitOfWork.Ledger.Add(addSalesAmountInRecordLedger);
@@ -242,7 +244,9 @@ namespace Application.Services
                         null,
                         dbn.DocNo,
                         'D',
-                        dbn.TotalAmount
+                        dbn.TotalAmount,
+                        dbn.CampusId,
+                        dbn.NoteDate
                     );
 
             await _unitOfWork.Ledger.Add(addPayableInLedger);
@@ -251,7 +255,7 @@ namespace Application.Services
 
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
-           var getDebitNote = await _unitOfWork.DebitNote.GetById(data.DocId, new DebitNoteSpecs(true));
+            var getDebitNote = await _unitOfWork.DebitNote.GetById(data.DocId, new DebitNoteSpecs(true));
 
             if (getDebitNote == null)
             {
@@ -276,7 +280,7 @@ namespace Application.Services
             }
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-            try 
+            try
             {
                 foreach (var role in currentUserRoles)
                 {
@@ -300,9 +304,9 @@ namespace Application.Services
                         return new Response<bool>(true, "DebitNote Reviewed");
                     }
                 }
-                
-                return new Response<bool> ("User does not have allowed role" );
-               
+
+                return new Response<bool>("User does not have allowed role");
+
             }
             catch (Exception ex)
             {

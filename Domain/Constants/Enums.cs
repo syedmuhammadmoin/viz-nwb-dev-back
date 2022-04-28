@@ -15,7 +15,10 @@ namespace Domain.Constants
     {
         Customer,
         Vendor,
-        Employee
+        Employee,
+        Supplier, 
+        Consultant, 
+        Contractor
     }
     public enum ProductType
     {
@@ -62,7 +65,8 @@ namespace Domain.Constants
         GDN,
         InventoryAdjustment,
         Quotation,
-        Requisition
+        Requisition,
+        Receipt
     }
     public enum ActionButton
     {
@@ -74,5 +78,15 @@ namespace Domain.Constants
         Custom,
         PreDefined,
         PreDefinedInList,
+    }
+    public enum BankAccountType
+    {
+        Current,
+        Saving
+    }
+    public enum CalculationType
+    {
+        Percentage,
+        FixedAmount
     }
 }

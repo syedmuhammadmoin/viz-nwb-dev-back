@@ -11,7 +11,7 @@ namespace Infrastructure.Specifications
 {
     public class PaymentSpecs : BaseSpecification<Payment>
     {
-        public PaymentSpecs(PaginationFilter filter)
+        public PaymentSpecs(PaginationFilter filter, PaymentType paymentType ) : base(e => (e.PaymentType == paymentType))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
@@ -21,16 +21,22 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Status);
             AddInclude(i => i.PaymentRegister);
         }
-
         public PaymentSpecs()
         {
-            AddInclude(i => i.BusinessPartner);
-            AddInclude(i => i.Account);
-            AddInclude(i => i.Campus);
             AddInclude(i => i.Status);
-            AddInclude(i => i.PaymentRegister);
         }
 
+        public PaymentSpecs(bool forEdit, PaymentType paymentType) : base(e => (e.PaymentType == paymentType))
+        {
+            if (!forEdit)
+            {
+                AddInclude(i => i.BusinessPartner);
+                AddInclude(i => i.Account);
+                AddInclude(i => i.Campus);
+                AddInclude(i => i.Status);
+                AddInclude(i => i.PaymentRegister);
+            }
+        }
         public PaymentSpecs(bool forRecon) : base(p => p.BankReconStatus != DocumentStatus.Reconciled)
         {
         }
@@ -44,5 +50,9 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.Status);
         }
+        public PaymentSpecs(PaymentType paymentType) : base(e => (e.PaymentType == paymentType))
+        {
+        }
+
     }
 }

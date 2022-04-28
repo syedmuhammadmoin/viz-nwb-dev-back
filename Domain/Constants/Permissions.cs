@@ -111,11 +111,30 @@ namespace Domain.Constants
             public const string Edit = "Permissions.CashAccountClaims.Edit";
             public const string Delete = "Permissions.CashAccountClaims.Delete";
         }
-        //Reporting Form
-        public static class ChartOfAccountClaims
+        public static class PurchaseOrderClaims
         {
-            public const string View = "Permissions.ChartOfAccountClaims.View";
+            public const string View = "Permissions.PurchaseOrderClaims.View";
+            public const string Create = "Permissions.PurchaseOrderClaims.Create";
+            public const string Edit = "Permissions.PurchaseOrderClaims.Edit";
+            public const string Delete = "Permissions.PurchaseOrderClaims.Delete";
         }
+
+        public static class GRNClaims
+        {
+            public const string View = "Permissions.GRNClaims.View";
+            public const string Create = "Permissions.GRNClaims.Create";
+            public const string Edit = "Permissions.GRNClaims.Edit";
+            public const string Delete = "Permissions.GRNClaims.Delete";
+        }
+        public static class RequisitionClaims
+        {
+            public const string View = "Permissions.RequisitionClaims.View";
+            public const string Create = "Permissions.RequisitionClaims.Create";
+            public const string Edit = "Permissions.RequisitionClaims.Edit";
+            public const string Delete = "Permissions.RequisitionClaims.Delete";
+        }
+
+       
 
         public static class CategoriesClaims
         {
@@ -176,6 +195,13 @@ namespace Domain.Constants
             public const string Edit = "Permissions.BudgetClaims.Edit";
             public const string Delete = "Permissions.BudgetClaims.Delete";
         }
+        public static class EstimatedBudgetClaims
+        {
+            public const string View = "Permissions.EstimatedBudgetClaims.View";
+            public const string Create = "Permissions.EstimatedBudgetClaims.Create";
+            public const string Edit = "Permissions.EstimatedBudgetClaims.Edit";
+            public const string Delete = "Permissions.EstimatedBudgetClaims.Delete";
+        }
         //Transaction Forms
         public static class InvoiceClaims
         {
@@ -198,6 +224,14 @@ namespace Domain.Constants
             public const string View = "Permissions.PaymentClaims.View";
             public const string Create = "Permissions.PaymentClaims.Create";
             public const string Edit = "Permissions.PaymentClaims.Edit";
+            public const string Delete = "Permissions.PaymentClaims.Delete";
+        }
+
+        public static class ReceiptClaims
+        {
+            public const string View = "Permissions.ReceiptClaims.View";
+            public const string Create = "Permissions.ReceiptClaims.Create";
+            public const string Edit = "Permissions.ReceiptClaims.Edit";
             public const string Delete = "Permissions.PaymentClaims.Delete";
         }
 
@@ -233,5 +267,26 @@ namespace Domain.Constants
             public const string Delete = "Permissions.JournalEntryClaims.Delete";
         }
 
+        //Reporting Form
+        public static class ChartOfAccountClaims
+        {
+            public const string View = "Permissions.ChartOfAccountClaims.View";
+        }
+        public static class GeneralLedgerClaims
+        {
+            public const string View = "Permissions.GeneralLedgerClaims.View";
+        }
+        public static class TrialBalanceClaims
+        {
+            public const string View = "Permissions.TrialBalanceClaims.View";
+        }
+        public static class BalanceSheetClaims
+        {
+            public const string View = "Permissions.BalanceSheetClaims.View";
+        }
+        public static class ProfitLossClaims
+        {
+            public const string View = "Permissions.ProfitLossClaims.View";
+        }
     }
 }

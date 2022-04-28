@@ -138,7 +138,17 @@ namespace Application.Services
 
                 if (checkingInvoice.Count != 0)
                 {
-                    return new Response<WorkFlowDto>("JournalEntry is pending for this workflow");
+                    return new Response<WorkFlowDto>("Payment is pending for this workflow");
+                }
+            }
+
+            if (entity.DocType == DocType.Receipt)
+            {
+                var checkingInvoice = _unitOfWork.Payment.Find(new PaymentSpecs("")).ToList();
+
+                if (checkingInvoice.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Receipt is pending for this workflow");
                 }
             }
 
