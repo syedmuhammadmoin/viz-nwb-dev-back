@@ -65,13 +65,30 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(
+    options.AddPolicy("Default",
         builder =>
         {
-            builder.WithOrigins("http://localhost:4200",
-                                "http://nwbtest.vizalys.com")
-                                        .AllowAnyHeader()
-                                        .AllowAnyMethod();
+            builder.WithOrigins(
+                                "http://localhost:4100",
+                                "http://localhost:4200",
+                                "http://localhost:4300",
+                                "http://localhost:4400",
+                                "http://localhost:4500",
+                                "http://localhost:4600",
+                                "http://nwb.vizalys.com",
+                                "http://www.nwb.vizalys.com",
+                                "http://nwbtest.vizalys.com",
+                                "http://www.nwbtest.vizalys.com")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+        });
+
+    options.AddPolicy("PayrollModule",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyHeader()
+                   .WithMethods("POST", "GET");
         });
 });
 
