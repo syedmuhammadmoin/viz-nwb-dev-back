@@ -97,6 +97,31 @@ namespace Domain.Constants
             public const string Edit = "Permissions.CashAccountClaims.Edit";
             public const string Delete = "Permissions.CashAccountClaims.Delete";
         }
+        public static class PurchaseOrderClaims
+        {
+            public const string View = "Permissions.PurchaseOrderClaims.View";
+            public const string Create = "Permissions.PurchaseOrderClaims.Create";
+            public const string Edit = "Permissions.PurchaseOrderClaims.Edit";
+            public const string Delete = "Permissions.PurchaseOrderClaims.Delete";
+        }
+
+        public static class GRNClaims
+        {
+            public const string View = "Permissions.GRNClaims.View";
+            public const string Create = "Permissions.GRNClaims.Create";
+            public const string Edit = "Permissions.GRNClaims.Edit";
+            public const string Delete = "Permissions.GRNClaims.Delete";
+        }
+        public static class RequisitionClaims
+        {
+            public const string View = "Permissions.RequisitionClaims.View";
+            public const string Create = "Permissions.RequisitionClaims.Create";
+            public const string Edit = "Permissions.RequisitionClaims.Edit";
+            public const string Delete = "Permissions.RequisitionClaims.Delete";
+        }
+
+       
+
         public static class CategoriesClaims
         {
             public const string View = "Permissions.CategoriesClaims.View";

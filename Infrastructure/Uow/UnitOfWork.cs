@@ -46,6 +46,9 @@ namespace Infrastructure.Uow
         public ICampusRepository Campus { get; private set; }
         public IWorkFlowTransitionRepository WorkFlowTransition { get; private set; }
         public IBudgetRepository Budget { get; private set; }
+        public IPurchaseOrderRepository PurchaseOrder { get; private set; }
+        public IRequisitionRepository Requisition { get; private set; }
+        public IGRNRepository GRN { get; private set; }
         public IEstimatedBudgetRepository EstimatedBudget { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
@@ -77,6 +80,9 @@ namespace Infrastructure.Uow
             TransactionReconcile = new TransactionReconcileRepository(context);
             Campus = new CampusRepository(context);
             Budget = new BudgetRepository(context);
+            PurchaseOrder = new PurchaseOrderRepository(context);
+            Requisition = new RequisitionRepository(context);
+            GRN = new GRNRepository(context);
             EstimatedBudget = new EstimatedBudgetRepository(context);
         }
 

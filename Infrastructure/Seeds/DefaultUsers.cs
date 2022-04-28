@@ -41,7 +41,6 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaim(superAdmin, "BusinessPartnerClaims");
             await roleManager.AddPermissionClaim(superAdmin, "OrganizationClaims");
             await roleManager.AddPermissionClaim(superAdmin, "DepartmentsClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "CampusClaims");
             await roleManager.AddPermissionClaim(superAdmin, "WarehouseClaims");
             await roleManager.AddPermissionClaim(superAdmin, "LocationClaims");
             await roleManager.AddPermissionClaim(superAdmin, "BankAccountClaims");
@@ -63,6 +62,9 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaim(superAdmin, "JournalEntryClaims");
             await roleManager.AddPermissionClaim(superAdmin, "BudgetClaims");
             await roleManager.AddPermissionClaim(superAdmin, "ReceiptClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "RequisitionClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "PurchaseOrderClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "GRNClaims");
             await roleManager.AddPermissionClaim(superAdmin, "EstimatedBudgetClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "ChartOfAccountClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "GeneralLedgerClaims");

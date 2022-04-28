@@ -43,6 +43,9 @@ builder.Services.AddScoped<IGeneralLedgerReportService, GeneralLedgerReportServi
 builder.Services.AddScoped<ITrialBalanceReportService, TrialBalanceReportService>();
 builder.Services.AddScoped<IBalanceSheetReportService, BalanceSheetReportService>();
 builder.Services.AddScoped<IPNLReportService, PNLReportService>();
+builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
+builder.Services.AddScoped<IRequisitionService, RequisitionService>();
+builder.Services.AddScoped<IGRNService, GRNService>();
 builder.Services.AddScoped<IEstimatedBudgetService, EstimatedBudgetService>();
 
 //Add auto mapper config
