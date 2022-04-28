@@ -23,5 +23,10 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Department);
             AddInclude(i => i.Designation);
         }
+
+        public EmployeeSpecs(string getCNIC) : base(e => e.CNIC == getCNIC)
+        {
+
+        }
     }
 }
