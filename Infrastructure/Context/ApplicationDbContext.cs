@@ -60,7 +60,7 @@ namespace Infrastructure.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
+
             //changing cascade delete behavior
             foreach (var foreignKey in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
             {
@@ -144,6 +144,17 @@ namespace Infrastructure.Context
             {
                 entity.ToTable("UserTokens");
             });
+
+            // Removing IdentityId for assistance in integeration
+
+            modelBuilder.Entity<Department>()
+            .Property(et => et.Id)
+            .ValueGeneratedNever();
+
+            modelBuilder.Entity<Designation>()
+           .Property(et => et.Id)
+           .ValueGeneratedNever();
+
 
             //Adding seeds in organization table
             modelBuilder.Entity<Organization>()
