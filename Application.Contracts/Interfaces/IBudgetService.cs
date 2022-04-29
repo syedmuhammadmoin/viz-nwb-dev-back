@@ -12,5 +12,6 @@ namespace Application.Contracts.Interfaces
     public interface IBudgetService : ICrudService<CreateBudgetDto, BudgetDto, int, PaginationFilter>
     {
         Task<Response<List<BudgetDto>>> GetBudgetDropDown();
+        Response<List<BudgetReportDto>> GetBudgetReport(BudgetReportFilters filters);
     }
 }

@@ -24,7 +24,10 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+        public BudgetService()
+        {
 
+        }
         public async Task<Response<BudgetDto>> CreateAsync(CreateBudgetDto entity)
         {
             if (entity.BudgetLines.Count() == 0)
@@ -101,6 +104,117 @@ namespace Application.Services
                 return new Response<List<BudgetDto>>("List is empty");
 
             return new Response<List<BudgetDto>>(_mapper.Map<List<BudgetDto>>(budgets), "Returning List");
+        }
+
+        public  Response<List<BudgetReportDto>> GetBudgetReport(BudgetReportFilters filters)
+        {
+            var getBudget = _unitOfWork.Budget.Find(new BudgetSpecs(filters.BudgetName))
+                .FirstOrDefault();
+
+            if (getBudget==null)
+                return new Response<List<BudgetReportDto>>("Budget not found");
+
+            if (filters.To > getBudget.To)
+                return new Response<List<BudgetReportDto>>("Till date is greater than budget end date");
+
+            if (filters.To < getBudget.From)
+                return new Response<List<BudgetReportDto>>("Till date is lesser than budget end date");
+
+            //Calling general ledger view
+            var generalLedger = _unitOfWork.Ledger.Find(new LedgerSpecs())
+                .Select(i => new GeneralLedgerDto()
+                {
+                    LedgerId = i.Id,
+                    AccountId = i.Level4_id,
+                    AccountName = i.Level4.Name,
+                    TransactionId = i.Id,
+                    CampusId = i.Id,
+                    DocDate = i.TransactionDate,
+                    DocType = i.Transactions.DocType,
+                    DocNo = i.Transactions.DocNo,
+                    Description = i.Description,
+                    Debit = i.Sign == 'D' ? i.Amount : 0,
+                    Credit = i.Sign == 'C' ? i.Amount : 0,
+                    BId = i.BusinessPartnerId,
+                    BusinessPartnerName = i.BusinessPartner != null ? i.BusinessPartner.Name : "N/A",
+                    WarehouseName = i.Warehouse != null ? i.Warehouse.Name : "N/A",
+                    CampusName = i.Campus != null ? i.Campus.Name : "N/A",
+                    Balance = i.Sign == 'D' ? i.Amount : (-1) * i.Amount
+                });
+
+            decimal currentTotal = 0;
+            //Applying Union
+            var generalLedgerView = generalLedger
+                .OrderBy(e => e.LedgerId)
+                .ThenBy(e => e.DocDate)
+                .ThenBy(e => e.TransactionId)
+                .Select(gl =>
+                {
+                    currentTotal += (gl.Debit - gl.Credit);
+                    gl.Balance = currentTotal;
+                    return gl;
+                });
+
+            var genLedger = generalLedgerView.ToList();
+            List<BudgetReportDto> result = new List<BudgetReportDto>();
+
+            foreach (var budgetLine in getBudget.BudgetLines)
+            {
+
+                //Getting data for the given data range
+                var glWithBudgetFilter = genLedger
+                    .Where(e => (e.AccountId == budgetLine.AccountId) &&
+                    (e.DocDate >= getBudget.From && e.DocDate <= filters.To))
+                    .OrderBy(x => x.DocDate)
+                    .ThenBy(x => x.TransactionId)
+                    .GroupBy(x => x.AccountId)
+                    .Select(x => new BudgetReportDto()
+                    {
+                        BudgetId = getBudget.Id,
+                        BudgetName = getBudget.BudgetName,
+                        From = getBudget.From,
+                        To = filters.To,
+                        AccountId = budgetLine.AccountId,
+                        Account = budgetLine.Account.Name,
+                        BudgetAmount = budgetLine.Amount,
+                        IncurredAmount = new BudgetService().getIncomeAccount(budgetLine.Account.Level1_id) ?
+                        x.Sum(s => s.Credit - s.Debit) : x.Sum(s => s.Debit - s.Credit),
+                        BalanceRemaining = budgetLine.Amount - (new BudgetService().getIncomeAccount(budgetLine.Account.Level1_id) ?
+                        x.Sum(s => s.Credit - s.Debit) : x.Sum(s => s.Debit - s.Credit))
+                    }).FirstOrDefault();
+
+                if (glWithBudgetFilter == null)
+                {
+                    var budgetWithoutEntry = new BudgetReportDto()
+                    {
+                        BudgetId = getBudget.Id,
+                        BudgetName = getBudget.BudgetName,
+                        From = getBudget.From,
+                        To = filters.To,
+                        AccountId = budgetLine.AccountId,
+                        Account = budgetLine.Account.Name,
+                        BudgetAmount = budgetLine.Amount,
+                        BalanceRemaining = budgetLine.Amount - 0
+                    };
+
+                    result.Add(budgetWithoutEntry);
+                }
+                else
+                {
+                    result.Add(glWithBudgetFilter);
+                }
+            }
+
+            return new Response<List<BudgetReportDto>>(result, "Returning budget report");
+        }
+
+        private bool getIncomeAccount(Guid id)
+        {
+            if (id == new Guid("40000000-5566-7788-99AA-BBCCDDEEFF00"))
+            {
+                return true;
+            }
+            return false;
         }
 
         public Task<Response<int>> DeleteAsync(int id)
