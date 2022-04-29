@@ -288,5 +288,9 @@ namespace Domain.Constants
         {
             public const string View = "Permissions.ProfitLossClaims.View";
         }
+        public static class BudgetReportClaims
+        {
+            public const string View = "Permissions.BudgetReportClaims.View";
+        }
     }
 }
