@@ -104,7 +104,7 @@ UserSeeding.Initialize(app.Services);
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseCors();
+app.UseCors("Default");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

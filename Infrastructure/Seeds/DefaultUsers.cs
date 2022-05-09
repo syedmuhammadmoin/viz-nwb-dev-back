@@ -69,13 +69,14 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaim(superAdmin, "PurchaseOrderClaims");
             await roleManager.AddPermissionClaim(superAdmin, "GRNClaims");
             await roleManager.AddPermissionClaim(superAdmin, "EstimatedBudgetClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "EmployeeClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "ChartOfAccountClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "GeneralLedgerClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "TrialBalanceClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "ChartOfAccountClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "BalanceSheetClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "ProfitLossClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "EmployeeClaims");
+            await roleManager.AddPermissionClaimReport(superAdmin, "BudgetReportClaims");
         }
         public static async Task AddPermissionClaim(this RoleManager<IdentityRole> roleManager, IdentityRole role, string module)
         {

@@ -460,6 +460,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.TrialBalanceClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.BalanceSheetClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.ProfitLossClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.BudgetReportClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.EmployeeClaims), id);
 
 
@@ -565,6 +566,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.TrialBalanceClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.BalanceSheetClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.ProfitLossClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.BudgetReportClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.EmployeeClaims), "12");
 
             var allClaimValues = allPermissions.Select(a => a.Value).ToList();

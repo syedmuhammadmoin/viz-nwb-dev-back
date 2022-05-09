@@ -26,8 +26,15 @@ namespace Infrastructure.Specifications
                 AddInclude("BudgetLines.Account");
             }
         }
-        public BudgetSpecs(DateTime date) : base( a => date >= a.From && date <= a.To)
+        public BudgetSpecs(DateTime date) : base(a => date >= a.From && date <= a.To)
         {
+        }
+
+        public BudgetSpecs(string budgetName) : base (a => budgetName == a.BudgetName)
+        {
+            AddInclude(i => i.BudgetLines);
+            AddInclude("BudgetLines.Account");
+
         }
     }
 }

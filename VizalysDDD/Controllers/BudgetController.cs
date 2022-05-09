@@ -74,5 +74,15 @@ namespace Vizalys.Api.Controllers
             return Ok(await _budgetService.GetBudgetDropDown()); // Status Code : 200
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.BudgetReportClaims.View })]
+        [HttpPost("BudgetReport")]
+        public ActionResult<Response<List<BudgetReportDto>>> GetBudgetReport(BudgetReportFilters filters)
+        {
+            var budget = _budgetService.GetBudgetReport(filters);
+            if (budget.IsSuccess)
+                return Ok(budget); // Status Code : 200
+
+            return BadRequest(budget); // Status code : 400
+        }
     }
 }
