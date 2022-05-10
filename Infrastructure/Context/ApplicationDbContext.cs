@@ -67,6 +67,9 @@ namespace Infrastructure.Context
         public DbSet<Department> Departments { get; set; }
         public DbSet<Designation> Designations { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<PayrollItem> PayrollItems { get; set; }
+        public DbSet<PayrollItemEmployee> PayrollItemEmployees { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

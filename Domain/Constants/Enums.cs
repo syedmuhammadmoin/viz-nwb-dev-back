@@ -89,4 +89,13 @@ namespace Domain.Constants
         Percentage,
         FixedAmount
     }
+    public enum PayrollType
+    {
+        BasicPay,
+        Increment,
+        Deduction,
+        Allowance,
+        AssignmentAllowance,
+        TaxDeduction
+    }
 }

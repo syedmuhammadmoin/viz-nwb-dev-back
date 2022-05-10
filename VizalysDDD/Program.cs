@@ -50,6 +50,7 @@ builder.Services.AddScoped<IEstimatedBudgetService, EstimatedBudgetService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IDesignationService, DesignationService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IPayrollItemService, PayrollItemService>();
 
 //Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
