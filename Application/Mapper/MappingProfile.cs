@@ -319,6 +319,11 @@ namespace Application.Mapper
                 dto => dto.MapFrom(a =>
                 a.CalculationType == CalculationType.Percentage ? ((a.Amount * a.Value / 100) + (a.Amount)) 
                 : (a.Amount + a.Value)));
+
+            // PayrollItem Mapping
+            CreateMap<PayrollItem, PayrollItemDto>()
+                .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
+            CreateMap<CreatePayrollItemDto, PayrollItem>();
         }
     }
 }
