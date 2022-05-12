@@ -28,12 +28,24 @@ namespace Application.Services
 
         public async Task<Response<PayrollItemDto>> CreateAsync(CreatePayrollItemDto entity)
         {
-            if (entity.PayrollType == PayrollType.BasicPay || entity.PayrollType == PayrollType.Increment)
+           //Checking BasicPay and Increment in amount
+           
+           if (entity.PayrollType == PayrollType.BasicPay || entity.PayrollType == PayrollType.Increment)
             {
                 if (entity.PayrollItemType == CalculationType.Percentage)
                     return new Response<PayrollItemDto>("Basic pay and increment should be in amount");
             }
 
+           //Checking duplicate employees if any
+            var duplicates = entity.EmployeeIds.GroupBy(x => x)
+             .Where(g => g.Count() > 1)
+             .Select(y => y.Key)
+             .ToList();
+
+            if (duplicates.Any())
+                return new Response<PayrollItemDto>("Duplicate employees found");
+
+            // with rollback Transaction
             _unitOfWork.CreateTransaction();
             try
             {
@@ -68,11 +80,6 @@ namespace Application.Services
             }
         }
 
-        public Task<Response<int>> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<PaginationResponse<List<PayrollItemDto>>> GetAllAsync(PaginationFilter filter)
         {
             var specification = new PayrollItemSpecs(filter);
@@ -88,12 +95,22 @@ namespace Application.Services
 
         public async Task<Response<PayrollItemDto>> GetByIdAsync(int id)
         {
-            var specification = new PayrollItemSpecs();
-            var payrollItem = await _unitOfWork.PayrollItem.GetById(id, specification);
-            if (payrollItem == null)
+            //getting payrollItm
+            var getPayrollItem = await _unitOfWork.PayrollItem.GetById(id);
+            if (getPayrollItem == null)
                 return new Response<PayrollItemDto>("Not found");
 
-            return new Response<PayrollItemDto>(_mapper.Map<PayrollItemDto>(payrollItem), "Returning value");
+            var payrollItem = _mapper.Map<PayrollItemDto>(getPayrollItem);
+
+            //getting employeelist in payrollItem
+            var empList = _unitOfWork.PayrollItemEmployee
+                .Find(new PayrollItemEmployeeSpecs(payrollItem.Id))
+                .Select(x => x.Employee)
+                .ToList();
+
+            payrollItem.Employees = _mapper.Map<List<EmployeeDto>>(empList);
+
+            return new Response<PayrollItemDto>(payrollItem, "Returning value");
         }
 
         public async Task<Response<PayrollItemDto>> UpdateAsync(CreatePayrollItemDto entity)
@@ -103,32 +120,56 @@ namespace Application.Services
                 if (entity.PayrollItemType == CalculationType.Percentage)
                     return new Response<PayrollItemDto>("Basic pay and increment should be in amount");
             }
+
+            var duplicates = entity.EmployeeIds.GroupBy(x => x)
+              .Where(g => g.Count() > 1)
+              .Select(y => y.Key)
+              .ToList();
+
+            if (duplicates.Any())
+                return new Response<PayrollItemDto>("Duplicate employees found");
+
+
+            // with rollback Transaction
             _unitOfWork.CreateTransaction();
             try
             {
-                var GetPayrollItem = _unitOfWork.PayrollItem.Find(new PayrollItemSpecs((int)entity.Id)).FirstOrDefault();
-
                 //For updating data
-                _mapper.Map<CreatePayrollItemDto, PayrollItem>(entity, GetPayrollItem);
+                var payrollItem = await _unitOfWork.PayrollItem.GetById((int)entity.Id);
+                _mapper.Map<CreatePayrollItemDto, PayrollItem>(entity, payrollItem);
                 await _unitOfWork.SaveAsync();
 
                 //getting and removing all EmployeeIds for this payrollItems
-                var empIds = await _unitOfWork.PayrollItemEmployee.get(entity);
-                foreach (var claim in claims)
+                var checkRemove = await _unitOfWork.PayrollItemEmployee.RemoveAllByPayrollItemId(payrollItem.Id);
+                if (!checkRemove)
                 {
-                    await _roleManager.RemoveClaimAsync(role, claim);
+                    return new Response<PayrollItemDto>("Error updating record");
                 }
+
+                var assignEmp = new List<PayrollItemEmployee>();
+                //assigning EmployeeIds to payrollItems
+                for (int i = 0; i < entity.EmployeeIds.Length; i++)
+                {
+                    assignEmp.Add(new PayrollItemEmployee(entity.EmployeeIds[i], payrollItem.Id));
+                }
+                await _unitOfWork.PayrollItemEmployee.AddRange(assignEmp);
+                await _unitOfWork.SaveAsync();
 
                 //Commiting the transaction 
                 _unitOfWork.Commit();
 
-                return new Response<PayrollItemDto>(_mapper.Map<PayrollItemDto>(GetPayrollItem), "Updated successfully");
+                return new Response<PayrollItemDto>(_mapper.Map<PayrollItemDto>(payrollItem), "Updated successfully");
             }
             catch (Exception ex)
             {
                 _unitOfWork.Rollback();
                 return new Response<PayrollItemDto>(ex.Message);
             }
+        }
+
+        public Task<Response<int>> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
