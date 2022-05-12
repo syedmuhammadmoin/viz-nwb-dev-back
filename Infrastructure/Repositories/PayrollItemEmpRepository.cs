@@ -1,6 +1,9 @@
-﻿using Domain.Entities;
+﻿using Application.Contracts.Response;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Context;
+using Infrastructure.Specifications;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,14 +20,35 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
+       
         public async Task AddRange(List<PayrollItemEmployee> list)
         {
             await _context.PayrollItemEmployees.AddRangeAsync(list);
         }
 
-        public async Task<List<PayrollItemEmployee>> GetById(int id)
+        public async Task<bool> RemoveAllByPayrollItemId(int id)
         {
-            return await _context.PayrollItemEmployees.Select(x => x.Id).Where(x=> x);
+           //getting employees via PayrollItem
+            var getList = await _context.PayrollItemEmployees
+                .Where(e => e.PayrollItemId== id)
+                .ToListAsync();
+            
+           //removing previous employees from payrollItems
+            if (getList.Any())
+            {
+                _context.PayrollItemEmployees.RemoveRange(getList);
+                _context.SaveChanges();
+                return true;
+            }
+
+           
+            return true;
+        }
+
+        public IEnumerable<PayrollItemEmployee> Find(ISpecification<PayrollItemEmployee> specification)
+        {
+            return SpecificationEvaluator<PayrollItemEmployee, int>.GetQuery(_context.PayrollItemEmployees
+                                    .AsQueryable(), specification);
         }
     }
 }

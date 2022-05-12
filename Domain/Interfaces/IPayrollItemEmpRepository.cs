@@ -10,6 +10,7 @@ namespace Domain.Interfaces
     public interface IPayrollItemEmpRepository
     {
         Task AddRange(List<PayrollItemEmployee> list);
-        Task<List<PayrollItemEmployee>> GetById(int id);
+        IEnumerable<PayrollItemEmployee> Find(ISpecification<PayrollItemEmployee> specification);
+        Task<bool> RemoveAllByPayrollItemId(int id);
     }
 }
