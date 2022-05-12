@@ -15,7 +15,12 @@ namespace Infrastructure.Specifications
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
             AddInclude(i => i.Employee);
-            AddInclude(i => i.PayrollItem);
+        }
+        public PayrollItemEmployeeSpecs(int payrollItemId) : base(a => a.PayrollItemId == payrollItemId)
+        {
+            AddInclude(i => i.Employee);
+            AddInclude("Employee.Designation");
+            AddInclude("Employee.Department");
         }
     }
 }

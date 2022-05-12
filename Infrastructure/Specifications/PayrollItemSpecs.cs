@@ -16,14 +16,5 @@ namespace Infrastructure.Specifications
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
             AddInclude(i => i.Account);
         }
-        public PayrollItemSpecs(int payrollItemId) : base(e => e.Id == payrollItemId)
-        {
-
-        }
-
-        public PayrollItemSpecs() 
-        {
-            AddInclude(i => i.Account);
-        }
     }
 }
