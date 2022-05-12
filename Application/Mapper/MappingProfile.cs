@@ -35,7 +35,7 @@ namespace Application.Mapper
             // Employee Mapping
             CreateMap<Employee, EmployeeDto>()
                 .ForMember(dto => dto.DepartmentName, core => core.MapFrom(a => a.Department.Name))
-                .ForMember(dto => dto.DepartmentName, core => core.MapFrom(a => a.Designation.Name));
+                .ForMember(dto => dto.DesignationName, core => core.MapFrom(a => a.Designation.Name));
 
             CreateMap<CreateEmployeeDto, Employee>();
 
@@ -324,6 +324,7 @@ namespace Application.Mapper
             CreateMap<PayrollItem, PayrollItemDto>()
                 .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
             CreateMap<CreatePayrollItemDto, PayrollItem>();
+            CreateMap<PayrollItemEmployee, PayrollItemEmployeeDto>();
         }
     }
 }
