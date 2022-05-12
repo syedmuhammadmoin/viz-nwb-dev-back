@@ -19,6 +19,6 @@ namespace Application.Contracts.DTOs
         public string AccountName { get; set; }
         public bool IsActive { get; set; }
         public string Remarks { get; set; }
-        //public List<EmployeeDto> Employees { get; set; }
+        public List<EmployeeDto> Employees { get; set; }
     }
 }
