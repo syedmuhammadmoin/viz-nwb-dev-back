@@ -13,5 +13,6 @@ namespace Application.Contracts.Interfaces
     public interface IBankStmtService : ICrudService<CreateBankStmtDto, BankStmtDto, int, PaginationFilter>
     {
         Task<Response<BankStmtDto>> CreateAsync(CreateBankStmtDto entity, IFormFile file);
+        Response<List<UnReconStmtDto>> GetBankUnreconciledStmts(int id);
     }
 }
