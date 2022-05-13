@@ -53,6 +53,13 @@ namespace Infrastructure.Specifications
         public PaymentSpecs(PaymentType paymentType) : base(e => (e.PaymentType == paymentType))
         {
         }
+        public PaymentSpecs(Guid paymentRegisterId) : base(
+            (x =>
+            (x.PaymentRegisterId == paymentRegisterId)
+            && (x.BankReconStatus == DocumentStatus.Unreconciled || x.BankReconStatus == DocumentStatus.Partial)
+            ))
+        {
+        }
 
     }
 }
