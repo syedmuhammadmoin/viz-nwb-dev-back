@@ -19,6 +19,13 @@ namespace Infrastructure.Repositories
         {
             _context = context;
         }
+
+        public IEnumerable<BankStmtLines> Find(ISpecification<BankStmtLines> specification)
+        {
+            return SpecificationEvaluator<BankStmtLines, int>.GetQuery(_context.BankStmtLines
+                                       .AsQueryable(), specification);
+        }
+
         public async Task<IEnumerable<BankStmtLines>> GetAll(ISpecification<BankStmtLines> specification = null)
         {
             return await SpecificationEvaluator<BankStmtLines, int>.GetQuery(_context.BankStmtLines
