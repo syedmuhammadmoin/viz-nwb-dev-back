@@ -16,11 +16,24 @@ namespace Infrastructure.Specifications
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
             AddInclude(i => i.Employee);
         }
-        public PayrollItemEmployeeSpecs(int payrollItemId) : base(a => a.PayrollItemId == payrollItemId)
+        public PayrollItemEmployeeSpecs(int id, bool isPayrollItem)
+            : base(isPayrollItem ? a => a.PayrollItemId == id
+            : a => a.EmployeeId == id)
         {
-            AddInclude(i => i.Employee);
-            AddInclude("Employee.Designation");
-            AddInclude("Employee.Department");
+
+            if (isPayrollItem)
+            {
+                AddInclude(i => i.PayrollItem);
+                AddInclude(i => i.Employee);
+            }
+            else
+            {
+                AddInclude(i => i.PayrollItem);
+                AddInclude(i => i.Employee);
+                AddInclude("Employee.Designation");
+                AddInclude("Employee.Department");
+            }
         }
+
     }
 }
