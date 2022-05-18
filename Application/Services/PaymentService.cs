@@ -398,6 +398,7 @@ namespace Application.Services
                         getPayment.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
+                            getPayment.setReconStatus(DocumentStatus.Unreconciled);
                             await AddToLedger(getPayment);
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "Payment Approved");
