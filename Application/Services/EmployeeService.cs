@@ -63,9 +63,21 @@ namespace Application.Services
         public async Task<Response<EmployeeDto>> GetByIdAsync(int id)
         {
             var specification = new EmployeeSpecs();
-            var employee = await _unitOfWork.Employee.GetById(id, specification); 
-            if (employee == null)
+            var getEmployee = await _unitOfWork.Employee.GetById(id, specification); 
+            if (getEmployee == null)
                 return new Response<EmployeeDto>("Not found");
+
+            var employee = _mapper.Map<EmployeeDto>(getEmployee);
+
+            //getting employeelist in payrollItem
+            var payrollItemList = _unitOfWork.PayrollItemEmployee
+                .Find(new PayrollItemEmployeeSpecs(employee.Id,false))
+                .Select(x => x.PayrollItem)
+                .ToList();
+
+            employee.PayrollItems = _mapper.Map<List<PayrollItemDto>>(payrollItemList);
+
+            var result = MapToValue(employee);
 
             return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(employee), "Returning value");
         }
@@ -87,6 +99,56 @@ namespace Application.Services
         public Task<Response<EmployeeDto>> UpdateAsync(CreateEmployeeDto entity)
         {
             throw new NotImplementedException();
+        }
+
+        public Task<Response<EmployeeDto>> MapToValue(EmployeeDto data)
+        {
+            decimal totalIncrement = 0;
+            decimal incrementAmount = 0;
+
+            if (data.IncrementId != null && data.NoOFIncrements != null)
+            {
+                incrementAmount = (decimal)data.Increment.Amount;
+                totalIncrement = (decimal)(data.Increment.Amount * (int)(data.NoOFIncrements));
+            }
+
+            decimal totalBasicPay = (decimal)(data.BasicPay.Amount + totalIncrement);
+
+            var payrollItemList = _unitOfWork.PayrollItemEmployee
+                .Find(new PayrollItemEmployeeSpecs(data.Id, false))
+                .Select(x => x.PayrollItem)
+                .ToList();
+
+            //Getting emp Lines
+            //var empLines = data.PayrollItems
+            //    .Select(e => new EmployeeLinesDTO
+            //    {
+            //        Id = e.Id,
+            //        PayrollItemId = e.PayrollItemId,
+            //        PayrollItem = e.PayrollItem.Name,
+            //        PayrollType = e.PayrollItem.PayrollType,
+            //        AccountId = e.PayrollItem.AccountId,
+            //        Account = e.PayrollItem.Account.Name,
+            //        isActive = e.PayrollItem.isActive,
+            //        Amount = e.PayrollItem.PayrollItemType == PayrollItemType.FixedAmount ? (decimal)(e.PayrollItem.Amount) :
+            //        (totalBasicPay * (int)(e.PayrollItem.Percentage) / 100)
+            //    }).ToList();
+
+            decimal totalAllowances = empLines
+                                .Where(p => p.PayrollType == PayrollType.Allowance || p.PayrollType == PayrollType.AssignmentAllowance)
+                                .Sum(e => e.Amount);
+
+            decimal grossPay = totalBasicPay + totalAllowances;
+
+            decimal totalDeductions = empLines
+                                .Where(p => p.PayrollType == PayrollType.Deduction)
+                                .Sum(e => e.Amount);
+
+            decimal taxDeduction = empLines
+                                .Where(p => p.PayrollType == PayrollType.TaxDeduction)
+                                .Sum(e => e.Amount);
+
+            decimal netPay = grossPay - totalDeductions - taxDeduction;
         }
     }
 }
