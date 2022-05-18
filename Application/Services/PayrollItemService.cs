@@ -104,7 +104,7 @@ namespace Application.Services
 
             //getting employeelist in payrollItem
             var empList = _unitOfWork.PayrollItemEmployee
-                .Find(new PayrollItemEmployeeSpecs(payrollItem.Id))
+                .Find(new PayrollItemEmployeeSpecs(payrollItem.Id, true))
                 .Select(x => x.Employee)
                 .ToList();
 
