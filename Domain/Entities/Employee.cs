@@ -50,7 +50,7 @@ namespace Domain.Entities
         public string Faculty { get; private set; }
         [MaxLength(80)]
         public string DutyShift { get; private set; }
-
+        public int? NoOfIncrements { get; private set; }
         protected Employee()
         {
 
