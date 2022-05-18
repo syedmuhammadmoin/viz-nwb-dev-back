@@ -33,5 +33,16 @@ namespace Application.Contracts.DTOs
         public string Role { get; private set; }
         public string Faculty { get; private set; }
         public string DutyShift { get; private set; }
+        public decimal BasicPay { get; set; }
+        public decimal Increment { get; set; }
+        public int NoOfIncrements { get; set; }
+        public decimal TotalIncrement { get; set; }
+        public decimal TotalBasicPay { get; set; }
+        public decimal TotalAllowances { get; set; }
+        public decimal GrossPay { get; set; }
+        public decimal TotalDeductions { get; set; }
+        public decimal TaxDeduction { get; set; }
+        public decimal NetPay { get; set; }
+        public virtual List<PayrollItemDto> PayrollItems { get; set; }
     }
 }
