@@ -43,6 +43,8 @@ namespace Domain.Interfaces
         IDepartmentRepository Department { get; }
         IDesignationRepository Designation { get; }
         IEmployeeRepository Employee { get; }
+        IPayrollItemRepository PayrollItem { get; }
+        IPayrollItemEmpRepository PayrollItemEmployee { get; }
 
         Task SaveAsync();
         void CreateTransaction();

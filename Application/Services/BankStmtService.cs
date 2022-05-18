@@ -154,5 +154,44 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
+        public Response<List<UnReconStmtDto>> GetBankUnreconciledStmts(int id)
+        {
+            List<UnReconStmtDto> unreconciledBankStmtStatus = new List<UnReconStmtDto>();
+
+            var bankStmts = _unitOfWork.BankStmtLines.Find(new BankStmtLinesSpecs(id))
+                .Select(i => new UnReconStmtDto()
+                {
+                    Id = i.Id,
+                    DocNo = i.Reference.ToString(),
+                    DocDate = i.StmtDate,
+                    Label = i.Label,
+                    Amount = i.Credit - i.Debit,
+                    BankReconStatus = i.BankReconStatus
+                })
+                .ToList();
+
+            if (bankStmts.Count() == 0)
+                 return new Response<List<UnReconStmtDto>>("Unreconciled bank statements not found");
+
+            foreach (var e in bankStmts)
+            {
+                var reconciledPayment = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(id, false)).Sum(a => a.Amount);
+                    
+                var mapingValueInDTO = new UnReconStmtDto
+                {
+                    Id = e.Id,
+                    DocNo = e.DocNo.ToString(),
+                    DocDate = e.DocDate,
+                    Amount = e.Amount,
+                    Label = e.Label,
+                    ReconciledAmount = reconciledPayment,
+                    UnreconciledAmount = e.Amount < 0 ? ((e.Amount * -1) - reconciledPayment) * -1 : (e.Amount - reconciledPayment),
+                    BankReconStatus = e.BankReconStatus
+                };
+                unreconciledBankStmtStatus.Add(mapingValueInDTO);
+            };
+            return new Response<List<UnReconStmtDto>>(unreconciledBankStmtStatus, "Returning bank statements");
+
+        }
     }
 }

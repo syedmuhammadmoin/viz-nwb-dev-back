@@ -67,6 +67,18 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [Authorize]
+        [ClaimRequirement("Permission", new string[] { Permissions.BankReconClaims.Create, Permissions.BankReconClaims.View })]
+        [HttpGet("bankStatus/{id:int}")]
+        public ActionResult<Response<List<UnReconStmtDto>>> GetBankUnreconciledStmts(int id)
+        {
+            var result = _bankStmtService.GetBankUnreconciledStmts(id);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
+
         [AllowAnonymous]
         [HttpGet("getStmtFile")]
         public ActionResult ExportStmtFormat()

@@ -13,9 +13,9 @@ namespace Application.Contracts.Interfaces
     public interface IPaymentService : ICrudService<CreatePaymentDto, PaymentDto, int, PaginationFilter> 
     {
         Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
-
         Task<PaginationResponse<List<PaymentDto>>> GetAllAsync(PaginationFilter filter, PaymentType paymentType);
         Task<Response<PaymentDto>> GetByIdAsync(int id, PaymentType paymentType);
+        Response<List<UnReconStmtDto>> GetBankUnreconciledPayments(Guid id);
 
     }
 }

@@ -53,6 +53,9 @@ namespace Infrastructure.Uow
         public IDepartmentRepository Department { get; private set; }
         public IDesignationRepository Designation { get; private set; }
         public IEmployeeRepository Employee { get; private set; }
+        public IPayrollItemRepository PayrollItem { get; private set; }
+        public IPayrollItemEmpRepository PayrollItemEmployee { get; private set; }
+
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -90,6 +93,8 @@ namespace Infrastructure.Uow
             Department = new DepartmentRepository(context);
             Designation = new DesignationRepository(context);
             Employee = new EmployeeRepository(context);
+            PayrollItem = new PayrollItemRepository(context);
+            PayrollItemEmployee = new PayrollItemEmpRepository(context);
         }
 
         public async Task SaveAsync()

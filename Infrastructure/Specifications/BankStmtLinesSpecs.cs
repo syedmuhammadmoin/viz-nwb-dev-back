@@ -13,5 +13,14 @@ namespace Infrastructure.Specifications
         public BankStmtLinesSpecs() : base(l => (l.BankReconStatus != DocumentStatus.Reconciled))
         {
         }
+        
+        public BankStmtLinesSpecs(int bankAcctId) 
+            : base(x =>
+            (x.BankStmtMaster.BankAccountId == bankAcctId)
+            && (x.BankReconStatus == DocumentStatus.Unreconciled || x.BankReconStatus == DocumentStatus.Partial)
+            )
+        {
+            AddInclude(i => i.BankStmtMaster);
+        }
     }
 }

@@ -87,5 +87,17 @@ namespace Vizalys.Api.Controllers
                 return Ok(result); // Status Code : 200
             return BadRequest(result);
         }
+
+        [Authorize]
+        [ClaimRequirement("Permission", new string[] { Permissions.BankReconClaims.Create, Permissions.BankReconClaims.View })]
+        [HttpGet("bankStatus/{id:Guid}")]
+        public ActionResult<Response<List<UnReconStmtDto>>> GetBankUnreconciledPayments(Guid id)
+        {
+            var result = _paymentService.GetBankUnreconciledPayments(id);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
     }
 }

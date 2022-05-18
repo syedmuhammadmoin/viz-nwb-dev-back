@@ -11,5 +11,6 @@ namespace Domain.Interfaces
     {
         Task<IEnumerable<BankStmtLines>> GetAll(ISpecification<BankStmtLines> specification = null);
         Task<BankStmtLines> GetById(int id, ISpecification<BankStmtLines> specification = null);
+        IEnumerable<BankStmtLines> Find(ISpecification<BankStmtLines> specification);
     }
 }

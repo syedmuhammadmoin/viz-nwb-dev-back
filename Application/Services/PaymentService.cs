@@ -398,6 +398,7 @@ namespace Application.Services
                         getPayment.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
+                            getPayment.setReconStatus(DocumentStatus.Unreconciled);
                             await AddToLedger(getPayment);
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "Payment Approved");
@@ -433,6 +434,36 @@ namespace Application.Services
         public Task<Response<PaymentDto>> GetByIdAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public Response<List<UnReconStmtDto>> GetBankUnreconciledPayments(Guid id)
+        {
+            List<UnReconStmtDto> unreconciledBankPaymentsStatus = new List<UnReconStmtDto>();
+
+            var getBankReconStatus = _unitOfWork.Payment.Find(new PaymentSpecs(id)).ToList();
+
+            foreach (var e in getBankReconStatus)
+            {
+                var netPayment = e.GrossPayment - e.Discount - e.IncomeTax - e.SalesTax;
+                var reconciledPayment = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(e.Id,true)).Sum(a => a.Amount);
+                    
+
+                var mapingValueInDTO = new UnReconStmtDto
+                {
+                    Id = e.Id,
+                    DocNo = e.DocNo,
+                    DocDate = e.PaymentDate,
+                    Amount = netPayment,
+                    Description = e.Description,
+                    ReconciledAmount = reconciledPayment,
+                    UnreconciledAmount = e.PaymentType == PaymentType.Inflow ? (netPayment - reconciledPayment) : ((netPayment - reconciledPayment) * -1),
+                    BankReconStatus = (DocumentStatus)e.BankReconStatus
+                };
+                unreconciledBankPaymentsStatus.Add(mapingValueInDTO);
+            };
+
+            return new Response<List<UnReconStmtDto>>(unreconciledBankPaymentsStatus, "Returning bank unreconciled payments");
+
         }
     }
 }

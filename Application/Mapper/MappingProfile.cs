@@ -35,7 +35,7 @@ namespace Application.Mapper
             // Employee Mapping
             CreateMap<Employee, EmployeeDto>()
                 .ForMember(dto => dto.DepartmentName, core => core.MapFrom(a => a.Department.Name))
-                .ForMember(dto => dto.DepartmentName, core => core.MapFrom(a => a.Designation.Name));
+                .ForMember(dto => dto.DesignationName, core => core.MapFrom(a => a.Designation.Name));
 
             CreateMap<CreateEmployeeDto, Employee>();
 
@@ -319,6 +319,12 @@ namespace Application.Mapper
                 dto => dto.MapFrom(a =>
                 a.CalculationType == CalculationType.Percentage ? ((a.Amount * a.Value / 100) + (a.Amount)) 
                 : (a.Amount + a.Value)));
+
+            // PayrollItem Mapping
+            CreateMap<PayrollItem, PayrollItemDto>()
+                .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
+            CreateMap<CreatePayrollItemDto, PayrollItem>();
+            CreateMap<PayrollItemEmployee, PayrollItemEmployeeDto>();
         }
     }
 }

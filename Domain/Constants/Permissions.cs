@@ -266,6 +266,20 @@ namespace Domain.Constants
             public const string Edit = "Permissions.JournalEntryClaims.Edit";
             public const string Delete = "Permissions.JournalEntryClaims.Delete";
         }
+        public static class PayrollItemClaims
+        {
+            public const string View = "Permissions.PayrollItemClaims.View";
+            public const string Create = "Permissions.PayrollItemClaims.Create";
+            public const string Edit = "Permissions.PayrollItemClaims.Edit";
+            public const string Delete = "Permissions.PayrollItemClaims.Delete";
+        }
+        public static class PayrollItemEmployeeClaims
+        {
+            public const string View = "Permissions.PayrollItemEmployeeClaims.View";
+            public const string Create = "Permissions.PayrollItemEmployeeClaims.Create";
+            public const string Edit = "Permissions.PayrollItemEmployeeClaims.Edit";
+            public const string Delete = "Permissions.PayrollItemEmployeeClaims.Delete";
+        }
 
         //Reporting Form
         public static class ChartOfAccountClaims
