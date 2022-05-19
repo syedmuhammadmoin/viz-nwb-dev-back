@@ -3,6 +3,7 @@ using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
+using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
@@ -63,7 +64,7 @@ namespace Application.Services
         public async Task<Response<EmployeeDto>> GetByIdAsync(int id)
         {
             var specification = new EmployeeSpecs();
-            var getEmployee = await _unitOfWork.Employee.GetById(id, specification); 
+            var getEmployee = await _unitOfWork.Employee.GetById(id, specification);
             if (getEmployee == null)
                 return new Response<EmployeeDto>("Not found");
 
@@ -71,7 +72,7 @@ namespace Application.Services
 
             //getting employeelist in payrollItem
             var payrollItemList = _unitOfWork.PayrollItemEmployee
-                .Find(new PayrollItemEmployeeSpecs(employee.Id,false))
+                .Find(new PayrollItemEmployeeSpecs(employee.Id, false))
                 .Select(x => x.PayrollItem)
                 .ToList();
 
@@ -79,7 +80,7 @@ namespace Application.Services
 
             var result = MapToValue(employee);
 
-            return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(employee), "Returning value");
+            return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(result), "Returning value");
         }
 
         public async Task<Response<List<EmployeeDto>>> GetEmployeeDropDown()
@@ -101,54 +102,59 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public Task<Response<EmployeeDto>> MapToValue(EmployeeDto data)
+        public EmployeeDto MapToValue(EmployeeDto data)
         {
             decimal totalIncrement = 0;
             decimal incrementAmount = 0;
 
-            if (data.IncrementId != null && data.NoOFIncrements != null)
+            // if (data.IncrementId != null && data.NoOfIncrements != null)
+            if (data.NoOfIncrements != null)
             {
-                incrementAmount = (decimal)data.Increment.Amount;
-                totalIncrement = (decimal)(data.Increment.Amount * (int)(data.NoOFIncrements));
+                incrementAmount = (decimal)data.PayrollItems
+                                .Where(p => p.PayrollType == PayrollType.Increment)
+                                .Sum(e => e.Value);
+
+                totalIncrement = (incrementAmount * (int)(data.NoOfIncrements));
             }
 
-            decimal totalBasicPay = (decimal)(data.BasicPay.Amount + totalIncrement);
+            var basicPay = (decimal)data.PayrollItems
+                                .Where(p => p.PayrollType == PayrollType.BasicPay)
+                                .Sum(e => e.Value);
+            decimal totalBasicPay = (basicPay + totalIncrement);
 
-            var payrollItemList = _unitOfWork.PayrollItemEmployee
-                .Find(new PayrollItemEmployeeSpecs(data.Id, false))
-                .Select(x => x.PayrollItem)
-                .ToList();
+            data.PayrollItems
+               .Where(e => e.PayrollItemType == CalculationType.Percentage)
+              .Select(e => e.Value = e.PayrollItemType == CalculationType.FixedAmount ? (decimal)(e.Value) :
+                  (totalBasicPay * (int)(e.Value) / 100)).ToList();
 
-            //Getting emp Lines
-            //var empLines = data.PayrollItems
-            //    .Select(e => new EmployeeLinesDTO
-            //    {
-            //        Id = e.Id,
-            //        PayrollItemId = e.PayrollItemId,
-            //        PayrollItem = e.PayrollItem.Name,
-            //        PayrollType = e.PayrollItem.PayrollType,
-            //        AccountId = e.PayrollItem.AccountId,
-            //        Account = e.PayrollItem.Account.Name,
-            //        isActive = e.PayrollItem.isActive,
-            //        Amount = e.PayrollItem.PayrollItemType == PayrollItemType.FixedAmount ? (decimal)(e.PayrollItem.Amount) :
-            //        (totalBasicPay * (int)(e.PayrollItem.Percentage) / 100)
-            //    }).ToList();
-
-            decimal totalAllowances = empLines
-                                .Where(p => p.PayrollType == PayrollType.Allowance || p.PayrollType == PayrollType.AssignmentAllowance)
-                                .Sum(e => e.Amount);
+            decimal totalAllowances = (decimal)data.PayrollItems
+                                 .Where(p => p.PayrollType == PayrollType.Allowance || p.PayrollType == PayrollType.AssignmentAllowance)
+                                 .Sum(e => e.Value);
 
             decimal grossPay = totalBasicPay + totalAllowances;
 
-            decimal totalDeductions = empLines
+            decimal totalDeductions = (decimal)data.PayrollItems
                                 .Where(p => p.PayrollType == PayrollType.Deduction)
-                                .Sum(e => e.Amount);
+                                .Sum(e => e.Value);
 
-            decimal taxDeduction = empLines
+            decimal taxDeduction = (decimal)data.PayrollItems
                                 .Where(p => p.PayrollType == PayrollType.TaxDeduction)
-                                .Sum(e => e.Amount);
+                                .Sum(e => e.Value);
 
             decimal netPay = grossPay - totalDeductions - taxDeduction;
+
+            //mapping calculated value to employeedto
+            data.BasicPay = basicPay;
+            data.Increment = totalIncrement;
+            data.TotalAllowances = totalAllowances;
+            data.TotalDeductions = totalDeductions;
+            data.TaxDeduction = taxDeduction;
+            data.NetPay = netPay; ;
+            data.GrossPay = grossPay;
+            data.TotalBasicPay = totalBasicPay;
+
+            return data;
+
         }
     }
 }
