@@ -51,6 +51,7 @@ namespace Domain.Entities
         [MaxLength(80)]
         public string DutyShift { get; private set; }
         public int? NoOfIncrements { get; private set; }
+
         protected Employee()
         {
 
