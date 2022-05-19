@@ -45,6 +45,7 @@ namespace Application.Services
             if (duplicates.Any())
                 return new Response<PayrollItemDto>("Duplicate employees found");
 
+
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
             try
@@ -52,18 +53,26 @@ namespace Application.Services
                 var payrollItem = await _unitOfWork.PayrollItem.Add(_mapper.Map<PayrollItem>(entity));
                 await _unitOfWork.SaveAsync();
 
-                //for (int i = 0; i < entity.EmployeeIds.Length; i++)
-                //{
-                //    await _unitOfWork.PayrollItemEmployee.Add(new PayrollItemEmployee(entity.EmployeeIds[i], payrollItem.Id));
-                //    await _unitOfWork.SaveAsync();
-                //}
-
                 var assignEmp = new List<PayrollItemEmployee>();
 
                 //assigning EmployeeIds to payrollItems
                 for (int i = 0; i < entity.EmployeeIds.Length; i++)
                 {
-                    assignEmp.Add(new PayrollItemEmployee(entity.EmployeeIds[i], payrollItem.Id));
+                    if (payrollItem.PayrollType == PayrollType.BasicPay || payrollItem.PayrollType == PayrollType.Increment)
+                    {
+                        //Checking existing BasicPay/Increments of employee
+                        var checkingBasicPayOrIncrement = _unitOfWork.PayrollItemEmployee
+                            .Find(new PayrollItemEmployeeSpecs(entity.EmployeeIds[i], payrollItem.PayrollType)).FirstOrDefault();
+                        
+                        if (checkingBasicPayOrIncrement != null)
+                            return new Response<PayrollItemDto>("Basic pay or Increments can not be assigned multiple times");
+                        
+                        assignEmp.Add(new PayrollItemEmployee(entity.EmployeeIds[i], payrollItem.Id, payrollItem.PayrollType));
+                    }
+                    else
+                    {
+                        assignEmp.Add(new PayrollItemEmployee(entity.EmployeeIds[i], payrollItem.Id, payrollItem.PayrollType));
+                    }
                 }
                 await _unitOfWork.PayrollItemEmployee.AddRange(assignEmp);
                 await _unitOfWork.SaveAsync();
@@ -148,9 +157,24 @@ namespace Application.Services
 
                 var assignEmp = new List<PayrollItemEmployee>();
                 //assigning EmployeeIds to payrollItems
+                
                 for (int i = 0; i < entity.EmployeeIds.Length; i++)
                 {
-                    assignEmp.Add(new PayrollItemEmployee(entity.EmployeeIds[i], payrollItem.Id));
+                    if (payrollItem.PayrollType == PayrollType.BasicPay || payrollItem.PayrollType == PayrollType.Increment)
+                    {
+                        //Checking existing BasicPay/Increments of employee
+                        var checkingBasicPayOrIncrement = _unitOfWork.PayrollItemEmployee
+                            .Find(new PayrollItemEmployeeSpecs(entity.EmployeeIds[i], payrollItem.PayrollType)).FirstOrDefault();
+
+                        if (checkingBasicPayOrIncrement != null)
+                            return new Response<PayrollItemDto>("Basic pay or Increments can not be assigned multiple times");
+
+                        assignEmp.Add(new PayrollItemEmployee(entity.EmployeeIds[i], payrollItem.Id, payrollItem.PayrollType));
+                    }
+                    else
+                    {
+                        assignEmp.Add(new PayrollItemEmployee(entity.EmployeeIds[i], payrollItem.Id, payrollItem.PayrollType));
+                    }
                 }
                 await _unitOfWork.PayrollItemEmployee.AddRange(assignEmp);
                 await _unitOfWork.SaveAsync();
