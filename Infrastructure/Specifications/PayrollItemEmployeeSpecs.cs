@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Filters;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,11 @@ namespace Infrastructure.Specifications
                 AddInclude("Employee.Designation");
                 AddInclude("Employee.Department");
             }
+        }
+
+        public PayrollItemEmployeeSpecs(int empId, PayrollType payrollType)
+            : base(a => a.EmployeeId == empId && a.PayrollType == payrollType)
+        {
         }
 
     }
