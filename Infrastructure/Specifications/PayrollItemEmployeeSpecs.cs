@@ -21,19 +21,10 @@ namespace Infrastructure.Specifications
             : base(isPayrollItem ? a => a.PayrollItemId == id
             : a => a.EmployeeId == id)
         {
-
-            if (isPayrollItem)
-            {
-                AddInclude(i => i.PayrollItem);
-                AddInclude(i => i.Employee);
-            }
-            else
-            {
-                AddInclude(i => i.PayrollItem);
-                AddInclude(i => i.Employee);
-                AddInclude("Employee.Designation");
-                AddInclude("Employee.Department");
-            }
+            AddInclude(i => i.PayrollItem);
+            AddInclude(i => i.Employee);
+            AddInclude("Employee.Designation");
+            AddInclude("Employee.Department");
         }
 
         public PayrollItemEmployeeSpecs(int empId, PayrollType payrollType)
