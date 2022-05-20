@@ -111,14 +111,14 @@ namespace Application.Services
             if (data.NoOfIncrements != null)
             {
                 incrementAmount = (decimal)data.PayrollItems
-                                .Where(p => p.PayrollType == PayrollType.Increment)
+                                .Where(p => p.PayrollType == PayrollType.Increment && p.IsActive == true)
                                 .Sum(e => e.Value);
 
                 totalIncrement = (incrementAmount * (int)(data.NoOfIncrements));
             }
 
             var basicPay = (decimal)data.PayrollItems
-                                .Where(p => p.PayrollType == PayrollType.BasicPay)
+                                .Where(p => p.PayrollType == PayrollType.BasicPay && p.IsActive == true)
                                 .Sum(e => e.Value);
             decimal totalBasicPay = (basicPay + totalIncrement);
 
@@ -128,17 +128,17 @@ namespace Application.Services
                   (totalBasicPay * (int)(e.Value) / 100)).ToList();
 
             decimal totalAllowances = (decimal)data.PayrollItems
-                                 .Where(p => p.PayrollType == PayrollType.Allowance || p.PayrollType == PayrollType.AssignmentAllowance)
+                                 .Where(p => p.PayrollType == PayrollType.Allowance || p.PayrollType == PayrollType.AssignmentAllowance && p.IsActive == true)
                                  .Sum(e => e.Value);
 
             decimal grossPay = totalBasicPay + totalAllowances;
 
             decimal totalDeductions = (decimal)data.PayrollItems
-                                .Where(p => p.PayrollType == PayrollType.Deduction)
+                                .Where(p => p.PayrollType == PayrollType.Deduction && p.IsActive == true)
                                 .Sum(e => e.Value);
 
             decimal taxDeduction = (decimal)data.PayrollItems
-                                .Where(p => p.PayrollType == PayrollType.TaxDeduction)
+                                .Where(p => p.PayrollType == PayrollType.TaxDeduction && p.IsActive == true)
                                 .Sum(e => e.Value);
 
             decimal netPay = grossPay - totalDeductions - taxDeduction;
