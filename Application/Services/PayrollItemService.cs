@@ -105,7 +105,8 @@ namespace Application.Services
         public async Task<Response<PayrollItemDto>> GetByIdAsync(int id)
         {
             //getting payrollItm
-            var getPayrollItem = await _unitOfWork.PayrollItem.GetById(id);
+            var specification = new PayrollItemSpecs(); 
+            var getPayrollItem = await _unitOfWork.PayrollItem.GetById(id, specification);
             if (getPayrollItem == null)
                 return new Response<PayrollItemDto>("Not found");
 
