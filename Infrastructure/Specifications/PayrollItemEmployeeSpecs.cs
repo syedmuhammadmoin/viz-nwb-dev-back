@@ -23,6 +23,7 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.PayrollItem);
             AddInclude(i => i.Employee);
+            AddInclude("PayrollItem.Account");
             AddInclude("Employee.Designation");
             AddInclude("Employee.Department");
         }
