@@ -58,7 +58,8 @@ namespace Application.Interfaces
         public DbSet<Employee> Employees { get; set; }
         public DbSet<PayrollItem> PayrollItems { get; set; }
         public DbSet<PayrollItemEmployee> PayrollItemEmployees { get; set; }
-
+        public DbSet<PayrollTransactionMaster> PayrollTransactionMaster { get; set; }
+        public DbSet<PayrollTransactionLines> PayrollTransactionLines { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

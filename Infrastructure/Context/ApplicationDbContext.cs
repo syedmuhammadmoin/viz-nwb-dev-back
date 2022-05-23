@@ -69,6 +69,8 @@ namespace Infrastructure.Context
         public DbSet<Employee> Employees { get; set; }
         public DbSet<PayrollItem> PayrollItems { get; set; }
         public DbSet<PayrollItemEmployee> PayrollItemEmployees { get; set; }
+        public DbSet<PayrollTransactionMaster> PayrollTransactionMaster { get; set; }
+        public DbSet<PayrollTransactionLines> PayrollTransactionLines { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -152,6 +154,13 @@ namespace Infrastructure.Context
             .HasOne(tc => tc.GRNMaster)
             .WithMany(c => c.GRNLines)
             .OnDelete(DeleteBehavior.Cascade);
+
+            //PayrollTransaction
+            modelBuilder.Entity<PayrollTransactionLines>()
+            .HasOne(tc => tc.PayrollTransactionMaster)
+            .WithMany(c => c.PayrollTransactionLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
             //Changing Identity users and roles tables name
             modelBuilder.Entity<User>(entity =>
             {
