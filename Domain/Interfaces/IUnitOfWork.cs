@@ -45,6 +45,7 @@ namespace Domain.Interfaces
         IEmployeeRepository Employee { get; }
         IPayrollItemRepository PayrollItem { get; }
         IPayrollItemEmpRepository PayrollItemEmployee { get; }
+        IPayrollTransactionRepository PayrollTransaction { get; }
 
         Task SaveAsync();
         void CreateTransaction();
