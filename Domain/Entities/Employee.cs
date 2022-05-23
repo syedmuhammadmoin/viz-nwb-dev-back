@@ -44,13 +44,14 @@ namespace Domain.Entities
         public DateTime DateofBirth { get; private set; }
         public int EarnedLeaves { get; private set; }
         public int CasualLeaves { get; private set; }
-        [MaxLength(30)]
-        public string Status { get; private set; }
+        //[MaxLength(30)]
+        //public string Status { get; private set; }
         [MaxLength(80)]
         public string Faculty { get; private set; }
         [MaxLength(80)]
         public string DutyShift { get; private set; }
         public int? NoOfIncrements { get; private set; }
+        public bool isActive { get; private set; }
 
         protected Employee()
         {

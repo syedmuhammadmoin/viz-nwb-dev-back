@@ -43,7 +43,7 @@ namespace Domain.Entities
         {
 
         }
-        public RecordLedger(int transactionId, Guid level4_id, int? businessPartnerId, int? warehouseId, string description, char sign, decimal amount, int campusId, DateTime transactionDate)
+        public RecordLedger(int transactionId, Guid level4_id, int? businessPartnerId, int? warehouseId, string description, char sign, decimal amount, int? campusId, DateTime transactionDate)
         {
             TransactionId = transactionId;
             Level4_id = level4_id;
