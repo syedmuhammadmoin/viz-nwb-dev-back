@@ -66,7 +66,9 @@ namespace Domain.Constants
         InventoryAdjustment,
         Quotation,
         Requisition,
-        Receipt
+        Receipt,
+        PayrollTransaction
+
     }
     public enum ActionButton
     {
