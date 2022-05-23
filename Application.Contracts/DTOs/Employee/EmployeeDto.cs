@@ -29,7 +29,7 @@ namespace Application.Contracts.DTOs
         public DateTime DateofBirth { get;  set; }
         public int EarnedLeaves { get;  set; }
         public int CasualLeaves { get;  set; }
-        public string Status { get;  set; }
+        public bool isActive { get;  set; }
         public string Role { get;  set; }
         public string Faculty { get;  set; }
         public string DutyShift { get;  set; }
