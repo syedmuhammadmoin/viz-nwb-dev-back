@@ -134,8 +134,6 @@ namespace Domain.Constants
             public const string Delete = "Permissions.RequisitionClaims.Delete";
         }
 
-       
-
         public static class CategoriesClaims
         {
             public const string View = "Permissions.CategoriesClaims.View";
@@ -280,7 +278,13 @@ namespace Domain.Constants
             public const string Edit = "Permissions.PayrollItemEmployeeClaims.Edit";
             public const string Delete = "Permissions.PayrollItemEmployeeClaims.Delete";
         }
-
+        public static class PayrollTransactionClaims
+        {
+            public const string View = "Permissions.PayrollTransactionClaims.View";
+            public const string Create = "Permissions.PayrollTransactionClaims.Create";
+            public const string Edit = "Permissions.PayrollTransactionClaims.Edit";
+            public const string Delete = "Permissions.PayrollTransactionClaims.Delete";
+        }
         //Reporting Form
         public static class ChartOfAccountClaims
         {
