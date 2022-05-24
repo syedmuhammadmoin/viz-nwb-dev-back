@@ -195,8 +195,8 @@ namespace Application.Services
             var inv = _mapper.Map<InvoiceMaster>(entity);
 
             //setting BusinessPartnerReceivable
-            var er = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
-            inv.setReceivableAccount(er.AccountReceivableId);
+            var businessPartner = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
+            inv.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
 
             //Setting status
             inv.setStatus(status);
@@ -250,8 +250,8 @@ namespace Application.Services
                 _mapper.Map<CreateInvoiceDto, InvoiceMaster>(entity, inv);
 
                 //setting BusinessPartnerReceivable
-                var er = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
-                inv.setReceivableAccount(er.AccountReceivableId);
+                var businessPartner = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
+                inv.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
                 await _unitOfWork.SaveAsync();
 
                 //Commiting the transaction
@@ -316,7 +316,7 @@ namespace Application.Services
             var getCustomerAccount = await _unitOfWork.BusinessPartner.GetById(inv.CustomerId);
             var addReceivableInLedger = new RecordLedger(
                         transaction.Id,
-                        getCustomerAccount.AccountReceivableId,
+                        (Guid)getCustomerAccount.AccountReceivableId,
                         inv.CustomerId,
                         null,
                         inv.DocNo,

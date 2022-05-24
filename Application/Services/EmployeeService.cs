@@ -28,24 +28,55 @@ namespace Application.Services
 
         public async Task<Response<EmployeeDto>> CreateAsync(CreateEmployeeDto entity)
         {
-            var employee = _mapper.Map<Employee>(entity);
-
-            var checkCNIC = _unitOfWork.Employee.Find(new EmployeeSpecs(entity.CNIC)).FirstOrDefault();
-
-            if (checkCNIC == null)
+            
+            _unitOfWork.CreateTransaction(); 
+            try
             {
-                await _unitOfWork.Employee.Add(employee);
-                await _unitOfWork.SaveAsync();
 
-                return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(checkCNIC), "Created successfully");
-            }
-            else
-            {
+                var checkCNIC = _unitOfWork.Employee.Find(new EmployeeSpecs(entity.CNIC)).FirstOrDefault();
+
+                if (checkCNIC == null)
+                {
+                    // mapping businessPartner model
+                    var businessPartner = new BusinessPartner(
+                        entity.Name,
+                        BusinessPartnerType.Employee,
+                        entity.CNIC
+                        );
+
+                    // Saving BP 
+                    var savingBP = await _unitOfWork.BusinessPartner.Add(businessPartner);
+                    await _unitOfWork.SaveAsync();
+
+                    // Check if bp is created
+                    if (savingBP == null)
+                    {
+                        _unitOfWork.Rollback();
+                        return new Response<EmployeeDto>("Error creating Employee");
+                    }
+
+                    var employee = _mapper.Map<Employee>(entity);
+
+                    employee.setBusinessPartnerId(savingBP.Id);
+
+                    await _unitOfWork.Employee.Add(employee);
+                    await _unitOfWork.SaveAsync();
+
+                    _unitOfWork.Commit();
+                    return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(checkCNIC), "Created successfully");
+                }
+                
                 _mapper.Map<CreateEmployeeDto, Employee>(entity, checkCNIC);
                 await _unitOfWork.SaveAsync();
-            }
+                _unitOfWork.Commit();
+                return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(checkCNIC), "updated successfully");
 
-            return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(checkCNIC), "updated successfully");
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<EmployeeDto>(ex.Message);
+            }
         }
 
         public async Task<PaginationResponse<List<EmployeeDto>>> GetAllAsync(PaginationFilter filter)
@@ -63,8 +94,7 @@ namespace Application.Services
 
         public async Task<Response<EmployeeDto>> GetByIdAsync(int id)
         {
-            var specification = new EmployeeSpecs();
-            var getEmployee = await _unitOfWork.Employee.GetById(id, specification);
+            var getEmployee = await _unitOfWork.Employee.GetById(id, new EmployeeSpecs());
             if (getEmployee == null)
                 return new Response<EmployeeDto>("Not found");
 
@@ -79,7 +109,9 @@ namespace Application.Services
             employee.PayrollItems = _mapper.Map<List<PayrollItemDto>>(payrollItemList);
 
             var result = MapToValue(employee);
-
+            result.PayrollItems = result.PayrollItems
+                .Where(i => i.PayrollType != PayrollType.BasicPay
+                && i.PayrollType != PayrollType.Increment).ToList();
             return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(result), "Returning value");
         }
 
@@ -117,9 +149,11 @@ namespace Application.Services
                 totalIncrement = (incrementAmount * (int)(data.NoOfIncrements));
             }
 
-            var basicPay = (decimal)data.PayrollItems
+            var basicPay = data.PayrollItems
                                 .Where(p => p.PayrollType == PayrollType.BasicPay && p.IsActive == true)
-                                .Sum(e => e.Value);
+                                .Select(i => i.Value)
+                                .FirstOrDefault();
+
             decimal totalBasicPay = (basicPay + totalIncrement);
 
             data.PayrollItems
@@ -145,13 +179,14 @@ namespace Application.Services
 
             //mapping calculated value to employeedto
             data.BasicPay = basicPay;
-            data.Increment = totalIncrement;
+            data.Increment = incrementAmount;
+            data.TotalIncrement = totalIncrement;
+            data.TotalBasicPay = totalBasicPay;
             data.TotalAllowances = totalAllowances;
+            data.GrossPay = grossPay;
             data.TotalDeductions = totalDeductions;
             data.TaxDeduction = taxDeduction;
-            data.NetPay = netPay; ;
-            data.GrossPay = grossPay;
-            data.TotalBasicPay = totalBasicPay;
+            data.NetPay = netPay;
 
             return data;
 

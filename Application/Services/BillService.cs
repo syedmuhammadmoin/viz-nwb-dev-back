@@ -134,8 +134,8 @@ namespace Application.Services
             var bill = _mapper.Map<BillMaster>(entity);
 
             //setting BusinessPartnerPayable
-            var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
-            bill.setPayableAccountId(er.AccountPayableId);
+            var businessPartner = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
+            bill.setPayableAccountId((Guid)businessPartner.AccountPayableId);
 
             //Setting status
             bill.setStatus(status);
@@ -187,8 +187,8 @@ namespace Application.Services
                 _mapper.Map<CreateBillDto, BillMaster>(entity, bill);
 
                 //setting BusinessPartnerPayable
-                var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
-                bill.setPayableAccountId(er.AccountPayableId);
+                var businessPartner = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
+                bill.setPayableAccountId((Guid)businessPartner.AccountPayableId);
 
                 await _unitOfWork.SaveAsync();
 
@@ -240,7 +240,7 @@ namespace Application.Services
             var getVendorAccount = await _unitOfWork.BusinessPartner.GetById(bill.VendorId);
             var addPayableInLedger = new RecordLedger(
                         transaction.Id,
-                        getVendorAccount.AccountPayableId,
+                        (Guid)getVendorAccount.AccountPayableId,
                         bill.VendorId,
                         null,
                         bill.DocNo,
