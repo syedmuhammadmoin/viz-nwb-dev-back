@@ -358,7 +358,7 @@ namespace Application.Services
             //Inserting line amount into recordledger table
             foreach (var line in payrollTransaction.PayrollTransactionLines)
             {
-                var addPayrollTransactionInRecordLedger = new RecordLedger(
+                var addBasicPayInLedger = new RecordLedger(
                     transaction.Id,
                     line.AccountId,
                     payrollTransaction.Employee.BusinessPartnerId,
@@ -370,7 +370,7 @@ namespace Application.Services
                     payrollTransaction.TransDate
                     );
 
-                await _unitOfWork.Ledger.Add(addPayrollTransactionInRecordLedger);
+                await _unitOfWork.Ledger.Add(addBasicPayInLedger);
                 await _unitOfWork.SaveAsync();
 
                 var getCustomerAccount = await _unitOfWork.BusinessPartner.GetById(payrollTransaction.EmployeeId);
