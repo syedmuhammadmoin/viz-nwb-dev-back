@@ -31,6 +31,9 @@ namespace Domain.Entities
         public string Gender { get; private set; }
         [MaxLength(50)]
         public string PlaceofBirth { get; private set; }
+        public int BusinessPartnerId { get; private set; }
+        [ForeignKey("BusinessPartnerId")]
+        public BusinessPartner BusinessPartner { get; private set; }
         public int DesignationId { get; private set; }
         [ForeignKey("DesignationId")] 
         public Designation Designation { get; private set; }
@@ -44,8 +47,6 @@ namespace Domain.Entities
         public DateTime DateofBirth { get; private set; }
         public int EarnedLeaves { get; private set; }
         public int CasualLeaves { get; private set; }
-        //[MaxLength(30)]
-        //public string Status { get; private set; }
         [MaxLength(80)]
         public string Faculty { get; private set; }
         [MaxLength(80)]
@@ -53,6 +54,13 @@ namespace Domain.Entities
         public int? NoOfIncrements { get; private set; }
         public bool isActive { get; private set; }
 
+        public void setBusinessPartnerId(int businessPartnerId) 
+        {
+            BusinessPartnerId = businessPartnerId;
+        }
+        
+
+        
         protected Employee()
         {
 

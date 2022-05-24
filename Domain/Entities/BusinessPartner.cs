@@ -35,12 +35,19 @@ namespace Domain.Entities
         public string BankAccountTitle { get; private set; }
         [MaxLength(30)]
         public string BankAccountNumber { get; private set; }
-        public Guid AccountReceivableId { get; private set; }
+        public Guid? AccountReceivableId { get; private set; }
         [ForeignKey("AccountReceivableId")]
         public Level4 AccountReceivable { get; private set; }
-        public Guid AccountPayableId { get; private set; }
+        public Guid? AccountPayableId { get; private set; }
         [ForeignKey("AccountPayableId")]
         public Level4 AccountPayable { get; private set; }
+
+        public BusinessPartner(string name, BusinessPartnerType businessPartnerType, string cnic)
+        {
+            Name = name;
+            BusinessPartnerType = businessPartnerType;
+            CNIC = cnic;
+        }
 
         protected BusinessPartner()
         {
