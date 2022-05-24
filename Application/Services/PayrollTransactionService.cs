@@ -109,7 +109,7 @@ namespace Application.Services
 
         private async Task<Response<PayrollTransactionDto>> SavePayrollTransaction(CreatePayrollTransactionDto entity, int status)
         {
-            if (entity.WorkingDays < entity.PresentDays 
+            if (entity.WorkingDays < entity.PresentDays
                 || entity.WorkingDays < entity.PresentDays + entity.LeaveDays)
                 return new Response<PayrollTransactionDto>("Present days and Leaves days sum can not be greater than working days");
 
@@ -270,7 +270,7 @@ namespace Application.Services
                     grossPay,
                     netPay,
                     status,
-                    payrollTransactionLines); 
+                    payrollTransactionLines);
 
                 await _unitOfWork.SaveAsync();
 
@@ -327,7 +327,7 @@ namespace Application.Services
         private decimal CalculateAllowance(PayrollItemDto line, int workingDays, int presentDays, int leaveDays, decimal totalBasicPay)
         {
 
-             if (line.PayrollType == PayrollType.Allowance || line.PayrollType == PayrollType.AssignmentAllowance)
+            if (line.PayrollType == PayrollType.Allowance || line.PayrollType == PayrollType.AssignmentAllowance)
             {
                 if (line.PayrollType == PayrollType.Allowance)
                 {
@@ -373,20 +373,62 @@ namespace Application.Services
                 await _unitOfWork.Ledger.Add(addBasicPayInLedger);
                 await _unitOfWork.SaveAsync();
 
-                var getCustomerAccount = await _unitOfWork.BusinessPartner.GetById(payrollTransaction.EmployeeId);
-                var addReceivableInLedger = new RecordLedger(
-                            transaction.Id,
-                            (Guid)getCustomerAccount.AccountReceivableId,
-                            payrollTransaction.Employee.BusinessPartnerId,
-                            null,
-                            payrollTransaction.DocNo,
-                            'C',
-                            line.Amount,
-                            null,
-                            payrollTransaction.TransDate
-                        );
+                foreach (var item in payrollTransaction.PayrollTransactionLines)
+                {
+                    //Adding Allowance in ledger
+                    if (item.PayrollItem.PayrollType == PayrollType.Allowance || item.PayrollItem.PayrollType == PayrollType.AssignmentAllowance)
+                    {
+                        var addAllowanceInRecordLedger = new RecordLedger(
+                    transaction.Id,
+                    item.AccountId,
+                    payrollTransaction.Employee.BusinessPartnerId,
+                    null,
+                    item.PayrollItem.Name,
+                    'D',
+                    item.Amount,
+                    null,
+                    payrollTransaction.TransDate
+                    );
 
-                await _unitOfWork.Ledger.Add(addReceivableInLedger);
+                        await _unitOfWork.Ledger.Add(addAllowanceInRecordLedger);
+                        await _unitOfWork.SaveAsync();
+                    }
+                    //Adding Deduction in ledger
+
+                    if (item.PayrollItem.PayrollType == PayrollType.Deduction || item.PayrollItem.PayrollType == PayrollType.TaxDeduction)
+                    {
+                     var addDeductionInRecordLedger = new RecordLedger(
+                    transaction.Id,
+                    item.AccountId,
+                    payrollTransaction.Employee.BusinessPartnerId,
+                    null,
+                    item.PayrollItem.Name,
+                    'C',
+                    item.Amount,
+                    null,
+                    payrollTransaction.TransDate
+                    );
+
+                        await _unitOfWork.Ledger.Add(addDeductionInRecordLedger);
+                        await _unitOfWork.SaveAsync();
+                    }
+                }
+
+                decimal netSalary = payrollTransaction.NetSalary;
+
+                var addPayableInLedger = new RecordLedger(
+                    transaction.Id,
+                    payrollTransaction.AccountPayableId,
+                    payrollTransaction.Employee.BusinessPartnerId,
+                    null,
+                    payrollTransaction.DocNo,
+                    'C',
+                    netSalary,
+                    null,
+                    payrollTransaction.TransDate
+                    );
+
+                await _unitOfWork.Ledger.Add(addPayableInLedger);
                 await _unitOfWork.SaveAsync();
             }
         }

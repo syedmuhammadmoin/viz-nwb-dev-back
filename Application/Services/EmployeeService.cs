@@ -32,7 +32,6 @@ namespace Application.Services
             _unitOfWork.CreateTransaction(); 
             try
             {
-
                 var checkCNIC = _unitOfWork.Employee.Find(new EmployeeSpecs(entity.CNIC)).FirstOrDefault();
 
                 if (checkCNIC == null)
@@ -63,7 +62,7 @@ namespace Application.Services
                     await _unitOfWork.SaveAsync();
 
                     _unitOfWork.Commit();
-                    return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(checkCNIC), "Created successfully");
+                    return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(employee), "Created successfully");
                 }
                 
                 _mapper.Map<CreateEmployeeDto, Employee>(entity, checkCNIC);
