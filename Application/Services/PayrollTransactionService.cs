@@ -61,6 +61,7 @@ namespace Application.Services
             var totalRecords = await _unitOfWork.PayrollTransaction.TotalRecord();
 
             var response = new List<PayrollTransactionDto>();
+
             foreach (var i in payrollTransactions)
             {
                 response.Add(MapToValue(i));
@@ -489,6 +490,9 @@ namespace Application.Services
             payrollTransactionDto.TaxDeduction = taxDeduction;
             payrollTransactionDto.GrossPay = data.GrossSalary;
             payrollTransactionDto.NetSalary = data.NetSalary;
+            payrollTransactionDto.CNIC = data.Employee.CNIC;
+            payrollTransactionDto.Religion = data.Employee.Religion;
+            payrollTransactionDto.TransDate = data.TransDate;
             return payrollTransactionDto;
         }
 
