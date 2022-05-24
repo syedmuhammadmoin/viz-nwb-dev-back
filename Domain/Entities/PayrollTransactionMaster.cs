@@ -32,13 +32,11 @@ namespace Domain.Entities
         public int LeaveDays { get;private set; }
         public DateTime TransDate { get;private set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Tax { get;private set; }
-        [Column(TypeName = "decimal(18,2)")]
         public decimal BasicSalary { get;private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal GrossSalary { get;private set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal NetSalaryBeforeTax { get;private set; }
+        public decimal NetSalary { get;private set; }
         public int StatusId { get;private set; }
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get;private set; }
@@ -47,7 +45,7 @@ namespace Domain.Entities
         public Transactions Transactions { get;private set; }
         public virtual List<PayrollTransactionLines> PayrollTransactionLines { get;private set; }
 
-        public PayrollTransactionMaster(int month, int year, int employeeId, int designationId, int departmentId, Guid accountPayableId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal tax, decimal basicSalary, decimal grossSalary, decimal netSalaryBeforeTax, int statusId, int? transactionId, List<PayrollTransactionLines> payrollTransactionLines)
+        public PayrollTransactionMaster(int month, int year, int employeeId, int designationId, int departmentId, Guid accountPayableId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId, List<PayrollTransactionLines> payrollTransactionLines)
         {
             Month = month;
             Year = year;
@@ -59,12 +57,30 @@ namespace Domain.Entities
             PresentDays = presentDays;
             LeaveDays = leaveDays;
             TransDate = transDate;
-            Tax = tax;
             BasicSalary = basicSalary;
             GrossSalary = grossSalary;
-            NetSalaryBeforeTax = netSalaryBeforeTax;
+            NetSalary = netSalary;
             StatusId = statusId;
-            TransactionId = transactionId;
+            PayrollTransactionLines = payrollTransactionLines;
+        }
+
+
+        public void updatePayrollTransaction(int month, int year, int employeeId, int designationId, int departmentId, Guid accountPayableId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId, List<PayrollTransactionLines> payrollTransactionLines)
+        {
+            Month = month;
+            Year = year;
+            EmployeeId = employeeId;
+            DesignationId = designationId;
+            DepartmentId = departmentId;
+            AccountPayableId = accountPayableId;
+            WorkingDays = workingDays;
+            PresentDays = presentDays;
+            LeaveDays = leaveDays;
+            TransDate = transDate;
+            BasicSalary = basicSalary;
+            GrossSalary = grossSalary;
+            NetSalary = netSalary;
+            StatusId = statusId;
             PayrollTransactionLines = payrollTransactionLines;
         }
 
