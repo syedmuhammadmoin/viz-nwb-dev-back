@@ -36,6 +36,10 @@ namespace Application.Contracts.DTOs
        // public decimal TotalPaid { get; set; }
         public bool IsAllowedRole { get; set; }
         public int TransactionId { get; set; }
+        public decimal BasicSalary { get; set; }
+        public string CNIC { get; set; }
+        public string Religion { get; set; }
+        public DateTime TransDate { get; set; }
         public virtual List<PayrollTransactionLinesDto> PayrollTransactionLines { get; set; }
 
     }
