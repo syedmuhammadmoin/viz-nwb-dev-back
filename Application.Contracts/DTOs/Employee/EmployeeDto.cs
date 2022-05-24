@@ -19,8 +19,9 @@ namespace Application.Contracts.DTOs
         public string Maritalstatus { get;  set; }
         public string Gender { get;  set; }
         public string PlaceofBirth { get;  set; }
-        public int DesignationId { get;  set; }
-        public string DesignationName { get;  set; }
+        public int BusinessPartnerId { get; set; }
+        public int DesignationId { get; set; }
+        public string DesignationName { get; set; }
         public int DepartmentId { get;  set; }
         public string DepartmentName { get;  set; }
         public string Address { get;  set; }
