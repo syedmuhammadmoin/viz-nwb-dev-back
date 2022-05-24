@@ -27,12 +27,13 @@ namespace Application.Contracts.DTOs
         public decimal TotalAllowances { get; set; }
         public decimal TotalDeductions { get; set; }
         public decimal TaxDeduction { get; set; }
+        public decimal GrossPay { get; set; }
         public decimal NetSalary { get; set; }
         public string Status { get; set; }
         public DocumentStatus State { get; set; }
         //public IEnumerable<PaidDocList> PaidAmountList { get; set; }
-        public decimal PendingAmount { get; set; }
-        public decimal TotalPaid { get; set; }
+       // public decimal PendingAmount { get; set; }
+       // public decimal TotalPaid { get; set; }
         public bool IsAllowedRole { get; set; }
         public int TransactionId { get; set; }
         public virtual List<PayrollTransactionLinesDto> PayrollTransactionLines { get; set; }
