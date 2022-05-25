@@ -12,5 +12,8 @@ namespace Application.Contracts.Interfaces
     public interface IPayrollTransactionService : ICrudService<CreatePayrollTransactionDto, PayrollTransactionDto, int, PaginationFilter>
     {
         Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
+        Task<Response<bool>> ProcessForCreate(CreateProcessDto data);
+        Task<Response<bool>> ProcessForEdit(int[] id);
+        Task<Response<bool>> ProcessForApproval(CreateApprovalProcessDto data);
     }
 }

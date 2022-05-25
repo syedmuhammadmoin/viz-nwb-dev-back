@@ -31,6 +31,7 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.PayrollTransactionLines);
                 AddInclude(i => i.Status);
                 AddInclude(a => a.Employee);
+                AddInclude(i => i.Status);
                 AddInclude("PayrollTransactionLines.PayrollItem");
                 AddInclude("PayrollTransactionLines.Account");
             }
