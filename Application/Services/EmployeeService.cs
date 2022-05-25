@@ -148,12 +148,11 @@ namespace Application.Services
                 totalIncrement = (incrementAmount * (int)(data.NoOfIncrements));
             }
 
-            var basicPay = data.PayrollItems
+            var basicPayItem = data.PayrollItems
                                 .Where(p => p.PayrollType == PayrollType.BasicPay && p.IsActive == true)
-                                .Select(i => i.Value)
                                 .FirstOrDefault();
 
-            decimal totalBasicPay = (basicPay + totalIncrement);
+            decimal totalBasicPay = (basicPayItem.Value + totalIncrement);
 
             data.PayrollItems
                .Where(e => e.PayrollItemType == CalculationType.Percentage)
@@ -177,7 +176,9 @@ namespace Application.Services
             decimal netPay = grossPay - totalDeductions - taxDeduction;
 
             //mapping calculated value to employeedto
-            data.BasicPay = basicPay;
+            data.BasicPay = basicPayItem.Value;
+            data.BPS = basicPayItem.Name;
+            data.BPSAccountId = basicPayItem.AccountId;
             data.Increment = incrementAmount;
             data.TotalIncrement = totalIncrement;
             data.TotalBasicPay = totalBasicPay;
