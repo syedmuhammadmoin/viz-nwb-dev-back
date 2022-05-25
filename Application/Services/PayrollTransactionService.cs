@@ -537,7 +537,6 @@ namespace Application.Services
             payrollTransactionDto.Religion = data.Employee.Religion;
             payrollTransactionDto.TransDate = data.TransDate;
 
-            bool isAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
 
             if (workflow != null)
