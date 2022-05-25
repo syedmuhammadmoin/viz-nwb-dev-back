@@ -86,7 +86,7 @@ namespace Application.Services
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
-                    .FirstOrDefault(x => (x.CurrentStatusId == payrollTransaction.StatusId));
+                    .FirstOrDefault(x => (x.CurrentStatusId == payrollTransactionDto.StatusId));
 
                 if (transition != null)
                 {
@@ -536,8 +536,121 @@ namespace Application.Services
             payrollTransactionDto.CNIC = data.Employee.CNIC;
             payrollTransactionDto.Religion = data.Employee.Religion;
             payrollTransactionDto.TransDate = data.TransDate;
+
+            bool isAllowedRole = false;
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
+
+            if (workflow != null)
+            {
+                var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == data.StatusId));
+
+                if (transition != null)
+                {
+                    var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+                    foreach (var role in currentUserRoles)
+                    {
+                        if (transition.AllowedRole.Name == role)
+                        {
+                            payrollTransactionDto.IsAllowedRole = true;
+                        }
+                    }
+                }
+            }
+
+            payrollTransactionDto.Status = data.Status.Status;
+            payrollTransactionDto.IsAllowedRole = isAllowedRole;
+
             return payrollTransactionDto;
         }
 
+        public async Task<Response<bool>> ProcessForCreate(CreateProcessDto data)
+        {
+            foreach (var employee in data.ProcessLines)
+            {
+                var payrollTransaction = new CreatePayrollTransactionDto()
+                {
+                    Month = data.Month,
+                    Year = data.Year,
+                    EmployeeId = employee.EmployeeId,
+                    WorkingDays = employee.WorkingDays,
+                    PresentDays = employee.PresentDays,
+                    TransDate = data.TransDate,
+                    AccountPayableId = data.AccountPayableId,
+                    isSubmit = data.isSubmit,
+                };
+                if (payrollTransaction.isSubmit)
+                {
+                    var result = await this.SubmitPayrollTransaction(payrollTransaction);
+                    if (!result.IsSuccess)
+                    {
+                        return new Response<bool>(result.Message);
+                    }
+                }
+                else
+                {
+                    var result = await this.SavePayrollTransaction(payrollTransaction, 1);
+                    if (!result.IsSuccess)
+                    {
+                        return new Response<bool>(result.Message);
+                    }
+                }
+            }
+            return new Response<bool>(true,"Payroll process completed successfully");
+
+        }
+
+        public async Task<Response<bool>> ProcessForEdit(int[] id)
+        {
+            _unitOfWork.CreateTransaction();
+            try
+            {
+                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
+
+                if (checkingActiveWorkFlows == null)
+                {
+                    return new Response<bool>("No workflow found for Payroll Transaction");
+                }
+                for (int i = 0; i < id.Length; i++)
+                {
+                    var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById(id[i]);
+                    
+                    if (getPayrollTransaction == null)
+                    {
+                        return new Response<bool>($"Payroll Transaction with the id = {id[i]} not found");
+                    }
+
+                    getPayrollTransaction.setStatus(6);
+
+                   await _unitOfWork.SaveAsync();
+                }
+                _unitOfWork.Commit();
+
+            return new Response<bool>(true,"Payroll process completed successfully");
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<bool>(ex.Message);
+            }
+        }
+
+        public async Task<Response<bool>> ProcessForApproval(CreateApprovalProcessDto data)
+        {
+            foreach (var docId in data.docId)
+            {
+                var approval = new ApprovalDto()
+                {
+                    DocId = docId,
+                    Action = data.Action
+                };
+                var result = await CheckWorkFlow(approval);
+                if (!result.IsSuccess)
+                {
+                    return result;
+                }
+            }
+            return new Response<bool>(true, "Payroll approval process completed successfully");
+        }
     }
 }
