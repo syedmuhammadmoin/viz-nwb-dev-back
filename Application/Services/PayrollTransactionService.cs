@@ -559,7 +559,6 @@ namespace Application.Services
             }
 
             payrollTransactionDto.Status = data.Status.Status;
-            payrollTransactionDto.IsAllowedRole = isAllowedRole;
 
             return payrollTransactionDto;
         }
