@@ -29,6 +29,7 @@ namespace Application.Contracts.DTOs
         public decimal TaxDeduction { get; set; }
         public decimal GrossPay { get; set; }
         public decimal NetSalary { get; set; }
+        public int StatusId { get; set; }
         public string Status { get; set; }
         public DocumentStatus State { get; set; }
         //public IEnumerable<PaidDocList> PaidAmountList { get; set; }
