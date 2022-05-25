@@ -18,6 +18,8 @@ namespace Domain.Entities
         public int EmployeeId { get;private set; }
         [ForeignKey("EmployeeId")]
         public Employee Employee { get;private set; }
+        public Guid BPSAccountId { get; private set; }
+        public string BPSName { get; private set; }
         public int DesignationId { get;private set; }
         [ForeignKey("DesignationId")]
         public Designation Designation { get;private set; }
@@ -45,11 +47,13 @@ namespace Domain.Entities
         public Transactions Transactions { get;private set; }
         public virtual List<PayrollTransactionLines> PayrollTransactionLines { get;private set; }
 
-        public PayrollTransactionMaster(int month, int year, int employeeId, int designationId, int departmentId, Guid accountPayableId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId, List<PayrollTransactionLines> payrollTransactionLines)
+        public PayrollTransactionMaster(int month, int year, int employeeId,Guid bpsAccountId, string bpsName, int designationId, int departmentId, Guid accountPayableId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId, List<PayrollTransactionLines> payrollTransactionLines)
         {
             Month = month;
             Year = year;
             EmployeeId = employeeId;
+            BPSAccountId = bpsAccountId;
+            BPSName = bpsName;
             DesignationId = designationId;
             DepartmentId = departmentId;
             AccountPayableId = accountPayableId;
@@ -65,11 +69,13 @@ namespace Domain.Entities
         }
 
 
-        public void updatePayrollTransaction(int month, int year, int employeeId, int designationId, int departmentId, Guid accountPayableId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId, List<PayrollTransactionLines> payrollTransactionLines)
+        public void updatePayrollTransaction(int month, int year, int employeeId, Guid bpsAccountId, string bpsName, int designationId, int departmentId, Guid accountPayableId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId, List<PayrollTransactionLines> payrollTransactionLines)
         {
             Month = month;
             Year = year;
             EmployeeId = employeeId;
+            BPSAccountId = bpsAccountId;
+            BPSName = bpsName;
             DesignationId = designationId;
             DepartmentId = departmentId;
             AccountPayableId = accountPayableId;
