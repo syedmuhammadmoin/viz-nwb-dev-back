@@ -64,11 +64,27 @@ namespace Infrastructure.Specifications
 
         }
 
+        //public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, bool isPayrollTransactoin)
+        //    : base(x => x.Month == month && x.Year == year
+        //        && (departmentIds.Count() > 0 ? departmentIds.Contains(x.DepartmentId) : true)
+        //        && (x.Status.State == DocumentStatus.Draft || x.Status.State == DocumentStatus.Rejected)
+        //        && isPayrollTransactoin == true)
+        //{
+        //    AddInclude(a => a.AccountPayable);
+        //    AddInclude(a => a.Department);
+        //    AddInclude(a => a.Designation);
+        //    AddInclude(a => a.Employee);
+        //    AddInclude(i => i.PayrollTransactionLines);
+        //    AddInclude(i => i.Status);
+        //    AddInclude("PayrollTransactionLines.PayrollItem");
+        //    AddInclude("PayrollTransactionLines.Account");
+        //}
+
         public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, bool isPayrollTransactoin)
             : base(x => x.Month == month && x.Year == year
                 && (departmentIds.Count() > 0 ? departmentIds.Contains(x.DepartmentId) : true)
-                && (x.Status.State == DocumentStatus.Draft || x.Status.State == DocumentStatus.Rejected)
-                && isPayrollTransactoin == true)
+                && (isPayrollTransactoin ? (x.Status.State == DocumentStatus.Draft || x.Status.State == DocumentStatus.Rejected) : true)
+            )
         {
             AddInclude(a => a.AccountPayable);
             AddInclude(a => a.Department);
