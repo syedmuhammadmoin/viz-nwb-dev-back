@@ -78,5 +78,48 @@ namespace Vizalys.Api.Controllers
                 return Ok(result); // Status Code : 200
             return BadRequest(result);
         }
+
+        [HttpPost("submitProcess")]
+        public async Task<ActionResult<Response<bool>>> ProcessForEdit([FromBody] int[] id)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = await _payrollTransactionService.ProcessForEdit(id);
+                    if (result.IsSuccess)
+                        return Ok(result); // Status Code : 200
+                    return BadRequest(result);
+                }
+                return BadRequest("Some properties are not valid"); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
+
+        [HttpPost("approvalProcess")]
+        public async Task<ActionResult<Response<bool>>> ProcessForApproval([FromBody] CreateApprovalProcessDto data)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = await _payrollTransactionService.ProcessForApproval(data);
+                    if (result.IsSuccess)
+                        return Ok(result); // Status Code : 200
+                    return BadRequest(result);
+                }
+                return BadRequest("Some properties are not valid"); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
+
     }
 }
