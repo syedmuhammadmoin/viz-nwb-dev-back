@@ -37,11 +37,12 @@ namespace Application.Services
 
                 if (file != null)
                 {
-                    if (bankStmtLinesArray.Count() == 0)
+                    entity.BankStmtLines = await ImportStmtLines(file);
+                    
+                    if (entity.BankStmtLines.Count() == 0)
                     {
                         return new Response<BankStmtDto>("Lines are required");
                     }
-                    entity.BankStmtLines = await ImportStmtLines(file);
                 }
 
                 foreach (var line in entity.BankStmtLines)
