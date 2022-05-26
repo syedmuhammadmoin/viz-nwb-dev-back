@@ -15,6 +15,7 @@ namespace Application.Contracts.Interfaces
         Task<Response<bool>> ProcessForCreate(CreateProcessDto data);
         Task<Response<bool>> ProcessForEdit(int[] id);
         Task<Response<bool>> ProcessForApproval(CreateApprovalProcessDto data);
-        Task<Response<bool>> GetEmployeesByDept(DeptFilter data);
+        Task<Response<List<PayrollTransactionDto>>> GetEmployeesByDept(DeptFilter data);
+        Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data);
     }
 }
