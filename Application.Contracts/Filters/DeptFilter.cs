@@ -14,7 +14,6 @@ namespace Application.Contracts.Filters
         public int Month { get; set; }
         [Required]
         public int Year { get; set; }
-        public int? BankId { get; set; }
         public Guid AccountPayableId { get; set; }
     }
 }
