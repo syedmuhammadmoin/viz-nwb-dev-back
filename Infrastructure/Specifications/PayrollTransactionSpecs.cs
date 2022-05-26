@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Filters;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -50,6 +51,14 @@ namespace Infrastructure.Specifications
         }
 
         public PayrollTransactionSpecs(int month, int year, int empId) : base(x => x.EmployeeId == empId && x.Year == year && x.Month == month)
+        {
+
+        }
+
+        public PayrollTransactionSpecs(int month, int year, int?[] departmentIds) 
+            : base(x => x.Month == month && x.Year == year
+                && (departmentIds.Count() > 0 ? departmentIds.Contains(x.DepartmentId) : true)
+                && (x.Status.State == DocumentStatus.Draft || x.Status.State == DocumentStatus.Rejected))
         {
 
         }

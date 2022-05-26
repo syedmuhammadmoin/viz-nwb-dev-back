@@ -15,6 +15,7 @@ namespace Infrastructure.Specifications
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
             AddInclude(i=> i.PreviousBudget);
+            ApplyOrderByDescending(i => i.Id);
         }
         public EstimatedBudgetSpecs(bool forEdit)
         {

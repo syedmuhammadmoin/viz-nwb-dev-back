@@ -14,6 +14,7 @@ namespace Infrastructure.Specifications
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+            ApplyOrderByDescending(i => i.Id);
             AddInclude(i => i.Department);
             AddInclude(i => i.Designation);
         }
@@ -25,6 +26,13 @@ namespace Infrastructure.Specifications
         }
 
         public EmployeeSpecs(string getCNIC) : base(e => e.CNIC == getCNIC)
+        {
+
+        }
+
+        public EmployeeSpecs(bool isActive, int?[] departmentIds) 
+            : base(c => c.isActive == isActive &&
+                (departmentIds.Count() > 0 ? departmentIds.Contains(c.DepartmentId) : true))
         {
 
         }

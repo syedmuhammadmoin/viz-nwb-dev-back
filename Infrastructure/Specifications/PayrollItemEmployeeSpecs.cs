@@ -16,6 +16,7 @@ namespace Infrastructure.Specifications
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
             AddInclude(i => i.Employee);
+            ApplyOrderByDescending(i => i.Id);
         }
         public PayrollItemEmployeeSpecs(int id, bool isPayrollItem)
             : base(isPayrollItem ? a => a.PayrollItemId == id
