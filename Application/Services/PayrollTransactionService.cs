@@ -280,7 +280,6 @@ namespace Application.Services
 
                 //Checking month year and emp id
                 var checkingPayrollTransSpan = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(getPayrollTransaction.Month, getPayrollTransaction.Year, getPayrollTransaction.EmployeeId))
-                    .Where(i => (i.Month == getPayrollTransaction.Month) && (i.Year == getPayrollTransaction.Year) && (i.EmployeeId == getPayrollTransaction.EmployeeId))
                     .ToList();
 
                 if (checkingPayrollTransSpan.Count > 1)
