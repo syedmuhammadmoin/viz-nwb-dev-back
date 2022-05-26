@@ -37,9 +37,9 @@ namespace Application.Services
 
                 if (file != null)
                 {
-                    if (entity.BankStmtLines.Count == 0)
+                    if (bankStmtLinesArray.Count() == 0)
                     {
-                        return new Response<BankStmtDto>("Bank Statement Lines are empty");
+                        return new Response<BankStmtDto>("Lines are required");
                     }
                     entity.BankStmtLines = await ImportStmtLines(file);
                 }
