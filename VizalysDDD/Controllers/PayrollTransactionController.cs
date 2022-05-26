@@ -120,6 +120,45 @@ namespace Vizalys.Api.Controllers
                     e.Message);
             }
         }
+        
+        [ClaimRequirement("Permission", new string[] { Permissions.EmployeeClaims.View, Permissions.PayrollTransactionClaims.Create, Permissions.PayrollTransactionClaims.Edit })]
+        [HttpPost("GetforSubmit")]
+        public async Task<ActionResult<Response<List<PayrollTransactionDto>>>> GetEmployeeByDept(DeptFilter data)
+        {
+            try
+            {
+                var result = await _payrollTransactionService.GetEmployeesByDept(data);
+                if (result.IsSuccess)
+                    return Ok(result); // Status Code : 200
 
+                return BadRequest(result); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
+
+        [HttpPost("GetforApproval")]
+        public ActionResult<Response<List<PayrollTransactionDto>>> GetPayrollTransactionByDept(DeptFilter data)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result =  _payrollTransactionService.GetPayrollTransactionByDept(data);
+                    if (result.IsSuccess)
+                        return Ok(result); // Status Code : 200
+                    return BadRequest(result);
+                }
+                return BadRequest("Some properties are not valid"); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
     }
 }
