@@ -624,7 +624,7 @@ namespace Application.Services
                 }
                 _unitOfWork.Commit();
 
-            return new Response<bool>(true,"Payroll process completed successfully");
+            return new Response<bool>(true, "Payroll transaction submitted successfully");
             }
             catch (Exception ex)
             {
@@ -651,11 +651,11 @@ namespace Application.Services
             return new Response<bool>(true, "Payroll approval process completed successfully");
         }
 
-        public async Task<Response<bool>> GetEmployeesByDept(DeptFilter data)
+        public async Task<Response<List<PayrollTransactionDto>>> GetEmployeesByDept(DeptFilter data)
         {
             if (data.AccountPayableId == new Guid("00000000-0000-0000-0000-000000000000"))
             {
-                return new Response<bool>("Account payable required");
+                return new Response<List<PayrollTransactionDto>>("Account payable required");
             }
 
             var createdpayrollTransactions = _unitOfWork.PayrollTransaction
@@ -683,7 +683,7 @@ namespace Application.Services
 
                     if (result.IsSuccess == false && result.Result == null)
                     {
-                        return new Response<bool>($"Error creating transaction for {transaction.EmployeeId}");
+                        return new Response<List<PayrollTransactionDto>>($"Error creating transaction for {transaction.EmployeeId}");
                     }
                 }
             }
@@ -693,7 +693,7 @@ namespace Application.Services
 
             if (employeeList.Count == 0)
             {
-                return new Response<bool>("No employee found in this department");
+                return new Response<List<PayrollTransactionDto>>("No employee found in this department");
             }
 
 
@@ -715,13 +715,45 @@ namespace Application.Services
 
                 if (result.IsSuccess == false && result.Result == null)
                 {
-                    return new Response<bool>($"Error creating transaction for {emp.Name}");
+                    return new Response<List<PayrollTransactionDto>>($"Error creating transaction for {emp.Name}");
                     
                 }
             }
 
-            return new Response<bool>("");
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, true)).ToList();
+           
+            if (payrollTransactions.Count == 0)
+            {
+                return new Response<List<PayrollTransactionDto>>("No employee found in this department");
+            }
 
+            var response = new List<PayrollTransactionDto>();
+
+            foreach (var i in payrollTransactions)
+            {
+                response.Add(MapToValue(i));
+            }
+
+            return new Response<List<PayrollTransactionDto>>(response, "Returning Payroll Transactions");
+        }
+
+        public Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data)
+        {
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, true)).ToList();
+
+            if (payrollTransactions.Count == 0)
+            {
+                return new Response<List<PayrollTransactionDto>>("list is empty");
+            }
+
+            var response = new List<PayrollTransactionDto>();
+
+            foreach (var i in payrollTransactions)
+            {
+                response.Add(MapToValue(i));
+            }
+
+            return new Response<List<PayrollTransactionDto>>(response, "Returning Payroll Transactions");
         }
     }
 }
