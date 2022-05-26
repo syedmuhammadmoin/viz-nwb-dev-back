@@ -37,6 +37,10 @@ namespace Application.Services
 
                 if (file != null)
                 {
+                    if (entity.BankStmtLines.Count == 0)
+                    {
+                        return new Response<BankStmtDto>("Bank Statement Lines are empty");
+                    }
                     entity.BankStmtLines = await ImportStmtLines(file);
                 }
 
