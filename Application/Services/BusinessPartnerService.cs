@@ -41,7 +41,7 @@ namespace Application.Services
             if (businessPartner.Count() == 0)
                 return new PaginationResponse<List<BusinessPartnerDto>>("List is empty");
 
-            var totalRecords = await _unitOfWork.BusinessPartner.TotalRecord();
+            var totalRecords = await _unitOfWork.BusinessPartner.TotalRecord(new BusinessPartnerSpecs(true));
 
             return new PaginationResponse<List<BusinessPartnerDto>>(_mapper.Map<List<BusinessPartnerDto>>(businessPartner), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
@@ -75,7 +75,9 @@ namespace Application.Services
 
         public async Task<Response<List<BusinessPartnerDto>>> GetBusinessPartnerDropDown()
         {
-            var businessPartners = await _unitOfWork.BusinessPartner.GetAll();
+            var specification = new BusinessPartnerSpecs(true);
+            
+            var businessPartners = await _unitOfWork.BusinessPartner.GetAll(specification);
             if (!businessPartners.Any())
                 return new Response<List<BusinessPartnerDto>>("List is empty");
 

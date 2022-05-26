@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Filters;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Infrastructure.Specifications
 {
     public class BusinessPartnerSpecs : BaseSpecification<BusinessPartner>
     {
-        public BusinessPartnerSpecs(PaginationFilter filter)
+        public BusinessPartnerSpecs(PaginationFilter filter): base(x => x.BusinessPartnerType != BusinessPartnerType.Employee)
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
@@ -19,10 +20,15 @@ namespace Infrastructure.Specifications
             AddInclude(i=> i.AccountReceivable);
         }
 
-        public BusinessPartnerSpecs()
+        public BusinessPartnerSpecs() : base(x => x.BusinessPartnerType != BusinessPartnerType.Employee)
         {
             AddInclude(i => i.AccountPayable);
             AddInclude(i => i.AccountReceivable);
+        }
+
+        public BusinessPartnerSpecs(bool isNotEmployee) : base(x => isNotEmployee == true && x.BusinessPartnerType != BusinessPartnerType.Employee)
+        {
+
         }
     }
 }
