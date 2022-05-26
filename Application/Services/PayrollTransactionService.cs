@@ -650,5 +650,78 @@ namespace Application.Services
             }
             return new Response<bool>(true, "Payroll approval process completed successfully");
         }
+
+        public async Task<Response<bool>> GetEmployeesByDept(DeptFilter data)
+        {
+            if (data.AccountPayableId == new Guid("00000000-0000-0000-0000-000000000000"))
+            {
+                return new Response<bool>("Account payable required");
+            }
+
+            var createdpayrollTransactions = _unitOfWork.PayrollTransaction
+                .Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId))
+                .ToList();
+
+            if (createdpayrollTransactions.Count() > 0)
+            {
+                foreach (var transaction in createdpayrollTransactions)
+                {
+                    var payroll = new CreatePayrollTransactionDto()
+                    {
+                        Id = transaction.Id,
+                        Month = data.Month,
+                        Year = data.Year,
+                        EmployeeId = transaction.EmployeeId,
+                        WorkingDays = transaction.WorkingDays,
+                        PresentDays = transaction.PresentDays,
+                        TransDate = transaction.TransDate,
+                        AccountPayableId = data.AccountPayableId,
+                        isSubmit = false,
+                    };
+
+                    var result = await this.UpdatePayrollTransaction(payroll, 1);
+
+                    if (result.IsSuccess == false && result.Result == null)
+                    {
+                        return new Response<bool>($"Error creating transaction for {transaction.EmployeeId}");
+                    }
+                }
+            }
+
+            var employeeList = _unitOfWork.Employee
+                .Find(new EmployeeSpecs(true, data.DepartmentId)).ToList();
+
+            if (employeeList.Count == 0)
+            {
+                return new Response<bool>("No employee found in this department");
+            }
+
+
+            foreach (var emp in employeeList)
+            {
+                var payroll = new CreatePayrollTransactionDto()
+                {
+                    Month = data.Month,
+                    Year = data.Year,
+                    EmployeeId = emp.Id,
+                    WorkingDays = DateTime.DaysInMonth(data.Year, data.Month),
+                    PresentDays = DateTime.DaysInMonth(data.Year, data.Month),
+                    TransDate = new DateTime(data.Year, data.Month, DateTime.DaysInMonth(data.Year, data.Month)),
+                    AccountPayableId = data.AccountPayableId,
+                    isSubmit = false,
+                };
+
+                var result = await this.SavePayrollTransaction(payroll, 1);
+
+                if (result.IsSuccess == false && result.Result == null)
+                {
+                    return new Response<bool>($"Error creating transaction for {emp.Name}");
+                    
+                }
+            }
+
+            return new Response<bool>("");
+
+        }
     }
 }
