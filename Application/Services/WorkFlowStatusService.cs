@@ -75,7 +75,7 @@ namespace Application.Services
 
         public async Task<Response<List<WorkFlowStatusDto>>> GetStatusDropDown()
         {
-            var status = await _unitOfWork.WorkFlowStatus.GetAll();
+            var status = await _unitOfWork.WorkFlowStatus.GetAll(new WorkFlowStatusSpecs());
             if (!status.Any())
                 return new Response<List<WorkFlowStatusDto>>("List is empty");
 
