@@ -240,7 +240,8 @@ namespace Application.Mapper
 
             // WorkFlowStatus Mapping
             CreateMap<WorkFlowStatus, WorkFlowStatusDto>();
-            CreateMap<CreateWorkFlowStatusDto, WorkFlowStatus>();
+            CreateMap<CreateWorkFlowStatusDto, WorkFlowStatus>()
+            .ForMember(core => core.Type, dto => dto.MapFrom(a => StatusType.Custom));
 
             // TransactionRecon Mapping
             CreateMap<CreateTransactionReconcileDto, TransactionReconcile>();
