@@ -114,51 +114,53 @@ namespace Application.Services
                 || entity.WorkingDays < entity.PresentDays + entity.LeaveDays)
                 return new Response<bool>("Present days and Leaves days sum can not be greater than working days");
 
+            //Fetching Employees by id
+            var emp = await _employeeService.GetByIdAsync(entity.EmployeeId);
+
+            var empDetails = emp.Result;
+
+            if (empDetails == null)
+                return new Response<bool>("Selected employee record not found");
+
+            if (!empDetails.isActive)
+                return new Response<bool>("Selected employee is not Active");
+
+            var checkingPayrollTrans = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(entity.Month, entity.Year, entity.EmployeeId)).FirstOrDefault();
+
+            if (checkingPayrollTrans != null)
+            {
+                return new Response<bool>(true, "Payroll transaction is already processed");
+            }
+
+            //getting payrollItems by empId
+            var payrollTransactionLines = empDetails.PayrollItems
+            .Where(x => ((x.IsActive == true) && (x.PayrollType != PayrollType.BasicPay && x.PayrollType != PayrollType.Increment)))
+            .Select(line => new PayrollTransactionLines(line.Id,
+                   line.PayrollType,
+                   CalculateAllowance(line, entity.WorkingDays, entity.PresentDays, entity.LeaveDays, empDetails.TotalBasicPay),
+                   line.AccountId)
+            ).ToList();
+
+
+            decimal totalAllowances = Math.Round(payrollTransactionLines
+                           .Where(p => p.PayrollType == PayrollType.Allowance || p.PayrollType == PayrollType.AssignmentAllowance)
+                           .Sum(e => e.Amount), 2);
+
+            decimal totalBasicPay = entity.LeaveDays > 0 ?
+                Math.Round((empDetails.TotalBasicPay / entity.WorkingDays) * (entity.PresentDays + entity.LeaveDays), 2) :
+                Math.Round((empDetails.TotalBasicPay / entity.WorkingDays) * entity.PresentDays, 2);
+
+            decimal grossPay = totalBasicPay + totalAllowances;
+
+            decimal totalDeductions = Math.Round(payrollTransactionLines
+                                .Where(p => p.PayrollType == PayrollType.Deduction || p.PayrollType == PayrollType.TaxDeduction)
+                                .Sum(e => e.Amount), 2);
+
+            decimal netPay = grossPay - totalDeductions;
+
             _unitOfWork.CreateTransaction();
             try
             {
-                //Fetching Employees by id
-                var emp = await _employeeService.GetByIdAsync(entity.EmployeeId);
-
-                var empDetails = emp.Result;
-
-                if (empDetails == null)
-                    return new Response<bool>("Selected employee record not found");
-
-                if (!empDetails.isActive)
-                    return new Response<bool>("Selected employee is not Active");
-
-                var checkingPayrollTrans = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(entity.Month, entity.Year, entity.EmployeeId)).FirstOrDefault();
-
-                if (checkingPayrollTrans != null)
-                    return new Response<bool>(true, "Payroll transaction is already processed");
-
-                //getting payrollItems by empId
-                var payrollTransactionLines = empDetails.PayrollItems
-                .Where(x => ((x.IsActive == true) && (x.PayrollType != PayrollType.BasicPay && x.PayrollType != PayrollType.Increment)))
-                .Select(line => new PayrollTransactionLines(line.Id,
-                       line.PayrollType,
-                       CalculateAllowance(line, entity.WorkingDays, entity.PresentDays, entity.LeaveDays, empDetails.TotalBasicPay),
-                       line.AccountId)
-                ).ToList();
-
-
-                decimal totalAllowances = Math.Round(payrollTransactionLines
-                               .Where(p => p.PayrollType == PayrollType.Allowance || p.PayrollType == PayrollType.AssignmentAllowance)
-                               .Sum(e => e.Amount), 2);
-
-                decimal totalBasicPay = entity.LeaveDays > 0 ?
-                    Math.Round((empDetails.TotalBasicPay / entity.WorkingDays) * (entity.PresentDays + entity.LeaveDays), 2) :
-                    Math.Round((empDetails.TotalBasicPay / entity.WorkingDays) * entity.PresentDays, 2);
-
-                decimal grossPay = totalBasicPay + totalAllowances;
-
-                decimal totalDeductions = Math.Round(payrollTransactionLines
-                                    .Where(p => p.PayrollType == PayrollType.Deduction || p.PayrollType == PayrollType.TaxDeduction)
-                                    .Sum(e => e.Amount), 2);
-
-                decimal netPay = grossPay - totalDeductions;
-
                 // mapping data in payroll transaction master table
                 var payrollTransaction = new PayrollTransactionMaster(
                     entity.Month,
