@@ -135,8 +135,8 @@ namespace Application.Services
             var dbn = _mapper.Map<DebitNoteMaster>(entity);
 
             //setting BusinessPartnerPayable
-            var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
-            dbn.setPayableAccountId(er.AccountPayableId);
+            var businessPartner = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
+            dbn.setPayableAccountId((Guid)businessPartner.AccountPayableId);
 
             //Setting status
             dbn.setStatus(status);
@@ -180,8 +180,8 @@ namespace Application.Services
                 return new Response<DebitNoteDto>("Only draft document can be edited");
 
             //setting BusinessPartnerPayable
-            var er = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
-            dbn.setPayableAccountId(er.AccountPayableId);
+            var businessPartner = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
+            dbn.setPayableAccountId((Guid)businessPartner.AccountPayableId);
 
             dbn.setStatus(status);
 
@@ -239,7 +239,7 @@ namespace Application.Services
             var getVendorAccount = await _unitOfWork.BusinessPartner.GetById(dbn.VendorId);
             var addPayableInLedger = new RecordLedger(
                         transaction.Id,
-                        getVendorAccount.AccountPayableId,
+                        (Guid)getVendorAccount.AccountPayableId,
                         dbn.VendorId,
                         null,
                         dbn.DocNo,

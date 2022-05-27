@@ -240,7 +240,8 @@ namespace Application.Mapper
 
             // WorkFlowStatus Mapping
             CreateMap<WorkFlowStatus, WorkFlowStatusDto>();
-            CreateMap<CreateWorkFlowStatusDto, WorkFlowStatus>();
+            CreateMap<CreateWorkFlowStatusDto, WorkFlowStatus>()
+            .ForMember(core => core.Type, dto => dto.MapFrom(a => StatusType.Custom));
 
             // TransactionRecon Mapping
             CreateMap<CreateTransactionReconcileDto, TransactionReconcile>();
@@ -325,6 +326,23 @@ namespace Application.Mapper
                 .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
             CreateMap<CreatePayrollItemDto, PayrollItem>();
             CreateMap<PayrollItemEmployee, PayrollItemEmployeeDto>();
+
+            // PayrollTransaction Mapping
+            CreateMap<PayrollTransactionMaster, PayrollTransactionDto>()
+              .ForMember(dto => dto.Employee, core => core.MapFrom(a => a.Employee.Name))
+              .ForMember(dto => dto.AccountPayable, core => core.MapFrom(a => a.AccountPayable.Name))
+              .ForMember(dto => dto.Department, core => core.MapFrom(a => a.Department.Name))
+              .ForMember(dto => dto.Designation, core => core.MapFrom(a => a.Designation.Name))
+              .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
+              .ForMember(dto => dto.NetSalary, core => core.MapFrom(a => a.NetSalary))
+                .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+
+            CreateMap<PayrollTransactionLines, PayrollTransactionLinesDto>()
+              .ForMember(dto => dto.PayrollItem, core => core.MapFrom(a => a.PayrollItem.Name))
+              .ForMember(dto => dto.Account, core => core.MapFrom(a => a.Account.Name));
+
+            CreateMap<CreatePayrollTransactionDto, PayrollTransactionMaster>();
         }
     }
 }

@@ -17,6 +17,7 @@ namespace Infrastructure.Specifications
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
             AddInclude(i => i.Campus);
             AddInclude(i => i.Status);
+            ApplyOrderByDescending(i => i.Id);
             AddInclude("JournalEntryLines.BusinessPartner");
             AddInclude("JournalEntryLines.Account");
             AddInclude("JournalEntryLines.Warehouse");

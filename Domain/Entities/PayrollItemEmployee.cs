@@ -1,4 +1,5 @@
 ﻿using Domain.Base;
+using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -16,11 +17,14 @@ namespace Domain.Entities
         public int PayrollItemId { get; private set; }
         [ForeignKey("PayrollItemId")]
         public PayrollItem PayrollItem { get; private set; }
-            
-        public PayrollItemEmployee(int employeeId, int payrollItemId)
+        public PayrollType PayrollType { get; private set; }
+
+        public PayrollItemEmployee(int employeeId, int payrollItemId, PayrollType payrollType)
         {
             EmployeeId = employeeId;
             PayrollItemId = payrollItemId;
+            PayrollType = payrollType;
+
         }
     }
 }

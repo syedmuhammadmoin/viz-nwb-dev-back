@@ -28,15 +28,22 @@ namespace Application.Services
 
         public async Task<Response<PayrollItemDto>> CreateAsync(CreatePayrollItemDto entity)
         {
-           //Checking BasicPay and Increment in amount
-           
-           if (entity.PayrollType == PayrollType.BasicPay || entity.PayrollType == PayrollType.Increment)
+            //Checking BasicPay and Increment in amount
+            if (entity.PayrollItemType == CalculationType.Percentage)
+            {
+                if (entity.Value > 100)
+                {
+                    return new Response<PayrollItemDto>("Percentage should be less than 100%");
+                }
+            }
+
+            if (entity.PayrollType == PayrollType.BasicPay || entity.PayrollType == PayrollType.Increment)
             {
                 if (entity.PayrollItemType == CalculationType.Percentage)
                     return new Response<PayrollItemDto>("Basic pay and increment should be in amount");
             }
 
-           //Checking duplicate employees if any
+            //Checking duplicate employees if any
             var duplicates = entity.EmployeeIds.GroupBy(x => x)
              .Where(g => g.Count() > 1)
              .Select(y => y.Key)
@@ -45,6 +52,7 @@ namespace Application.Services
             if (duplicates.Any())
                 return new Response<PayrollItemDto>("Duplicate employees found");
 
+
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
             try
@@ -52,18 +60,26 @@ namespace Application.Services
                 var payrollItem = await _unitOfWork.PayrollItem.Add(_mapper.Map<PayrollItem>(entity));
                 await _unitOfWork.SaveAsync();
 
-                //for (int i = 0; i < entity.EmployeeIds.Length; i++)
-                //{
-                //    await _unitOfWork.PayrollItemEmployee.Add(new PayrollItemEmployee(entity.EmployeeIds[i], payrollItem.Id));
-                //    await _unitOfWork.SaveAsync();
-                //}
-
                 var assignEmp = new List<PayrollItemEmployee>();
 
                 //assigning EmployeeIds to payrollItems
                 for (int i = 0; i < entity.EmployeeIds.Length; i++)
                 {
-                    assignEmp.Add(new PayrollItemEmployee(entity.EmployeeIds[i], payrollItem.Id));
+                    if (payrollItem.PayrollType == PayrollType.BasicPay || payrollItem.PayrollType == PayrollType.Increment)
+                    {
+                        //Checking existing BasicPay/Increments of employee
+                        var checkingBasicPayOrIncrement = _unitOfWork.PayrollItemEmployee
+                            .Find(new PayrollItemEmployeeSpecs(entity.EmployeeIds[i], payrollItem.PayrollType)).FirstOrDefault();
+
+                        if (checkingBasicPayOrIncrement != null)
+                            return new Response<PayrollItemDto>("Basic pay or Increments can not be assigned multiple times");
+
+                        assignEmp.Add(new PayrollItemEmployee(entity.EmployeeIds[i], payrollItem.Id, payrollItem.PayrollType));
+                    }
+                    else
+                    {
+                        assignEmp.Add(new PayrollItemEmployee(entity.EmployeeIds[i], payrollItem.Id, payrollItem.PayrollType));
+                    }
                 }
                 await _unitOfWork.PayrollItemEmployee.AddRange(assignEmp);
                 await _unitOfWork.SaveAsync();
@@ -96,7 +112,8 @@ namespace Application.Services
         public async Task<Response<PayrollItemDto>> GetByIdAsync(int id)
         {
             //getting payrollItm
-            var getPayrollItem = await _unitOfWork.PayrollItem.GetById(id);
+            var specification = new PayrollItemSpecs();
+            var getPayrollItem = await _unitOfWork.PayrollItem.GetById(id, specification);
             if (getPayrollItem == null)
                 return new Response<PayrollItemDto>("Not found");
 
@@ -104,7 +121,7 @@ namespace Application.Services
 
             //getting employeelist in payrollItem
             var empList = _unitOfWork.PayrollItemEmployee
-                .Find(new PayrollItemEmployeeSpecs(payrollItem.Id))
+                .Find(new PayrollItemEmployeeSpecs(payrollItem.Id, true))
                 .Select(x => x.Employee)
                 .ToList();
 
@@ -115,6 +132,15 @@ namespace Application.Services
 
         public async Task<Response<PayrollItemDto>> UpdateAsync(CreatePayrollItemDto entity)
         {
+            //Checking BasicPay and Increment in amount
+            if (entity.PayrollItemType == CalculationType.Percentage)
+            {
+                if (entity.Value > 100)
+                {
+                    return new Response<PayrollItemDto>("Percentage should be less than 100%");
+                }
+            }
+
             if (entity.PayrollType == PayrollType.BasicPay || entity.PayrollType == PayrollType.Increment)
             {
                 if (entity.PayrollItemType == CalculationType.Percentage)
@@ -148,9 +174,24 @@ namespace Application.Services
 
                 var assignEmp = new List<PayrollItemEmployee>();
                 //assigning EmployeeIds to payrollItems
+
                 for (int i = 0; i < entity.EmployeeIds.Length; i++)
                 {
-                    assignEmp.Add(new PayrollItemEmployee(entity.EmployeeIds[i], payrollItem.Id));
+                    if (payrollItem.PayrollType == PayrollType.BasicPay || payrollItem.PayrollType == PayrollType.Increment)
+                    {
+                        //Checking existing BasicPay/Increments of employee
+                        var checkingBasicPayOrIncrement = _unitOfWork.PayrollItemEmployee
+                            .Find(new PayrollItemEmployeeSpecs(entity.EmployeeIds[i], payrollItem.PayrollType)).FirstOrDefault();
+
+                        if (checkingBasicPayOrIncrement != null)
+                            return new Response<PayrollItemDto>("Basic pay or Increments can not be assigned multiple times");
+
+                        assignEmp.Add(new PayrollItemEmployee(entity.EmployeeIds[i], payrollItem.Id, payrollItem.PayrollType));
+                    }
+                    else
+                    {
+                        assignEmp.Add(new PayrollItemEmployee(entity.EmployeeIds[i], payrollItem.Id, payrollItem.PayrollType));
+                    }
                 }
                 await _unitOfWork.PayrollItemEmployee.AddRange(assignEmp);
                 await _unitOfWork.SaveAsync();

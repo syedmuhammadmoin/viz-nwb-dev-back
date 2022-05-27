@@ -79,5 +79,17 @@ namespace Vizalys.Api.Controllers
         {
             return Ok(await _level4Service.GetBudgetAccounts()); // Status Code : 200
         }
+
+        [HttpGet("payables")]
+        public async Task<ActionResult<Response<List<Level4Dto>>>> GetPayableAccounts()
+        {
+            return Ok(await _level4Service.GetPayableAccounts()); // Status Code : 200
+        }
+
+        [HttpGet("receivables")]
+        public async Task<ActionResult<Response<List<Level4Dto>>>> GetReceivableAccounts()
+        {
+            return Ok(await _level4Service.GetReceivableAccounts()); // Status Code : 200
+        }
     }
 }

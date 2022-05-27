@@ -13,5 +13,7 @@ namespace Application.Contracts.Interfaces
     {
         Task<Response<List<Level4Dto>>> GetLevel4DropDown();
         Task<Response<List<Level4Dto>>> GetBudgetAccounts();
+        Task<Response<List<Level4Dto>>> GetPayableAccounts();
+        Task<Response<List<Level4Dto>>> GetReceivableAccounts();
     }
 }

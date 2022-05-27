@@ -45,11 +45,11 @@ namespace Application.Contracts.DTOs
         public DateTime? DateofBirth { get; set; }
         public int? EarnedLeaves { get; set; }
         public int? CasualLeaves { get; set; }
-        [MaxLength(30)]
-        public string Status { get; set; }
+        public bool isActive { get; set; }
         [MaxLength(80)]
         public string Faculty { get; set; }
         [MaxLength(80)]
         public string DutyShift { get; set; }
+        public int? NoOfIncrements { get; set; }
     }
 }

@@ -132,8 +132,8 @@ namespace Application.Services
             var crn = _mapper.Map<CreditNoteMaster>(entity);
 
             //setting BusinessPartnerReceivable
-            var er = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
-            crn.setReceivableAccount(er.AccountReceivableId);
+            var businessPartner = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
+            crn.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
 
             //Setting status
             crn.setStatus(status);
@@ -177,8 +177,8 @@ namespace Application.Services
                 return new Response<CreditNoteDto>("Only draft document can be edited");
 
             //setting BusinessPartnerReceivable
-            var er = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
-            crn.setReceivableAccount(er.AccountReceivableId);
+            var businessPartner = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
+            crn.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
 
             crn.setStatus(status);
 
@@ -252,7 +252,7 @@ namespace Application.Services
             var getCustomerAccount = await _unitOfWork.BusinessPartner.GetById(crn.CustomerId);
             var addReceivableInLedger = new RecordLedger(
                         transaction.Id,
-                        getCustomerAccount.AccountReceivableId,
+                        (Guid)getCustomerAccount.AccountReceivableId,
                         crn.CustomerId,
                         null,
                         crn.DocNo,

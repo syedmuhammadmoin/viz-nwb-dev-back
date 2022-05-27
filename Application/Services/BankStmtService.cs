@@ -38,6 +38,11 @@ namespace Application.Services
                 if (file != null)
                 {
                     entity.BankStmtLines = await ImportStmtLines(file);
+                    
+                    if (entity.BankStmtLines.Count() == 0)
+                    {
+                        return new Response<BankStmtDto>("Lines are required");
+                    }
                 }
 
                 foreach (var line in entity.BankStmtLines)
@@ -60,11 +65,17 @@ namespace Application.Services
                 _unitOfWork.Commit();
                 return new Response<BankStmtDto>(_mapper.Map<BankStmtDto>(bankStmt), "Created successfully");
             }
+            catch (NullReferenceException)
+            {
+                _unitOfWork.Rollback();
+                return new Response<BankStmtDto>("All fields are required in spreadsheet");
+            }
             catch (Exception ex)
             {
                 _unitOfWork.Rollback();
                 return new Response<BankStmtDto>(ex.Message);
             }
+           
         }
 
         public async Task<PaginationResponse<List<BankStmtDto>>> GetAllAsync(PaginationFilter filter)
@@ -135,6 +146,7 @@ namespace Application.Services
                     var rowCount = worksheet.Dimension.Rows;
                     for (int row = 2; row <= rowCount; row++)
                     {
+                        
                         list.Add(new CreateBankStmtLinesDto()
                         {
                             Reference = (int)Convert.ToSingle(worksheet.Cells[row, 1].Value),
