@@ -68,5 +68,17 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
+
+        [ClaimRequirement("Permission", new string[] { Permissions.PayrollItemClaims.Create, Permissions.PayrollItemClaims.View, Permissions.PayrollItemClaims.Delete, Permissions.PayrollItemClaims.Edit })]
+        [HttpGet("basicpays")]
+        public async Task<ActionResult<PaginationResponse<List<PayrollItemDto>>>> GetBaicPayList()
+        {
+            var results = await _payrollItemService.GetBaicPayList();
+            if (results.IsSuccess)
+                return Ok(results); // Status Code : 200
+
+            return BadRequest(results); // Status code : 400
+        }
+
     }
 }
