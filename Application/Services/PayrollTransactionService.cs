@@ -674,7 +674,6 @@ namespace Application.Services
                     EmployeeId = emp.Id,
                     WorkingDays = DateTime.DaysInMonth(data.Year, data.Month),
                     PresentDays = DateTime.DaysInMonth(data.Year, data.Month),
-                    LeaveDays = DateTime.DaysInMonth(data.Year, data.Month),
                     TransDate = new DateTime(data.Year, data.Month, DateTime.DaysInMonth(data.Year, data.Month)),
                     AccountPayableId = data.AccountPayableId,
                     isSubmit = false,
