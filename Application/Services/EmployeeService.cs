@@ -108,6 +108,7 @@ namespace Application.Services
             employee.PayrollItems = _mapper.Map<List<PayrollItemDto>>(payrollItemList);
 
             var result = MapToValue(employee);
+            
             result.PayrollItems = result.PayrollItems
                 .Where(i => i.PayrollType != PayrollType.BasicPay
                 && i.PayrollType != PayrollType.Increment).ToList();
@@ -141,55 +142,61 @@ namespace Application.Services
             // if (data.IncrementId != null && data.NoOfIncrements != null)
             if (data.NoOfIncrements != null)
             {
-                incrementAmount = (decimal)data.PayrollItems
+                var increment = data.PayrollItems
                                 .Where(p => p.PayrollType == PayrollType.Increment && p.IsActive == true)
-                                .Sum(e => e.Value);
-
-                totalIncrement = (incrementAmount * (int)(data.NoOfIncrements));
+                                .FirstOrDefault();
+                if (increment != null)
+                {
+                    incrementAmount = increment.Value;
+                    totalIncrement = (incrementAmount * (int)(data.NoOfIncrements));
+                }
             }
-
+            
             var basicPayItem = data.PayrollItems
                                 .Where(p => p.PayrollType == PayrollType.BasicPay && p.IsActive == true)
                                 .FirstOrDefault();
 
-            decimal totalBasicPay = (basicPayItem.Value + totalIncrement);
+            if (basicPayItem != null)
+            {
+                decimal totalBasicPay = (basicPayItem.Value + totalIncrement);
 
-            data.PayrollItems
-               .Where(e => e.PayrollItemType == CalculationType.Percentage)
-              .Select(e => e.Value = e.PayrollItemType == CalculationType.FixedAmount ? (decimal)(e.Value) :
-                  (totalBasicPay * (int)(e.Value) / 100)).ToList();
+                data.PayrollItems
+                   .Where(e => e.PayrollItemType == CalculationType.Percentage)
+                  .Select(e => e.Value = e.PayrollItemType == CalculationType.FixedAmount ? (decimal)(e.Value) :
+                      (totalBasicPay * (int)(e.Value) / 100)).ToList();
 
-            decimal totalAllowances = (decimal)data.PayrollItems
-                                 .Where(p => p.PayrollType == PayrollType.Allowance || p.PayrollType == PayrollType.AssignmentAllowance && p.IsActive == true)
-                                 .Sum(e => e.Value);
+                decimal totalAllowances = (decimal)data.PayrollItems
+                                     .Where(p => p.PayrollType == PayrollType.Allowance || p.PayrollType == PayrollType.AssignmentAllowance && p.IsActive == true)
+                                     .Sum(e => e.Value);
 
-            decimal grossPay = totalBasicPay + totalAllowances;
+                decimal grossPay = totalBasicPay + totalAllowances;
 
-            decimal totalDeductions = (decimal)data.PayrollItems
-                                .Where(p => p.PayrollType == PayrollType.Deduction && p.IsActive == true)
-                                .Sum(e => e.Value);
+                decimal totalDeductions = (decimal)data.PayrollItems
+                                    .Where(p => p.PayrollType == PayrollType.Deduction && p.IsActive == true)
+                                    .Sum(e => e.Value);
 
-            decimal taxDeduction = (decimal)data.PayrollItems
-                                .Where(p => p.PayrollType == PayrollType.TaxDeduction && p.IsActive == true)
-                                .Sum(e => e.Value);
+                decimal taxDeduction = (decimal)data.PayrollItems
+                                    .Where(p => p.PayrollType == PayrollType.TaxDeduction && p.IsActive == true)
+                                    .Sum(e => e.Value);
 
-            decimal netPay = grossPay - totalDeductions - taxDeduction;
+                decimal netPay = grossPay - totalDeductions - taxDeduction;
 
-            //mapping calculated value to employeedto
-            data.BasicPay = basicPayItem.Value;
-            data.BPS = basicPayItem.Name;
-            data.BPSAccountId = basicPayItem.AccountId;
-            data.Increment = incrementAmount;
-            data.TotalIncrement = totalIncrement;
-            data.TotalBasicPay = totalBasicPay;
-            data.TotalAllowances = totalAllowances;
-            data.GrossPay = grossPay;
-            data.TotalDeductions = totalDeductions;
-            data.TaxDeduction = taxDeduction;
-            data.NetPay = netPay;
+                //mapping calculated value to employeedto
+                data.BasicPay = basicPayItem.Value;
+                data.BPS = basicPayItem.Name;
+                data.BPSAccountId = basicPayItem.AccountId;
+                data.Increment = incrementAmount;
+                data.TotalIncrement = totalIncrement;
+                data.TotalBasicPay = totalBasicPay;
+                data.TotalAllowances = totalAllowances;
+                data.GrossPay = grossPay;
+                data.TotalDeductions = totalDeductions;
+                data.TaxDeduction = taxDeduction;
+                data.NetPay = netPay;
+            }
 
+            
             return data;
-
         }
     }
 }
