@@ -18,7 +18,6 @@ namespace Domain.Entities
         public string Name { get; private set; }
         public PayrollType PayrollType { get; private set; }
         public CalculationType PayrollItemType { get; private set; }
-        [Range(0.00, 500.00, ErrorMessage = "Please enter a positive value")]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Value { get; private set; }
         public Guid AccountId { get; private set; }
