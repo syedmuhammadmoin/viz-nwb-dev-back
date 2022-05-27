@@ -40,7 +40,7 @@ namespace Application.Services
             var warehouse = await _unitOfWork.Warehouse.GetAll(specification);
 
             if (warehouse.Count() == 0)
-                return new PaginationResponse<List<WarehouseDto>>("List is empty");
+                return new PaginationResponse<List<WarehouseDto>>(_mapper.Map<List<WarehouseDto>>(warehouse), "List is empty");
 
             var totalRecords = await _unitOfWork.Warehouse.TotalRecord();
 

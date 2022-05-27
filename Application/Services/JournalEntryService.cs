@@ -61,7 +61,7 @@ namespace Application.Services
             var jvs = await _unitOfWork.JournalEntry.GetAll(specification);
 
             if (jvs.Count() == 0)
-                return new PaginationResponse<List<JournalEntryDto>>("List is empty");
+                return new PaginationResponse<List<JournalEntryDto>>(_mapper.Map<List<JournalEntryDto>>(jvs), "List is empty");
 
             var totalRecords = await _unitOfWork.JournalEntry.TotalRecord();
 

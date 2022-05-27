@@ -84,7 +84,7 @@ namespace Application.Services
             var employees = await _unitOfWork.Employee.GetAll(specification);
 
             if (employees.Count() == 0)
-                return new PaginationResponse<List<EmployeeDto>>("List is empty");
+                return new PaginationResponse<List<EmployeeDto>>(_mapper.Map<List<EmployeeDto>>(employees), "List is empty");
 
             var totalRecords = await _unitOfWork.Employee.TotalRecord();
 

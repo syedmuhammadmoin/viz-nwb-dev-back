@@ -110,7 +110,7 @@ namespace Application.Services
             var gRN = await _unitOfWork.GRN.GetAll(specification);
 
             if (gRN.Count() == 0)
-                return new PaginationResponse<List<GRNDto>>("List is empty");
+                return new PaginationResponse<List<GRNDto>>(_mapper.Map<List<GRNDto>>(gRN), "List is empty");
 
             var totalRecords = await _unitOfWork.GRN.TotalRecord();
 

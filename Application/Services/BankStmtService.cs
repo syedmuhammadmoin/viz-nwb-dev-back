@@ -84,7 +84,7 @@ namespace Application.Services
             var bankStmts = await _unitOfWork.Bankstatement.GetAll(specification);
 
             if (!bankStmts.Any())
-                return new PaginationResponse<List<BankStmtDto>>("List is empty");
+                return new PaginationResponse<List<BankStmtDto>>(_mapper.Map<List<BankStmtDto>>(bankStmts), "List is empty");
 
             var totalRecords = await _unitOfWork.Bankstatement.TotalRecord();
 

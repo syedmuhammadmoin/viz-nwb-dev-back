@@ -48,7 +48,7 @@ namespace Application.Services
             var po = await _unitOfWork.PurchaseOrder.GetAll(specification);
 
             if (po.Count() == 0)
-                return new PaginationResponse<List<PurchaseOrderDto>>("List is empty");
+                return new PaginationResponse<List<PurchaseOrderDto>>(_mapper.Map<List<PurchaseOrderDto>>(po), "List is empty");
 
             var totalRecords = await _unitOfWork.PurchaseOrder.TotalRecord();
 

@@ -46,7 +46,7 @@ namespace Application.Services
             var level4 = await _unitOfWork.Level4.GetAll(specification);
 
             if (level4.Count() == 0)
-                return new PaginationResponse<List<Level4Dto>>("List is empty");
+                return new PaginationResponse<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "List is empty");
 
             var totalRecords = await _unitOfWork.Level4.TotalRecord();
 

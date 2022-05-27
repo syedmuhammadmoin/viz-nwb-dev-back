@@ -746,7 +746,7 @@ namespace Infrastructure.Context
             var entries = ChangeTracker.Entries();
             foreach (var entry in entries)
             {
-                if (entry.Entity is BaseEntity<int> trackable)
+                if (entry.Entity is BaseEntity trackable)
                 {
                     var now = DateTime.UtcNow;
                     var user = GetCurrentUser();
@@ -767,6 +767,7 @@ namespace Infrastructure.Context
                 }
             }
         }
+
         private string GetCurrentUser()
         {
             //return "UserName"; // TODO implement your own logic

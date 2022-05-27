@@ -102,7 +102,7 @@ namespace Application.Services
             var payrollItem = await _unitOfWork.PayrollItem.GetAll(specification);
 
             if (payrollItem.Count() == 0)
-                return new PaginationResponse<List<PayrollItemDto>>("List is empty");
+                return new PaginationResponse<List<PayrollItemDto>>(_mapper.Map<List<PayrollItemDto>>(payrollItem), "List is empty");
 
             var totalRecords = await _unitOfWork.PayrollItem.TotalRecord();
 

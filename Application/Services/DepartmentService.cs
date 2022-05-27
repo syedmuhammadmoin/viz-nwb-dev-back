@@ -53,7 +53,7 @@ namespace Application.Services
             var departments = await _unitOfWork.Department.GetAll(specification);
 
             if (departments.Count() == 0)
-                return new PaginationResponse<List<DepartmentDto>>("List is empty");
+                return new PaginationResponse<List<DepartmentDto>>(_mapper.Map<List<DepartmentDto>>(departments), "List is empty");
 
             var totalRecords = await _unitOfWork.Department.TotalRecord();
 

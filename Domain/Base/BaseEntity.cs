@@ -7,9 +7,13 @@ using System.Threading.Tasks;
 
 namespace Domain.Base
 {
-    public abstract class BaseEntity<TKey>
+    public abstract class BaseEntity<TKey> : BaseEntity
     {
         public TKey Id { get; set; }
+    }
+
+    public abstract class BaseEntity
+    {
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
         [MaxLength(100)]

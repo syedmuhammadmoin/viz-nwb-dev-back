@@ -39,7 +39,7 @@ namespace Application.Services
             var businessPartner = await _unitOfWork.BusinessPartner.GetAll(specification);
 
             if (businessPartner.Count() == 0)
-                return new PaginationResponse<List<BusinessPartnerDto>>("List is empty");
+                return new PaginationResponse<List<BusinessPartnerDto>>(_mapper.Map<List<BusinessPartnerDto>>(businessPartner), "List is empty");
 
             var totalRecords = await _unitOfWork.BusinessPartner.TotalRecord(new BusinessPartnerSpecs(true));
 

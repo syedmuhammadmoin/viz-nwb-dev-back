@@ -53,7 +53,7 @@ namespace Application.Services
             var payment = await _unitOfWork.Payment.GetAll(specification);
 
             if (payment.Count() == 0)
-                return new PaginationResponse<List<PaymentDto>>("List is empty");
+                return new PaginationResponse<List<PaymentDto>>(_mapper.Map<List<PaymentDto>>(payment), "List is empty");
 
             var totalRecords = await _unitOfWork.Payment.TotalRecord(new PaymentSpecs(paymentType));
 

@@ -44,7 +44,7 @@ namespace Application.Services
             var orgs = await _unitOfWork.Organization.GetAll(specification);
 
             if (orgs.Count() == 0)
-                return new PaginationResponse<List<OrganizationDto>>("List is empty");
+                return new PaginationResponse<List<OrganizationDto>>(_mapper.Map<List<OrganizationDto>>(orgs), "List is empty");
 
             var totalRecords = await _unitOfWork.Organization.TotalRecord();
 

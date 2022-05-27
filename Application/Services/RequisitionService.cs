@@ -49,7 +49,7 @@ namespace Application.Services
             var requisition = await _unitOfWork.Requisition.GetAll(specification);
 
             if (requisition.Count() == 0)
-                return new PaginationResponse<List<RequisitionDto>>("List is empty");
+                return new PaginationResponse<List<RequisitionDto>>(_mapper.Map<List<RequisitionDto>>(requisition), "List is empty");
 
             var totalRecords = await _unitOfWork.Requisition.TotalRecord();
 

@@ -21,6 +21,13 @@ namespace Application.Contracts.Response
             this.Message = message;
             this.IsSuccess = true;
         }
+        public PaginationResponse(T data, string message)
+        {
+            this.Result = data;
+            this.Message = message;
+            this.IsSuccess = true;
+        }
+
         public PaginationResponse(string message)
         {
             this.Message = message;

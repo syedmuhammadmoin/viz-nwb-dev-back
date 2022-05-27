@@ -8,6 +8,10 @@ namespace Application.Contracts.Response
 {
     public class Response<T>
     {
+        public T Result { get; protected set; }
+        public bool IsSuccess { get; protected set; }
+        public string[] Errors { get; protected set; }
+        public string Message { get; protected set; }
         protected Response()
         {
         }
@@ -25,10 +29,5 @@ namespace Application.Contracts.Response
             IsSuccess = false;
             Message = message;
         }
-
-        public T Result { get; protected set; }
-        public bool IsSuccess { get; protected set; }
-        public string[] Errors { get; protected set; }
-        public string Message { get; protected set; }
     }
 }

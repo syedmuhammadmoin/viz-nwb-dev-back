@@ -77,7 +77,7 @@ namespace Application.Services
             var cashAccount = await _unitOfWork.CashAccount.GetAll(specification);
 
             if (!cashAccount.Any())
-                return new PaginationResponse<List<CashAccountDto>>("List is empty");
+                return new PaginationResponse<List<CashAccountDto>>(_mapper.Map<List<CashAccountDto>>(cashAccount), "List is empty");
 
             var totalRecords = await _unitOfWork.CashAccount.TotalRecord();
 
