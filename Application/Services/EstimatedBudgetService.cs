@@ -44,7 +44,7 @@ namespace Application.Services
             var estimatedEstimatedBudgets = await _unitOfWork.EstimatedBudget.GetAll(specification);
 
             if (!estimatedEstimatedBudgets.Any())
-                return new PaginationResponse<List<EstimatedBudgetDto>>("List is empty");
+                return new PaginationResponse<List<EstimatedBudgetDto>>(_mapper.Map<List<EstimatedBudgetDto>>(estimatedEstimatedBudgets), "List is empty");
 
             var totalRecords = await _unitOfWork.EstimatedBudget.TotalRecord();
 

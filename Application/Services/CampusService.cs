@@ -45,7 +45,7 @@ namespace Application.Services
             var campus = await _unitOfWork.Campus.GetAll(specification);
 
             if (campus.Count() == 0)
-                return new PaginationResponse<List<CampusDto>>("List is empty");
+                return new PaginationResponse<List<CampusDto>>(_mapper.Map<List<CampusDto>>(campus), "List is empty");
 
             var totalRecords = await _unitOfWork.Campus.TotalRecord();
 

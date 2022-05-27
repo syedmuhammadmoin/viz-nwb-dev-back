@@ -48,7 +48,7 @@ namespace Application.Services
             var Invs = await _unitOfWork.Invoice.GetAll(specification);
 
             if (Invs.Count() == 0)
-                return new PaginationResponse<List<InvoiceDto>>("List is empty");
+                return new PaginationResponse<List<InvoiceDto>>(_mapper.Map<List<InvoiceDto>>(Invs),"List is empty");
 
             var totalRecords = await _unitOfWork.Invoice.TotalRecord();
 

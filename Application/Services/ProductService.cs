@@ -40,7 +40,7 @@ namespace Application.Services
             var product = await _unitOfWork.Product.GetAll(specification);
 
             if (product.Count() == 0)
-                return new PaginationResponse<List<ProductDto>>("List is empty");
+                return new PaginationResponse<List<ProductDto>>(_mapper.Map<List<ProductDto>>(product), "List is empty");
 
             var totalRecords = await _unitOfWork.Product.TotalRecord();
 

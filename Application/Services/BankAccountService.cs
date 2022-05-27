@@ -85,7 +85,7 @@ namespace Application.Services
             var backAccount = await _unitOfWork.BankAccount.GetAll(specification);
 
             if (!backAccount.Any())
-                return new PaginationResponse<List<BankAccountDto>>("List is empty");
+                return new PaginationResponse<List<BankAccountDto>>(_mapper.Map<List<BankAccountDto>>(backAccount), "List is empty");
 
             var totalRecords = await _unitOfWork.BankAccount.TotalRecord();
 

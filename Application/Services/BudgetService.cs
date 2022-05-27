@@ -54,7 +54,7 @@ namespace Application.Services
             var budgets = await _unitOfWork.Budget.GetAll(specification);
 
             if (!budgets.Any())
-                return new PaginationResponse<List<BudgetDto>>("List is empty");
+                return new PaginationResponse<List<BudgetDto>>(_mapper.Map<List<BudgetDto>>(budgets), "List is empty");
 
             var totalRecords = await _unitOfWork.Budget.TotalRecord();
 

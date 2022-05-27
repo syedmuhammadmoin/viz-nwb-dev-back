@@ -48,7 +48,7 @@ namespace Application.Services
             var dbns = await _unitOfWork.DebitNote.GetAll(specification);
 
             if (dbns.Count() == 0)
-                return new PaginationResponse<List<DebitNoteDto>>("List is empty");
+                return new PaginationResponse<List<DebitNoteDto>>(_mapper.Map<List<DebitNoteDto>>(dbns), "List is empty");
 
             var totalRecords = await _unitOfWork.DebitNote.TotalRecord();
 

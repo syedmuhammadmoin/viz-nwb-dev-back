@@ -49,7 +49,7 @@ namespace Application.Services
             var bills = await _unitOfWork.Bill.GetAll(specification);
 
             if (bills.Count() == 0)
-                return new PaginationResponse<List<BillDto>>("List is empty");
+                return new PaginationResponse<List<BillDto>>(_mapper.Map<List<BillDto>>(bills), "List is empty");
 
             var totalRecords = await _unitOfWork.Bill.TotalRecord();
 

@@ -52,7 +52,7 @@ namespace Application.Services
             var designations = await _unitOfWork.Designation.GetAll(specification);
 
             if (designations.Count() == 0)
-                return new PaginationResponse<List<DesignationDto>>("List is empty");
+                return new PaginationResponse<List<DesignationDto>>(_mapper.Map<List<DesignationDto>>(designations), "List is empty");
 
             var totalRecords = await _unitOfWork.Designation.TotalRecord();
 

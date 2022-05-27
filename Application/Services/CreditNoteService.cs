@@ -47,7 +47,7 @@ namespace Application.Services
             var crns = await _unitOfWork.CreditNote.GetAll(specification);
 
             if (crns.Count() == 0)
-                return new PaginationResponse<List<CreditNoteDto>>("List is empty");
+                return new PaginationResponse<List<CreditNoteDto>>(_mapper.Map<List<CreditNoteDto>>(crns), "List is empty");
 
             var totalRecords = await _unitOfWork.CreditNote.TotalRecord();
 

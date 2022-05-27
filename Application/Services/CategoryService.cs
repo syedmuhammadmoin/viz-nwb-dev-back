@@ -39,7 +39,7 @@ namespace Application.Services
             var category = await _unitOfWork.Category.GetAll(specification);
 
             if (category.Count() == 0)
-                return new PaginationResponse<List<CategoryDto>>("List is empty");
+                return new PaginationResponse<List<CategoryDto>>(_mapper.Map<List<CategoryDto>>(category), "List is empty");
 
             var totalRecords = await _unitOfWork.Category.TotalRecord();
 

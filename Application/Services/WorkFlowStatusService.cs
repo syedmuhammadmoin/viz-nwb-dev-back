@@ -40,7 +40,7 @@ namespace Application.Services
             var status = await _unitOfWork.WorkFlowStatus.GetAll(specification);
 
             if (!status.Any())
-                return new PaginationResponse<List<WorkFlowStatusDto>>("List is empty");
+                return new PaginationResponse<List<WorkFlowStatusDto>>(_mapper.Map<List<WorkFlowStatusDto>>(status), "List is empty");
 
             var totalRecords = await _unitOfWork.WorkFlowStatus.TotalRecord(new WorkFlowStatusSpecs());
 
