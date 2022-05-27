@@ -16,5 +16,6 @@ namespace Application.Contracts.Interfaces
         Task<Response<bool>> ProcessForApproval(CreateApprovalProcessDto data);
         Task<Response<List<PayrollTransactionDto>>> GetEmployeesByDept(DeptFilter data);
         Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data);
+        Response<List<PayrollTransactionDto>> GetPayrollReport(PayrollFilter filter);
     }
 }
