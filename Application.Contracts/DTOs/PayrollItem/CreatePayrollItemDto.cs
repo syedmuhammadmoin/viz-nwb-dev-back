@@ -22,7 +22,7 @@ namespace Application.Contracts.DTOs
         public PayrollType PayrollType { get; set; }
         [Required]
         public CalculationType PayrollItemType { get; set; }
-        [Column(TypeName = "decimal(18,2)")]
+        [Range(0, double.MaxValue, ErrorMessage = "Please enter a positive value")]
         [Required]
         public decimal Value { get; set; }
         [Required]
