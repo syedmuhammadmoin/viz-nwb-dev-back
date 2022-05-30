@@ -27,6 +27,10 @@ namespace Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
+        public decimal OtherTax { get; private set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Tax { get; private set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; private set; }
         [MaxLength(20)]
         public string Contact { get; private set; }
