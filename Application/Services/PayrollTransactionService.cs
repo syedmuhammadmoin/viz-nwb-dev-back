@@ -722,5 +722,45 @@ namespace Application.Services
 
             return new Response<List<PayrollTransactionDto>>(result, "Returning Payroll Transactions");
         }
+
+        public Response<List<PayrollTransactionDto>> GetPayrollReport(PayrollFilter filter)
+        {
+            filter.FromDate = filter.FromDate.Date;
+            filter.ToDate = filter.ToDate.Date;
+            var employees = new List<int?>();
+            var months = new List<int?>();
+            var years = new List<int?>();
+
+            if (filter.EmployeeId != null)
+            {
+                employees.Add(filter.EmployeeId);
+            }
+            if (filter.Month != null)
+            {
+                months.Add(filter.Month);
+            }
+            if (filter.Year != null)
+            {
+                years.Add(filter.Year);
+            }
+
+            var payrollTransactions = _unitOfWork.PayrollTransaction
+                .Find(new PayrollTransactionSpecs(months, years, employees, filter.FromDate, filter.ToDate,
+                filter.Designation, filter.Department, filter.BPS))
+                .ToList();
+
+            if (payrollTransactions.Count() == 0)
+            {
+                return new Response<List<PayrollTransactionDto>>("List is empty");
+            }
+
+            var response = new List<PayrollTransactionDto>();
+
+            foreach (var i in payrollTransactions)
+            {
+                response.Add(MapToValue(i));
+            }
+            return new Response<List<PayrollTransactionDto>>(response.OrderBy(i => i.Employee).ToList(), "Returning List");
+        }
     }
 }

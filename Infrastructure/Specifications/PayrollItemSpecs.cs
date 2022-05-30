@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Filters;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,10 @@ namespace Infrastructure.Specifications
         public PayrollItemSpecs()
         {
             AddInclude(i => i.Account);
+        }
+
+        public PayrollItemSpecs(bool isBasicPay) : base(x => isBasicPay ? x.PayrollType == PayrollType.BasicPay : false)
+        {
         }
     }
 }

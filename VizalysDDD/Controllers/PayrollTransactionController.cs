@@ -160,5 +160,24 @@ namespace Vizalys.Api.Controllers
                     e.Message);
             }
         }
+        [ClaimRequirement("Permission", new string[] { Permissions.PayrollTransactionClaims.Create, Permissions.PayrollTransactionClaims.View, Permissions.PayrollTransactionClaims.Delete, Permissions.PayrollTransactionClaims.Edit })]
+        [HttpGet("Report")]
+        public ActionResult<Response<List<PayrollTransactionDto>>> GetPayrollReport([FromQuery] PayrollFilter filter)
+        {
+            try
+            {
+                var result = _payrollTransactionService.GetPayrollReport(filter);
+                if (result.IsSuccess)
+                    return Ok(result); // Status Code : 200
+
+                return BadRequest(result); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
+
     }
 }

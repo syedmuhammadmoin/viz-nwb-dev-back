@@ -212,5 +212,14 @@ namespace Application.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task<Response<List<PayrollItemDto>>> GetBaicPayList()
+        {
+            var result = await _unitOfWork.PayrollItem.GetAll(new PayrollItemSpecs(true));
+            if (result == null)
+                return new Response<List<PayrollItemDto>>("List is empty");
+
+            return new Response<List<PayrollItemDto>>(_mapper.Map<List<PayrollItemDto>>(result), "Returning List");
+        }
     }
 }

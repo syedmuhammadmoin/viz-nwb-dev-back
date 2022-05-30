@@ -333,6 +333,7 @@ namespace Application.Mapper
               .ForMember(dto => dto.AccountPayable, core => core.MapFrom(a => a.AccountPayable.Name))
               .ForMember(dto => dto.Department, core => core.MapFrom(a => a.Department.Name))
               .ForMember(dto => dto.Designation, core => core.MapFrom(a => a.Designation.Name))
+              .ForMember(dto => dto.BPSName, core => core.MapFrom(a => a.BPSName))
               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
               .ForMember(dto => dto.NetSalary, core => core.MapFrom(a => a.NetSalary))
