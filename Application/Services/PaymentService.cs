@@ -234,6 +234,23 @@ namespace Application.Services
                     await _unitOfWork.Ledger.Add(addDiscountInRecordLedger);
                 }
 
+                if (payment.SRBTax > 0)
+                {
+                    var addSRBInRecordLedger = new RecordLedger(
+                        transaction.Id,
+                    payment.AccountId,
+                    payment.BusinessPartnerId,
+                    null,
+                    payment.Description,
+                    'D',
+                    payment.SRBTax,
+                    payment.CampusId,
+                    payment.PaymentDate
+                        );
+
+                    await _unitOfWork.Ledger.Add(addSRBInRecordLedger);
+                }
+
                 if (payment.SalesTax > 0)
                 {
                     var addSalesTaxInRecordLedger = new RecordLedger(
@@ -255,7 +272,7 @@ namespace Application.Services
                 {
                     var addIncomeTaxInRecordLedger = new RecordLedger(
 
-                        transaction.Id,
+                    transaction.Id,
                     payment.AccountId,
                     payment.BusinessPartnerId,
                     null,
@@ -273,7 +290,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'D',
-                    (payment.GrossPayment - payment.Discount - payment.SalesTax - payment.IncomeTax),
+                    (payment.GrossPayment - payment.Discount - payment.SalesTax - payment.IncomeTax - payment.SRBTax),
                     payment.CampusId,
                     payment.PaymentDate);
 
@@ -313,6 +330,23 @@ namespace Application.Services
                     await _unitOfWork.Ledger.Add(addDiscountInRecordLedger);
                 }
 
+                if (payment.SRBTax > 0)
+                {
+                    var addSRBInRecordLedger = new RecordLedger(
+                     transaction.Id,
+                    payment.AccountId,
+                    payment.BusinessPartnerId,
+                    null,
+                    payment.Description,
+                    'C',
+                    payment.SRBTax,
+                    payment.CampusId,
+                    payment.PaymentDate
+                        );
+
+                    await _unitOfWork.Ledger.Add(addSRBInRecordLedger);
+                }
+
                 if (payment.SalesTax > 0)
                 {
                     var addSalesTaxInRecordLedger = new RecordLedger(
@@ -352,7 +386,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'C',
-                    (payment.GrossPayment - payment.Discount - payment.SalesTax - payment.IncomeTax),
+                    (payment.GrossPayment - payment.Discount - payment.SalesTax - payment.IncomeTax - payment.SRBTax),
                     payment.CampusId,
                     payment.PaymentDate);
 

@@ -227,7 +227,7 @@ namespace Application.Services
                     line.WarehouseId,
                     line.Description,
                     'D',
-                    amount + tax,
+                    amount + tax + line.AnyOtherTax,
                     bill.CampusId,
                     bill.BillDate
                     );

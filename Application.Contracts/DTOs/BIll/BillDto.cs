@@ -23,7 +23,9 @@ namespace Application.Contracts.DTOs
         public int StatusId { get; set; }
         public string Status { get; set; }
         public DocumentStatus State { get; set; }
-        public decimal TotalBeforeTax { get; private set; }
+        public decimal TotalBeforeTax { get; set; }
+        public decimal OtherTax { get; set; }
+        public decimal Tax { get; set; }
         public decimal TotalTax { get; set; }
         public decimal TotalAmount { get; set; }
         public int TransactionId { get; set; }
