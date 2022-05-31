@@ -47,22 +47,22 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public async Task<PaginationResponse<List<PaymentDto>>> GetAllAsync(PaginationFilter filter, PaymentType paymentType)
+        public async Task<PaginationResponse<List<PaymentDto>>> GetAllAsync(PaginationFilter filter, PaymentType paymentType, DocType docType)
         {
-            var specification = new PaymentSpecs(filter, paymentType);
+            var specification = new PaymentSpecs(filter, paymentType, docType);
             var payment = await _unitOfWork.Payment.GetAll(specification);
 
             if (payment.Count() == 0)
                 return new PaginationResponse<List<PaymentDto>>(_mapper.Map<List<PaymentDto>>(payment), "List is empty");
 
-            var totalRecords = await _unitOfWork.Payment.TotalRecord(new PaymentSpecs(paymentType));
+            var totalRecords = await _unitOfWork.Payment.TotalRecord(new PaymentSpecs(paymentType, docType));
 
             return new PaginationResponse<List<PaymentDto>>(_mapper.Map<List<PaymentDto>>(payment), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
 
-        public async Task<Response<PaymentDto>> GetByIdAsync(int id, PaymentType paymentType)
+        public async Task<Response<PaymentDto>> GetByIdAsync(int id, PaymentType paymentType, DocType docType)
         {
-            var specification = new PaymentSpecs(false, paymentType);
+            var specification = new PaymentSpecs(false, paymentType, docType);
             var payment = await _unitOfWork.Payment.GetById(id, specification);
             if (payment == null)
                 return new Response<PaymentDto>("Not found");
@@ -159,7 +159,7 @@ namespace Application.Services
 
         private async Task<Response<PaymentDto>> UpdatePay(CreatePaymentDto entity, int status)
         {
-            var specification = new PaymentSpecs(true, entity.PaymentType);
+            var specification = new PaymentSpecs(true, entity.PaymentType, entity.PaymentFormType);
             var payment = await _unitOfWork.Payment.GetById((int)entity.Id, specification);
 
             if (payment == null)
@@ -499,5 +499,57 @@ namespace Application.Services
             return new Response<List<UnReconStmtDto>>(unreconciledBankPaymentsStatus, "Returning bank unreconciled payments");
 
         }
+
+        public async Task<Response<bool>> CreatePayrollPaymentProcess(CreatePayrollPaymentDto data)
+        {
+            foreach (var line in data.CreatePayrollTransLines)
+            {
+                var bp = await _unitOfWork.BusinessPartner.GetById(line.BusinessPartnerId);
+                if (bp != null)
+                {
+                    if (bp.BusinessPartnerType != BusinessPartnerType.Employee)
+                        return new Response<bool>("Business Partner is not employee");
+                }
+                var payment = new CreatePaymentDto()
+                {
+                    PaymentType = PaymentType.Outflow,
+                    PaymentFormType = DocType.PayrollPayment,
+                    BusinessPartnerId = line.BusinessPartnerId,
+                    AccountId = line.AccountPayableId,
+                    CampusId = data.CampusId,
+                    GrossPayment = line.NetSalary,
+                    PaymentDate = data.PaymentDate,
+                    PaymentRegisterType = data.PaymentRegisterType,
+                    PaymentRegisterId = data.PaymentRegisterId,
+                    Description = data.Description,
+                    Discount = 0,
+                    SalesTax = 0,
+                    IncomeTax = 0,
+                    DocumentTransactionId = line.TransactionId,
+                    isSubmit = false
+                };
+
+                if (payment.isSubmit)
+                {
+                    var result = await this.SubmitPay(payment);
+                    if (!result.IsSuccess)
+                    {
+                        return new Response<bool>(true, ""); ;
+                    }
+                }
+                else
+                {
+                    var result = await this.SavePay(payment, 1);
+                    if (!result.IsSuccess)
+                    {
+                        return new Response<bool>(true, ""); ;
+                    }
+                }
+
+            }
+
+            return new Response<bool>(true, "Payroll Payment created successfully");
+        }
+
     }
 }
