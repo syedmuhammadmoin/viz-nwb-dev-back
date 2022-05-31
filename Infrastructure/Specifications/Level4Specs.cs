@@ -28,13 +28,19 @@ namespace Infrastructure.Specifications
         {
         }
 
-        public Level4Specs(int id, bool isReceivable)  
+        public Level4Specs(int id, bool isReceivable)
             : base(
                   isReceivable ?
-                  (x => x.Level1_id == new Guid("30000000-5566-7788-99AA-BBCCDDEEFF00"))
-                  : (x => x.Level1_id == new Guid("20000000-5566-7788-99AA-BBCCDDEEFF00")))
+                  (x => x.Level3_id == new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00"))
+                  : (x => x.Level3_id == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00")))
+        {
+        }
+
+        public Level4Specs(string getAll)
+            : base(x => x.Level3_id != new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00")
+            && x.Level3_id != new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00"))
         {
 
         }
-    }
+    } 
 }
