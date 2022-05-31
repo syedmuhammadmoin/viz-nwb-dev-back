@@ -26,7 +26,7 @@ namespace Vizalys.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<PaymentDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
-            var payments = await _paymentService.GetAllAsync(filter, PaymentType.Outflow );
+            var payments = await _paymentService.GetAllAsync(filter, PaymentType.Outflow, DocType.Payment );
             if (payments.IsSuccess)
                 return Ok(payments); // Status Code : 200
 
@@ -37,7 +37,7 @@ namespace Vizalys.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Response<PaymentDto>>> CreateAsync(CreatePaymentDto entity)
         {
-            if (entity.PaymentType != PaymentType.Outflow)
+            if (entity.PaymentType != PaymentType.Outflow && entity.PaymentFormType != DocType.Payment)
             {
                 return new Response<PaymentDto>("Invalid API");
             }
@@ -53,7 +53,7 @@ namespace Vizalys.Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<PaymentDto>>> GetByIdAsync(int id)
         {
-            var result = await _paymentService.GetByIdAsync(id, PaymentType.Outflow);
+            var result = await _paymentService.GetByIdAsync(id, PaymentType.Outflow, DocType.Payment);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 
@@ -67,7 +67,7 @@ namespace Vizalys.Api.Controllers
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
 
-            if (entity.PaymentType != PaymentType.Outflow)
+            if (entity.PaymentType != PaymentType.Outflow && entity.PaymentFormType != DocType.Payment)
             {
                 return new Response<PaymentDto>("Invalid API");
             }
@@ -99,5 +99,27 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
+
+        [HttpPost("createProcess")]
+        public async Task<ActionResult<bool>> CreatePayrollPaymentProcess([FromBody] CreatePayrollPaymentDto data)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = await _paymentService.CreatePayrollPaymentProcess(data);
+                    if (result.IsSuccess)
+                        return Ok(result); // Status Code : 200
+                    return BadRequest(result);
+                }
+                return BadRequest("Some properties are not valid"); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
+
     }
 }

@@ -27,7 +27,7 @@ namespace Vizalys.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<PaymentDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
-            var payments = await _paymentService.GetAllAsync(filter, PaymentType.Inflow);
+            var payments = await _paymentService.GetAllAsync(filter, PaymentType.Inflow, DocType.Payment);
             if (payments.IsSuccess)
                 return Ok(payments); // Status Code : 200
 
@@ -38,7 +38,7 @@ namespace Vizalys.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Response<PaymentDto>>> CreateAsync(CreatePaymentDto entity)
         {
-            if (entity.PaymentType != PaymentType.Inflow)
+            if (entity.PaymentType != PaymentType.Inflow && entity.PaymentFormType != DocType.Payment)
             {
                return new Response<PaymentDto>("Invalid API");
             }
@@ -54,7 +54,7 @@ namespace Vizalys.Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<PaymentDto>>> GetByIdAsync(int id)
         {
-            var result = await _paymentService.GetByIdAsync(id, PaymentType.Inflow);
+            var result = await _paymentService.GetByIdAsync(id, PaymentType.Inflow, DocType.Payment);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 
