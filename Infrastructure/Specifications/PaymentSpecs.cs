@@ -11,7 +11,7 @@ namespace Infrastructure.Specifications
 {
     public class PaymentSpecs : BaseSpecification<Payment>
     {
-        public PaymentSpecs(PaginationFilter filter, PaymentType paymentType ) : base(e => (e.PaymentType == paymentType))
+        public PaymentSpecs(PaginationFilter filter, PaymentType paymentType, DocType docType ) : base(e => (e.PaymentType == paymentType) && (e.paymentFormType == docType))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
@@ -27,7 +27,7 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Status);
         }
 
-        public PaymentSpecs(bool forEdit, PaymentType paymentType) : base(e => (e.PaymentType == paymentType))
+        public PaymentSpecs(bool forEdit, PaymentType paymentType, DocType docType) : base(e => (e.PaymentType == paymentType && (e.paymentFormType == docType)))
         {
             if (!forEdit)
             {
@@ -51,7 +51,7 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.Status);
         }
-        public PaymentSpecs(PaymentType paymentType) : base(e => (e.PaymentType == paymentType))
+        public PaymentSpecs(PaymentType paymentType, DocType docType) : base(e => (e.PaymentType == paymentType) && (e.paymentFormType == docType))
         {
         }
         public PaymentSpecs(Guid paymentRegisterId) : base(
@@ -61,6 +61,7 @@ namespace Infrastructure.Specifications
             ))
         {
         }
+
 
     }
 }
