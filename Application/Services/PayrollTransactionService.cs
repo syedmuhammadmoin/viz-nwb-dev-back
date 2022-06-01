@@ -511,7 +511,7 @@ namespace Application.Services
             }
         }
 
-        private PayrollTransactionDto MapToValue(PayrollTransactionMaster data)
+        public PayrollTransactionDto MapToValue(PayrollTransactionMaster data)
         {
             //For Payroll transaction Lines
 
