@@ -245,9 +245,6 @@ namespace Application.Mapper
             CreateMap<CreateWorkFlowStatusDto, WorkFlowStatus>()
             .ForMember(core => core.Type, dto => dto.MapFrom(a => StatusType.Custom));
 
-            // TransactionRecon Mapping
-            CreateMap<CreateTransactionReconcileDto, TransactionReconcile>();
-
             // Budget Mapping
             CreateMap<BudgetMaster, BudgetDto>();
             CreateMap<BudgetLines, BudgetLinesDto>()
