@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Domain.Constants;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,24 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.BusinessPartner);
             AddInclude(i => i.Warehouse);
             AddInclude("Level4.Level1");
+        }
+
+        public LedgerSpecs(int transactionId) : base(i => i.TransactionId == transactionId
+        && (i.ReconStatus == DocumentStatus.Unreconciled || i.ReconStatus == DocumentStatus.Partial)
+        && i.IsReconcilable == true)
+        {
+            AddInclude(i => i.Transactions);
+        }
+
+        public LedgerSpecs(int transactionId, Guid level4Id, int? businessPartnerId, char sign) 
+        : base(i => i.TransactionId == transactionId
+        && i.Level4_id == level4Id
+        && i.BusinessPartnerId == businessPartnerId
+        && i.Sign != sign
+        && (i.ReconStatus == DocumentStatus.Unreconciled || i.ReconStatus == DocumentStatus.Partial)
+        && i.IsReconcilable == true)
+        {
+            AddInclude(i => i.Transactions);
         }
     }
 }
