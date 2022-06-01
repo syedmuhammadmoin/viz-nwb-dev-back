@@ -27,7 +27,7 @@ namespace Vizalys.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<PaymentDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
-            var payments = await _paymentService.GetAllAsync(filter, PaymentType.Inflow, DocType.Payment);
+            var payments = await _paymentService.GetAllAsync(filter, DocType.Receipt);
             if (payments.IsSuccess)
                 return Ok(payments); // Status Code : 200
 
@@ -38,11 +38,8 @@ namespace Vizalys.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Response<PaymentDto>>> CreateAsync(CreatePaymentDto entity)
         {
-            if (entity.PaymentType != PaymentType.Inflow && entity.PaymentFormType != DocType.Payment)
-            {
-               return new Response<PaymentDto>("Invalid API");
-            }
-
+            entity.PaymentType = PaymentType.Inflow;
+            entity.PaymentFormType = DocType.Receipt;
             var payment = await _paymentService.CreateAsync(entity);
             if (payment.IsSuccess)
                 return Ok(payment); // Status Code : 200
@@ -54,7 +51,7 @@ namespace Vizalys.Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<PaymentDto>>> GetByIdAsync(int id)
         {
-            var result = await _paymentService.GetByIdAsync(id, PaymentType.Inflow, DocType.Payment);
+            var result = await _paymentService.GetByIdAsync(id, DocType.Receipt);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 
@@ -68,10 +65,8 @@ namespace Vizalys.Api.Controllers
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
 
-            if (entity.PaymentType != PaymentType.Inflow)
-            {
-                return new Response<PaymentDto>("Invalid API");
-            }
+            entity.PaymentType = PaymentType.Inflow;
+            entity.PaymentFormType = DocType.Receipt;
 
             var result = await _paymentService.UpdateAsync(entity);
             if (result.IsSuccess)

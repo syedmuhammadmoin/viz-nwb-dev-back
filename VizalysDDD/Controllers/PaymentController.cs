@@ -26,7 +26,7 @@ namespace Vizalys.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<PaymentDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
-            var payments = await _paymentService.GetAllAsync(filter, PaymentType.Outflow, DocType.Payment );
+            var payments = await _paymentService.GetAllAsync(filter, DocType.Payment );
             if (payments.IsSuccess)
                 return Ok(payments); // Status Code : 200
 
@@ -37,11 +37,9 @@ namespace Vizalys.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Response<PaymentDto>>> CreateAsync(CreatePaymentDto entity)
         {
-            if (entity.PaymentType != PaymentType.Outflow && entity.PaymentFormType != DocType.Payment)
-            {
-                return new Response<PaymentDto>("Invalid API");
-            }
 
+            entity.PaymentType = PaymentType.Outflow;
+            entity.PaymentFormType = DocType.Payment;
             var payment = await _paymentService.CreateAsync(entity);
             if (payment.IsSuccess)
                 return Ok(payment); // Status Code : 200
@@ -53,7 +51,7 @@ namespace Vizalys.Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<PaymentDto>>> GetByIdAsync(int id)
         {
-            var result = await _paymentService.GetByIdAsync(id, PaymentType.Outflow, DocType.Payment);
+            var result = await _paymentService.GetByIdAsync(id, DocType.Payment);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 
@@ -67,10 +65,9 @@ namespace Vizalys.Api.Controllers
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
 
-            if (entity.PaymentType != PaymentType.Outflow && entity.PaymentFormType != DocType.Payment)
-            {
-                return new Response<PaymentDto>("Invalid API");
-            }
+
+            entity.PaymentType = PaymentType.Outflow;
+            entity.PaymentFormType = DocType.Payment;
             var result = await _paymentService.UpdateAsync(entity);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
@@ -121,5 +118,25 @@ namespace Vizalys.Api.Controllers
             }
         }
 
+        [HttpPost("GetPayrollPayment")]
+        public ActionResult<Response<List<PaymentDto>>> GetPaymentByDept(DeptFilter data)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = _paymentService.GetPaymentByDept(data);
+                    if (result.IsSuccess)
+                        return Ok(result); // Status Code : 200
+                    return BadRequest(result);
+                }
+                return BadRequest("Some properties are not valid"); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
     }
 }
