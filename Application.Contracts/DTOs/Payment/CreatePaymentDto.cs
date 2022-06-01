@@ -11,11 +11,9 @@ namespace Application.Contracts.DTOs
     public class CreatePaymentDto
     {
         public int? Id { get; set; }
-        [Required]
         public PaymentType PaymentType { get; set; }
         [Required]
         public int BusinessPartnerId { get; set; }
-        [Required]
         public DocType PaymentFormType { get; set; }
         [Required]
         public Guid AccountId { get; set; }
