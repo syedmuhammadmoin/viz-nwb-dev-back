@@ -501,7 +501,7 @@ namespace Application.Services
 
         }
 
-        public async Task<Response<bool>> CreatePayrollPaymentProcess(CreatePayrollPaymentDto data)
+        public async Task<Response<PaymentDto>> CreatePayrollPaymentProcess(CreatePayrollPaymentDto data)
         {
             foreach (var line in data.CreatePayrollTransLines)
             {
@@ -509,7 +509,7 @@ namespace Application.Services
                 if (bp != null)
                 {
                     if (bp.BusinessPartnerType != BusinessPartnerType.Employee)
-                        return new Response<bool>("Business Partner is not employee");
+                        return new Response<PaymentDto>("Business Partner is not employee");
                 }
                 var payment = new CreatePaymentDto()
                 {
@@ -535,7 +535,7 @@ namespace Application.Services
                     var result = await this.SubmitPay(payment);
                     if (!result.IsSuccess)
                     {
-                        return new Response<bool>(true, ""); ;
+                        return new Response<PaymentDto>(""); ;
                     }
                 }
                 else
@@ -543,12 +543,12 @@ namespace Application.Services
                     var result = await this.SavePay(payment, 1);
                     if (!result.IsSuccess)
                     {
-                        return new Response<bool>(true, ""); ;
+                        return new Response<PaymentDto>(""); ;
                     }
                 }
             }
 
-            return new Response<bool>(true, "Payroll Payment created successfully");
+            return new Response<PaymentDto>(null, "Payroll Payment created successfully");
         }
 
         public Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data)
