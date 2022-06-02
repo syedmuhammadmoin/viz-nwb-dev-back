@@ -45,11 +45,6 @@ namespace Application.Services
             }
         }
 
-        public Task<Response<int>> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<PaginationResponse<List<PaymentDto>>> GetAllAsync(PaginationFilter filter, DocType docType)
         {
             var specification = new PaymentSpecs(filter, docType);
@@ -479,9 +474,12 @@ namespace Application.Services
 
             var getBankReconStatus = _unitOfWork.Payment.Find(new PaymentSpecs(id)).ToList();
 
+            if (getBankReconStatus.Count == 0)
+                 return new Response<List<UnReconStmtDto>>(unreconciledBankPaymentsStatus, "Unreconciled bank statements not found");
+
             foreach (var e in getBankReconStatus)
             {
-                var netPayment = e.GrossPayment - e.Discount - e.IncomeTax - e.SalesTax;
+                var netPayment = e.GrossPayment - e.Discount - e.IncomeTax - e.SalesTax - e.SRBTax;
                 var reconciledPayment = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(e.Id, true)).Sum(a => a.Amount);
 
 
@@ -672,5 +670,11 @@ namespace Application.Services
             return new Response<bool>(true, "Payroll payment approval process completed successfully");
 
         }
+
+        public Task<Response<int>> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }
