@@ -25,7 +25,7 @@ namespace Vizalys.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<PaymentDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
-            var payments = await _paymentService.GetAllAsync(filter, PaymentType.Outflow, DocType.PayrollPayment);
+            var payments = await _paymentService.GetAllAsync(filter, DocType.PayrollPayment);
             if (payments.IsSuccess)
                 return Ok(payments); // Status Code : 200
 
@@ -36,7 +36,7 @@ namespace Vizalys.Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<PaginationResponse<List<PaymentDto>>>> GetByIdAsync (int id)
         {
-            var payments = await _paymentService.GetByIdAsync(id, PaymentType.Outflow, DocType.PayrollPayment);
+            var payments = await _paymentService.GetByIdAsync(id, DocType.PayrollPayment);
             if (payments.IsSuccess)
                 return Ok(payments); // Status Code : 200
 

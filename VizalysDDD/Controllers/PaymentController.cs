@@ -138,5 +138,89 @@ namespace Vizalys.Api.Controllers
                     e.Message);
             }
         }
+
+        [HttpPost("GetPayrollTrans")]
+        public ActionResult<Response<List<PayrollTransactionDto>>> GetPayrollTransactionByDept(DeptFilter data)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = _paymentService.GetPayrollTransactionByDept(data);
+                    if (result.IsSuccess)
+                        return Ok(result); // Status Code : 200
+                    return BadRequest(result);
+                }
+                return BadRequest("Some properties are not valid"); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
+
+        [HttpPost("submitProcess")]
+        public async Task<ActionResult<Response<bool>>> ProcessForEditPayrollPayment([FromBody] int[] id)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = await _paymentService.ProcessForEditPayrollPayment(id);
+                    if (result.IsSuccess)
+                        return Ok(result); // Status Code : 200
+                    return BadRequest(result);
+                }
+                return BadRequest("Some properties are not valid"); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
+
+        [HttpPost("GetforPayrollPaymentApproval")]
+        public ActionResult<Response<bool>> GetPaymentForApproval(DeptFilter data)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = _paymentService.GetPaymentForApproval(data);
+                    if (result.IsSuccess)
+                        return Ok(result); // Status Code : 200
+                    return BadRequest(result);
+                }
+                return BadRequest("Some properties are not valid"); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
+
+        [HttpPost("approvalProcess")]
+        public async Task<ActionResult<Response<bool>>> ProcessForApproval([FromBody] CreateApprovalProcessDto data)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = await _paymentService.ProcessForApproval(data);
+                    if (result.IsSuccess)
+                        return Ok(result); // Status Code : 200
+                    return BadRequest(result);
+                }
+                return BadRequest("Some properties are not valid"); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
     }
 }
