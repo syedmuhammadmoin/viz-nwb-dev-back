@@ -601,6 +601,13 @@ namespace Application.Services
             _unitOfWork.CreateTransaction();
             try
             {
+                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollPayment)).FirstOrDefault();
+
+                if (checkingActiveWorkFlows == null)
+                {
+                    return new Response<bool>("No workflow found for Payroll payment");
+                }
+
                 for (int i = 0; i < id.Length; i++)
                 {
                     var getPayment = await _unitOfWork.Payment.GetById(id[i], new PayrollPaymentSpecs());
