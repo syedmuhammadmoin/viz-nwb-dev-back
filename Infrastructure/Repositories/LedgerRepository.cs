@@ -44,6 +44,24 @@ namespace Infrastructure.Repositories
 
         public async Task AddRange(List<RecordLedger> list)
         {
+            foreach (var item in list)
+            {
+                //Getting level 3 account id
+                var getLevel3 = await _context.Level4
+                    .Where(i => i.Id == item.Level4_id)
+                    .Select(i => i.Level3_id)
+                    .FirstOrDefaultAsync();
+
+                // Setting isReconcilable true if account id is equal to payable or receivable
+                if (getLevel3 == new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00") || getLevel3 == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00"))
+                {
+                    item.setIsReconcilable(true);
+                }
+                else
+                {
+                    item.setIsReconcilable(false);
+                }
+            }
             await _context.RecordLedger.AddRangeAsync(list);
         }
 
