@@ -18,7 +18,8 @@ namespace Domain.Interfaces
         Expression<Func<T, object>> OrderBy { get; }
         // Order By Descending
         Expression<Func<T, object>> OrderByDescending { get; }
-
+        //For Adding AsNoTracking
+        bool AsNoTracking { get; }
         //For Pagination
         int Take { get; }
         int Skip { get; }

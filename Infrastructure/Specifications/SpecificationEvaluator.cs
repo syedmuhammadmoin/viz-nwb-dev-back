@@ -41,6 +41,12 @@ namespace Infrastructure.Specifications
                     query = query.OrderByDescending(specification.OrderByDescending);
                 }
 
+                // Apply AsNoTracking
+                if (specification.AsNoTracking)
+                {
+                    query = query.AsNoTracking();
+                }
+                
                 // Apply paging if enabled
                 if (specification.IsPagingEnabled)
                 {
