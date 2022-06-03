@@ -750,7 +750,7 @@ namespace Application.Services
 
             if (payrollTransactions.Count() == 0)
             {
-                return new Response<List<PayrollTransactionDto>>("List is empty");
+                return new Response<List<PayrollTransactionDto>>(null,"List is empty");
             }
 
             var response = new List<PayrollTransactionDto>();
