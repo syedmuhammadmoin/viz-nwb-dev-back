@@ -47,11 +47,8 @@ namespace Vizalys.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Response<PaymentDto>>> CreateAsync(CreatePaymentDto entity)
         {
-            if (entity.PaymentType != PaymentType.Outflow && entity.PaymentFormType != DocType.PayrollPayment)
-            {
-                return new Response<PaymentDto>("Invalid API");
-            }
-
+            entity.PaymentType = PaymentType.Outflow;
+            entity.PaymentFormType = DocType.PayrollPayment;
             var payment = await _paymentService.CreateAsync(entity);
             if (payment.IsSuccess)
                 return Ok(payment); // Status Code : 200
@@ -66,10 +63,8 @@ namespace Vizalys.Api.Controllers
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
 
-            if (entity.PaymentType != PaymentType.Outflow && entity.PaymentFormType != DocType.PayrollPayment)
-            {
-                return new Response<PaymentDto>("Invalid API");
-            }
+            entity.PaymentType = PaymentType.Outflow;
+            entity.PaymentFormType = DocType.PayrollPayment;
             var result = await _paymentService.UpdateAsync(entity);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
