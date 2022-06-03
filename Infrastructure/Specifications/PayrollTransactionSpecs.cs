@@ -67,7 +67,7 @@ namespace Infrastructure.Specifications
         public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, string getPayrollPayment) 
             : base(x => x.Month == month && x.Year == year
                 && (departmentIds.Count() > 0 ? departmentIds.Contains(x.DepartmentId) : true)
-                && (x.Status.State == DocumentStatus.Draft || x.Status.State == DocumentStatus.Rejected)
+                && (x.Status.State == DocumentStatus.Unpaid)
                 && (x.TransactionId != null || x.TransactionId != 0)
             )
         {
