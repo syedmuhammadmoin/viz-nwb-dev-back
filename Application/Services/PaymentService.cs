@@ -105,9 +105,8 @@ namespace Application.Services
 
         private async Task<Response<PaymentDto>> SubmitPay(CreatePaymentDto entity)
         {
-
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(
-                new WorkFlowSpecs(entity.PaymentType == PaymentType.Inflow ? DocType.Receipt : DocType.Payment)).FirstOrDefault();
+                new WorkFlowSpecs(entity.PaymentFormType)).FirstOrDefault();
 
             if (checkingActiveWorkFlows == null)
             {
