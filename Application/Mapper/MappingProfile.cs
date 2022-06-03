@@ -338,8 +338,7 @@ namespace Application.Mapper
               .ForMember(dto => dto.BPSName, core => core.MapFrom(a => a.BPSName))
               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
-              .ForMember(dto => dto.NetSalary, core => core.MapFrom(a => a.NetSalary))
-                .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+              .ForMember(dto => dto.NetSalary, core => core.MapFrom(a => a.NetSalary));
 
             CreateMap<PayrollTransactionLines, PayrollTransactionLinesDto>()
               .ForMember(dto => dto.PayrollItem, core => core.MapFrom(a => a.PayrollItem.Name))
