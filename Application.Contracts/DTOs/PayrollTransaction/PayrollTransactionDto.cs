@@ -9,6 +9,7 @@ namespace Application.Contracts.DTOs
 {
     public class PayrollTransactionDto
     {
+        public int BusinessPartnerId { get; set; }
         public int Id { get; set; }
         public string DocNo { get; set; }
         public int Month { get; set; }

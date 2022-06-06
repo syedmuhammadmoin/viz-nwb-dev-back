@@ -14,32 +14,41 @@ namespace Vizalys.Api.Controllers
     [ApiController]
     [Authorize]
 
-    public class ReceiptController : ControllerBase
+    public class PayrollPaymentController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
-
-        public ReceiptController(IPaymentService paymentService)
+        public PayrollPaymentController(IPaymentService paymentService)
         {
             _paymentService = paymentService;
         }
-
-        [ClaimRequirement("Permission", new string[] { Permissions.ReceiptClaims.Create, Permissions.ReceiptClaims.View, Permissions.ReceiptClaims.Delete, Permissions.ReceiptClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.PayrollPaymentClaims.Create, Permissions.PayrollPaymentClaims.View, Permissions.PayrollPaymentClaims.Delete, Permissions.PayrollPaymentClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<PaymentDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
         {
-            var payments = await _paymentService.GetAllAsync(filter, DocType.Receipt);
+            var payments = await _paymentService.GetAllAsync(filter, DocType.PayrollPayment);
             if (payments.IsSuccess)
                 return Ok(payments); // Status Code : 200
 
             return BadRequest(payments); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.ReceiptClaims.Create })]
+        [ClaimRequirement("Permission", new string[] { Permissions.PayrollPaymentClaims.Create, Permissions.PayrollPaymentClaims.View, Permissions.PayrollPaymentClaims.Delete, Permissions.PayrollPaymentClaims.Edit })]
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<PaginationResponse<List<PaymentDto>>>> GetByIdAsync (int id)
+        {
+            var payments = await _paymentService.GetByIdAsync(id, DocType.PayrollPayment);
+            if (payments.IsSuccess)
+                return Ok(payments); // Status Code : 200
+
+            return BadRequest(payments); // Status code : 400
+        }
+
+        [ClaimRequirement("Permission", new string[] { Permissions.PayrollPaymentClaims.Create })]
         [HttpPost]
         public async Task<ActionResult<Response<PaymentDto>>> CreateAsync(CreatePaymentDto entity)
         {
-            entity.PaymentType = PaymentType.Inflow;
-            entity.PaymentFormType = DocType.Receipt;
+            entity.PaymentType = PaymentType.Outflow;
+            entity.PaymentFormType = DocType.PayrollPayment;
             var payment = await _paymentService.CreateAsync(entity);
             if (payment.IsSuccess)
                 return Ok(payment); // Status Code : 200
@@ -47,27 +56,15 @@ namespace Vizalys.Api.Controllers
             return BadRequest(payment); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.ReceiptClaims.View, Permissions.ReceiptClaims.Delete, Permissions.ReceiptClaims.Edit })]
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<Response<PaymentDto>>> GetByIdAsync(int id)
-        {
-            var result = await _paymentService.GetByIdAsync(id, DocType.Receipt);
-            if (result.IsSuccess)
-                return Ok(result); // Status Code : 200
-
-            return BadRequest(result); // Status code : 400
-        }
-
-        [ClaimRequirement("Permission", new string[] { Permissions.ReceiptClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.PayrollPaymentClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<PaymentDto>>> UpdateAsync(int id, CreatePaymentDto entity)
         {
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
 
-            entity.PaymentType = PaymentType.Inflow;
-            entity.PaymentFormType = DocType.Receipt;
-
+            entity.PaymentType = PaymentType.Outflow;
+            entity.PaymentFormType = DocType.PayrollPayment;
             var result = await _paymentService.UpdateAsync(entity);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
@@ -75,7 +72,8 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.ReceiptClaims.View })]
+
+        [ClaimRequirement("Permission", new string[] { Permissions.PayrollPaymentClaims.View })]
         [HttpPost("workflow")]
         public async Task<ActionResult<Response<bool>>> CheckWorkFlow([FromBody] ApprovalDto data)
         {
@@ -84,6 +82,5 @@ namespace Vizalys.Api.Controllers
                 return Ok(result); // Status Code : 200
             return BadRequest(result);
         }
-
     }
 }

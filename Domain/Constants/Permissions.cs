@@ -285,6 +285,13 @@ namespace Domain.Constants
             public const string Edit = "Permissions.PayrollTransactionClaims.Edit";
             public const string Delete = "Permissions.PayrollTransactionClaims.Delete";
         }
+        public static class PayrollPaymentClaims
+        {
+            public const string View = "Permissions.PayrollPaymentClaims.View";
+            public const string Create = "Permissions.PayrollPaymentClaims.Create";
+            public const string Edit = "Permissions.PayrollPaymentClaims.Edit";
+            public const string Delete = "Permissions.PayrollPaymentClaims.Delete";
+        }
         //Reporting Form
         public static class ChartOfAccountClaims
         {

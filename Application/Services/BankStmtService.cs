@@ -183,11 +183,11 @@ namespace Application.Services
                 .ToList();
 
             if (bankStmts.Count() == 0)
-                 return new Response<List<UnReconStmtDto>>("Unreconciled bank statements not found");
+                 return new Response<List<UnReconStmtDto>>(unreconciledBankStmtStatus, "Unreconciled bank statements not found");
 
             foreach (var e in bankStmts)
             {
-                var reconciledPayment = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(id, false)).Sum(a => a.Amount);
+                var reconciledPayment = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(e.Id, false)).Sum(a => a.Amount);
                     
                 var mapingValueInDTO = new UnReconStmtDto
                 {

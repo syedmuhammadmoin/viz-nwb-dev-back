@@ -64,6 +64,16 @@ namespace Infrastructure.Specifications
 
         }
 
+        public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, string getPayrollPayment) 
+            : base(x => x.Month == month && x.Year == year
+                && (departmentIds.Count() > 0 ? departmentIds.Contains(x.DepartmentId) : true)
+                && (x.Status.State == DocumentStatus.Unpaid)
+                && (x.TransactionId != null || x.TransactionId != 0)
+            )
+        {
+            AddInclude(i => i.Status);
+        }
+
         public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, bool isPayrollTransactoin)
             : base(x => x.Month == month && x.Year == year
                 && (departmentIds.Count() > 0 ? departmentIds.Contains(x.DepartmentId) : true)
