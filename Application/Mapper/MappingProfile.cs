@@ -81,8 +81,7 @@ namespace Application.Mapper
             // JournalEntry Mapping
             CreateMap<JournalEntryMaster, JournalEntryDto>()
                  .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
-              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
-             .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<JournalEntryLines, JournalEntryLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
@@ -121,8 +120,7 @@ namespace Application.Mapper
                .ForMember(dto => dto.ReceivableAccountName, core => core.MapFrom(a => a.ReceivableAccount.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
-              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
-             .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<CreditNoteLines, CreditNoteLinesDto>()
               .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId == null ? null : a.ItemId))
@@ -255,7 +253,7 @@ namespace Application.Mapper
 
             // PurchaseOrder Mapping
             CreateMap<PurchaseOrderMaster, PurchaseOrderDto>()
-              .ForMember(dto => dto.Vendor, core => core.MapFrom(a => a.Vendor.Name))
+              .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
@@ -290,7 +288,7 @@ namespace Application.Mapper
 
             // GRN Mapping
             CreateMap<GRNMaster, GRNDto>()
-              .ForMember(dto => dto.Vendor, core => core.MapFrom(a => a.Vendor.Name))
+              .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
