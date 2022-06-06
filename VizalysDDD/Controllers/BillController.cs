@@ -36,7 +36,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.BillClaims.Create, Permissions.BillClaims.View, Permissions.BillClaims.Delete, Permissions.BillClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<BillDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<BillDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var bills = await _billService.GetAllAsync(filter);
             if (bills.IsSuccess)
