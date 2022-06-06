@@ -35,7 +35,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.CreditNoteClaims.Create, Permissions.CreditNoteClaims.View, Permissions.CreditNoteClaims.Delete, Permissions.CreditNoteClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<CreditNoteDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<CreditNoteDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var results = await _creditNoteService.GetAllAsync(filter);
             if (results.IsSuccess)

@@ -23,7 +23,7 @@ namespace Vizalys.Api.Controllers
         }
         [ClaimRequirement("Permission", new string[] { Permissions.PayrollPaymentClaims.Create, Permissions.PayrollPaymentClaims.View, Permissions.PayrollPaymentClaims.Delete, Permissions.PayrollPaymentClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<PaymentDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<PaymentDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var payments = await _paymentService.GetAllAsync(filter, DocType.PayrollPayment);
             if (payments.IsSuccess)
