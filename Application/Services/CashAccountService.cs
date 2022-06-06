@@ -71,7 +71,7 @@ namespace Application.Services
             }
         }
 
-        public async Task<PaginationResponse<List<CashAccountDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<CashAccountDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new CashAccountSpecs(filter);
             var cashAccount = await _unitOfWork.CashAccount.GetAll(specification);
