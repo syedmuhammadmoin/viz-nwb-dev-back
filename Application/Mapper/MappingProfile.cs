@@ -204,8 +204,7 @@ namespace Application.Mapper
             CreateMap<BankAccount, BankAccountDto>()
                 .ForMember(dto => dto.ChAccountName, core => core.MapFrom(a => a.ChAccount.Name))
                 .ForMember(dto => dto.ClearingAccount, core => core.MapFrom(a => a.ClearingAccount.Name))
-                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
-                .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name));
             CreateMap<CreateBankAccountDto, BankAccount>();
             CreateMap<UpdateBankAccountDto, BankAccount>();
 
