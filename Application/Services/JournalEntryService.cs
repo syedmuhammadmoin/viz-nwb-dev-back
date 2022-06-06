@@ -55,15 +55,30 @@ namespace Application.Services
             }
         }
 
-        public async Task<PaginationResponse<List<JournalEntryDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<JournalEntryDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new JournalEntrySpecs(filter);
+            var docDate = new List<DateTime?>();
+            var dueDate = new List<DateTime?>();
+            var states = new List<DocumentStatus?>();
+            if (filter.DocDate != null)
+            {
+                docDate.Add(filter.DocDate);
+            }
+            if (filter.DueDate != null)
+            {
+                dueDate.Add(filter.DueDate);
+            }
+            if (filter.State != null)
+            {
+                states.Add(filter.State);
+            }
+            var specification = new JournalEntrySpecs(docDate, dueDate, states, filter);
             var jvs = await _unitOfWork.JournalEntry.GetAll(specification);
 
             if (jvs.Count() == 0)
                 return new PaginationResponse<List<JournalEntryDto>>(_mapper.Map<List<JournalEntryDto>>(jvs), "List is empty");
 
-            var totalRecords = await _unitOfWork.JournalEntry.TotalRecord();
+            var totalRecords = await _unitOfWork.JournalEntry.TotalRecord(specification);
 
             return new PaginationResponse<List<JournalEntryDto>>(_mapper.Map<List<JournalEntryDto>>(jvs),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
