@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IBillService : ICrudService<CreateBillDto, BillDto, int, PaginationFilter>
+    public interface IBillService : ICrudService<CreateBillDto, BillDto, int, TransactionFormFilter>
     {
         Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
     }

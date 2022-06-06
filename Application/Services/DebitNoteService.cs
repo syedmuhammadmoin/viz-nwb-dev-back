@@ -42,15 +42,25 @@ namespace Application.Services
             }
         }
 
-        public async Task<PaginationResponse<List<DebitNoteDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<DebitNoteDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new DebitNoteSpecs(filter);
+            var docDate = new List<DateTime?>();
+            var states = new List<DocumentStatus?>();
+            if (filter.DocDate != null)
+            {
+                docDate.Add(filter.DocDate);
+            }
+            if (filter.State != null)
+            {
+                states.Add(filter.State);
+            }
+            var specification = new DebitNoteSpecs(docDate, states, filter);
             var dbns = await _unitOfWork.DebitNote.GetAll(specification);
 
             if (dbns.Count() == 0)
                 return new PaginationResponse<List<DebitNoteDto>>(_mapper.Map<List<DebitNoteDto>>(dbns), "List is empty");
 
-            var totalRecords = await _unitOfWork.DebitNote.TotalRecord();
+            var totalRecords = await _unitOfWork.DebitNote.TotalRecord(specification);
 
             return new PaginationResponse<List<DebitNoteDto>>(_mapper.Map<List<DebitNoteDto>>(dbns),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
