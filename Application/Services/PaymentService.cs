@@ -50,7 +50,6 @@ namespace Application.Services
             var docDate = new List<DateTime?>();
             var dueDate = new List<DateTime?>();
             var states = new List<DocumentStatus?>();
-            var amount = new List<decimal?>();
 
             if (filter.DocDate != null)
             {
@@ -64,11 +63,8 @@ namespace Application.Services
             {
                 states.Add(filter.State);
             }
-            if (filter.Amount != null)
-            {
-                amount.Add(filter.Amount);
-            }
-            var specification = new PaymentSpecs(docDate, dueDate, states, amount, filter, docType);
+            
+            var specification = new PaymentSpecs(docDate, dueDate, states, filter, docType);
             var payment = await _unitOfWork.Payment.GetAll(specification);
 
             if (payment.Count() == 0)
