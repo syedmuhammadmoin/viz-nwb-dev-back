@@ -11,7 +11,14 @@ namespace Infrastructure.Specifications
 {
     public class PaymentSpecs : BaseSpecification<Payment>
     {
-        public PaymentSpecs(PaginationFilter filter, DocType docType) : base(e => (e.PaymentFormType == docType))
+        public PaymentSpecs(List<DateTime?> docDate, List<DateTime?> dueDate,
+            List<DocumentStatus?> states, List<decimal?> amount, TransactionFormFilter filter, DocType docType) : base(e => (e.PaymentFormType == docType)
+        && (docDate.Count() > 0 ? docDate.Contains(e.PaymentDate) : true)
+                && e.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
+                && e.BusinessPartner.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
+                && (amount.Count() > 0 ? amount.Contains(e.GrossPayment - e.Discount - e.IncomeTax - e.SalesTax - e.SRBTax) : true)
+                && (states.Count() > 0 ? states.Contains(e.Status.State) : true)
+        )
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
