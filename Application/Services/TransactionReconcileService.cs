@@ -17,172 +17,11 @@ namespace Application.Services
     public class TransactionReconcileService : ITransactionReconcileService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public TransactionReconcileService(IUnitOfWork unitOfWork, IMapper mapper)
+        public TransactionReconcileService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
-        //public async Task<Response<bool>> Reconcile(CreateTransactionReconcileDto entity)
-        //{
-
-        //    //Declaring Variables
-        //    dynamic paymentTotalAmount;
-        //    dynamic invoiceTotalAmount;
-        //    dynamic creditNoteTotalAmount = 0;
-        //    dynamic debitNoteTotalAmount = 0;
-        //    dynamic billTotalAmount = 0;
-
-
-        //    // FOR PAYMENT
-        //    var paymentAmounts = GetPaymentReconAmounts(entity.PaymentTransactionId);
-        //    paymentTotalAmount = paymentAmounts.TotalAmount;
-
-        //    if (entity.Amount > paymentAmounts.UnreconciledAmount)
-        //    {
-        //        //FOR CREDIT NOTE
-        //        var creditNoteAmounts = GetCreditNoteReconAmounts(entity.PaymentTransactionId);
-        //        creditNoteTotalAmount = creditNoteAmounts.TotalAmount;
-
-        //        if (entity.Amount > creditNoteAmounts.UnreconciledAmount)
-        //        {
-        //            //FOR DEBIT NOTE
-        //            var debitNoteAmounts = GetDebitNoteReconAmounts(entity.PaymentTransactionId);
-        //            debitNoteTotalAmount = debitNoteAmounts.TotalAmount;
-
-        //            if (entity.Amount > debitNoteAmounts.UnreconciledAmount)
-        //            {
-        //                return new Response<bool>("Enter amount is greater than pending payment amount");
-        //            }
-        //        }
-        //    }
-
-        //    //FOR INVOICE
-        //    var invoiceAmounts = GetInvoiceReconAmounts(entity.DocumentTransactionId);
-        //    invoiceTotalAmount = invoiceAmounts.TotalAmount;
-
-        //    if (entity.Amount > invoiceAmounts.UnreconciledAmount)
-        //    {
-        //        //FOR BILL
-        //        var billAmounts = GetBillReconAmounts(entity.DocumentTransactionId);
-        //        billTotalAmount = billAmounts.TotalAmount;
-
-        //        if (entity.Amount > billAmounts.UnreconciledAmount)
-        //        {
-        //            return new Response<bool>("Enter amount is greater than pending document amount");
-        //        }
-        //    }
-
-        //    //Begin Transaction
-        //    _unitOfWork.CreateTransaction();
-        //    try
-        //    {
-        //        //Adding in Reconcilation table
-        //        var recons = _mapper.Map<TransactionReconcile>(entity);
-
-        //        await _unitOfWork.TransactionReconcile.Reconcile(recons);
-        //        await _unitOfWork.SaveAsync();
-
-
-        //        //Get Paymet Total Reconciled Amount
-        //        var reconciledTotalPayment = _unitOfWork.TransactionReconcile
-        //            .Find(new TransactionReconSpecs(entity.PaymentTransactionId, true))
-        //            .Sum(i => i.Amount);
-
-        //        //FOR PAYMENT STATUS
-        //        var payment = _unitOfWork.Payment.Find(new PaymentSpecs(entity.PaymentTransactionId)).FirstOrDefault();
-
-        //        if (payment != null)
-        //        {
-        //            if ((decimal)paymentTotalAmount == reconciledTotalPayment)
-        //            {
-        //                payment.setStatus(5); // Paid
-        //            }
-        //            else
-        //            {
-        //                payment.setStatus(4); // Partial
-        //            }
-        //        }
-
-        //        //FOR CREDITNOTE STATUS
-        //        var creditNote = _unitOfWork.CreditNote.Find(new CreditNoteSpecs(entity.PaymentTransactionId)).FirstOrDefault();
-
-        //        if (creditNote != null)
-        //        {
-        //            if (creditNoteTotalAmount == reconciledTotalPayment)
-        //            {
-        //                creditNote.setStatus(5); // Paid
-        //            }
-        //            else
-        //            {
-        //                creditNote.setStatus(4); // Partial
-        //            }
-        //        }
-
-        //        //FOR DEBITNOTE STATUS
-
-        //        var debitNote = _unitOfWork.DebitNote.Find(new DebitNoteSpecs(entity.PaymentTransactionId)).FirstOrDefault();
-
-        //        if (debitNote != null)
-        //        {
-        //            if (debitNoteTotalAmount == reconciledTotalPayment)
-        //            {
-        //                debitNote.StatusId = 5; // Paid
-        //            }
-        //            else
-        //            {
-        //                debitNote.StatusId = 4; // Partial
-        //            }
-        //        }
-
-        //        //Get Document Total Reconciled Amount
-        //        var reconciledTotalDocAmount = _unitOfWork.TransactionReconcile
-        //            .Find(new TransactionReconSpecs(entity.DocumentTransactionId, false))
-        //            .Sum(i => i.Amount);
-
-
-        //        //FOR INVOICE STATUS
-        //        var invoice = _unitOfWork.Invoice.Find(new InvoiceSpecs(entity.DocumentTransactionId)).FirstOrDefault();
-
-        //        if (invoice != null)
-        //        {
-        //            if (invoiceTotalAmount == reconciledTotalDocAmount)
-        //            {
-        //                invoice.setStatus(5); // Paid
-        //            }
-        //            else
-        //            {
-        //                invoice.setStatus(4); // Partial
-        //            }
-        //        }
-
-        //        //FOR BILL STATUS
-        //        var bill = _unitOfWork.Bill.Find(new BillSpecs(entity.DocumentTransactionId)).FirstOrDefault();
-
-        //        if (bill != null)
-        //        {
-        //            if (billTotalAmount == reconciledTotalDocAmount)
-        //            {
-        //                bill.setStatus(5); // Paid;
-        //            }
-        //            else
-        //            {
-        //                bill.setStatus(4); // Partial
-        //            }
-        //        }
-
-        //        await _unitOfWork.SaveAsync();
-        //        _unitOfWork.Commit();
-
-        //        return new Response<bool>(true, "Reconciled Successfully");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _unitOfWork.Rollback();
-        //        return new Response<bool>(ex.Message);
-        //    }
-        //}
 
         public async Task<Response<bool>> Reconcile(CreateTransactionReconcileDto entity)
         {
@@ -332,86 +171,96 @@ namespace Application.Services
                 }
             }
         }
-        public AmountsForReconciliationDto GetPaymentReconAmounts(int transactionId)
-        {
-            // FOR PAYMENT
-            var paymentTotalAmount = _unitOfWork.Payment.Find(new PaymentSpecs(transactionId)).Select(e => e.GrossPayment).FirstOrDefault();
-            
-            var reconciledAmount = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(transactionId, true)).Sum(p => p.Amount);
 
-            var unreconciledAmount = paymentTotalAmount - reconciledAmount;
-            return new AmountsForReconciliationDto
+        //Will do it later
+        private Response<List<PaymentAmountListDto>> GetPaymentAmountListDto(int paymentTransactionId, int documentTransactionId, decimal amount)
+        {
+            //Checking if both id are same
+            if (documentTransactionId == paymentTransactionId)
+                return new Response<List<PaymentAmountListDto>>("Both transaction id cannot be same");
+
+            //Getting transaction with Payment Transaction Id
+            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(documentTransactionId)).FirstOrDefault();
+            if (getUnreconciledDocumentAmount == null)
+                return new Response<List<PaymentAmountListDto>>("No Transaction found for the given document transaction id");
+
+            // Checking if given amount is greater than unreconciled document amount
+            var reconciledDocumentAmount = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(getUnreconciledDocumentAmount.Id, false)).Sum(p => p.Amount);
+            var unreconciledDocumentAmount = getUnreconciledDocumentAmount.Amount - reconciledDocumentAmount;
+            if (amount > unreconciledDocumentAmount)
+                return new Response<List<PaymentAmountListDto>>("Enter amount is greater than pending document amount");
+
+
+            //Getting transaction with Document Transaction Id
+            var getUnreconciledPaymentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(paymentTransactionId,
+                getUnreconciledDocumentAmount.Level4_id, getUnreconciledDocumentAmount.BusinessPartnerId, getUnreconciledDocumentAmount.Sign)).ToList();
+            if (!getUnreconciledPaymentAmount.Any())
+                return new Response<List<PaymentAmountListDto>>("No Transaction found for the given payment transaction id");
+
+            // declaring list for unconciledPaymentAmounts
+            var unreconciledPaymentAmountList = new List<PaymentAmountListDto>();
+            decimal unreconciledPaymentAmountTotal = 0;
+
+            // looping thourgh unreconciled amount for adding them to list
+            foreach (var item in getUnreconciledPaymentAmount)
             {
-                TotalAmount = paymentTotalAmount,
-                ReconciledAmount = reconciledAmount,
-                UnreconciledAmount = unreconciledAmount
-            };
+                var reconciledPaymentAmount = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(item.Id, true)).Sum(p => p.Amount);
+                unreconciledPaymentAmountTotal += item.Amount - reconciledPaymentAmount;
+
+                unreconciledPaymentAmountList.Add(new PaymentAmountListDto()
+                {
+                    LedgerId = item.Id,
+                    UnreconciledAmount = item.Amount - reconciledPaymentAmount,
+                });
+            }
+            return new Response<List<PaymentAmountListDto>>(unreconciledPaymentAmountList, "Returning List");
         }
 
-        public AmountsForReconciliationDto GetCreditNoteReconAmounts(int transactionId)
+        public Response<List<AmountsForReconciliationDto>> GetPaymentReconAmounts(Guid accountId, int businessPartnerId, char sign)
         {
-            //FOR CREDIT NOTE
-            var creditNoteTotalAmount = _unitOfWork.CreditNote.Find(new CreditNoteSpecs(transactionId)).Select(e => e.TotalAmount).FirstOrDefault();
-            
-            var reconciledCreditNoteAmount = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(transactionId, true)).Sum(p => p.Amount);
+            var amountsForRecociliationList = new List<AmountsForReconciliationDto>();
+            var getUnreconciledPaymentAmountList = _unitOfWork.Ledger.Find(new LedgerSpecs(accountId, businessPartnerId, sign))
+                .GroupBy(i => i.TransactionId)
+                .Select(i => new { TransactionId = i.Key })
+                .Select(i => i.TransactionId)
+                .ToList();
 
-            var unreconciledCreditNoteAmount = creditNoteTotalAmount - reconciledCreditNoteAmount;
-            return new AmountsForReconciliationDto
+            if (getUnreconciledPaymentAmountList.Any())
             {
-                TotalAmount = creditNoteTotalAmount,
-                ReconciledAmount = reconciledCreditNoteAmount,
-                UnreconciledAmount = unreconciledCreditNoteAmount
-            };
+                foreach (var trasactionId in getUnreconciledPaymentAmountList)
+                {
+                    //Getting transaction with Document Transaction Id
+                    var getUnreconciledPaymentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(trasactionId,
+                        accountId, businessPartnerId, sign, true)).ToList();
+                    if (getUnreconciledPaymentAmount.Any())
+                    {
+                        decimal RecociledPaymentAmountTotal = 0;
+                        decimal unreconciledPaymentAmountTotal = 0;
+
+                        // looping thourgh unreconciled amount for adding them to list
+                        foreach (var item in getUnreconciledPaymentAmount)
+                        {
+                            var reconciledPaymentAmount = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(item.Id, true)).Sum(p => p.Amount);
+                            RecociledPaymentAmountTotal += reconciledPaymentAmount;
+                            unreconciledPaymentAmountTotal += item.Amount - reconciledPaymentAmount;
+                        }
+
+                        var docDetails = getUnreconciledPaymentAmount.FirstOrDefault();
+                        string[] docId = docDetails.Transactions.DocNo.Split("-");
+                        amountsForRecociliationList.Add(new AmountsForReconciliationDto
+                        {
+                            DocumentId = Int32.Parse(docId[1]),
+                            PaymentTransactionId = docDetails.TransactionId,
+                            DocNo = docDetails.Transactions.DocNo,
+                            DocType = docDetails.Transactions.DocType,
+                            TotalAmount = getUnreconciledPaymentAmount.Sum(i => i.Amount),
+                            ReconciledAmount = RecociledPaymentAmountTotal,
+                            UnreconciledAmount = unreconciledPaymentAmountTotal
+                        });
+                    }
+                }
+            }
+            return new Response<List<AmountsForReconciliationDto>>(amountsForRecociliationList, "Return amounts");
         }
-        
-        public AmountsForReconciliationDto GetDebitNoteReconAmounts(int transactionId)
-        {
-            //FOR DEBIT NOTE
-            var debitNoteTotalAmount = _unitOfWork.DebitNote.Find(new DebitNoteSpecs(transactionId)).Select(e => e.TotalAmount).FirstOrDefault();
-
-            var reconciledDebitNoteAmount = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(transactionId, true)).Sum(p => p.Amount);
-
-            var unreconciledDebitNoteAmount = debitNoteTotalAmount - reconciledDebitNoteAmount;
-            return new AmountsForReconciliationDto
-            {
-                TotalAmount = debitNoteTotalAmount,
-                ReconciledAmount = reconciledDebitNoteAmount,
-                UnreconciledAmount = unreconciledDebitNoteAmount
-            };
-        }
-
-
-        public AmountsForReconciliationDto GetInvoiceReconAmounts(int transactionId)
-        {
-            //FOR INVOICE
-            var invoiceTotalAmount = _unitOfWork.Invoice.Find(new InvoiceSpecs(transactionId)).Select(e => e.TotalAmount).FirstOrDefault();
-            
-            var reconciledInvoiceAmount = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(transactionId, false)).Sum(p => p.Amount);
-
-            var unreconciledInvoiceAmount = invoiceTotalAmount - reconciledInvoiceAmount;
-            return new AmountsForReconciliationDto
-            {
-                TotalAmount = invoiceTotalAmount,
-                ReconciledAmount = reconciledInvoiceAmount,
-                UnreconciledAmount = unreconciledInvoiceAmount
-            };
-        }
-
-        public AmountsForReconciliationDto GetBillReconAmounts(int transactionId)
-        {
-            //FOR BILL
-            var billTotalAmount = _unitOfWork.Bill.Find(new BillSpecs(transactionId)).Select(e => e.TotalAmount).FirstOrDefault();
-            
-            var reconciledBillAmount = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(transactionId, false)).Sum(p => p.Amount);
-
-            var unreconciledBillAmount = billTotalAmount - reconciledBillAmount;
-            return new AmountsForReconciliationDto
-            {
-                TotalAmount = billTotalAmount,
-                ReconciledAmount = reconciledBillAmount,
-                UnreconciledAmount = unreconciledBillAmount
-            };
-        }
-
     }
 }
