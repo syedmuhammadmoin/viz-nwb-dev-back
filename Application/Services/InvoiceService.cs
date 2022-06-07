@@ -48,7 +48,7 @@ namespace Application.Services
             var Invs = await _unitOfWork.Invoice.GetAll(specification);
 
             if (Invs.Count() == 0)
-                return new PaginationResponse<List<InvoiceDto>>(_mapper.Map<List<InvoiceDto>>(Invs),"List is empty");
+                return new PaginationResponse<List<InvoiceDto>>(_mapper.Map<List<InvoiceDto>>(Invs), "List is empty");
 
             var totalRecords = await _unitOfWork.Invoice.TotalRecord();
 
@@ -65,10 +65,13 @@ namespace Application.Services
 
             var invoiceDto = _mapper.Map<InvoiceDto>(inv);
 
+            if ((invoiceDto.State == DocumentStatus.Unpaid || invoiceDto.State == DocumentStatus.Partial || invoiceDto.State == DocumentStatus.Paid) && invoiceDto.TransactionId != null)
+            {
+                return new Response<InvoiceDto>(MapToValue(invoiceDto), "Returning value");
+            }
+
             invoiceDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Invoice)).FirstOrDefault();
-
-
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
@@ -328,6 +331,69 @@ namespace Application.Services
 
             await _unitOfWork.Ledger.Add(addReceivableInLedger);
             await _unitOfWork.SaveAsync();
+        }
+
+        private InvoiceDto MapToValue(InvoiceDto data)
+        {
+            //Getting transaction with Payment Transaction Id
+            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(data.TransactionId)).FirstOrDefault();
+            
+            // Checking if given amount is greater than unreconciled document amount
+            var transactionReconciles = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(getUnreconciledDocumentAmount.Id, false)).ToList();
+
+            //For Paid Document List
+            var paidDocList = new List<PaidDocListDto>();
+            // if reconciles transaction found
+            if (transactionReconciles.Count() > 0)
+            {
+                //Adding Paid Doc List
+                foreach (var tranRecon in transactionReconciles)
+                {
+                    string[] docId = tranRecon.PaymentLedger.Transactions.DocNo.Split("-");
+                    paidDocList.Add(new PaidDocListDto
+                    {
+                        Id = Int32.Parse(docId[1]),
+                        DocNo = tranRecon.PaymentLedger.Transactions.DocNo,
+                        DocType = tranRecon.PaymentLedger.Transactions.DocType,
+                        Amount = tranRecon.Amount
+                    });
+                }
+            }
+            var paidpayments = paidDocList.GroupBy(n => new { n.Id, n.DocNo, n.DocType })
+                .Select(g => new PaidDocListDto()
+                {
+                    Id = g.Key.Id,
+                    DocNo = g.Key.DocNo,
+                    DocType = g.Key.DocType,
+                    Amount = g.Sum(i => i.Amount),
+                }).ToList();
+
+            //Getting Pending Invoice Amount
+            var pendingAmount = data.TotalAmount - transactionReconciles.Sum(e => e.Amount);
+
+            //Creating transactionReconRepo object
+            TransactionReconcileService trasactionReconService = new TransactionReconcileService(_unitOfWork);
+            var getUnreconPayment = trasactionReconService.GetPaymentReconAmounts(getUnreconciledDocumentAmount.Level4_id, (int)getUnreconciledDocumentAmount.BusinessPartnerId, getUnreconciledDocumentAmount.Sign);
+
+
+            //For Getting Business Partner Unreconciled Payments and CreditNote
+            var BPUnreconPayments = getUnreconPayment.Result.Select(i => new UnreconciledBusinessPartnerPaymentsDto()
+            {
+                Id = i.DocumentId,
+                DocNo = i.DocNo,
+                DocType = i.DocType,
+                Amount = i.UnreconciledAmount,
+                PaymentTransactionId = i.PaymentTransactionId
+            }).ToList();
+
+            data.Status = data.State == DocumentStatus.Unpaid ? "Unpaid" : data.Status;
+            data.TotalPaid = transactionReconciles.Sum(e => e.Amount);
+            data.PaidAmountList = paidpayments;
+            data.PendingAmount = pendingAmount;
+            data.BPUnreconPaymentList = BPUnreconPayments;
+
+            // Returning invoiceDTO with all values assigned
+            return data;
         }
 
     }
