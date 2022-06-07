@@ -198,5 +198,17 @@ namespace Application.Services
             
             return data;
         }
+
+        public async Task<Response<List<EmployeeDropDownPaymentDto>>> GetEmployeeDropDownPayment()
+        {
+            var specification = new EmployeeSpecs(true);
+            var employees = await _unitOfWork.Employee.GetAll(specification);
+            if (!employees.Any())
+                return new Response<List<EmployeeDropDownPaymentDto>>("List is empty");
+
+            return new Response<List<EmployeeDropDownPaymentDto>>(_mapper.Map<List<EmployeeDropDownPaymentDto>>(employees), "Returning List");
+        }
+
+
     }
 }
