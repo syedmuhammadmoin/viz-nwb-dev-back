@@ -25,7 +25,7 @@ namespace Vizalys.Api.Controllers
         
         [ClaimRequirement("Permission", new string[] { Permissions.CashAccountClaims.Create, Permissions.CashAccountClaims.View, Permissions.CashAccountClaims.Delete, Permissions.CashAccountClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<CashAccountDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<CashAccountDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             return Ok(await _cashAccountService.GetAllAsync(filter)); // Status Code : 200
         }
