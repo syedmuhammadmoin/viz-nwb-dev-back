@@ -100,8 +100,7 @@ namespace Application.Mapper
               .ForMember(dto => dto.ReceivableAccountName, core => core.MapFrom(a => a.ReceivableAccount.Name))
               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
-              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
-                .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<InvoiceLines, InvoiceLinesDto>()
               .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId == null ? null : a.ItemId))
