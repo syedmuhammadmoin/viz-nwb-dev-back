@@ -63,7 +63,7 @@ namespace Application.Services
                 states.Add(filter.State);
             }
 
-            var specification = new PayrollTransactionSpecs(filter);
+            var specification = new PayrollTransactionSpecs(docDate, states, filter);
             var payrollTransactions = await _unitOfWork.PayrollTransaction.GetAll(specification);
             var response = new List<PayrollTransactionDto>();
 

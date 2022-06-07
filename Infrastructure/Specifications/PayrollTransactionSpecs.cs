@@ -11,7 +11,7 @@ namespace Infrastructure.Specifications
 {
     public class PayrollTransactionSpecs : BaseSpecification<PayrollTransactionMaster>
     {
-        public PayrollTransactionSpecs(List<DateTime?> docDate, List<DateTime?> dueDate,
+        public PayrollTransactionSpecs(List<DateTime?> docDate,
             List<DocumentStatus?> states, TransactionFormFilter filter)
             : base(c =>(docDate.Count() > 0 ? docDate.Contains(c.TransDate) : true)
                 && c.Employee.CNIC.Contains(filter.DocNo != null ? filter.DocNo : "")
