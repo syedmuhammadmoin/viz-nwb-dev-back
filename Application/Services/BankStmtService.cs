@@ -78,7 +78,7 @@ namespace Application.Services
            
         }
 
-        public async Task<PaginationResponse<List<BankStmtDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<BankStmtDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new BankStmtSpecs(filter);
             var bankStmts = await _unitOfWork.Bankstatement.GetAll(specification);

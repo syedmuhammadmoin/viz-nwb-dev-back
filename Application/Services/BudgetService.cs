@@ -48,7 +48,7 @@ namespace Application.Services
             return new Response<BudgetDto>(_mapper.Map<BudgetDto>(result), "Created successfully");
         }
 
-        public async Task<PaginationResponse<List<BudgetDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<BudgetDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new BudgetSpecs(filter);
             var budgets = await _unitOfWork.Budget.GetAll(specification);
