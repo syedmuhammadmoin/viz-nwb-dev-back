@@ -24,9 +24,13 @@ namespace Application.Contracts.DTOs
         public DocumentStatus State { get; set; }
         public int CampusId { get; set; }
         public string CampusName { get; set; }
-        public decimal TotalBeforeTax { get; private set; }
+        public decimal TotalBeforeTax { get; set; }
         public decimal TotalTax { get; set; }
         public decimal TotalAmount { get; set; }
+        public decimal TotalPaid { get; set; }
+        public IEnumerable<PaidDocListDto> PaidAmountList { get; set; }
+        public IEnumerable<UnreconciledBusinessPartnerPaymentsDto> BPUnreconPaymentList { get; set; }
+        public decimal PendingAmount { get; set; }
         public int TransactionId { get; set; }
         public virtual List<InvoiceLinesDto> InvoiceLines { get; set; }
         public bool IsAllowedRole { get; set; }
