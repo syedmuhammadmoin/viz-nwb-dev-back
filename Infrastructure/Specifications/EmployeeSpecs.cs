@@ -46,7 +46,6 @@ namespace Infrastructure.Specifications
 
         public EmployeeSpecs(bool isEmployeeBP) : base(x => isEmployeeBP == true && x.BusinessPartner.BusinessPartnerType == BusinessPartnerType.Employee)
         {
-
         }
     }
 }
