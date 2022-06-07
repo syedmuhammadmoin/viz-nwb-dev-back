@@ -86,7 +86,7 @@ namespace Application.Services
             if (employees.Count() == 0)
                 return new PaginationResponse<List<EmployeeDto>>(_mapper.Map<List<EmployeeDto>>(employees), "List is empty");
 
-            var totalRecords = await _unitOfWork.Employee.TotalRecord();
+            var totalRecords = await _unitOfWork.Employee.TotalRecord(specification);
 
             return new PaginationResponse<List<EmployeeDto>>(_mapper.Map<List<EmployeeDto>>(employees), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

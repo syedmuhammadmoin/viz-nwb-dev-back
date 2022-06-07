@@ -14,7 +14,7 @@ namespace Infrastructure.Specifications
         public PayrollItemSpecs(List<CalculationType?> payrollItemType, List<PayrollType?> payrollType, PayrollItemFilter filter)
             : base(c => c.Name.Contains(filter.Name != null ? filter.Name : "")
             && c.ItemCode.Contains(filter.ItemCode != null ? filter.ItemCode : "")
-            && c.IsActive.Equals(filter.IsActive != false ? filter.IsActive : false)
+            && (filter.IsActive != null ? c.IsActive == filter.IsActive : true)
             && (payrollItemType.Count() > 0 ? payrollItemType.Contains(c.PayrollItemType) : true)
             && (payrollType.Count() > 0 ? payrollType.Contains(c.PayrollType) : true)
             )

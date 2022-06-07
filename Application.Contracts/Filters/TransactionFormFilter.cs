@@ -20,6 +20,6 @@ namespace Application.Contracts.Filters
         public DateTime? DocDate { get; set; }
         public DateTime? DueDate { get; set; }
         public DocumentStatus? State { get; set; }
-        public bool? isActive { get; set; }
+        public bool? IsActive { get; set; }
     }
 }
