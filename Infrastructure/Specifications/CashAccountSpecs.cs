@@ -11,8 +11,8 @@ namespace Infrastructure.Specifications
     public class CashAccountSpecs : BaseSpecification<CashAccount>
     {
         public CashAccountSpecs(TransactionFormFilter filter) 
-            : base(c => (c.CashAccountName.Contains(filter.BusinessPartner != null 
-                ? filter.BusinessPartner : "")))
+            : base(c => (c.CashAccountName.Contains(filter.Name != null 
+                ? filter.Name : "")))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

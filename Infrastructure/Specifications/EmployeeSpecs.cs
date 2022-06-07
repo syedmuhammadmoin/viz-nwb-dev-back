@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Filters;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,11 @@ namespace Infrastructure.Specifications
         public EmployeeSpecs(bool isActive, int?[] departmentIds) 
             : base(c => c.isActive == isActive &&
                 (departmentIds.Count() > 0 ? departmentIds.Contains(c.DepartmentId) : true))
+        {
+
+        }
+
+        public EmployeeSpecs(bool isEmployeeBP) : base(x => isEmployeeBP == true && x.BusinessPartner.BusinessPartnerType == BusinessPartnerType.Employee)
         {
 
         }

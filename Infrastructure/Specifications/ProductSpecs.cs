@@ -12,9 +12,9 @@ namespace Infrastructure.Specifications
     public class ProductSpecs : BaseSpecification<Product>
     {
         public ProductSpecs(TransactionFormFilter filter)
-            : base(c => c.ProductName.Contains(filter.DocNo != null ? filter.DocNo : "")
+            : base(c => c.ProductName.Contains(filter.Name != null ? filter.Name : "")
            && (c.Barcode.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
-           && (c.Category.ToString().Contains(filter.Designation != null ? filter.Designation : "")
+           && (c.Category.Name.Contains(filter.Category != null ? filter.Category : "")
             )))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
