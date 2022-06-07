@@ -50,8 +50,19 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public async Task<PaginationResponse<List<PayrollTransactionDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<PayrollTransactionDto>>> GetAllAsync(TransactionFormFilter filter)
         {
+            var docDate = new List<DateTime?>();
+            var states = new List<DocumentStatus?>();
+            if (filter.DocDate != null)
+            {
+                docDate.Add(filter.DocDate);
+            }
+            if (filter.State != null)
+            {
+                states.Add(filter.State);
+            }
+
             var specification = new PayrollTransactionSpecs(filter);
             var payrollTransactions = await _unitOfWork.PayrollTransaction.GetAll(specification);
             var response = new List<PayrollTransactionDto>();

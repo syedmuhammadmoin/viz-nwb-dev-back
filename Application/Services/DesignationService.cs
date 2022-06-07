@@ -46,7 +46,7 @@ namespace Application.Services
             return new Response<DesignationDto>(_mapper.Map<DesignationDto>(getDesignation), "Created successfully");
         }
 
-        public async Task<PaginationResponse<List<DesignationDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<DesignationDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new DesignationSpecs(filter);
             var designations = await _unitOfWork.Designation.GetAll(specification);

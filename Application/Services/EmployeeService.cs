@@ -78,7 +78,7 @@ namespace Application.Services
             }
         }
 
-        public async Task<PaginationResponse<List<EmployeeDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<EmployeeDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new EmployeeSpecs(filter);
             var employees = await _unitOfWork.Employee.GetAll(specification);

@@ -3,6 +3,7 @@ using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
+using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
@@ -33,15 +34,21 @@ namespace Application.Services
             return new Response<BusinessPartnerDto>(_mapper.Map<BusinessPartnerDto>(result), "Created successfully");
         }
 
-        public async Task<PaginationResponse<List<BusinessPartnerDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<BusinessPartnerDto>>> GetAllAsync(BusinessPartnerFilter filter)
         {
-            var specification = new BusinessPartnerSpecs(filter);
+            var businessPartnerTypes = new List<BusinessPartnerType?>();
+            if (filter.Type != null)
+            {
+                businessPartnerTypes.Add(filter.Type);
+            }
+
+            var specification = new BusinessPartnerSpecs(businessPartnerTypes, filter);
             var businessPartner = await _unitOfWork.BusinessPartner.GetAll(specification);
 
             if (businessPartner.Count() == 0)
                 return new PaginationResponse<List<BusinessPartnerDto>>(_mapper.Map<List<BusinessPartnerDto>>(businessPartner), "List is empty");
 
-            var totalRecords = await _unitOfWork.BusinessPartner.TotalRecord(new BusinessPartnerSpecs(true));
+            var totalRecords = await _unitOfWork.BusinessPartner.TotalRecord(specification);
 
             return new PaginationResponse<List<BusinessPartnerDto>>(_mapper.Map<List<BusinessPartnerDto>>(businessPartner), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
@@ -83,5 +90,6 @@ namespace Application.Services
 
             return new Response<List<BusinessPartnerDto>>(_mapper.Map<List<BusinessPartnerDto>>(businessPartners), "Returning List");
         }
+
     }
 }

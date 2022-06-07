@@ -17,6 +17,8 @@ namespace Application.Contracts.Filters
         public DateTime? DueDate { get; set; }
         public DocumentStatus? State { get; set; }
         public decimal? Amount { get; set; }
+        public bool? isActive { get; set; }
+
 
     }
 }

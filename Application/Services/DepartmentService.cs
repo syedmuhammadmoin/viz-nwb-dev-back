@@ -47,7 +47,7 @@ namespace Application.Services
             return new Response<DepartmentDto>(_mapper.Map<DepartmentDto>(getDepartment), "Created successfully");
         }
 
-        public async Task<PaginationResponse<List<DepartmentDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<DepartmentDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new DepartmentSpecs(filter);
             var departments = await _unitOfWork.Department.GetAll(specification);

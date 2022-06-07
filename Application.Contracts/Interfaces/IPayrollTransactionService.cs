@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IPayrollTransactionService : ICrudService<CreatePayrollTransactionDto, PayrollTransactionDto, int, PaginationFilter>
+    public interface IPayrollTransactionService : ICrudService<CreatePayrollTransactionDto, PayrollTransactionDto, int, TransactionFormFilter>
     {
         Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
         Task<Response<bool>> ProcessForEdit(int[] id);

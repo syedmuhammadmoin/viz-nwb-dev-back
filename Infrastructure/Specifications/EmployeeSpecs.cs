@@ -10,7 +10,13 @@ namespace Infrastructure.Specifications
 {
     public class EmployeeSpecs : BaseSpecification<Employee>
     {
-        public EmployeeSpecs(PaginationFilter filter)
+        public EmployeeSpecs(TransactionFormFilter filter)
+            : base(c => c.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
+                && c.CNIC.Contains(filter.DocNo != null ? filter.DocNo : "")
+                && c.isActive.Equals(filter.isActive!= false ? filter.isActive : false)
+                && c.Department.Name.Contains(filter.Department != null ? filter.Department : "")
+                && c.Designation.Name.Contains(filter.Designation != null ? filter.Designation : ""))
+
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

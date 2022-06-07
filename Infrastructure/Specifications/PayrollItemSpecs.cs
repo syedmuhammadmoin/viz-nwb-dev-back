@@ -11,7 +11,13 @@ namespace Infrastructure.Specifications
 {
     public class PayrollItemSpecs : BaseSpecification<PayrollItem>
     {
-        public PayrollItemSpecs(PaginationFilter filter)
+        public PayrollItemSpecs(List<CalculationType?> payrollItemType, List<PayrollType?> payrollType, PayrollItemFilter filter)
+            : base(c => c.Name.Contains(filter.Name != null ? filter.Name : "")
+            && c.ItemCode.Contains(filter.ItemCode != null ? filter.ItemCode : "")
+            && c.IsActive.Equals(filter.IsActive != false ? filter.IsActive : false)
+            && (payrollItemType.Count() > 0 ? payrollItemType.Contains(c.PayrollItemType) : true)
+            && (payrollType.Count() > 0 ? payrollType.Contains(c.PayrollType) : true)
+            )
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

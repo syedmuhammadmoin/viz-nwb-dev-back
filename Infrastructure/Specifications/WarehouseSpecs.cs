@@ -10,7 +10,8 @@ namespace Infrastructure.Specifications
 {
     public class WarehouseSpecs : BaseSpecification<Warehouse>
     {
-        public WarehouseSpecs(PaginationFilter filter)
+        public WarehouseSpecs(TransactionFormFilter filter) 
+            : base(c=> c.Name.Contains(filter.DocNo != null ? filter.DocNo : ""))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

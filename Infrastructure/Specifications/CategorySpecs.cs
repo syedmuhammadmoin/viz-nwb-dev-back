@@ -10,7 +10,8 @@ namespace Infrastructure.Specifications
 {
     public class CategorySpecs : BaseSpecification<Category>
     {
-        public CategorySpecs(PaginationFilter filter)
+        public CategorySpecs(TransactionFormFilter filter) 
+            : base(c=> c.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")) 
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
