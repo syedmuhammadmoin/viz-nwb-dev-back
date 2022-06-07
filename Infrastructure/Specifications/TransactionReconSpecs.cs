@@ -11,6 +11,11 @@ namespace Infrastructure.Specifications
     {
         public TransactionReconSpecs(int ledgerId, bool isPaymentId) 
             : base(isPaymentId ? p => p.PaymentLedgerId == ledgerId
-            : p => p.DocumentLegderId == ledgerId) {}
+            : p => p.DocumentLegderId == ledgerId)
+        {
+            AddInclude(i => i.DocumentLedger);
+            AddInclude("PaymentLedger.Transactions");
+            ApplyAsNoTracking();
+        }
     }
 }

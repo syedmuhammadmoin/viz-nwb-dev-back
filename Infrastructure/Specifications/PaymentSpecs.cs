@@ -26,7 +26,6 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.Status);
         }
-
         public PaymentSpecs(bool forEdit, PaymentType paymentType) : base(e => (e.PaymentType == paymentType))
         {
             if (!forEdit)
@@ -52,6 +51,9 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Status);
         }
         public PaymentSpecs(PaymentType paymentType) : base(e => (e.PaymentType == paymentType))
+        {
+        }
+        public PaymentSpecs(int businessPartnerId, PaymentType paymentType) : base(e => (e.PaymentType == paymentType))
         {
         }
         public PaymentSpecs(Guid paymentRegisterId) : base(
