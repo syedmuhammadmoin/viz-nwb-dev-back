@@ -12,7 +12,7 @@ namespace Infrastructure.Specifications
     public class EmployeeSpecs : BaseSpecification<Employee>
     {
         public EmployeeSpecs(TransactionFormFilter filter)
-            : base(c => c.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
+            : base(c => c.Name.Contains(filter.Name != null ? filter.Name : "")
                 && c.CNIC.Contains(filter.DocNo != null ? filter.DocNo : "")
                 && c.isActive.Equals(filter.isActive!= false ? filter.isActive : false)
                 && c.Department.Name.Contains(filter.Department != null ? filter.Department : "")
