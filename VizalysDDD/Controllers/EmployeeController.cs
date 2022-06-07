@@ -73,5 +73,11 @@ namespace Vizalys.Api.Controllers
             return Ok(await _employeeService.GetEmployeeDropDown()); // Status Code : 200
         }
 
+        [HttpGet("EmployeePaymentDropDown")]
+        public async Task<ActionResult<Response<List<EmployeeDto>>>> GetEmployeeDropDownPayment()
+        {
+            return Ok(await _employeeService.GetEmployeeDropDownPayment()); // Status Code : 200
+        }
+
     }
 }
