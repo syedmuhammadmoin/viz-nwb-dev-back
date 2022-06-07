@@ -38,6 +38,11 @@ namespace Application.Mapper
                 .ForMember(dto => dto.DesignationName, core => core.MapFrom(a => a.Designation.Name));
 
             CreateMap<CreateEmployeeDto, Employee>();
+            
+            // EmployeeDropDown for payrollPayment
+            CreateMap<Employee, EmployeeDropDownPaymentDto> ()
+                .ForMember(dto => dto.Id, core => core.MapFrom(a => a.BusinessPartnerId))
+                .ForMember(dto => dto.Name, core => core.MapFrom(a => a.Name));
 
             // Warehouse Mapping
             CreateMap<Warehouse, WarehouseDto>()
