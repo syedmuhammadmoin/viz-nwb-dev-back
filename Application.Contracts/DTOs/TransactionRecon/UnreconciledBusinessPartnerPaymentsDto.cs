@@ -7,14 +7,12 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.DTOs
 {
-    public class AmountsForReconciliationDto
+    public class UnreconciledBusinessPartnerPaymentsDto
     {
-        public int DocumentId { get; set; }
+        public int Id { get; set; }
         public int? PaymentTransactionId { get; set; }
         public string DocNo { get; set; }
         public DocType DocType { get; set; }
-        public decimal TotalAmount { get; set; }
-        public decimal ReconciledAmount { get; set; }
-        public decimal UnreconciledAmount { get; set; }
+        public decimal Amount { get; set; }
     }
 }
