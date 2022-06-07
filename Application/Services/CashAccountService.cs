@@ -79,7 +79,7 @@ namespace Application.Services
             if (!cashAccount.Any())
                 return new PaginationResponse<List<CashAccountDto>>(_mapper.Map<List<CashAccountDto>>(cashAccount), "List is empty");
 
-            var totalRecords = await _unitOfWork.CashAccount.TotalRecord();
+            var totalRecords = await _unitOfWork.CashAccount.TotalRecord(specification);
 
             return new PaginationResponse<List<CashAccountDto>>(_mapper.Map<List<CashAccountDto>>(cashAccount), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
 
