@@ -34,7 +34,6 @@ namespace Infrastructure.Specifications
         }
 
         public PaymentSpecs(bool forEdit, DocType docType) : base(e => (e.PaymentFormType == docType))
-        public PaymentSpecs(bool forEdit, PaymentType paymentType) : base(e => (e.PaymentType == paymentType))
         {
             if (!forEdit)
             {
