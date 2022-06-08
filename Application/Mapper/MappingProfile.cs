@@ -328,14 +328,14 @@ namespace Application.Mapper
             // PayrollTransaction Mapping
             CreateMap<PayrollTransactionMaster, PayrollTransactionDto>()
               .ForMember(dto => dto.Employee, core => core.MapFrom(a => a.Employee.Name))
+              .ForMember(dto => dto.BusinessPartnerId, core => core.MapFrom(a => a.Employee.BusinessPartnerId))
               .ForMember(dto => dto.AccountPayable, core => core.MapFrom(a => a.AccountPayable.Name))
               .ForMember(dto => dto.Department, core => core.MapFrom(a => a.Department.Name))
               .ForMember(dto => dto.Designation, core => core.MapFrom(a => a.Designation.Name))
               .ForMember(dto => dto.BPSName, core => core.MapFrom(a => a.BPSName))
               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
-              .ForMember(dto => dto.NetSalary, core => core.MapFrom(a => a.NetSalary))
-                .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+              .ForMember(dto => dto.NetSalary, core => core.MapFrom(a => a.NetSalary));
 
             CreateMap<PayrollTransactionLines, PayrollTransactionLinesDto>()
               .ForMember(dto => dto.PayrollItem, core => core.MapFrom(a => a.PayrollItem.Name))

@@ -18,6 +18,7 @@ namespace Domain.Entities
         public int BusinessPartnerId { get; private set; }
         [ForeignKey("BusinessPartnerId")]
         public BusinessPartner BusinessPartner { get; private set; }
+        public DocType PaymentFormType { get; private set; } 
         public Guid AccountId { get; private set; }
         [ForeignKey("AccountId")]
         public Level4 Account { get; private set; }

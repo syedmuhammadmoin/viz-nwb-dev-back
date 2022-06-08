@@ -41,8 +41,7 @@ namespace Application.Services
             }
             else
             {
-                var result =  await this.SavePayrollTransaction(entity, 1);
-                return new Response<PayrollTransactionDto>(null, result.Message);
+                return await this.SavePayrollTransaction(entity, 1);
             }
         }
 
@@ -108,11 +107,11 @@ namespace Application.Services
             return new Response<PayrollTransactionDto>(result, "Returning value");
         }
 
-        private async Task<Response<bool>> SavePayrollTransaction(CreatePayrollTransactionDto entity, int status)
+        private async Task<Response<PayrollTransactionDto>> SavePayrollTransaction(CreatePayrollTransactionDto entity, int status)
         {
             if (entity.WorkingDays < entity.PresentDays
                 || entity.WorkingDays < entity.PresentDays + entity.LeaveDays)
-                return new Response<bool>("Present days and Leaves days sum can not be greater than working days");
+                return new Response<PayrollTransactionDto>("Present days and Leaves days sum can not be greater than working days");
 
             //Fetching Employees by id
             var emp = await _employeeService.GetByIdAsync(entity.EmployeeId);
@@ -120,16 +119,16 @@ namespace Application.Services
             var empDetails = emp.Result;
 
             if (empDetails == null)
-                return new Response<bool>("Selected employee record not found");
+                return new Response<PayrollTransactionDto>("Selected employee record not found");
 
             if (!empDetails.isActive)
-                return new Response<bool>("Selected employee is not Active");
+                return new Response<PayrollTransactionDto>("Selected employee is not Active");
 
             var checkingPayrollTrans = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(entity.Month, entity.Year, entity.EmployeeId)).FirstOrDefault();
 
             if (checkingPayrollTrans != null)
             {
-                return new Response<bool>(true, "Payroll transaction is already processed");
+                return new Response<PayrollTransactionDto>("Payroll transaction is already processed");
             }
 
             //getting payrollItems by empId
@@ -191,22 +190,22 @@ namespace Application.Services
                 //Commiting the transaction 
                 _unitOfWork.Commit();
                 //returning response
-                return new Response<bool>(true, "Created successfully");
+                return new Response<PayrollTransactionDto>(null, "Created successfully");
             }
             catch (DbUpdateException ex)
             {
                 _unitOfWork.Rollback();
                 if (ex.InnerException.Data["HelpLink.EvtID"].ToString() == "2627")
                 {
-                    return new Response<bool>("Payroll transaction is already processed");
+                    return new Response<PayrollTransactionDto>("Payroll transaction is already processed");
                 }
 
-                return new Response<bool>(ex.Message);
+                return new Response<PayrollTransactionDto>(ex.Message);
             }
             catch (Exception ex)
             {
                 _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
+                return new Response<PayrollTransactionDto>(ex.Message);
             }
         }
 
@@ -511,7 +510,7 @@ namespace Application.Services
             }
         }
 
-        private PayrollTransactionDto MapToValue(PayrollTransactionMaster data)
+        public PayrollTransactionDto MapToValue(PayrollTransactionMaster data)
         {
             //For Payroll transaction Lines
 
@@ -751,7 +750,7 @@ namespace Application.Services
 
             if (payrollTransactions.Count() == 0)
             {
-                return new Response<List<PayrollTransactionDto>>("List is empty");
+                return new Response<List<PayrollTransactionDto>>(null,"List is empty");
             }
 
             var response = new List<PayrollTransactionDto>();

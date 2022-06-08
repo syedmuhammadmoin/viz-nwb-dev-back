@@ -69,6 +69,7 @@ namespace Application.Services
                          (glv.BusinessPartnerName.Contains(pnl.BusinessPartner) &&
                          glv.WarehouseName.Contains(pnl.Warehouse) &&
                          glv.CampusName.Contains(pnl.Campus) &&
+                         (l4.Level1_id== new Guid("40000000-5566-7788-99AA-BBCCDDEEFF00") || l4.Level1_id == new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00")) &&
                          (glv.DocDate >= pnl.DocDate && glv.DocDate <= pnl.DocDate2)))
                          select new
                          {

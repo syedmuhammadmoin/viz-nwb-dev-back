@@ -21,14 +21,17 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IEmployeeService _employeeService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public PaymentService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public PaymentService(IUnitOfWork unitOfWork, IMapper mapper, IEmployeeService employeeService, IHttpContextAccessor httpContextAccessor, IPayrollTransactionService payrollTransactionService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _employeeService = employeeService;
         }
+
 
         public async Task<Response<PaymentDto>> CreateAsync(CreatePaymentDto entity)
         {
@@ -42,27 +45,22 @@ namespace Application.Services
             }
         }
 
-        public Task<Response<int>> DeleteAsync(int id)
+        public async Task<PaginationResponse<List<PaymentDto>>> GetAllAsync(PaginationFilter filter, DocType docType)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<PaginationResponse<List<PaymentDto>>> GetAllAsync(PaginationFilter filter, PaymentType paymentType)
-        {
-            var specification = new PaymentSpecs(filter, paymentType);
+            var specification = new PaymentSpecs(filter, docType);
             var payment = await _unitOfWork.Payment.GetAll(specification);
 
             if (payment.Count() == 0)
                 return new PaginationResponse<List<PaymentDto>>(_mapper.Map<List<PaymentDto>>(payment), "List is empty");
 
-            var totalRecords = await _unitOfWork.Payment.TotalRecord(new PaymentSpecs(paymentType));
+            var totalRecords = await _unitOfWork.Payment.TotalRecord(new PaymentSpecs(docType));
 
             return new PaginationResponse<List<PaymentDto>>(_mapper.Map<List<PaymentDto>>(payment), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
 
-        public async Task<Response<PaymentDto>> GetByIdAsync(int id, PaymentType paymentType)
+        public async Task<Response<PaymentDto>> GetByIdAsync(int id, DocType docType)
         {
-            var specification = new PaymentSpecs(false, paymentType);
+            var specification = new PaymentSpecs(false, docType);
             var payment = await _unitOfWork.Payment.GetById(id, specification);
             if (payment == null)
                 return new Response<PaymentDto>("Not found");
@@ -70,7 +68,7 @@ namespace Application.Services
             var paymentDto = _mapper.Map<PaymentDto>(payment);
 
             paymentDto.IsAllowedRole = false;
-            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Payment)).FirstOrDefault();
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(docType)).FirstOrDefault();
 
 
             if (workflow != null)
@@ -107,9 +105,8 @@ namespace Application.Services
 
         private async Task<Response<PaymentDto>> SubmitPay(CreatePaymentDto entity)
         {
-
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(
-                new WorkFlowSpecs(entity.PaymentType == PaymentType.Inflow ? DocType.Receipt : DocType.Payment)).FirstOrDefault();
+                new WorkFlowSpecs(entity.PaymentFormType)).FirstOrDefault();
 
             if (checkingActiveWorkFlows == null)
             {
@@ -159,7 +156,7 @@ namespace Application.Services
 
         private async Task<Response<PaymentDto>> UpdatePay(CreatePaymentDto entity, int status)
         {
-            var specification = new PaymentSpecs(true, entity.PaymentType);
+            var specification = new PaymentSpecs(true, entity.PaymentFormType);
             var payment = await _unitOfWork.Payment.GetById((int)entity.Id, specification);
 
             if (payment == null)
@@ -194,7 +191,7 @@ namespace Application.Services
 
         private async Task AddToLedger(Payment payment)
         {
-            var transaction = new Transactions(payment.DocNo, DocType.Payment);
+            var transaction = new Transactions(payment.DocNo, payment.PaymentFormType);
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
@@ -408,7 +405,7 @@ namespace Application.Services
             {
                 return new Response<bool>("Payment already approved");
             }
-            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Payment)).FirstOrDefault();
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(getPayment.PaymentFormType)).FirstOrDefault();
 
             if (workflow == null)
             {
@@ -476,11 +473,14 @@ namespace Application.Services
 
             var getBankReconStatus = _unitOfWork.Payment.Find(new PaymentSpecs(id)).ToList();
 
+            if (getBankReconStatus.Count == 0)
+                 return new Response<List<UnReconStmtDto>>(unreconciledBankPaymentsStatus, "Unreconciled bank statements not found");
+
             foreach (var e in getBankReconStatus)
             {
-                var netPayment = e.GrossPayment - e.Discount - e.IncomeTax - e.SalesTax;
-                var reconciledPayment = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(e.Id,true)).Sum(a => a.Amount);
-                    
+                var netPayment = e.GrossPayment - e.Discount - e.IncomeTax - e.SalesTax - e.SRBTax;
+                var reconciledPayment = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(e.Id, true)).Sum(a => a.Amount);
+
 
                 var mapingValueInDTO = new UnReconStmtDto
                 {
@@ -499,5 +499,188 @@ namespace Application.Services
             return new Response<List<UnReconStmtDto>>(unreconciledBankPaymentsStatus, "Returning bank unreconciled payments");
 
         }
+
+        public async Task<Response<PaymentDto>> CreatePayrollPaymentProcess(CreatePayrollPaymentDto data)
+        {
+            foreach (var line in data.CreatePayrollTransLines)
+            {
+                var bp = await _unitOfWork.BusinessPartner.GetById(line.BusinessPartnerId);
+                if (bp != null)
+                {
+                    if (bp.BusinessPartnerType != BusinessPartnerType.Employee)
+                        return new Response<PaymentDto>("Business Partner is not employee");
+                }
+                var payment = new CreatePaymentDto()
+                {
+                    PaymentType = PaymentType.Outflow,
+                    PaymentFormType = DocType.PayrollPayment,
+                    BusinessPartnerId = line.BusinessPartnerId,
+                    AccountId = line.AccountPayableId,
+                    CampusId = data.CampusId,
+                    GrossPayment = line.NetSalary,
+                    PaymentDate = data.PaymentDate,
+                    PaymentRegisterType = data.PaymentRegisterType,
+                    PaymentRegisterId = data.PaymentRegisterId,
+                    Description = data.Description,
+                    Discount = 0,
+                    SalesTax = 0,
+                    IncomeTax = 0,
+                    DocumentTransactionId = line.TransactionId,
+                    isSubmit = false
+                };
+
+                if (payment.isSubmit)
+                {
+                    var result = await this.SubmitPay(payment);
+                    if (!result.IsSuccess)
+                    {
+                        return new Response<PaymentDto>(""); ;
+                    }
+                }
+                else
+                {
+                    var result = await this.SavePay(payment, 1);
+                    if (!result.IsSuccess)
+                    {
+                        return new Response<PaymentDto>(""); ;
+                    }
+                }
+            }
+
+            return new Response<PaymentDto>(null, "Payroll Payment created successfully");
+        }
+
+        public Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data)
+        {
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, false)).ToList();
+
+            if (payrollTransactions.Count == 0)
+                return new Response<List<PayrollTransactionDto>>("list is empty");
+
+            var response = new List<PayrollTransactionDto>();
+
+            foreach (var i in payrollTransactions)
+            {
+                response.Add(new PayrollTransactionService(_unitOfWork, _mapper, _employeeService, _httpContextAccessor).MapToValue(i));
+            }
+            var result = response.OrderBy(i => i.Employee).ToList();
+
+            return new Response<List<PayrollTransactionDto>>(result, "Returning Payroll Transactions");
+        }
+
+        public Response<List<PaymentDto>> GetPaymentByDept(DeptFilter data)
+        {
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, "")).ToList();
+
+            if (payrollTransactions.Count == 0)
+                return new Response<List<PaymentDto>>("list is empty");
+
+            var getPayments = _unitOfWork.Payment.Find(new PaymentSpecs(DocType.PayrollPayment, false)).ToList();
+
+            var response = new List<PaymentDto>();
+
+            foreach (var t in payrollTransactions)
+            {
+                var payment = getPayments.FirstOrDefault(x => x.TransactionId == t.TransactionId);
+                var paymentDto = _mapper.Map<PaymentDto>(payment);
+
+                if (payment != null)
+                {
+                    response.Add(paymentDto);
+                }
+            }
+            var result = response.OrderBy(x => x.BusinessPartnerId).ToList();
+
+            return new Response<List<PaymentDto>>(result, "Returning payroll payments");
+
+        }
+
+        public async Task<Response<bool>> ProcessForEditPayrollPayment(int[] id)
+        {
+            _unitOfWork.CreateTransaction();
+            try
+            {
+                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollPayment)).FirstOrDefault();
+
+                if (checkingActiveWorkFlows == null)
+                {
+                    return new Response<bool>("No workflow found for Payroll payment");
+                }
+
+                for (int i = 0; i < id.Length; i++)
+                {
+                    var getPayment = await _unitOfWork.Payment.GetById(id[i], new PayrollPaymentSpecs());
+
+                    if (getPayment == null)
+                        return new Response<bool>($"Payroll Payment with the id = {id[i]} not found");
+
+                    if (getPayment.BusinessPartner.BusinessPartnerType != BusinessPartnerType.Employee)
+                        return new Response<bool>($"Payroll Payment with the id = {id[i]} business partner is not employee");
+
+                    getPayment.setStatus(6);
+                    await _unitOfWork.SaveAsync();
+                }
+                _unitOfWork.Commit();
+
+                return new Response<bool>(true, "Payment submitted successfully");
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<bool>(ex.Message);
+            }
+        }
+
+        public Response<bool> GetPaymentForApproval(DeptFilter data)
+        {
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, "")).ToList();
+
+                if (payrollTransactions.Count == 0)
+                return new Response<bool>("list is empty");
+
+            var getPayments = _unitOfWork.Payment.Find(new PaymentSpecs( DocType.PayrollPayment, true)).ToList();
+           
+            var response = new List<PaymentDto>();
+
+            foreach (var t in payrollTransactions)
+            {
+                var payment = getPayments.FirstOrDefault(x => x.TransactionId == t.TransactionId);
+                var paymentDto = _mapper.Map<PaymentDto>(payment);
+
+                if (payment != null)
+                {
+                    response.Add(paymentDto);
+                }
+            }
+
+            var result = response.OrderBy(x => x.BusinessPartnerId).ToList();
+
+            return new Response<bool>(true, "Returning payroll payments");
+        }
+
+        public async Task<Response<bool>> ProcessForApproval(CreateApprovalProcessDto data)
+        {
+            foreach (var docId in data.docId)
+            {
+                var approval = new ApprovalDto()
+                {
+                    DocId = docId,
+                    Action = data.Action
+                };
+                var result = await CheckWorkFlow(approval);
+                if (!result.IsSuccess)
+                {
+                    return result;
+                }
+            }
+            return new Response<bool>(true, "Payroll payment approval process completed successfully");
+
+        }
+
+        public Task<Response<int>> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }
