@@ -10,7 +10,8 @@ namespace Infrastructure.Specifications
 {
     public class EstimatedBudgetSpecs : BaseSpecification<EstimatedBudgetMaster>
     {
-        public EstimatedBudgetSpecs(PaginationFilter filter)
+        public EstimatedBudgetSpecs(TransactionFormFilter filter)
+            : base(c => c.EstimatedBudgetName.Contains(filter.Name != null ? filter.Name : ""))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

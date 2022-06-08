@@ -78,7 +78,7 @@ namespace Application.Services
            
         }
 
-        public async Task<PaginationResponse<List<BankStmtDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<BankStmtDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new BankStmtSpecs(filter);
             var bankStmts = await _unitOfWork.Bankstatement.GetAll(specification);
@@ -86,7 +86,7 @@ namespace Application.Services
             if (!bankStmts.Any())
                 return new PaginationResponse<List<BankStmtDto>>(_mapper.Map<List<BankStmtDto>>(bankStmts), "List is empty");
 
-            var totalRecords = await _unitOfWork.Bankstatement.TotalRecord();
+            var totalRecords = await _unitOfWork.Bankstatement.TotalRecord(specification);
 
             return new PaginationResponse<List<BankStmtDto>>(_mapper.Map<List<BankStmtDto>>(bankStmts),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");

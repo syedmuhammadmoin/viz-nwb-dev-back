@@ -23,7 +23,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.ProductsClaims.Create, Permissions.ProductsClaims.View, Permissions.ProductsClaims.Delete, Permissions.ProductsClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<ProductDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<ProductDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var products = await _productService.GetAllAsync(filter);
             if (products.IsSuccess)

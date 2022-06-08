@@ -48,7 +48,7 @@ namespace Application.Services
             return new Response<BudgetDto>(_mapper.Map<BudgetDto>(result), "Created successfully");
         }
 
-        public async Task<PaginationResponse<List<BudgetDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<BudgetDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new BudgetSpecs(filter);
             var budgets = await _unitOfWork.Budget.GetAll(specification);
@@ -56,7 +56,7 @@ namespace Application.Services
             if (!budgets.Any())
                 return new PaginationResponse<List<BudgetDto>>(_mapper.Map<List<BudgetDto>>(budgets), "List is empty");
 
-            var totalRecords = await _unitOfWork.Budget.TotalRecord();
+            var totalRecords = await _unitOfWork.Budget.TotalRecord(specification);
 
             return new PaginationResponse<List<BudgetDto>>(_mapper.Map<List<BudgetDto>>(budgets),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");

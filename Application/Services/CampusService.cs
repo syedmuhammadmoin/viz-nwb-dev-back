@@ -39,7 +39,7 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public async Task<PaginationResponse<List<CampusDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<CampusDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new CampusSpecs(filter);
             var campus = await _unitOfWork.Campus.GetAll(specification);
@@ -47,7 +47,7 @@ namespace Application.Services
             if (campus.Count() == 0)
                 return new PaginationResponse<List<CampusDto>>(_mapper.Map<List<CampusDto>>(campus), "List is empty");
 
-            var totalRecords = await _unitOfWork.Campus.TotalRecord();
+            var totalRecords = await _unitOfWork.Campus.TotalRecord(specification);
 
             return new PaginationResponse<List<CampusDto>>(_mapper.Map<List<CampusDto>>(campus), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

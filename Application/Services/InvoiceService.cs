@@ -42,15 +42,30 @@ namespace Application.Services
             }
         }
 
-        public async Task<PaginationResponse<List<InvoiceDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<InvoiceDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new InvoiceSpecs(filter);
+            var docDate = new List<DateTime?>();
+            var dueDate = new List<DateTime?>();
+            var states = new List<DocumentStatus?>();
+            if (filter.DocDate != null)
+            {
+                docDate.Add(filter.DocDate);
+            }
+            if (filter.DueDate != null)
+            {
+                dueDate.Add(filter.DueDate);
+            }
+            if (filter.State != null)
+            {
+                states.Add(filter.State);
+            }
+            var specification = new InvoiceSpecs(docDate, dueDate, states, filter);
             var Invs = await _unitOfWork.Invoice.GetAll(specification);
 
             if (Invs.Count() == 0)
                 return new PaginationResponse<List<InvoiceDto>>(_mapper.Map<List<InvoiceDto>>(Invs), "List is empty");
 
-            var totalRecords = await _unitOfWork.Invoice.TotalRecord();
+            var totalRecords = await _unitOfWork.Invoice.TotalRecord(specification);
 
             return new PaginationResponse<List<InvoiceDto>>(_mapper.Map<List<InvoiceDto>>(Invs),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");

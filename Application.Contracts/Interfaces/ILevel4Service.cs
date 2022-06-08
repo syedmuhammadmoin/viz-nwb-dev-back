@@ -12,9 +12,9 @@ namespace Application.Contracts.Interfaces
     public interface ILevel4Service : ICrudService<CreateLevel4Dto, Level4Dto, Guid, PaginationFilter>
     {
         Task<Response<List<Level4Dto>>> GetLevel4DropDown();
-        Task<Response<List<Level4Dto>>> GetAllAccounts();
         Task<Response<List<Level4Dto>>> GetBudgetAccounts();
         Task<Response<List<Level4Dto>>> GetPayableAccounts();
         Task<Response<List<Level4Dto>>> GetReceivableAccounts();
+        Task<Response<List<Level4Dto>>> GetAllOtherAccounts();
     }
 }

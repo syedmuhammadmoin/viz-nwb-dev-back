@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Filters;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,12 @@ namespace Infrastructure.Specifications
 {
     public class EmployeeSpecs : BaseSpecification<Employee>
     {
-        public EmployeeSpecs(PaginationFilter filter)
+        public EmployeeSpecs(TransactionFormFilter filter)
+            : base(c => c.Name.Contains(filter.Name != null ? filter.Name : "")
+                && c.CNIC.Contains(filter.DocNo != null ? filter.DocNo : "")
+                && c.Department.Name.Contains(filter.Department != null ? filter.Department : "")
+                && c.Designation.Name.Contains(filter.Designation != null ? filter.Designation : "")
+                && (filter.IsActive != null ? c.isActive == filter.IsActive : true))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
@@ -35,6 +41,10 @@ namespace Infrastructure.Specifications
                 (departmentIds.Count() > 0 ? departmentIds.Contains(c.DepartmentId) : true))
         {
 
+        }
+
+        public EmployeeSpecs(bool isEmployeeBP) : base(x => isEmployeeBP == true && x.BusinessPartner.BusinessPartnerType == BusinessPartnerType.Employee)
+        {
         }
     }
 }

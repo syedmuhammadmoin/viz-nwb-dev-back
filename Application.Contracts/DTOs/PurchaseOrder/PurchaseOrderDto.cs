@@ -12,7 +12,7 @@ namespace Application.Contracts.DTOs
         public int Id { get; set; }
         public string DocNo { get; set; }
         public int VendorId { get; set; }
-        public string Vendor { get; set; }
+        public string VendorName { get; set; }
         public DateTime PODate { get; set; }
         public DateTime DueDate { get; set; }
         public int CampusId { get; set; }

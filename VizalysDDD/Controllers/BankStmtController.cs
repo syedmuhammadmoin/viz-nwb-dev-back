@@ -26,7 +26,7 @@ namespace Vizalys.Api.Controllers
         
         [ClaimRequirement("Permission", new string[] { Permissions.BankStatementClaims.Create, Permissions.BankStatementClaims.View, Permissions.BankStatementClaims.Delete, Permissions.BankStatementClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<BankStmtDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<BankStmtDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             return Ok(await _bankStmtService.GetAllAsync(filter)); // Status Code : 200
         }

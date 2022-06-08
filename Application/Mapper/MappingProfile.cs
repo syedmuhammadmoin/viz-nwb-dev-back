@@ -38,6 +38,11 @@ namespace Application.Mapper
                 .ForMember(dto => dto.DesignationName, core => core.MapFrom(a => a.Designation.Name));
 
             CreateMap<CreateEmployeeDto, Employee>();
+            
+            // EmployeeDropDown for payrollPayment
+            CreateMap<Employee, EmployeeDropDownPaymentDto> ()
+                .ForMember(dto => dto.Id, core => core.MapFrom(a => a.BusinessPartnerId))
+                .ForMember(dto => dto.Name, core => core.MapFrom(a => a.Name));
 
             // Warehouse Mapping
             CreateMap<Warehouse, WarehouseDto>()
@@ -81,8 +86,7 @@ namespace Application.Mapper
             // JournalEntry Mapping
             CreateMap<JournalEntryMaster, JournalEntryDto>()
                  .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
-              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
-             .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<JournalEntryLines, JournalEntryLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
@@ -121,8 +125,7 @@ namespace Application.Mapper
                .ForMember(dto => dto.ReceivableAccountName, core => core.MapFrom(a => a.ReceivableAccount.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
-              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
-             .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<CreditNoteLines, CreditNoteLinesDto>()
               .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId == null ? null : a.ItemId))
@@ -143,8 +146,7 @@ namespace Application.Mapper
               .ForMember(dto => dto.PayableAccountName, core => core.MapFrom(a => a.PayableAccount.Name))
               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
-              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
-              .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<BillLines, BillLinesDto>()
               .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId == null ? null : a.ItemId))
@@ -168,8 +170,7 @@ namespace Application.Mapper
               .ForMember(dto => dto.PayableAccountName, core => core.MapFrom(a => a.PayableAccount.Name))
               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
-              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
-             .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<DebitNoteLines, DebitNoteLinesDto>()
               .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId == null ? null : a.ItemId))
@@ -199,8 +200,7 @@ namespace Application.Mapper
             // CashAccount Mapping
             CreateMap<CashAccount, CashAccountDto>()
                 .ForMember(dto => dto.ChAccountName, core => core.MapFrom(a => a.ChAccount.Name))
-                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
-                .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name));
             CreateMap<CreateCashAccountDto, CashAccount>();
             CreateMap<UpdateCashAccountDto, CashAccount>();
 
@@ -208,8 +208,7 @@ namespace Application.Mapper
             CreateMap<BankAccount, BankAccountDto>()
                 .ForMember(dto => dto.ChAccountName, core => core.MapFrom(a => a.ChAccount.Name))
                 .ForMember(dto => dto.ClearingAccount, core => core.MapFrom(a => a.ClearingAccount.Name))
-                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
-                .ForMember(dto => dto.TransactionId, core => core.MapFrom(a => a.Transactions.Id));
+                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name));
             CreateMap<CreateBankAccountDto, BankAccount>();
             CreateMap<UpdateBankAccountDto, BankAccount>();
 
@@ -254,7 +253,7 @@ namespace Application.Mapper
 
             // PurchaseOrder Mapping
             CreateMap<PurchaseOrderMaster, PurchaseOrderDto>()
-              .ForMember(dto => dto.Vendor, core => core.MapFrom(a => a.Vendor.Name))
+              .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
@@ -289,7 +288,7 @@ namespace Application.Mapper
 
             // GRN Mapping
             CreateMap<GRNMaster, GRNDto>()
-              .ForMember(dto => dto.Vendor, core => core.MapFrom(a => a.Vendor.Name))
+              .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));

@@ -78,7 +78,7 @@ namespace Application.Services
             }
         }
 
-        public async Task<PaginationResponse<List<EmployeeDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<EmployeeDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new EmployeeSpecs(filter);
             var employees = await _unitOfWork.Employee.GetAll(specification);
@@ -86,7 +86,7 @@ namespace Application.Services
             if (employees.Count() == 0)
                 return new PaginationResponse<List<EmployeeDto>>(_mapper.Map<List<EmployeeDto>>(employees), "List is empty");
 
-            var totalRecords = await _unitOfWork.Employee.TotalRecord();
+            var totalRecords = await _unitOfWork.Employee.TotalRecord(specification);
 
             return new PaginationResponse<List<EmployeeDto>>(_mapper.Map<List<EmployeeDto>>(employees), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
@@ -198,5 +198,17 @@ namespace Application.Services
             
             return data;
         }
+
+        public async Task<Response<List<EmployeeDropDownPaymentDto>>> GetEmployeeDropDownPayment()
+        {
+            var specification = new EmployeeSpecs(true);
+            var employees = await _unitOfWork.Employee.GetAll(specification);
+            if (!employees.Any())
+                return new Response<List<EmployeeDropDownPaymentDto>>("List is empty");
+
+            return new Response<List<EmployeeDropDownPaymentDto>>(_mapper.Map<List<EmployeeDropDownPaymentDto>>(employees), "Returning List");
+        }
+
+
     }
 }

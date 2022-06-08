@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IBankAccountService : ICrudService<CreateBankAccountDto, UpdateBankAccountDto, BankAccountDto, int, PaginationFilter>
+    public interface IBankAccountService : ICrudService<CreateBankAccountDto, UpdateBankAccountDto, BankAccountDto, int, TransactionFormFilter>
     {
         Task<Response<List<BankAccountDto>>> GetBankAccountDropDown();
     }

@@ -35,7 +35,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.JournalEntryClaims.Create, Permissions.JournalEntryClaims.View, Permissions.JournalEntryClaims.Delete, Permissions.JournalEntryClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<JournalEntryDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<JournalEntryDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var jvs = await _journalEntryService.GetAllAsync(filter);
             if (jvs.IsSuccess)

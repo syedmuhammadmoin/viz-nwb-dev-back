@@ -10,7 +10,8 @@ namespace Infrastructure.Specifications
 {
     public class DesignationSpecs : BaseSpecification<Designation>
     {
-        public DesignationSpecs(PaginationFilter filter)
+        public DesignationSpecs(TransactionFormFilter filter)
+            : base(c => c.Name.Contains(filter.Name != null ? filter.Name : ""))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

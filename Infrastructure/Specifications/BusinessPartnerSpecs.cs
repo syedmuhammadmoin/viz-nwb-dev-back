@@ -11,7 +11,9 @@ namespace Infrastructure.Specifications
 {
     public class BusinessPartnerSpecs : BaseSpecification<BusinessPartner>
     {
-        public BusinessPartnerSpecs(PaginationFilter filter): base(x => x.BusinessPartnerType != BusinessPartnerType.Employee)
+        public BusinessPartnerSpecs(List<BusinessPartnerType?> businessPartnerTypes, BusinessPartnerFilter filter)
+            : base(c => c.Name.Contains(filter.Name != null ? filter.Name : "")
+                && (businessPartnerTypes.Count() > 0 ? businessPartnerTypes.Contains(c.BusinessPartnerType):true))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

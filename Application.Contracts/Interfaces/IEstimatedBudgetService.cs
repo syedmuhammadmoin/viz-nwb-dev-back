@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IEstimatedBudgetService : ICrudService<CreateEstimatedBudgetDto, EstimatedBudgetDto, int, PaginationFilter>
+    public interface IEstimatedBudgetService : ICrudService<CreateEstimatedBudgetDto, EstimatedBudgetDto, int, TransactionFormFilter>
     {
         Task<Response<List<EstimatedBudgetDto>>> GetEstimatedBudgetDropDown();
     }

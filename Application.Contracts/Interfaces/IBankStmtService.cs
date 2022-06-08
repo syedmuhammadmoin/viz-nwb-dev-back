@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IBankStmtService : ICrudService<CreateBankStmtDto, BankStmtDto, int, PaginationFilter>
+    public interface IBankStmtService : ICrudService<CreateBankStmtDto, BankStmtDto, int, TransactionFormFilter>
     {
         Task<Response<BankStmtDto>> CreateAsync(CreateBankStmtDto entity, IFormFile file);
         Response<List<UnReconStmtDto>> GetBankUnreconciledStmts(int id);

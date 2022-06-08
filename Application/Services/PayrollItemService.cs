@@ -96,15 +96,26 @@ namespace Application.Services
             }
         }
 
-        public async Task<PaginationResponse<List<PayrollItemDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<PayrollItemDto>>> GetAllAsync(PayrollItemFilter filter)
         {
-            var specification = new PayrollItemSpecs(filter);
+            var payrollItemType = new List<CalculationType?>();
+            var payrollType = new List<PayrollType?>();
+            if (filter.PayrollItemType != null)
+            {
+                payrollItemType.Add(filter.PayrollItemType);
+            }
+            if (filter.PayrollType != null)
+            {
+                payrollType.Add(filter.PayrollType);
+            }
+
+            var specification = new PayrollItemSpecs(payrollItemType, payrollType, filter);
             var payrollItem = await _unitOfWork.PayrollItem.GetAll(specification);
 
             if (payrollItem.Count() == 0)
                 return new PaginationResponse<List<PayrollItemDto>>(_mapper.Map<List<PayrollItemDto>>(payrollItem), "List is empty");
 
-            var totalRecords = await _unitOfWork.PayrollItem.TotalRecord();
+            var totalRecords = await _unitOfWork.PayrollItem.TotalRecord(specification);
 
             return new PaginationResponse<List<PayrollItemDto>>(_mapper.Map<List<PayrollItemDto>>(payrollItem), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

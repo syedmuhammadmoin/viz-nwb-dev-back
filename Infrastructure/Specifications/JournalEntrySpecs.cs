@@ -11,7 +11,10 @@ namespace Infrastructure.Specifications
 {
     public class JournalEntrySpecs : BaseSpecification<JournalEntryMaster>
     {
-        public JournalEntrySpecs(PaginationFilter filter)
+        public JournalEntrySpecs(List<DateTime?> docDate, List<DateTime?> dueDate, List<DocumentStatus?> states, TransactionFormFilter filter) 
+            : base(c => (docDate.Count() > 0 ? docDate.Contains(c.Date) : true)
+                && c.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
+                && (states.Count() > 0 ? states.Contains(c.Status.State) : true))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

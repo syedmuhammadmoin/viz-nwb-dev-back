@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IBusinessPartnerService :ICrudService<CreateBusinessPartnerDto, BusinessPartnerDto, int, PaginationFilter>
+    public interface IBusinessPartnerService :ICrudService<CreateBusinessPartnerDto, BusinessPartnerDto, int, BusinessPartnerFilter>
     {
         Task<Response<List<BusinessPartnerDto>>> GetBusinessPartnerDropDown();
     }

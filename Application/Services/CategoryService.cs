@@ -33,7 +33,7 @@ namespace Application.Services
             return new Response<CategoryDto>(_mapper.Map<CategoryDto>(result), "Created successfully");
         }
 
-        public async Task<PaginationResponse<List<CategoryDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<CategoryDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new CategorySpecs(filter);
             var category = await _unitOfWork.Category.GetAll(specification);
@@ -41,7 +41,7 @@ namespace Application.Services
             if (category.Count() == 0)
                 return new PaginationResponse<List<CategoryDto>>(_mapper.Map<List<CategoryDto>>(category), "List is empty");
 
-            var totalRecords = await _unitOfWork.Category.TotalRecord();
+            var totalRecords = await _unitOfWork.Category.TotalRecord(specification);
 
             return new PaginationResponse<List<CategoryDto>>(_mapper.Map<List<CategoryDto>>(category), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

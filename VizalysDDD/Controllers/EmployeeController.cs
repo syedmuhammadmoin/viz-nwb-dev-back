@@ -27,7 +27,7 @@ namespace Vizalys.Api.Controllers
         [EnableCors("PayrollModule")]
         [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<EmployeeDto>>>> GetAllAsync([FromHeader(Name = "key")] string key, [FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<EmployeeDto>>>> GetAllAsync([FromHeader(Name = "key")] string key, [FromQuery] TransactionFormFilter filter)
         {
             if (key != "b4!V47w^e3QhItW_XY:jHgWQp%$&93nMS|h)Bj~R0&Q#J1m%lI^;b4C,&]Gf2(H_fu]5&X@1Oy~")
             {
@@ -71,6 +71,12 @@ namespace Vizalys.Api.Controllers
         public async Task<ActionResult<Response<List<EmployeeDto>>>> GetEmployeeDropDown()
         {
             return Ok(await _employeeService.GetEmployeeDropDown()); // Status Code : 200
+        }
+
+        [HttpGet("EmployeePaymentDropDown")]
+        public async Task<ActionResult<Response<List<EmployeeDto>>>> GetEmployeeDropDownPayment()
+        {
+            return Ok(await _employeeService.GetEmployeeDropDownPayment()); // Status Code : 200
         }
 
     }

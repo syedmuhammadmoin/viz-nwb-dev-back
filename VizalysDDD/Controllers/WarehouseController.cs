@@ -24,7 +24,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.WarehouseClaims.Create, Permissions.WarehouseClaims.View, Permissions.WarehouseClaims.Delete, Permissions.WarehouseClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<WarehouseDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<WarehouseDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var warehouses = await _warehouseService.GetAllAsync(filter);
             if (warehouses.IsSuccess)

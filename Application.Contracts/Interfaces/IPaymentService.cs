@@ -13,7 +13,7 @@ namespace Application.Contracts.Interfaces
     public interface IPaymentService : ICrudService<CreatePaymentDto, PaymentDto, int, PaginationFilter> 
     {
         Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
-        Task<PaginationResponse<List<PaymentDto>>> GetAllAsync(PaginationFilter filter,DocType docType);
+        Task<PaginationResponse<List<PaymentDto>>> GetAllAsync(TransactionFormFilter filter,DocType docType);
         Task<Response<PaymentDto>> GetByIdAsync(int id, DocType docType);
         Response<List<UnReconStmtDto>> GetBankUnreconciledPayments(Guid id);
         Task<Response<PaymentDto>> CreatePayrollPaymentProcess(CreatePayrollPaymentDto data);
