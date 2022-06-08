@@ -70,7 +70,7 @@ namespace Application.Services
             if (payrollTransactions.Count() == 0)
                 return new PaginationResponse<List<PayrollTransactionDto>>(_mapper.Map<List<PayrollTransactionDto>>(response), "List is empty");
 
-            var totalRecords = await _unitOfWork.PayrollTransaction.TotalRecord();
+            var totalRecords = await _unitOfWork.PayrollTransaction.TotalRecord(specification);
 
 
             foreach (var i in payrollTransactions)

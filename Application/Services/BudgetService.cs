@@ -56,7 +56,7 @@ namespace Application.Services
             if (!budgets.Any())
                 return new PaginationResponse<List<BudgetDto>>(_mapper.Map<List<BudgetDto>>(budgets), "List is empty");
 
-            var totalRecords = await _unitOfWork.Budget.TotalRecord();
+            var totalRecords = await _unitOfWork.Budget.TotalRecord(specification);
 
             return new PaginationResponse<List<BudgetDto>>(_mapper.Map<List<BudgetDto>>(budgets),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
