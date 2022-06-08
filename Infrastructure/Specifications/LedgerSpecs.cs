@@ -27,6 +27,13 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Transactions);
         }
 
+        public LedgerSpecs(int transactionId, bool forDoc) : base(i => i.TransactionId == transactionId
+        && (i.ReconStatus == DocumentStatus.Unreconciled || i.ReconStatus == DocumentStatus.Partial || i.ReconStatus == DocumentStatus.Reconciled)
+        && i.IsReconcilable == true)
+        {
+            AddInclude(i => i.Transactions);
+        }
+
         public LedgerSpecs(int transactionId, Guid level4Id, int? businessPartnerId, char sign, bool asNoTracking = false) 
         : base(i => i.TransactionId == transactionId
         && i.Level4_id == level4Id

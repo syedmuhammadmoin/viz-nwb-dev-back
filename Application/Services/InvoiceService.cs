@@ -351,7 +351,7 @@ namespace Application.Services
         private InvoiceDto MapToValue(InvoiceDto data)
         {
             //Getting transaction with Payment Transaction Id
-            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(data.TransactionId)).FirstOrDefault();
+            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(data.TransactionId, true)).FirstOrDefault();
             
             // Checking if given amount is greater than unreconciled document amount
             var transactionReconciles = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(getUnreconciledDocumentAmount.Id, false)).ToList();
