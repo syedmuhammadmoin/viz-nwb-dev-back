@@ -50,16 +50,27 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public async Task<PaginationResponse<List<PayrollTransactionDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<PayrollTransactionDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new PayrollTransactionSpecs(filter);
+            var docDate = new List<DateTime?>();
+            var states = new List<DocumentStatus?>();
+            if (filter.DocDate != null)
+            {
+                docDate.Add(filter.DocDate);
+            }
+            if (filter.State != null)
+            {
+                states.Add(filter.State);
+            }
+
+            var specification = new PayrollTransactionSpecs(docDate, states, filter);
             var payrollTransactions = await _unitOfWork.PayrollTransaction.GetAll(specification);
             var response = new List<PayrollTransactionDto>();
 
             if (payrollTransactions.Count() == 0)
                 return new PaginationResponse<List<PayrollTransactionDto>>(_mapper.Map<List<PayrollTransactionDto>>(response), "List is empty");
 
-            var totalRecords = await _unitOfWork.PayrollTransaction.TotalRecord();
+            var totalRecords = await _unitOfWork.PayrollTransaction.TotalRecord(specification);
 
 
             foreach (var i in payrollTransactions)

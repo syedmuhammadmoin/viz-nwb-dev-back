@@ -23,7 +23,7 @@ namespace Vizalys.Api.Controllers
         }
         [ClaimRequirement("Permission", new string[] { Permissions.BudgetClaims.Create, Permissions.BudgetClaims.View, Permissions.BudgetClaims.Delete, Permissions.BudgetClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<BudgetDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<BudgetDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var budget = await _budgetService.GetAllAsync(filter);
             if (budget.IsSuccess)

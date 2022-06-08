@@ -34,7 +34,7 @@ namespace Application.Services
             return new Response<WarehouseDto>(_mapper.Map<WarehouseDto>(result), "Created successfully");
         }
 
-        public async Task<PaginationResponse<List<WarehouseDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<WarehouseDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new WarehouseSpecs(filter);
             var warehouse = await _unitOfWork.Warehouse.GetAll(specification);
@@ -42,7 +42,7 @@ namespace Application.Services
             if (warehouse.Count() == 0)
                 return new PaginationResponse<List<WarehouseDto>>(_mapper.Map<List<WarehouseDto>>(warehouse), "List is empty");
 
-            var totalRecords = await _unitOfWork.Warehouse.TotalRecord();
+            var totalRecords = await _unitOfWork.Warehouse.TotalRecord(specification);
 
             return new PaginationResponse<List<WarehouseDto>>(_mapper.Map<List<WarehouseDto>>(warehouse), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

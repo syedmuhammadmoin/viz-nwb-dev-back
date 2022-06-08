@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IProductService : ICrudService<CreateProductDto, ProductDto, int, PaginationFilter>
+    public interface IProductService : ICrudService<CreateProductDto, ProductDto, int, TransactionFormFilter>
     {
         Task<Response<List<ProductDto>>> GetProductDropDown();
     }

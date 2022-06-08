@@ -35,7 +35,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.DebitNoteClaims.Create, Permissions.DebitNoteClaims.View, Permissions.DebitNoteClaims.Delete, Permissions.DebitNoteClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<DebitNoteDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<DebitNoteDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var results = await _debitNoteService.GetAllAsync(filter);
             if (results.IsSuccess)

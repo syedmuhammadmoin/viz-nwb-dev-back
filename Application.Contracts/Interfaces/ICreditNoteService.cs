@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface ICreditNoteService : ICrudService<CreateCreditNoteDto, CreditNoteDto, int, PaginationFilter>
+    public interface ICreditNoteService : ICrudService<CreateCreditNoteDto, CreditNoteDto, int, TransactionFormFilter>
     {
         Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
     }

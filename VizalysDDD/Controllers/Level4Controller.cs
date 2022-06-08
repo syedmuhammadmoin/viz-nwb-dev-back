@@ -75,7 +75,11 @@ namespace Vizalys.Api.Controllers
             return Ok(await _level4Service.GetLevel4DropDown()); // Status Code : 200
         }
 
-
+        [HttpGet("OtherAccounts")]
+        public async Task<ActionResult<Response<List<Level4Dto>>>> GetAllOtherAccounts()
+        {
+            return Ok(await _level4Service.GetAllOtherAccounts()); // Status Code : 200
+        }
         [HttpGet("budgetAccounts")]
         public async Task<ActionResult<Response<List<Level4Dto>>>> GetBudgetAccounts()
         {
@@ -92,12 +96,6 @@ namespace Vizalys.Api.Controllers
         public async Task<ActionResult<Response<List<Level4Dto>>>> GetReceivableAccounts()
         {
             return Ok(await _level4Service.GetReceivableAccounts()); // Status Code : 200
-        }
-
-        [HttpGet("getAllAccounts")]
-        public async Task<ActionResult<Response<List<Level4Dto>>>> GetAllAccounts()
-        {
-            return Ok(await _level4Service.GetAllAccounts()); // Status Code : 200
         }
     }
 }

@@ -41,15 +41,26 @@ namespace Application.Services
             }
         }
 
-        public async Task<PaginationResponse<List<CreditNoteDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<CreditNoteDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new CreditNoteSpecs(filter);
+            var docDate = new List<DateTime?>();
+            var states = new List<DocumentStatus?>();
+            if (filter.DocDate != null)
+            {
+                docDate.Add(filter.DocDate);
+            }
+            if (filter.State != null)
+            {
+                states.Add(filter.State);
+            }
+
+            var specification = new CreditNoteSpecs(docDate, states, filter);
             var crns = await _unitOfWork.CreditNote.GetAll(specification);
 
             if (crns.Count() == 0)
                 return new PaginationResponse<List<CreditNoteDto>>(_mapper.Map<List<CreditNoteDto>>(crns), "List is empty");
 
-            var totalRecords = await _unitOfWork.CreditNote.TotalRecord();
+            var totalRecords = await _unitOfWork.CreditNote.TotalRecord(specification);
 
             return new PaginationResponse<List<CreditNoteDto>>(_mapper.Map<List<CreditNoteDto>>(crns),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");

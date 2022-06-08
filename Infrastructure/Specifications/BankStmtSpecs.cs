@@ -10,7 +10,8 @@ namespace Infrastructure.Specifications
 {
     public class BankStmtSpecs : BaseSpecification<BankStmtMaster>
     {
-        public BankStmtSpecs(PaginationFilter filter)
+        public BankStmtSpecs(TransactionFormFilter filter)
+         : base(c => c.BankAccount.BankName.Contains(filter.Name != null ? filter.Name : ""))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

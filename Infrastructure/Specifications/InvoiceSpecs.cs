@@ -11,7 +11,11 @@ namespace Infrastructure.Specifications
 {
     public class InvoiceSpecs : BaseSpecification<InvoiceMaster>
     {
-        public InvoiceSpecs(PaginationFilter filter)
+        public InvoiceSpecs(List<DateTime?> docDate, List<DateTime?> dueDate,
+            List<DocumentStatus?> states, TransactionFormFilter filter) : base(x => (docDate.Count() > 0 ? docDate.Contains(x.InvoiceDate) : true) && (dueDate.Count() > 0 ? dueDate.Contains(x.DueDate) : true)
+            && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
+            && x.Customer.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
+            && (states.Count() > 0 ? states.Contains(x.Status.State) : true))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

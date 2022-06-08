@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IPayrollItemService : ICrudService<CreatePayrollItemDto, PayrollItemDto, int, PaginationFilter>
+    public interface IPayrollItemService : ICrudService<CreatePayrollItemDto, PayrollItemDto, int, PayrollItemFilter>
     {
         Task<Response<List<PayrollItemDto>>> GetBaicPayList();
     }

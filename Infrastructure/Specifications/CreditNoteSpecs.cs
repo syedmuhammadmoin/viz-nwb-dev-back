@@ -11,7 +11,11 @@ namespace Infrastructure.Specifications
 {
     public class CreditNoteSpecs : BaseSpecification<CreditNoteMaster>
     {
-        public CreditNoteSpecs(PaginationFilter filter)
+        public CreditNoteSpecs(List<DateTime?> docDate, List<DocumentStatus?> states,
+            TransactionFormFilter filter) : base(c => (docDate.Count() > 0 ? docDate.Contains(c.NoteDate) : true)
+                && c.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
+                && c.Customer.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
+                && (states.Count() > 0 ? states.Contains(c.Status.State) : true))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

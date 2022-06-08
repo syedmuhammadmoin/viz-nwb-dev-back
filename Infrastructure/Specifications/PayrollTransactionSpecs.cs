@@ -11,7 +11,14 @@ namespace Infrastructure.Specifications
 {
     public class PayrollTransactionSpecs : BaseSpecification<PayrollTransactionMaster>
     {
-        public PayrollTransactionSpecs(PaginationFilter filter)
+        public PayrollTransactionSpecs(List<DateTime?> docDate,
+            List<DocumentStatus?> states, TransactionFormFilter filter)
+            : base(c =>(docDate.Count() > 0 ? docDate.Contains(c.TransDate) : true)
+                && c.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
+                && c.Employee.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
+                && c.Department.Name.Contains(filter.Department != null ? filter.Department : "")
+                && c.Designation.Name.Contains(filter.Designation != null ? filter.Designation : "")
+                && (states.Count() > 0 ? states.Contains(c.Status.State) : true))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

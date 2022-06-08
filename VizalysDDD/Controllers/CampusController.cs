@@ -24,7 +24,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.CampusClaims.Create, Permissions.CampusClaims.View, Permissions.CampusClaims.Delete, Permissions.CampusClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<CampusDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<CampusDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var campuses = await _campusService.GetAllAsync(filter);
             if (campuses.IsSuccess)

@@ -47,7 +47,7 @@ namespace Application.Services
             return new Response<DepartmentDto>(_mapper.Map<DepartmentDto>(getDepartment), "Created successfully");
         }
 
-        public async Task<PaginationResponse<List<DepartmentDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<DepartmentDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new DepartmentSpecs(filter);
             var departments = await _unitOfWork.Department.GetAll(specification);
@@ -55,7 +55,7 @@ namespace Application.Services
             if (departments.Count() == 0)
                 return new PaginationResponse<List<DepartmentDto>>(_mapper.Map<List<DepartmentDto>>(departments), "List is empty");
 
-            var totalRecords = await _unitOfWork.Department.TotalRecord();
+            var totalRecords = await _unitOfWork.Department.TotalRecord(specification);
 
             return new PaginationResponse<List<DepartmentDto>>(_mapper.Map<List<DepartmentDto>>(departments), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

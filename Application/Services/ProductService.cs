@@ -3,6 +3,7 @@ using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
+using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
@@ -34,7 +35,7 @@ namespace Application.Services
             return new Response<ProductDto>(_mapper.Map<ProductDto>(result), "Created successfully");
         }
 
-        public async Task<PaginationResponse<List<ProductDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<ProductDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new ProductSpecs(filter);
             var product = await _unitOfWork.Product.GetAll(specification);
@@ -42,7 +43,7 @@ namespace Application.Services
             if (product.Count() == 0)
                 return new PaginationResponse<List<ProductDto>>(_mapper.Map<List<ProductDto>>(product), "List is empty");
 
-            var totalRecords = await _unitOfWork.Product.TotalRecord();
+            var totalRecords = await _unitOfWork.Product.TotalRecord(specification);
 
             return new PaginationResponse<List<ProductDto>>(_mapper.Map<List<ProductDto>>(product), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

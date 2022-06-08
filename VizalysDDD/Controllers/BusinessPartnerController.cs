@@ -24,7 +24,7 @@ namespace Vizalys.Api.Controllers
         
         [ClaimRequirement("Permission", new string[] { Permissions.BusinessPartnerClaims.Create, Permissions.BusinessPartnerClaims.View, Permissions.BusinessPartnerClaims.Delete, Permissions.BusinessPartnerClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<BusinessPartnerDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<BusinessPartnerDto>>>> GetAllAsync([FromQuery] BusinessPartnerFilter filter)
         {
             var businessPartners = await _businessPartnerService.GetAllAsync(filter);
             if (businessPartners.IsSuccess)

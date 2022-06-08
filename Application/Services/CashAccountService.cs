@@ -71,7 +71,7 @@ namespace Application.Services
             }
         }
 
-        public async Task<PaginationResponse<List<CashAccountDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<CashAccountDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new CashAccountSpecs(filter);
             var cashAccount = await _unitOfWork.CashAccount.GetAll(specification);
@@ -79,7 +79,7 @@ namespace Application.Services
             if (!cashAccount.Any())
                 return new PaginationResponse<List<CashAccountDto>>(_mapper.Map<List<CashAccountDto>>(cashAccount), "List is empty");
 
-            var totalRecords = await _unitOfWork.CashAccount.TotalRecord();
+            var totalRecords = await _unitOfWork.CashAccount.TotalRecord(specification);
 
             return new PaginationResponse<List<CashAccountDto>>(_mapper.Map<List<CashAccountDto>>(cashAccount), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
 
