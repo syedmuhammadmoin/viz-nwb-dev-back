@@ -119,5 +119,12 @@ namespace Infrastructure.Specifications
             AddInclude("PayrollTransactionLines.Account");
             ApplyOrderByDescending(i => i.Id);
         }
+
+        public PayrollTransactionSpecs(int transactionId) :
+         base(p => (p.Status.State == DocumentStatus.Unpaid
+          || p.Status.State == DocumentStatus.Partial) && (p.TransactionId == transactionId))
+        {
+            AddInclude(i => i.Status);
+        }
     }
 }

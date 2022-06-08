@@ -124,6 +124,14 @@ namespace Application.Services
                         var payment = _unitOfWork.Payment.Find(new PaymentSpecs(transactionId)).FirstOrDefault();
                         payment.setStatus(5); // Paid
                         break;
+                    case DocType.Receipt:
+                        var receipt = _unitOfWork.Payment.Find(new PaymentSpecs(transactionId)).FirstOrDefault();
+                        receipt.setStatus(5); // Paid
+                        break;
+                    case DocType.PayrollPayment:
+                        var payrollPayment = _unitOfWork.Payment.Find(new PaymentSpecs(transactionId)).FirstOrDefault();
+                        payrollPayment.setStatus(5); // Paid
+                        break;
                     case DocType.CreditNote:
                         var creaditNote = _unitOfWork.CreditNote.Find(new CreditNoteSpecs(transactionId)).FirstOrDefault();
                         creaditNote.setStatus(5); // Paid
@@ -140,6 +148,10 @@ namespace Application.Services
                         var bill = _unitOfWork.Bill.Find(new BillSpecs(transactionId)).FirstOrDefault();
                         bill.setStatus(5); // Paid
                         break;
+                    case DocType.PayrollTransaction:
+                        var payrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(transactionId)).FirstOrDefault();
+                        payrollTransaction.setStatus(5); // Paid
+                        break;
                 }
             }
             else
@@ -151,6 +163,14 @@ namespace Application.Services
                     case DocType.Payment:
                         var payment = _unitOfWork.Payment.Find(new PaymentSpecs(transactionId)).FirstOrDefault();
                         payment.setStatus(4); // Partial
+                        break;
+                    case DocType.Receipt:
+                        var receipt = _unitOfWork.Payment.Find(new PaymentSpecs(transactionId)).FirstOrDefault();
+                        receipt.setStatus(4); // Partial
+                        break;
+                    case DocType.PayrollPayment:
+                        var payrollPayment = _unitOfWork.Payment.Find(new PaymentSpecs(transactionId)).FirstOrDefault();
+                        payrollPayment.setStatus(4); // Partial
                         break;
                     case DocType.CreditNote:
                         var creaditNote = _unitOfWork.CreditNote.Find(new CreditNoteSpecs(transactionId)).FirstOrDefault();
@@ -167,6 +187,10 @@ namespace Application.Services
                     case DocType.Bill:
                         var bill = _unitOfWork.Bill.Find(new BillSpecs(transactionId)).FirstOrDefault();
                         bill.setStatus(4); // Partial
+                        break;
+                    case DocType.PayrollTransaction:
+                        var payrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(transactionId)).FirstOrDefault();
+                        payrollTransaction.setStatus(4); // Partial
                         break;
                 }
             }
