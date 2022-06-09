@@ -20,8 +20,48 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
+        public new async Task<RecordLedger> Add(RecordLedger entity)
+        {
+            //Getting level 3 account id
+            var getLevel3 = await _context.Level4
+                .Where(i => i.Id == entity.Level4_id)
+                .Select(i => i.Level3_id)
+                .FirstOrDefaultAsync();
+            
+            // Setting isReconcilable true if account id is equal to payable or receivable
+            if (getLevel3 == new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00") || getLevel3 == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00"))
+            {
+                entity.setIsReconcilable(true);
+            }
+            else
+            {
+                entity.setIsReconcilable(false);
+            }
+            //Adding in recordLedger
+            var result = await _context.RecordLedger.AddAsync(entity);
+            return result.Entity;
+        }
+
         public async Task AddRange(List<RecordLedger> list)
         {
+            foreach (var item in list)
+            {
+                //Getting level 3 account id
+                var getLevel3 = await _context.Level4
+                    .Where(i => i.Id == item.Level4_id)
+                    .Select(i => i.Level3_id)
+                    .FirstOrDefaultAsync();
+
+                // Setting isReconcilable true if account id is equal to payable or receivable
+                if (getLevel3 == new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00") || getLevel3 == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00"))
+                {
+                    item.setIsReconcilable(true);
+                }
+                else
+                {
+                    item.setIsReconcilable(false);
+                }
+            }
             await _context.RecordLedger.AddRangeAsync(list);
         }
 

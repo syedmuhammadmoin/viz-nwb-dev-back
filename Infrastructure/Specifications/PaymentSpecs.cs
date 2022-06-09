@@ -60,7 +60,9 @@ namespace Infrastructure.Specifications
         public PaymentSpecs(PaymentType paymentType, DocType docType) : base(e => (e.PaymentType == paymentType) && (e.PaymentFormType == docType))
         {
         }
-
+        public PaymentSpecs(int businessPartnerId, PaymentType paymentType) : base(e => (e.PaymentType == paymentType))
+        {
+        }
         public PaymentSpecs(Guid paymentRegisterId) : base(
             (x =>
             (x.PaymentRegisterId == paymentRegisterId)

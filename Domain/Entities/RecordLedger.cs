@@ -1,4 +1,5 @@
 ﻿using Domain.Base;
+using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -38,11 +39,15 @@ namespace Domain.Entities
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
         public DateTime TransactionDate { get; private set; }
+        public DocumentStatus ReconStatus { get; private set; }
+        public bool IsReconcilable { get; private set; }
+
 
         protected RecordLedger()
         {
 
         }
+       
         public RecordLedger(int transactionId, Guid level4_id, int? businessPartnerId, int? warehouseId, string description, char sign, decimal amount, int? campusId, DateTime transactionDate)
         {
             TransactionId = transactionId;
@@ -54,6 +59,16 @@ namespace Domain.Entities
             Amount = amount;
             CampusId = campusId;
             TransactionDate = transactionDate;
+            ReconStatus = DocumentStatus.Unreconciled;
+        }
+
+        public void setIsReconcilable(bool value)
+        {
+            IsReconcilable = value;
+        }
+        public void setStatus(DocumentStatus status)
+        {
+            ReconStatus = status;
         }
     }
 }

@@ -9,8 +9,13 @@ namespace Infrastructure.Specifications
 {
     public class TransactionReconSpecs : BaseSpecification<TransactionReconcile>
     {
-        public TransactionReconSpecs(int transactionId, bool isPaymentId) 
-            : base(isPaymentId ? p => p.PaymentTransactionId == transactionId
-            : p => p.DocumentTransactionId == transactionId) {}
+        public TransactionReconSpecs(int ledgerId, bool isPaymentId) 
+            : base(isPaymentId ? p => p.PaymentLedgerId == ledgerId
+            : p => p.DocumentLegderId == ledgerId)
+        {
+            AddInclude(i => i.DocumentLedger);
+            AddInclude("PaymentLedger.Transactions");
+            ApplyAsNoTracking();
+        }
     }
 }
