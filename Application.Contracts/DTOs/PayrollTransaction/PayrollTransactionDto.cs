@@ -39,7 +39,8 @@ namespace Application.Contracts.DTOs
         public IEnumerable<UnreconciledBusinessPartnerPaymentsDto> BPUnreconPaymentList { get; set; }
         public decimal PendingAmount { get; set; }
         public bool IsAllowedRole { get; set; }
-        public int TransactionId { get; set; }
+        public int? TransactionId { get; set; }
+        public int? LedgerId { get; set; }
         public decimal BasicSalary { get; set; }
         public string CNIC { get; set; }
         public string Religion { get; set; }
