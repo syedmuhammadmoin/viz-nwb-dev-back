@@ -38,9 +38,9 @@ namespace Application.Mapper
                 .ForMember(dto => dto.DesignationName, core => core.MapFrom(a => a.Designation.Name));
 
             CreateMap<CreateEmployeeDto, Employee>();
-            
+
             // EmployeeDropDown for payrollPayment
-            CreateMap<Employee, EmployeeDropDownPaymentDto> ()
+            CreateMap<Employee, EmployeeDropDownPaymentDto>()
                 .ForMember(dto => dto.Id, core => core.MapFrom(a => a.BusinessPartnerId))
                 .ForMember(dto => dto.Name, core => core.MapFrom(a => a.Name));
 
@@ -145,7 +145,7 @@ namespace Application.Mapper
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
               .ForMember(dto => dto.PayableAccountName, core => core.MapFrom(a => a.PayableAccount.Name))
               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
-              .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+              .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State == DocumentStatus.Unpaid ? "Unpaid" : a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<BillLines, BillLinesDto>()
@@ -155,13 +155,13 @@ namespace Application.Mapper
 
             CreateMap<CreateBillDto, BillMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.BillLines.Sum(e => e.Quantity * e.Cost)))
-               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.BillLines.Sum(e => (e.Quantity * e.Cost * e.Tax / 100)+(e.AnyOtherTax))))
+               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.BillLines.Sum(e => (e.Quantity * e.Cost * e.Tax / 100) + (e.AnyOtherTax))))
                .ForMember(core => core.OtherTax, dto => dto.MapFrom(a => a.BillLines.Sum(e => e.AnyOtherTax)))
                .ForMember(core => core.Tax, dto => dto.MapFrom(a => a.BillLines.Sum(e => (e.Quantity * e.Cost * e.Tax / 100))))
                .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.BillLines.Sum(e => (e.Quantity * e.Cost) + (e.Quantity * e.Cost * e.Tax / 100) + (e.AnyOtherTax))));
 
             CreateMap<CreateBillLinesDto, BillLines>()
-               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)+ (a.AnyOtherTax)));
+               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100) + (a.AnyOtherTax)));
 
 
             // DebitNote Mapping
@@ -315,7 +315,7 @@ namespace Application.Mapper
             CreateMap<CreateEstimatedBudgetLinesDto, EstimatedBudgetLines>()
                 .ForMember(core => core.EstimatedValue,
                 dto => dto.MapFrom(a =>
-                a.CalculationType == CalculationType.Percentage ? ((a.Amount * a.Value / 100) + (a.Amount)) 
+                a.CalculationType == CalculationType.Percentage ? ((a.Amount * a.Value / 100) + (a.Amount))
                 : (a.Amount + a.Value)));
 
             // PayrollItem Mapping
