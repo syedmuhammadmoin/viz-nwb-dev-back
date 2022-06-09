@@ -53,23 +53,23 @@ namespace Domain.Constants
         public static class DepartmentClaims
         {
             public const string View = "Permissions.DepartmentsClaims.View";
-            public const string Create = "Permissions.DepartmentsClaims.Create";
-            public const string Edit = "Permissions.DepartmentsClaims.Edit";
-            public const string Delete = "Permissions.DepartmentsClaims.Delete";
+            //public const string Create = "Permissions.DepartmentsClaims.Create";
+            //public const string Edit = "Permissions.DepartmentsClaims.Edit";
+            //public const string Delete = "Permissions.DepartmentsClaims.Delete";
         }
         public static class DesignationClaims
         {
             public const string View = "Permissions.DesignationClaims.View";
-            public const string Create = "Permissions.DesignationClaims.Create";
-            public const string Edit = "Permissions.DesignationClaims.Edit";
-            public const string Delete = "Permissions.DesignationClaims.Delete";
+            //public const string Create = "Permissions.DesignationClaims.Create";
+            //public const string Edit = "Permissions.DesignationClaims.Edit";
+            //public const string Delete = "Permissions.DesignationClaims.Delete";
         }
         public static class EmployeeClaims
         {
             public const string View = "Permissions.EmployeeClaims.View";
-            public const string Create = "Permissions.EmployeeClaims.Create";
-            public const string Edit = "Permissions.EmployeeClaims.Edit";
-            public const string Delete = "Permissions.EmployeeClaims.Delete";
+            //public const string Create = "Permissions.EmployeeClaims.Create";
+            //public const string Edit = "Permissions.EmployeeClaims.Edit";
+            //public const string Delete = "Permissions.EmployeeClaims.Delete";
         }
 
         public static class LocationClaims
