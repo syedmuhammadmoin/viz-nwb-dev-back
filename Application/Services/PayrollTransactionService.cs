@@ -550,6 +550,66 @@ namespace Application.Services
             payrollTransactionDto.Religion = data.Employee.Religion;
             payrollTransactionDto.TransDate = data.TransDate;
 
+            if ((data.Status.State == DocumentStatus.Unpaid || data.Status.State == DocumentStatus.Partial || data.Status.State == DocumentStatus.Paid) && data.TransactionId != null)
+            {
+                //Getting transaction with Payment Transaction Id
+                var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs((int)data.TransactionId, true)).FirstOrDefault();
+
+                // Checking if given amount is greater than unreconciled document amount
+                var transactionReconciles = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(getUnreconciledDocumentAmount.Id, false)).ToList();
+
+                //For Paid Document List
+                var paidDocList = new List<PaidDocListDto>();
+                // if reconciles transaction found
+                if (transactionReconciles.Count() > 0)
+                {
+                    //Adding Paid Doc List
+                    foreach (var tranRecon in transactionReconciles)
+                    {
+                        string[] docId = tranRecon.PaymentLedger.Transactions.DocNo.Split("-");
+                        paidDocList.Add(new PaidDocListDto
+                        {
+                            Id = Int32.Parse(docId[1]),
+                            DocNo = tranRecon.PaymentLedger.Transactions.DocNo,
+                            DocType = tranRecon.PaymentLedger.Transactions.DocType,
+                            Amount = tranRecon.Amount
+                        });
+                    }
+                }
+                var paidpayments = paidDocList.GroupBy(n => new { n.Id, n.DocNo, n.DocType })
+                    .Select(g => new PaidDocListDto()
+                    {
+                        Id = g.Key.Id,
+                        DocNo = g.Key.DocNo,
+                        DocType = g.Key.DocType,
+                        Amount = g.Sum(i => i.Amount),
+                    }).ToList();
+
+                //Getting Pending Invoice Amount
+                var pendingAmount = data.NetSalary - transactionReconciles.Sum(e => e.Amount);
+
+                //Creating transactionReconRepo object
+                TransactionReconcileService trasactionReconService = new TransactionReconcileService(_unitOfWork);
+                var getUnreconPayment = trasactionReconService.GetPaymentReconAmounts(getUnreconciledDocumentAmount.Level4_id, (int)getUnreconciledDocumentAmount.BusinessPartnerId, getUnreconciledDocumentAmount.Sign);
+
+
+                //For Getting Business Partner Unreconciled Payments and CreditNote
+                var BPUnreconPayments = getUnreconPayment.Result.Select(i => new UnreconciledBusinessPartnerPaymentsDto()
+                {
+                    Id = i.DocumentId,
+                    DocNo = i.DocNo,
+                    DocType = i.DocType,
+                    Amount = i.UnreconciledAmount,
+                    PaymentTransactionId = i.PaymentTransactionId
+                }).ToList();
+
+                //data.Status = data.State == DocumentStatus.Unpaid ? "Unpaid" : data.Status;
+                payrollTransactionDto.TotalPaid = transactionReconciles.Sum(e => e.Amount);
+                payrollTransactionDto.PaidAmountList = paidpayments;
+                payrollTransactionDto.PendingAmount = pendingAmount;
+                payrollTransactionDto.BPUnreconPaymentList = BPUnreconPayments;
+            }
+
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
 
             if (workflow != null)
@@ -569,9 +629,6 @@ namespace Application.Services
                     }
                 }
             }
-
-            payrollTransactionDto.Status = data.Status.Status;
-
             return payrollTransactionDto;
         }
 
