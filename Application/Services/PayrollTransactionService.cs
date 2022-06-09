@@ -588,26 +588,31 @@ namespace Application.Services
                 //Getting Pending Invoice Amount
                 var pendingAmount = data.NetSalary - transactionReconciles.Sum(e => e.Amount);
 
-                //Creating transactionReconRepo object
-                TransactionReconcileService trasactionReconService = new TransactionReconcileService(_unitOfWork);
-                var getUnreconPayment = trasactionReconService.GetPaymentReconAmounts(getUnreconciledDocumentAmount.Level4_id, (int)getUnreconciledDocumentAmount.BusinessPartnerId, getUnreconciledDocumentAmount.Sign);
-
-
-                //For Getting Business Partner Unreconciled Payments and CreditNote
-                var BPUnreconPayments = getUnreconPayment.Result.Select(i => new UnreconciledBusinessPartnerPaymentsDto()
+                if (data.Status.State != DocumentStatus.Paid)
                 {
-                    Id = i.DocumentId,
-                    DocNo = i.DocNo,
-                    DocType = i.DocType,
-                    Amount = i.UnreconciledAmount,
-                    PaymentTransactionId = i.PaymentTransactionId
-                }).ToList();
+                    //Creating transactionReconRepo object
+                    TransactionReconcileService trasactionReconService = new TransactionReconcileService(_unitOfWork);
+                    var getUnreconPayment = trasactionReconService.GetPaymentReconAmounts(getUnreconciledDocumentAmount.Level4_id, (int)getUnreconciledDocumentAmount.BusinessPartnerId, getUnreconciledDocumentAmount.Sign);
+
+
+                    //For Getting Business Partner Unreconciled Payments and CreditNote
+                    var BPUnreconPayments = getUnreconPayment.Result.Select(i => new UnreconciledBusinessPartnerPaymentsDto()
+                    {
+                        Id = i.DocumentId,
+                        DocNo = i.DocNo,
+                        DocType = i.DocType,
+                        Amount = i.UnreconciledAmount,
+                        PaymentLedgerId = i.PaymentLedgerId
+                    }).ToList();
+
+                    payrollTransactionDto.BPUnreconPaymentList = BPUnreconPayments;
+                }
 
                 //data.Status = data.State == DocumentStatus.Unpaid ? "Unpaid" : data.Status;
                 payrollTransactionDto.TotalPaid = transactionReconciles.Sum(e => e.Amount);
                 payrollTransactionDto.PaidAmountList = paidpayments;
                 payrollTransactionDto.PendingAmount = pendingAmount;
-                payrollTransactionDto.BPUnreconPaymentList = BPUnreconPayments;
+                payrollTransactionDto.LedgerId = getUnreconciledDocumentAmount.Id;
             }
 
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();

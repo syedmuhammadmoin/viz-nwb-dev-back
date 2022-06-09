@@ -10,7 +10,7 @@ namespace Application.Contracts.DTOs
     public class AmountsForReconciliationDto
     {
         public int DocumentId { get; set; }
-        public int? PaymentTransactionId { get; set; }
+        public int PaymentLedgerId { get; set; }
         public string DocNo { get; set; }
         public DocType DocType { get; set; }
         public decimal TotalAmount { get; set; }

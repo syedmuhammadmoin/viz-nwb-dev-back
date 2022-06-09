@@ -351,7 +351,7 @@ namespace Application.Services
         private InvoiceDto MapToValue(InvoiceDto data)
         {
             //Getting transaction with Payment Transaction Id
-            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(data.TransactionId, true)).FirstOrDefault();
+            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs((int)data.TransactionId, true)).FirstOrDefault();
             
             // Checking if given amount is greater than unreconciled document amount
             var transactionReconciles = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(getUnreconciledDocumentAmount.Id, false)).ToList();
@@ -365,7 +365,7 @@ namespace Application.Services
                 foreach (var tranRecon in transactionReconciles)
                 {
                     string[] docId = tranRecon.PaymentLedger.Transactions.DocNo.Split("-");
-                    paidDocList.Add(new PaidDocListDto
+                        paidDocList.Add(new PaidDocListDto
                     {
                         Id = Int32.Parse(docId[1]),
                         DocNo = tranRecon.PaymentLedger.Transactions.DocNo,
@@ -386,26 +386,30 @@ namespace Application.Services
             //Getting Pending Invoice Amount
             var pendingAmount = data.TotalAmount - transactionReconciles.Sum(e => e.Amount);
 
-            //Creating transactionReconRepo object
-            TransactionReconcileService trasactionReconService = new TransactionReconcileService(_unitOfWork);
-            var getUnreconPayment = trasactionReconService.GetPaymentReconAmounts(getUnreconciledDocumentAmount.Level4_id, (int)getUnreconciledDocumentAmount.BusinessPartnerId, getUnreconciledDocumentAmount.Sign);
-
-
-            //For Getting Business Partner Unreconciled Payments and CreditNote
-            var BPUnreconPayments = getUnreconPayment.Result.Select(i => new UnreconciledBusinessPartnerPaymentsDto()
+            if (data.State != DocumentStatus.Paid)
             {
-                Id = i.DocumentId,
-                DocNo = i.DocNo,
-                DocType = i.DocType,
-                Amount = i.UnreconciledAmount,
-                PaymentTransactionId = i.PaymentTransactionId
-            }).ToList();
+                //Creating transactionReconRepo object
+                TransactionReconcileService trasactionReconService = new TransactionReconcileService(_unitOfWork);
+                var getUnreconPayment = trasactionReconService.GetPaymentReconAmounts(getUnreconciledDocumentAmount.Level4_id, (int)getUnreconciledDocumentAmount.BusinessPartnerId, getUnreconciledDocumentAmount.Sign);
 
-            //data.Status = data.State == DocumentStatus.Unpaid ? "Unpaid" : data.Status;
+
+                //For Getting Business Partner Unreconciled Payments and CreditNote
+                var BPUnreconPayments = getUnreconPayment.Result.Select(i => new UnreconciledBusinessPartnerPaymentsDto()
+                {
+                    Id = i.DocumentId,
+                    DocNo = i.DocNo,
+                    DocType = i.DocType,
+                    Amount = i.UnreconciledAmount,
+                    PaymentLedgerId = i.PaymentLedgerId
+                }).ToList();
+                
+                data.BPUnreconPaymentList = BPUnreconPayments;
+            }
+
             data.TotalPaid = transactionReconciles.Sum(e => e.Amount);
             data.PaidAmountList = paidpayments;
             data.PendingAmount = pendingAmount;
-            data.BPUnreconPaymentList = BPUnreconPayments;
+            data.LedgerId = getUnreconciledDocumentAmount.Id;
 
             // Returning invoiceDTO with all values assigned
             return data;
