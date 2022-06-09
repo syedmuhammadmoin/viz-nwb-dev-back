@@ -401,7 +401,7 @@ namespace Application.Services
                 PaymentTransactionId = i.PaymentTransactionId
             }).ToList();
 
-            data.Status = data.State == DocumentStatus.Unpaid ? "Unpaid" : data.Status;
+            //data.Status = data.State == DocumentStatus.Unpaid ? "Unpaid" : data.Status;
             data.TotalPaid = transactionReconciles.Sum(e => e.Amount);
             data.PaidAmountList = paidpayments;
             data.PendingAmount = pendingAmount;
