@@ -42,7 +42,7 @@ namespace Application.Services
             if (!status.Any())
                 return new PaginationResponse<List<WorkFlowStatusDto>>(_mapper.Map<List<WorkFlowStatusDto>>(status), "List is empty");
 
-            var totalRecords = await _unitOfWork.WorkFlowStatus.TotalRecord(new WorkFlowStatusSpecs());
+            var totalRecords = await _unitOfWork.WorkFlowStatus.TotalRecord(specification);
 
             return new PaginationResponse<List<WorkFlowStatusDto>>(_mapper.Map<List<WorkFlowStatusDto>>(status), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
