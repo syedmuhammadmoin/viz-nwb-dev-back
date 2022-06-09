@@ -15,7 +15,6 @@ namespace Application.Contracts.DTOs
         public BusinessPartnerType BusinessPartnerType { get; set; }
         [Required]
         public string Name { get; set; }
-        [Required]
         public string CNIC { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
