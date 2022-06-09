@@ -24,7 +24,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.WorkflowStatusClaims.Create, Permissions.WorkflowStatusClaims.View, Permissions.WorkflowStatusClaims.Delete, Permissions.WorkflowStatusClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<WorkFlowStatusDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<WorkFlowStatusDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var campuses = await _workFlowStatusService.GetAllAsync(filter);
             if (campuses.IsSuccess)

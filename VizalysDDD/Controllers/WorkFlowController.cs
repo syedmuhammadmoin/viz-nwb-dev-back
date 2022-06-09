@@ -22,7 +22,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.WorkflowClaims.Create, Permissions.WorkflowClaims.View, Permissions.WorkflowClaims.Delete, Permissions.WorkflowClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<WorkFlowDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<WorkFlowDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var campuses = await _workFlowService.GetAllAsync(filter);
             if (campuses.IsSuccess)

@@ -34,7 +34,7 @@ namespace Application.Services
             return new Response<WorkFlowStatusDto>(_mapper.Map<WorkFlowStatusDto>(result), "Created successfully");
         }
 
-        public async Task<PaginationResponse<List<WorkFlowStatusDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<WorkFlowStatusDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new WorkFlowStatusSpecs(filter);
             var status = await _unitOfWork.WorkFlowStatus.GetAll(specification);
