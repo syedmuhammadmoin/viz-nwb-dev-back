@@ -361,14 +361,6 @@ namespace Application.Services
                     });
                 }
             }
-            var paidpayments = paidDocList.GroupBy(n => new { n.Id, n.DocNo, n.DocType })
-                .Select(g => new PaidDocListDto()
-                {
-                    Id = g.Key.Id,
-                    DocNo = g.Key.DocNo,
-                    DocType = g.Key.DocType,
-                    Amount = g.Sum(i => i.Amount),
-                }).ToList();
 
             //Getting Pending Invoice Amount
             var pendingAmount = data.TotalAmount - transactionReconciles.Sum(e => e.Amount);
@@ -396,7 +388,7 @@ namespace Application.Services
 
             data.LedgerId = getUnreconciledDocumentAmount.Id;
             data.TotalPaid = transactionReconciles.Sum(e => e.Amount);
-            data.PaidAmountList = paidpayments;
+            data.PaidAmountList = paidDocList;
             data.PendingAmount = pendingAmount;
 
             // Returning BillDto with all values assigned

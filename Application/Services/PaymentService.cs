@@ -730,14 +730,6 @@ namespace Application.Services
                     });
                 }
             }
-            var paidpayments = paidDocList.GroupBy(n => new { n.Id, n.DocNo, n.DocType })
-                .Select(g => new PaidDocListDto()
-                {
-                    Id = g.Key.Id,
-                    DocNo = g.Key.DocNo,
-                    DocType = g.Key.DocType,
-                    Amount = g.Sum(i => i.Amount),
-                }).ToList();
 
             //Getting Pending Invoice Amount
             var unReconciledAmount = data.NetPayment - transactionReconciles.Sum(e => e.Amount);
