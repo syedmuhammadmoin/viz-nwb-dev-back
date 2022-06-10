@@ -83,10 +83,14 @@ namespace Application.Services
                 return new Response<PaymentDto>("Not found");
 
             var paymentDto = _mapper.Map<PaymentDto>(payment);
+ 
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(docType)).FirstOrDefault();
+            if ((paymentDto.State == DocumentStatus.Unpaid || paymentDto.State == DocumentStatus.Partial || paymentDto.State == DocumentStatus.Paid) && paymentDto.TransactionId != null)
+            {
+                return new Response<PaymentDto>(MapToValue(paymentDto), "Returning value");
+            }
 
             paymentDto.IsAllowedRole = false;
-            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(docType)).FirstOrDefault();
-
 
             if (workflow != null)
             {
@@ -699,5 +703,52 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
+        private PaymentDto MapToValue(PaymentDto data)
+        {
+            //Getting transaction with Payment Transaction Id
+            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs((int)data.TransactionId, true)).FirstOrDefault();
+
+            // Checking if given amount is greater than unreconciled document amount
+            var transactionReconciles = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(getUnreconciledDocumentAmount.Id, true)).ToList();
+
+            //For Paid Document List
+            var paidDocList = new List<PaidDocListDto>();
+            // if reconciles transaction found
+            
+            if (transactionReconciles.Count() > 0)
+            {
+                //Adding Paid Doc List
+                foreach (var tranRecon in transactionReconciles)
+                {
+                    string[] docId = tranRecon.DocumentLedger.Transactions.DocNo.Split("-");
+                    paidDocList.Add(new PaidDocListDto
+                    {
+                        Id = Int32.Parse(docId[1]),
+                        DocNo = tranRecon.DocumentLedger.Transactions.DocNo,
+                        DocType = tranRecon.DocumentLedger.Transactions.DocType,
+                        Amount = tranRecon.Amount
+                    });
+                }
+            }
+            var paidpayments = paidDocList.GroupBy(n => new { n.Id, n.DocNo, n.DocType })
+                .Select(g => new PaidDocListDto()
+                {
+                    Id = g.Key.Id,
+                    DocNo = g.Key.DocNo,
+                    DocType = g.Key.DocType,
+                    Amount = g.Sum(i => i.Amount),
+                }).ToList();
+
+            //Getting Pending Invoice Amount
+            var unReconciledAmount = data.NetPayment - transactionReconciles.Sum(e => e.Amount);
+
+            data.LedgerId = getUnreconciledDocumentAmount.Id;
+            data.ReconciledAmount = transactionReconciles.Sum(e => e.Amount);
+            data.PaidAmountList = paidDocList;
+            data.UnreconciledAmount = unReconciledAmount;
+
+            // Returning BillDto with all values assigned
+            return data;
+        }
     }
 }
