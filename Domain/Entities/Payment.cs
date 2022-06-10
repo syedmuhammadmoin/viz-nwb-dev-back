@@ -48,6 +48,7 @@ namespace Domain.Entities
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
         public DocumentStatus? BankReconStatus { get; private set; }
+        public int? DocumentLedgerId { get; set; }
         public int StatusId { get; private set; }
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get; private set; }

@@ -39,7 +39,7 @@ namespace Application.Contracts.DTOs
         public decimal IncomeTax { get; set; }
         [Range(0.00, double.MaxValue, ErrorMessage = "Please enter a positive value")]
         public decimal SRBTax { get;  set; }
-        public int? DocumentTransactionId { get; set; }
+        public int? DocumentLedgerId { get; set; }
         [Required]
         public bool isSubmit { get; set; }
     }

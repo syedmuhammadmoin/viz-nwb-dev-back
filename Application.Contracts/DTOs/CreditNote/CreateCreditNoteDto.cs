@@ -18,6 +18,7 @@ namespace Application.Contracts.DTOs
         public int CampusId { get; set; }
         [Required]
         public bool isSubmit { get; set; }
+        public int? DocumentLedgerId { get; set; }
         public virtual List<CreateCreditNoteLinesDto> CreditNoteLines { get; set; }
     }
 }
