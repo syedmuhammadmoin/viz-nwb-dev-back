@@ -76,7 +76,7 @@ namespace Application.Services
         }
 
         public async Task<Response<PaymentDto>> GetByIdAsync(int id, DocType docType)
-        {
+      {
             var specification = new PaymentSpecs(false, docType);
             var payment = await _unitOfWork.Payment.GetById(id, specification);
             if (payment == null)
@@ -91,14 +91,13 @@ namespace Application.Services
             }
 
             paymentDto.IsAllowedRole = false;
-            PaidDocListDto forDocument = null;
             if (payment.DocumentLedgerId != null)
             {
-                var ledger = _unitOfWork.Ledger.Find(new LedgerSpecs((int)payment.DocumentLedgerId, true)).FirstOrDefault();
+                var ledger = _unitOfWork.Ledger.Find(new LedgerSpecs((int)payment.DocumentLedgerId, false)).FirstOrDefault();
                 if (ledger != null)
                 {
                     string[] docId = ledger.Transactions.DocNo.Split("-");
-                    forDocument = new PaidDocListDto
+                    paymentDto.DocumentReconcile = new PaidDocListDto
                     {
                         Id = Int32.Parse(docId[1]),
                         DocNo = ledger.Transactions.DocNo,
@@ -204,6 +203,9 @@ namespace Application.Services
 
             payment.setStatus(status);
 
+            if (payment.DocumentLedgerId != null)
+                entity.DocumentLedgerId = payment.DocumentLedgerId;
+            
             _unitOfWork.CreateTransaction();
             try
             {
