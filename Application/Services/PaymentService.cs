@@ -91,7 +91,23 @@ namespace Application.Services
             }
 
             paymentDto.IsAllowedRole = false;
-
+            PaidDocListDto forDocument = null;
+            if (payment.DocumentLedgerId != null)
+            {
+                var ledger = _unitOfWork.Ledger.Find(new LedgerSpecs((int)payment.DocumentLedgerId, true)).FirstOrDefault();
+                if (ledger != null)
+                {
+                    string[] docId = ledger.Transactions.DocNo.Split("-");
+                    forDocument = new PaidDocListDto
+                    {
+                        Id = Int32.Parse(docId[1]),
+                        DocNo = ledger.Transactions.DocNo,
+                        DocType = ledger.Transactions.DocType,
+                        Amount = ledger.Amount
+                    };
+                }
+            }
+            
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
@@ -452,6 +468,30 @@ namespace Application.Services
                         {
                             getPayment.setReconStatus(DocumentStatus.Unreconciled);
                             await AddToLedger(getPayment);
+                            if (getPayment.DocumentLedgerId != 0 && getPayment.DocumentLedgerId != null)
+                            {
+                                TransactionReconcileService trecon = new TransactionReconcileService(_unitOfWork);
+                                //Getting transaction with Payment Transaction Id
+                                var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(true, (int)getPayment.TransactionId)).FirstOrDefault();
+                                if (getUnreconciledDocumentAmount == null)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>("Ledger not found");
+                                }
+
+                                var isReconciled = await trecon.Reconcile(new CreateTransactionReconcileDto()
+                                {
+                                    PaymentLedgerId = getUnreconciledDocumentAmount.Id,
+                                    DocumentLedgerId = (int)getPayment.DocumentLedgerId,
+                                    Amount = getPayment.GrossPayment
+                                });
+
+                                if (!isReconciled.IsSuccess)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>("Ledger not found");
+                                }
+                            }
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "Payment Approved");
                         }
@@ -466,7 +506,6 @@ namespace Application.Services
                         return new Response<bool>(true, "Payment Reviewed");
                     }
                 }
-
                 return new Response<bool>("User does not have allowed role");
 
             }
