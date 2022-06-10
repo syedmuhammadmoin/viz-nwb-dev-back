@@ -189,10 +189,13 @@ namespace Application.Mapper
             CreateMap<Payment, PaymentDto>()
                 .ForMember(dto => dto.BusinessPartnerName, core => core.MapFrom(a => a.BusinessPartner.Name))
                 .ForMember(dto => dto.PaymentRegisterName, core => core.MapFrom(a => a.PaymentRegister.Name))
-                 .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
-              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
+                .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
                 .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
-             .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
+                .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
+              .ForMember(dto => dto.Status, core => core.MapFrom(
+                    a => a.BankReconStatus == DocumentStatus.Unreconciled ? "In Payment" :
+                    a.BankReconStatus == DocumentStatus.Partial ? "Partial Reconciled" :
+                    a.BankReconStatus == DocumentStatus.Reconciled ? "Reconciled" : a.Status.Status));
 
             CreateMap<CreatePaymentDto, Payment>()
                 .ForMember(core => core.NetPayment, dto => dto.MapFrom(a => (a.GrossPayment - a.Discount - a.IncomeTax - a.SalesTax - a.SRBTax)));
