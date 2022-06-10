@@ -35,6 +35,13 @@ namespace Infrastructure.Specifications
             ApplyAsNoTracking();
         }
 
+        public LedgerSpecs(bool forDoc, int transactionId) : base(i => i.TransactionId == transactionId
+        && (i.ReconStatus == DocumentStatus.Unreconciled)
+        && i.IsReconcilable == true)
+        {
+            ApplyAsNoTracking();
+        }
+
         public LedgerSpecs(int id, Guid level4Id, int? businessPartnerId, char sign, bool asNoTracking = false) 
         : base(i => i.Id == id
         && i.Level4_id == level4Id
