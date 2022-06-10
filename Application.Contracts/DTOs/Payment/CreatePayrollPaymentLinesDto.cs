@@ -9,7 +9,7 @@ namespace Application.Contracts.DTOs
 {
     public class CreatePayrollPaymentLinesDto
     {
-        public int TransactionId { get; set; }
+        public int LedgerId { get; set; }
         public int BusinessPartnerId { get; set; }
         public Guid AccountPayableId { get; set; }
         [Range(1, double.MaxValue, ErrorMessage = "Gross amount must be greater than 0")]

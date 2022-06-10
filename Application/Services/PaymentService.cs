@@ -585,7 +585,7 @@ namespace Application.Services
                     Discount = 0,
                     SalesTax = 0,
                     IncomeTax = 0,
-                    DocumentTransactionId = line.TransactionId,
+                    DocumentLedgerId = line.LedgerId,
                     isSubmit = false
                 };
 
