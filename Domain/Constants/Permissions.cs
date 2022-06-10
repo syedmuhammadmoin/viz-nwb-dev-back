@@ -52,10 +52,10 @@ namespace Domain.Constants
         }
         public static class DepartmentClaims
         {
-            public const string View = "Permissions.DepartmentsClaims.View";
-            public const string Create = "Permissions.DepartmentsClaims.Create";
-            public const string Edit = "Permissions.DepartmentsClaims.Edit";
-            public const string Delete = "Permissions.DepartmentsClaims.Delete";
+            public const string View = "Permissions.DepartmentClaims.View";
+            public const string Create = "Permissions.DepartmentClaims.Create";
+            public const string Edit = "Permissions.DepartmentClaims.Edit";
+            public const string Delete = "Permissions.DepartmentClaims.Delete";
         }
         public static class DesignationClaims
         {
