@@ -41,7 +41,8 @@ namespace Application.Services
             }
             else
             {
-                return await this.SavePayrollTransaction(entity, 1);
+                var result = await this.SavePayrollTransaction(entity, 1);
+                return new Response<PayrollTransactionDto>(new PayrollTransactionDto { Id = result.Result }, result.Message);
             }
         }
 
@@ -118,11 +119,11 @@ namespace Application.Services
             return new Response<PayrollTransactionDto>(result, "Returning value");
         }
 
-        private async Task<Response<PayrollTransactionDto>> SavePayrollTransaction(CreatePayrollTransactionDto entity, int status)
+        private async Task<Response<int>> SavePayrollTransaction(CreatePayrollTransactionDto entity, int status)
         {
             if (entity.WorkingDays < entity.PresentDays
                 || entity.WorkingDays < entity.PresentDays + entity.LeaveDays)
-                return new Response<PayrollTransactionDto>("Present days and Leaves days sum can not be greater than working days");
+                return new Response<int>("Present days and Leaves days sum can not be greater than working days");
 
             //Fetching Employees by id
             var emp = await _employeeService.GetByIdAsync(entity.EmployeeId);
@@ -130,16 +131,16 @@ namespace Application.Services
             var empDetails = emp.Result;
 
             if (empDetails == null)
-                return new Response<PayrollTransactionDto>("Selected employee record not found");
+                return new Response<int>("Selected employee record not found");
 
             if (!empDetails.isActive)
-                return new Response<PayrollTransactionDto>("Selected employee is not Active");
+                return new Response<int>("Selected employee is not Active");
 
             var checkingPayrollTrans = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(entity.Month, entity.Year, entity.EmployeeId)).FirstOrDefault();
 
             if (checkingPayrollTrans != null)
             {
-                return new Response<PayrollTransactionDto>("Payroll transaction is already processed");
+                return new Response<int>("Payroll transaction is already processed");
             }
 
             //getting payrollItems by empId
@@ -201,22 +202,22 @@ namespace Application.Services
                 //Commiting the transaction 
                 _unitOfWork.Commit();
                 //returning response
-                return new Response<PayrollTransactionDto>(null, "Created successfully");
+                return new Response<int>(payrollTransaction.Id, "Created successfully");
             }
             catch (DbUpdateException ex)
             {
                 _unitOfWork.Rollback();
                 if (ex.InnerException.Data["HelpLink.EvtID"].ToString() == "2627")
                 {
-                    return new Response<PayrollTransactionDto>("Payroll transaction is already processed");
+                    return new Response<int>("Payroll transaction is already processed");
                 }
 
-                return new Response<PayrollTransactionDto>(ex.Message);
+                return new Response<int>(ex.Message);
             }
             catch (Exception ex)
             {
                 _unitOfWork.Rollback();
-                return new Response<PayrollTransactionDto>(ex.Message);
+                return new Response<int>(ex.Message);
             }
         }
 
