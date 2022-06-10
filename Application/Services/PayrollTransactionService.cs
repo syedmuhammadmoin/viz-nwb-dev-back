@@ -714,7 +714,7 @@ namespace Application.Services
 
                     var result = await this.UpdatePayrollTransaction(payroll, 1);
 
-                    if (result.IsSuccess == false && result.Result == null)
+                    if (result.IsSuccess == false && result.Message != "Payroll transaction is already processed")
                     {
                         return new Response<List<PayrollTransactionDto>>($"Error creating transaction for {transaction.EmployeeId}");
                     }
@@ -746,7 +746,7 @@ namespace Application.Services
 
                 var result = await this.SavePayrollTransaction(payroll, 1);
 
-                if (result.IsSuccess == false)
+                if (result.IsSuccess == false && result.Message != "Payroll transaction is already processed")
                 {
                     return new Response<List<PayrollTransactionDto>>($"Error creating transaction for {emp.Name}");
                     
