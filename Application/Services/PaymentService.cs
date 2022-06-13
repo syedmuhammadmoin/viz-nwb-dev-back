@@ -481,17 +481,26 @@ namespace Application.Services
                                     return new Response<bool>("Ledger not found");
                                 }
 
-                                var isReconciled = await trecon.Reconcile(new CreateTransactionReconcileDto()
+                                var reconModel = new CreateTransactionReconcileDto()
                                 {
                                     PaymentLedgerId = getUnreconciledDocumentAmount.Id,
                                     DocumentLedgerId = (int)getPayment.DocumentLedgerId,
                                     Amount = getPayment.GrossPayment
-                                });
+                                };
 
-                                if (!isReconciled.IsSuccess)
+                                //Checking Reconciliation Validation
+                                var checkValidation = trecon.CheckReconValidation(reconModel);
+                                if (!checkValidation.IsSuccess)
                                 {
                                     _unitOfWork.Rollback();
-                                    return new Response<bool>("Ledger not found");
+                                    return new Response<bool>(checkValidation.Message);
+                                }
+
+                                var reconcile = await trecon.ReconciliationProcess(reconModel);
+                                if (!reconcile.IsSuccess)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>(reconcile.Message);
                                 }
                             }
                             _unitOfWork.Commit();
