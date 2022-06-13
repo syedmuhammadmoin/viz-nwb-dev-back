@@ -43,7 +43,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(budget); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.BudgetClaims.View, Permissions.BudgetClaims.Delete, Permissions.BudgetClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.BudgetClaims.Create, Permissions.BudgetClaims.View, Permissions.BudgetClaims.Delete, Permissions.BudgetClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<BudgetDto>>> GetByIdAsync(int id)
         {

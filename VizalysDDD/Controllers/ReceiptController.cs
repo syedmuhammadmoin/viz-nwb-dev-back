@@ -47,7 +47,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(payment); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.ReceiptClaims.View, Permissions.ReceiptClaims.Delete, Permissions.ReceiptClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.ReceiptClaims.Create, Permissions.ReceiptClaims.View, Permissions.ReceiptClaims.Delete, Permissions.ReceiptClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<PaymentDto>>> GetByIdAsync(int id)
         {
