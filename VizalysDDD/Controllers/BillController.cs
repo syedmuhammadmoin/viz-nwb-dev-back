@@ -70,7 +70,6 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.BillClaims.View })]
         [HttpPost("workflow")]
         public async Task<ActionResult<Response<bool>>> CheckWorkFlow([FromBody] ApprovalDto data)
         {
