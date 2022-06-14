@@ -163,7 +163,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
-        [HttpGet("Dropdown")]
+        [HttpGet("Roles/Dropdown")]
         public async Task<ActionResult<Response<IEnumerable<IdentityRole>>>> GetRolesDropDown()
         {
             return Ok(await _userService.GetRolesDropDown()); // Status Code : 200
