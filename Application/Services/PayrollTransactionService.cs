@@ -42,7 +42,10 @@ namespace Application.Services
             else
             {
                 var result = await this.SavePayrollTransaction(entity, 1);
-                return new Response<PayrollTransactionDto>(new PayrollTransactionDto { Id = result.Result }, result.Message);
+                if (result.IsSuccess)
+                    return new Response<PayrollTransactionDto>(new PayrollTransactionDto { Id = result.Result }, result.Message);
+
+                return new Response<PayrollTransactionDto>(result.Message);
             }
         }
 
