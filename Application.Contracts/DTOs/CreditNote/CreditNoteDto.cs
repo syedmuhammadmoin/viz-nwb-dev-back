@@ -24,7 +24,12 @@ namespace Application.Contracts.DTOs
         public decimal TotalBeforeTax { get; set; }
         public decimal TotalTax { get; set; }
         public decimal TotalAmount { get; set; }
-        public int TransactionId { get; set; }
+        public decimal ReconciledAmount { get; set; }
+        public IEnumerable<PaidDocListDto> PaidAmountList { get; set; }
+        public decimal UnreconciledAmount { get; set; }
+        public PaidDocListDto DocumentReconcile { get; set; }
+        public int? LedgerId { get; set; }
+        public int? TransactionId { get; set; }
         public virtual List<CreditNoteLinesDto> CreditNoteLines { get; set; }
         public bool IsAllowedRole { get; set; }
     }
