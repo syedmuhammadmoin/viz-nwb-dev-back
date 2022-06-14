@@ -44,7 +44,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(businessPartner); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] {Permissions.BusinessPartnerClaims.View, Permissions.BusinessPartnerClaims.Delete, Permissions.BusinessPartnerClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.BusinessPartnerClaims.Create, Permissions.BusinessPartnerClaims.View, Permissions.BusinessPartnerClaims.Delete, Permissions.BusinessPartnerClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<BusinessPartnerDto>>> GetByIdAsync(int id)
         {

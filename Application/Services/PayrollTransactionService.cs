@@ -41,7 +41,11 @@ namespace Application.Services
             }
             else
             {
-                return await this.SavePayrollTransaction(entity, 1);
+                var result = await this.SavePayrollTransaction(entity, 1);
+                if (result.IsSuccess)
+                    return new Response<PayrollTransactionDto>(new PayrollTransactionDto { Id = result.Result }, result.Message);
+
+                return new Response<PayrollTransactionDto>(result.Message);
             }
         }
 
@@ -118,11 +122,11 @@ namespace Application.Services
             return new Response<PayrollTransactionDto>(result, "Returning value");
         }
 
-        private async Task<Response<PayrollTransactionDto>> SavePayrollTransaction(CreatePayrollTransactionDto entity, int status)
+        private async Task<Response<int>> SavePayrollTransaction(CreatePayrollTransactionDto entity, int status)
         {
             if (entity.WorkingDays < entity.PresentDays
                 || entity.WorkingDays < entity.PresentDays + entity.LeaveDays)
-                return new Response<PayrollTransactionDto>("Present days and Leaves days sum can not be greater than working days");
+                return new Response<int>("Present days and Leaves days sum can not be greater than working days");
 
             //Fetching Employees by id
             var emp = await _employeeService.GetByIdAsync(entity.EmployeeId);
@@ -130,16 +134,16 @@ namespace Application.Services
             var empDetails = emp.Result;
 
             if (empDetails == null)
-                return new Response<PayrollTransactionDto>("Selected employee record not found");
+                return new Response<int>("Selected employee record not found");
 
             if (!empDetails.isActive)
-                return new Response<PayrollTransactionDto>("Selected employee is not Active");
+                return new Response<int>("Selected employee is not Active");
 
             var checkingPayrollTrans = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(entity.Month, entity.Year, entity.EmployeeId)).FirstOrDefault();
 
             if (checkingPayrollTrans != null)
             {
-                return new Response<PayrollTransactionDto>("Payroll transaction is already processed");
+                return new Response<int>("Payroll transaction is already processed");
             }
 
             //getting payrollItems by empId
@@ -201,22 +205,22 @@ namespace Application.Services
                 //Commiting the transaction 
                 _unitOfWork.Commit();
                 //returning response
-                return new Response<PayrollTransactionDto>(null, "Created successfully");
+                return new Response<int>(payrollTransaction.Id, "Created successfully");
             }
             catch (DbUpdateException ex)
             {
                 _unitOfWork.Rollback();
                 if (ex.InnerException.Data["HelpLink.EvtID"].ToString() == "2627")
                 {
-                    return new Response<PayrollTransactionDto>("Payroll transaction is already processed");
+                    return new Response<int>("Payroll transaction is already processed");
                 }
 
-                return new Response<PayrollTransactionDto>(ex.Message);
+                return new Response<int>(ex.Message);
             }
             catch (Exception ex)
             {
                 _unitOfWork.Rollback();
-                return new Response<PayrollTransactionDto>(ex.Message);
+                return new Response<int>(ex.Message);
             }
         }
 
@@ -365,7 +369,7 @@ namespace Application.Services
 
         private async Task AddToLedger(PayrollTransactionMaster payrollTransaction)
         {
-            var transaction = new Transactions(payrollTransaction.DocNo, DocType.PayrollTransaction);
+            var transaction = new Transactions(payrollTransaction.Id, payrollTransaction.DocNo, DocType.PayrollTransaction);
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
@@ -550,6 +554,62 @@ namespace Application.Services
             payrollTransactionDto.Religion = data.Employee.Religion;
             payrollTransactionDto.TransDate = data.TransDate;
 
+            if ((data.Status.State == DocumentStatus.Unpaid || data.Status.State == DocumentStatus.Partial || data.Status.State == DocumentStatus.Paid) && data.TransactionId != null)
+            {
+                //Getting transaction with Payment Transaction Id
+                var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs((int)data.TransactionId, true)).FirstOrDefault();
+
+                // Checking if given amount is greater than unreconciled document amount
+                var transactionReconciles = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(getUnreconciledDocumentAmount.Id, false)).ToList();
+
+                //For Paid Document List
+                var paidDocList = new List<PaidDocListDto>();
+                // if reconciles transaction found
+                if (transactionReconciles.Count() > 0)
+                {
+                    //Adding Paid Doc List
+                    foreach (var tranRecon in transactionReconciles)
+                    {
+                        paidDocList.Add(new PaidDocListDto
+                        {
+                            Id = tranRecon.PaymentLedger.Transactions.DocId,
+                            DocNo = tranRecon.PaymentLedger.Transactions.DocNo,
+                            DocType = tranRecon.PaymentLedger.Transactions.DocType,
+                            Amount = tranRecon.Amount
+                        });
+                    }
+                }
+
+                //Getting Pending Invoice Amount
+                var pendingAmount = data.NetSalary - transactionReconciles.Sum(e => e.Amount);
+
+                if (data.Status.State != DocumentStatus.Paid)
+                {
+                    //Creating transactionReconRepo object
+                    TransactionReconcileService trasactionReconService = new TransactionReconcileService(_unitOfWork);
+                    var getUnreconPayment = trasactionReconService.GetPaymentReconAmounts(getUnreconciledDocumentAmount.Level4_id, (int)getUnreconciledDocumentAmount.BusinessPartnerId, getUnreconciledDocumentAmount.Sign);
+
+
+                    //For Getting Business Partner Unreconciled Payments and CreditNote
+                    var BPUnreconPayments = getUnreconPayment.Result.Select(i => new UnreconciledBusinessPartnerPaymentsDto()
+                    {
+                        Id = i.DocId,
+                        DocNo = i.DocNo,
+                        DocType = i.DocType,
+                        Amount = i.UnreconciledAmount,
+                        PaymentLedgerId = i.PaymentLedgerId
+                    }).ToList();
+
+                    payrollTransactionDto.BPUnreconPaymentList = BPUnreconPayments;
+                }
+
+                //data.Status = data.State == DocumentStatus.Unpaid ? "Unpaid" : data.Status;
+                payrollTransactionDto.TotalPaid = transactionReconciles.Sum(e => e.Amount);
+                payrollTransactionDto.PaidAmountList = paidDocList;
+                payrollTransactionDto.PendingAmount = pendingAmount;
+                payrollTransactionDto.LedgerId = getUnreconciledDocumentAmount.Id;
+            }
+
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
 
             if (workflow != null)
@@ -569,9 +629,6 @@ namespace Application.Services
                     }
                 }
             }
-
-            payrollTransactionDto.Status = data.Status.Status;
-
             return payrollTransactionDto;
         }
 
@@ -659,7 +716,7 @@ namespace Application.Services
 
                     var result = await this.UpdatePayrollTransaction(payroll, 1);
 
-                    if (result.IsSuccess == false && result.Result == null)
+                    if (result.IsSuccess == false && result.Message != "Payroll transaction is already processed")
                     {
                         return new Response<List<PayrollTransactionDto>>($"Error creating transaction for {transaction.EmployeeId}");
                     }
@@ -691,7 +748,7 @@ namespace Application.Services
 
                 var result = await this.SavePayrollTransaction(payroll, 1);
 
-                if (result.IsSuccess == false)
+                if (result.IsSuccess == false && result.Message != "Payroll transaction is already processed")
                 {
                     return new Response<List<PayrollTransactionDto>>($"Error creating transaction for {emp.Name}");
                     

@@ -11,7 +11,8 @@ namespace Infrastructure.Specifications
 {
     public class WorkFlowSpecs : BaseSpecification<WorkFlowMaster>
     {
-        public WorkFlowSpecs(PaginationFilter filter)
+        public WorkFlowSpecs(TransactionFormFilter filter)
+            : base(c => c.Name.Contains(filter.Name != null ? filter.Name : ""))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

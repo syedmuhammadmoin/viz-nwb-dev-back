@@ -39,7 +39,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(bankAccount); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] {Permissions.BankAccountClaims.View, Permissions.BankAccountClaims.Delete, Permissions.BankAccountClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.BankAccountClaims.Create, Permissions.BankAccountClaims.View, Permissions.BankAccountClaims.Delete, Permissions.BankAccountClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<BankAccountDto>>> GetByIdAsync(int id)
         {

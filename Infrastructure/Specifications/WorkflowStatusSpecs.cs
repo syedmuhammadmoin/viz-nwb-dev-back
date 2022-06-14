@@ -11,7 +11,9 @@ namespace Infrastructure.Specifications
 {
     public class WorkFlowStatusSpecs : BaseSpecification<WorkFlowStatus>
     {
-        public WorkFlowStatusSpecs(PaginationFilter filter) : base(a => a.Type != StatusType.PreDefined && a.IsDelete == false)
+        public WorkFlowStatusSpecs(TransactionFormFilter filter) 
+            : base(c => (c.Type != StatusType.PreDefined && c.IsDelete == false) 
+            && (c.Status.Contains(filter.Name != null ? filter.Name : "")))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

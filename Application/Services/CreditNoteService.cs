@@ -75,9 +75,28 @@ namespace Application.Services
 
             var creditNoteDto = _mapper.Map<CreditNoteDto>(crn);
 
-            creditNoteDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.CreditNote)).FirstOrDefault();
+            if ((creditNoteDto.State == DocumentStatus.Unpaid || creditNoteDto.State == DocumentStatus.Partial || creditNoteDto.State == DocumentStatus.Paid) && creditNoteDto.TransactionId != null)
+            {
+                return new Response<CreditNoteDto>(MapToValue(creditNoteDto), "Returning value");
+            }
 
+            creditNoteDto.IsAllowedRole = false;
+
+            if (crn.DocumentLedgerId != null)
+            {
+                var ledger = _unitOfWork.Ledger.Find(new LedgerSpecs((int)crn.DocumentLedgerId, false)).FirstOrDefault();
+                if (ledger != null)
+                {
+                    creditNoteDto.DocumentReconcile = new PaidDocListDto
+                    {
+                        Id = ledger.Transactions.DocId,
+                        DocNo = ledger.Transactions.DocNo,
+                        DocType = ledger.Transactions.DocType,
+                        Amount = ledger.Amount
+                    };
+                }
+            }
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
@@ -216,7 +235,7 @@ namespace Application.Services
 
         private async Task AddToLedger(CreditNoteMaster crn)
         {
-            var transaction = new Transactions(crn.DocNo, DocType.CreditNote);
+            var transaction = new Transactions(crn.Id, crn.DocNo, DocType.CreditNote);
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
@@ -314,6 +333,41 @@ namespace Application.Services
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
                             await AddToLedger(getCreditNote);
+
+                            if (getCreditNote.DocumentLedgerId != 0 && getCreditNote.DocumentLedgerId != null)
+                            {
+                                TransactionReconcileService trecon = new TransactionReconcileService(_unitOfWork);
+                                //Getting transaction with Payment Transaction Id
+                                var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(true, (int)getCreditNote.TransactionId)).FirstOrDefault();
+                                if (getUnreconciledDocumentAmount == null)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>("Ledger not found");
+                                }
+
+                                var reconModel = new CreateTransactionReconcileDto()
+                                {
+                                    PaymentLedgerId = getUnreconciledDocumentAmount.Id,
+                                    DocumentLedgerId = (int)getCreditNote.DocumentLedgerId,
+                                    Amount = getCreditNote.TotalAmount
+                                };
+
+                                //Checking Reconciliation Validation
+                                var checkValidation = trecon.CheckReconValidation(reconModel);
+                                if (!checkValidation.IsSuccess)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>(checkValidation.Message);
+                                }
+
+                                var reconcile = await trecon.ReconciliationProcess(reconModel);
+                                if (!reconcile.IsSuccess)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>(reconcile.Message);
+                                }
+                            }
+
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "CreditNote Approved");
                         }
@@ -337,6 +391,46 @@ namespace Application.Services
                 _unitOfWork.Rollback();
                 return new Response<bool>(ex.Message);
             }
+        }
+
+        private CreditNoteDto MapToValue(CreditNoteDto data)
+        {
+            //Getting transaction with Payment Transaction Id
+            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs((int)data.TransactionId, true)).FirstOrDefault();
+
+            // Checking if given amount is greater than unreconciled document amount
+            var transactionReconciles = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(getUnreconciledDocumentAmount.Id, true)).ToList();
+
+            //For Paid Document List
+            var paidDocList = new List<PaidDocListDto>();
+            // if reconciles transaction found
+
+            if (transactionReconciles.Count() > 0)
+            {
+                //Adding Paid Doc List
+                foreach (var tranRecon in transactionReconciles)
+                {
+                    string[] docId = tranRecon.DocumentLedger.Transactions.DocNo.Split("-");
+                    paidDocList.Add(new PaidDocListDto
+                    {
+                        Id = tranRecon.DocumentLedger.Transactions.DocId,
+                        DocNo = tranRecon.DocumentLedger.Transactions.DocNo,
+                        DocType = tranRecon.DocumentLedger.Transactions.DocType,
+                        Amount = tranRecon.Amount
+                    });
+                }
+            }
+
+            //Getting Pending CreditNoteDto Amount
+            var unReconciledAmount = data.TotalAmount - transactionReconciles.Sum(e => e.Amount);
+
+            data.LedgerId = getUnreconciledDocumentAmount.Id;
+            data.ReconciledAmount = transactionReconciles.Sum(e => e.Amount);
+            data.PaidAmountList = paidDocList;
+            data.UnreconciledAmount = unReconciledAmount;
+
+            // Returning CreditNoteDto with all values assigned
+            return data;
         }
     }
 }

@@ -13,8 +13,8 @@ namespace Infrastructure.Specifications
             : base(isPaymentId ? p => p.PaymentLedgerId == ledgerId
             : p => p.DocumentLegderId == ledgerId)
         {
-            AddInclude(i => i.DocumentLedger);
             AddInclude("PaymentLedger.Transactions");
+            AddInclude("DocumentLedger.Transactions");
             ApplyAsNoTracking();
         }
     }

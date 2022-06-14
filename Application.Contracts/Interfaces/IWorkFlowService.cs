@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IWorkFlowService : ICrudService<CreateWorkFlowDto, WorkFlowDto, int, PaginationFilter>
+    public interface IWorkFlowService : ICrudService<CreateWorkFlowDto, WorkFlowDto, int, TransactionFormFilter>
     {
     }
 }

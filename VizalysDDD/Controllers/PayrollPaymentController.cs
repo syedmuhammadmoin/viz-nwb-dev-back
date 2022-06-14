@@ -73,7 +73,6 @@ namespace Vizalys.Api.Controllers
         }
 
 
-        [ClaimRequirement("Permission", new string[] { Permissions.PayrollPaymentClaims.View })]
         [HttpPost("workflow")]
         public async Task<ActionResult<Response<bool>>> CheckWorkFlow([FromBody] ApprovalDto data)
         {

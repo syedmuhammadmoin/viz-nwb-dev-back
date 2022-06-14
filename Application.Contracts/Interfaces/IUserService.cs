@@ -24,6 +24,7 @@ namespace Application.Contracts.Interfaces
         //FOR ROLES
         Task<Response<string>> CreateRoleAsync(RegisterRoleDto model);
         Task<Response<IEnumerable<IdentityRole>>> GetRolesAsync();
+        Task<Response<IEnumerable<IdentityRole>>> GetRolesDropDown();
         Task<Response<RegisterRoleDto>> GetRoleAsync(string id);
         Task<Response<RegisterRoleDto>> UpdateRoleAsync(string id, RegisterRoleDto model);
 

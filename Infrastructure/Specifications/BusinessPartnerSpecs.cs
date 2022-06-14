@@ -13,6 +13,7 @@ namespace Infrastructure.Specifications
     {
         public BusinessPartnerSpecs(List<BusinessPartnerType?> businessPartnerTypes, BusinessPartnerFilter filter)
             : base(c => c.Name.Contains(filter.Name != null ? filter.Name : "")
+                && (c.BusinessPartnerType != BusinessPartnerType.Employee )
                 && (businessPartnerTypes.Count() > 0 ? businessPartnerTypes.Contains(c.BusinessPartnerType):true))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Application.Contracts.Interfaces
 {
 
-    public interface IWorkFlowStatusService : ICrudService<CreateWorkFlowStatusDto, WorkFlowStatusDto, int, PaginationFilter>
+    public interface IWorkFlowStatusService : ICrudService<CreateWorkFlowStatusDto, WorkFlowStatusDto, int, TransactionFormFilter>
     {
         Task<Response<List<WorkFlowStatusDto>>> GetStatusDropDown();
     }

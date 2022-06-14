@@ -80,10 +80,14 @@ namespace Application.Services
             if (bill == null)
                 return new Response<BillDto>("Not found");
             var billDto = _mapper.Map<BillDto>(bill);
+            
+            if ((billDto.State == DocumentStatus.Unpaid || billDto.State == DocumentStatus.Partial || billDto.State == DocumentStatus.Paid) && billDto.TransactionId != null)
+            {
+                return new Response<BillDto>(MapToValue(billDto), "Returning value");
+            }
 
             billDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Bill)).FirstOrDefault();
-
 
             if (workflow != null)
             {
@@ -120,6 +124,68 @@ namespace Application.Services
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
+        {
+            var getBill = await _unitOfWork.Bill.GetById(data.DocId, new BillSpecs(true));
+
+            if (getBill == null)
+            {
+                return new Response<bool>("Bill with the input id not found");
+            }
+            if (getBill.Status.State == DocumentStatus.Unpaid || getBill.Status.State == DocumentStatus.Partial || getBill.Status.State == DocumentStatus.Paid)
+            {
+                return new Response<bool>("Bill already approved");
+            }
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Bill)).FirstOrDefault();
+
+            if (workflow == null)
+            {
+                return new Response<bool>("No activated workflow found for this document");
+            }
+            var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == getBill.StatusId && x.Action == data.Action));
+
+            if (transition == null)
+            {
+                return new Response<bool>("No transition found");
+            }
+            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+            _unitOfWork.CreateTransaction();
+            try
+            {
+                foreach (var role in currentUserRoles)
+                {
+                    if (transition.AllowedRole.Name == role)
+                    {
+                        getBill.setStatus(transition.NextStatusId);
+                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                        {
+                            await AddToLedger(getBill);
+                            _unitOfWork.Commit();
+                            return new Response<bool>(true, "Bill Approved");
+                        }
+                        if (transition.NextStatus.State == DocumentStatus.Rejected)
+                        {
+                            await _unitOfWork.SaveAsync();
+                            _unitOfWork.Commit();
+                            return new Response<bool>(true, "Bill Rejected");
+                        }
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Bill Reviewed");
+                    }
+                }
+
+                return new Response<bool>("User does not have allowed role");
+
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<bool>(ex.Message);
+            }
         }
 
         //Private Methods for Bills
@@ -223,7 +289,7 @@ namespace Application.Services
 
         private async Task AddToLedger(BillMaster bill)
         {
-            var transaction = new Transactions(bill.DocNo, DocType.Bill);
+            var transaction = new Transactions(bill.Id, bill.DocNo, DocType.Bill);
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
@@ -270,66 +336,63 @@ namespace Application.Services
             await _unitOfWork.SaveAsync();
         }
 
-        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
+        private BillDto MapToValue(BillDto data)
         {
-            var getBill = await _unitOfWork.Bill.GetById(data.DocId, new BillSpecs(true));
+            //Getting transaction with Payment Transaction Id
+            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs((int)data.TransactionId, true)).FirstOrDefault();
 
-            if (getBill == null)
-            {
-                return new Response<bool>("Bill with the input id not found");
-            }
-            if (getBill.Status.State == DocumentStatus.Unpaid || getBill.Status.State == DocumentStatus.Partial || getBill.Status.State == DocumentStatus.Paid)
-            {
-                return new Response<bool>("Bill already approved");
-            }
-            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Bill)).FirstOrDefault();
+            // Checking if given amount is greater than unreconciled document amount
+            var transactionReconciles = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(getUnreconciledDocumentAmount.Id, false)).ToList();
 
-            if (workflow == null)
+            //For Paid Document List
+            var paidDocList = new List<PaidDocListDto>();
+            // if reconciles transaction found
+            if (transactionReconciles.Count() > 0)
             {
-                return new Response<bool>("No activated workflow found for this document");
-            }
-            var transition = workflow.WorkflowTransitions
-                    .FirstOrDefault(x => (x.CurrentStatusId == getBill.StatusId && x.Action == data.Action));
-
-            if (transition == null)
-            {
-                return new Response<bool>("No transition found");
-            }
-            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
-            _unitOfWork.CreateTransaction();
-            try
-            {
-                foreach (var role in currentUserRoles)
+                //Adding Paid Doc List
+                foreach (var tranRecon in transactionReconciles)
                 {
-                    if (transition.AllowedRole.Name == role)
+                    paidDocList.Add(new PaidDocListDto
                     {
-                        getBill.setStatus(transition.NextStatusId);
-                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
-                        {
-                            await AddToLedger(getBill);
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "Bill Approved");
-                        }
-                        if (transition.NextStatus.State == DocumentStatus.Rejected)
-                        {
-                            await _unitOfWork.SaveAsync();
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "Bill Rejected");
-                        }
-                        await _unitOfWork.SaveAsync();
-                        _unitOfWork.Commit();
-                        return new Response<bool>(true, "Bill Reviewed");
-                    }
+                        Id = tranRecon.PaymentLedger.Transactions.DocId,
+                        DocNo = tranRecon.PaymentLedger.Transactions.DocNo,
+                        DocType = tranRecon.PaymentLedger.Transactions.DocType,
+                        Amount = tranRecon.Amount
+                    });
                 }
-
-                return new Response<bool>("User does not have allowed role");
-
             }
-            catch (Exception ex)
+
+            //Getting Pending Invoice Amount
+            var pendingAmount = data.TotalAmount - transactionReconciles.Sum(e => e.Amount);
+
+            if (data.State != DocumentStatus.Paid)
             {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
+                //Creating transactionReconRepo object
+                TransactionReconcileService trasactionReconService = new TransactionReconcileService(_unitOfWork);
+                var getUnreconPayment = trasactionReconService.GetPaymentReconAmounts(getUnreconciledDocumentAmount.Level4_id, (int)getUnreconciledDocumentAmount.BusinessPartnerId, getUnreconciledDocumentAmount.Sign);
+
+
+                //For Getting Business Partner Unreconciled Payments and CreditNote
+                var BPUnreconPayments = getUnreconPayment.Result.Select(i => new UnreconciledBusinessPartnerPaymentsDto()
+                {
+                    Id = i.DocId,
+                    DocNo = i.DocNo,
+                    DocType = i.DocType,
+                    Amount = i.UnreconciledAmount,
+                    PaymentLedgerId = i.PaymentLedgerId
+                }).ToList();
+
+                data.BPUnreconPaymentList = BPUnreconPayments;
             }
+
+
+            data.LedgerId = getUnreconciledDocumentAmount.Id;
+            data.TotalPaid = transactionReconciles.Sum(e => e.Amount);
+            data.PaidAmountList = paidDocList;
+            data.PendingAmount = pendingAmount;
+
+            // Returning BillDto with all values assigned
+            return data;
         }
     }
 }

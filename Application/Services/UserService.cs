@@ -534,6 +534,16 @@ namespace Application.Services
             }
         }
 
+        public async Task<Response<IEnumerable<IdentityRole>>> GetRolesDropDown()
+        {
+            IEnumerable<IdentityRole> roles = await _roleManager.Roles.ToListAsync();
+            if (roles == null)
+            {
+                return new Response<IEnumerable<IdentityRole>>("Role list cannot be found");
+            }
+            return new Response<IEnumerable<IdentityRole>>(roles, "Returning Roles");
+        }
+
         //For Claims
         public Response<List<string>> GetClaimsAsync()
         {

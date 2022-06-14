@@ -44,7 +44,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(campus); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.CampusClaims.View, Permissions.CampusClaims.Delete, Permissions.CampusClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.CampusClaims.Create, Permissions.CampusClaims.View, Permissions.CampusClaims.Delete, Permissions.CampusClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<CampusDto>>> GetByIdAsync(int id)
         {

@@ -76,18 +76,36 @@ namespace Application.Services
         }
 
         public async Task<Response<PaymentDto>> GetByIdAsync(int id, DocType docType)
-        {
+      {
             var specification = new PaymentSpecs(false, docType);
             var payment = await _unitOfWork.Payment.GetById(id, specification);
             if (payment == null)
                 return new Response<PaymentDto>("Not found");
 
             var paymentDto = _mapper.Map<PaymentDto>(payment);
+ 
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(docType)).FirstOrDefault();
+            if ((paymentDto.State == DocumentStatus.Unpaid || paymentDto.State == DocumentStatus.Partial || paymentDto.State == DocumentStatus.Paid) && paymentDto.TransactionId != null)
+            {
+                return new Response<PaymentDto>(MapToValue(paymentDto), "Returning value");
+            }
 
             paymentDto.IsAllowedRole = false;
-            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(docType)).FirstOrDefault();
-
-
+            if (payment.DocumentLedgerId != null)
+            {
+                var ledger = _unitOfWork.Ledger.Find(new LedgerSpecs((int)payment.DocumentLedgerId, false)).FirstOrDefault();
+                if (ledger != null)
+                {
+                    paymentDto.DocumentReconcile = new PaidDocListDto
+                    {
+                        Id = ledger.Transactions.DocId,
+                        DocNo = ledger.Transactions.DocNo,
+                        DocType = ledger.Transactions.DocType,
+                        Amount = ledger.Amount
+                    };
+                }
+            }
+            
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
@@ -184,6 +202,9 @@ namespace Application.Services
 
             payment.setStatus(status);
 
+            if (payment.DocumentLedgerId != null)
+                entity.DocumentLedgerId = payment.DocumentLedgerId;
+            
             _unitOfWork.CreateTransaction();
             try
             {
@@ -208,7 +229,7 @@ namespace Application.Services
 
         private async Task AddToLedger(Payment payment)
         {
-            var transaction = new Transactions(payment.DocNo, payment.PaymentFormType);
+            var transaction = new Transactions(payment.Id, payment.DocNo, payment.PaymentFormType);
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
@@ -448,6 +469,39 @@ namespace Application.Services
                         {
                             getPayment.setReconStatus(DocumentStatus.Unreconciled);
                             await AddToLedger(getPayment);
+                            if (getPayment.DocumentLedgerId != 0 && getPayment.DocumentLedgerId != null)
+                            {
+                                TransactionReconcileService trecon = new TransactionReconcileService(_unitOfWork);
+                                //Getting transaction with Payment Transaction Id
+                                var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(true, (int)getPayment.TransactionId)).FirstOrDefault();
+                                if (getUnreconciledDocumentAmount == null)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>("Ledger not found");
+                                }
+
+                                var reconModel = new CreateTransactionReconcileDto()
+                                {
+                                    PaymentLedgerId = getUnreconciledDocumentAmount.Id,
+                                    DocumentLedgerId = (int)getPayment.DocumentLedgerId,
+                                    Amount = getPayment.GrossPayment
+                                };
+
+                                //Checking Reconciliation Validation
+                                var checkValidation = trecon.CheckReconValidation(reconModel);
+                                if (!checkValidation.IsSuccess)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>(checkValidation.Message);
+                                }
+
+                                var reconcile = await trecon.ReconciliationProcess(reconModel);
+                                if (!reconcile.IsSuccess)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>(reconcile.Message);
+                                }
+                            }
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "Payment Approved");
                         }
@@ -462,7 +516,6 @@ namespace Application.Services
                         return new Response<bool>(true, "Payment Reviewed");
                     }
                 }
-
                 return new Response<bool>("User does not have allowed role");
 
             }
@@ -542,7 +595,7 @@ namespace Application.Services
                     Discount = 0,
                     SalesTax = 0,
                     IncomeTax = 0,
-                    DocumentTransactionId = line.TransactionId,
+                    DocumentLedgerId = line.LedgerId,
                     isSubmit = false
                 };
 
@@ -590,20 +643,18 @@ namespace Application.Services
             var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, "")).ToList();
 
             if (payrollTransactions.Count == 0)
-                return new Response<List<PaymentDto>>("list is empty");
-
+                return new Response<List<PaymentDto>>(null,"list is empty");
             var getPayments = _unitOfWork.Payment.Find(new PaymentSpecs(DocType.PayrollPayment, false)).ToList();
 
             var response = new List<PaymentDto>();
 
             foreach (var t in payrollTransactions)
             {
-                var payment = getPayments.FirstOrDefault(x => x.TransactionId == t.TransactionId);
-                var paymentDto = _mapper.Map<PaymentDto>(payment);
-
+                var payrollLedgerId = _unitOfWork.Ledger.Find(new LedgerSpecs(true, (int)t.TransactionId)).Select(i => i.Id).FirstOrDefault();
+                var payment = getPayments.FirstOrDefault(x => x.DocumentLedgerId == payrollLedgerId);
                 if (payment != null)
                 {
-                    response.Add(paymentDto);
+                    response.Add(_mapper.Map<PaymentDto>(payment));
                 }
             }
             var result = response.OrderBy(x => x.BusinessPartnerId).ToList();
@@ -699,5 +750,44 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
+        private PaymentDto MapToValue(PaymentDto data)
+        {
+            //Getting transaction with Payment Transaction Id
+            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs((int)data.TransactionId, true)).FirstOrDefault();
+
+            // Checking if given amount is greater than unreconciled document amount
+            var transactionReconciles = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(getUnreconciledDocumentAmount.Id, true)).ToList();
+
+            //For Paid Document List
+            var paidDocList = new List<PaidDocListDto>();
+            // if reconciles transaction found
+            
+            if (transactionReconciles.Count() > 0)
+            {
+                //Adding Paid Doc List
+                foreach (var tranRecon in transactionReconciles)
+                {
+                    string[] docId = tranRecon.DocumentLedger.Transactions.DocNo.Split("-");
+                    paidDocList.Add(new PaidDocListDto
+                    {
+                        Id = tranRecon.DocumentLedger.Transactions.DocId,
+                        DocNo = tranRecon.DocumentLedger.Transactions.DocNo,
+                        DocType = tranRecon.DocumentLedger.Transactions.DocType,
+                        Amount = tranRecon.Amount
+                    });
+                }
+            }
+
+            //Getting Pending Invoice Amount
+            var unReconciledAmount = data.NetPayment - transactionReconciles.Sum(e => e.Amount);
+
+            data.LedgerId = getUnreconciledDocumentAmount.Id;
+            data.ReconciledAmount = transactionReconciles.Sum(e => e.Amount);
+            data.PaidAmountList = paidDocList;
+            data.UnreconciledAmount = unReconciledAmount;
+
+            // Returning BillDto with all values assigned
+            return data;
+        }
     }
 }

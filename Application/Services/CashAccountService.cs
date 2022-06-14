@@ -38,7 +38,7 @@ namespace Application.Services
 
                 await _unitOfWork.Level4.Add(ChAccount);
 
-                var transaction = new Transactions("1", DocType.CashAccount);
+                var transaction = new Transactions(0, "1", DocType.CashAccount);
                 await _unitOfWork.Transaction.Add(transaction);
                 await _unitOfWork.SaveAsync();
 
@@ -52,7 +52,7 @@ namespace Application.Services
                 await _unitOfWork.SaveAsync();
 
                 cashAccount.createDocNo();
-                transaction.updateDocNo(cashAccount.DocNo);
+                transaction.updateDocNo(cashAccount.Id, cashAccount.DocNo);
                 await _unitOfWork.SaveAsync();
 
                 //Adding CashAccount to Ledger

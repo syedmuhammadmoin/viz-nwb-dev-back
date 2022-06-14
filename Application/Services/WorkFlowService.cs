@@ -42,7 +42,7 @@ namespace Application.Services
             return new Response<WorkFlowDto>(_mapper.Map<WorkFlowDto>(result), "Created successfully");
         }
 
-        public async Task<PaginationResponse<List<WorkFlowDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<WorkFlowDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new WorkFlowSpecs(filter);
             var WorkFlow = await _unitOfWork.WorkFlow.GetAll(specification);
@@ -50,7 +50,7 @@ namespace Application.Services
             if (!WorkFlow.Any())
                 return new PaginationResponse<List<WorkFlowDto>>(_mapper.Map<List<WorkFlowDto>>(WorkFlow), "List is empty");
 
-            var totalRecords = await _unitOfWork.WorkFlow.TotalRecord();
+            var totalRecords = await _unitOfWork.WorkFlow.TotalRecord(specification);
 
             return new PaginationResponse<List<WorkFlowDto>>(_mapper.Map<List<WorkFlowDto>>(WorkFlow), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
 

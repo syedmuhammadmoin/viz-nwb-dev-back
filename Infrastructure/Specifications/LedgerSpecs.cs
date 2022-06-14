@@ -20,22 +20,31 @@ namespace Infrastructure.Specifications
             AddInclude("Level4.Level1");
         }
 
-        public LedgerSpecs(int transactionId) : base(i => i.TransactionId == transactionId
+        public LedgerSpecs(int id) : base(i => i.Id == id
         && (i.ReconStatus == DocumentStatus.Unreconciled || i.ReconStatus == DocumentStatus.Partial)
         && i.IsReconcilable == true)
         {
             AddInclude(i => i.Transactions);
         }
 
-        public LedgerSpecs(int transactionId, bool forDoc) : base(i => i.TransactionId == transactionId
+        public LedgerSpecs(int id, bool forDoc) : base(i => 
+        (forDoc ? i.TransactionId == id : i.Id == id)
         && (i.ReconStatus == DocumentStatus.Unreconciled || i.ReconStatus == DocumentStatus.Partial || i.ReconStatus == DocumentStatus.Reconciled)
         && i.IsReconcilable == true)
         {
             AddInclude(i => i.Transactions);
+            ApplyAsNoTracking();
         }
 
-        public LedgerSpecs(int transactionId, Guid level4Id, int? businessPartnerId, char sign, bool asNoTracking = false) 
-        : base(i => i.TransactionId == transactionId
+        public LedgerSpecs(bool forDoc, int transactionId) : base(i => i.TransactionId == transactionId
+        && (i.ReconStatus == DocumentStatus.Unreconciled)
+        && i.IsReconcilable == true)
+        {
+            ApplyAsNoTracking();
+        }
+
+        public LedgerSpecs(int id, Guid level4Id, int? businessPartnerId, char sign, bool asNoTracking = false) 
+        : base(i => i.Id == id
         && i.Level4_id == level4Id
         && i.BusinessPartnerId == businessPartnerId
         && i.Sign != sign
@@ -54,6 +63,7 @@ namespace Infrastructure.Specifications
         && (i.ReconStatus == DocumentStatus.Unreconciled || i.ReconStatus == DocumentStatus.Partial)
         && i.IsReconcilable == true)
         {
+            AddInclude(i => i.Transactions);
             ApplyAsNoTracking();
         }
     }

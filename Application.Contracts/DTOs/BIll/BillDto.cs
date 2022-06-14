@@ -28,7 +28,12 @@ namespace Application.Contracts.DTOs
         public decimal Tax { get; set; }
         public decimal TotalTax { get; set; }
         public decimal TotalAmount { get; set; }
-        public int TransactionId { get; set; }
+        public decimal TotalPaid { get; set; }
+        public IEnumerable<PaidDocListDto> PaidAmountList { get; set; }
+        public IEnumerable<UnreconciledBusinessPartnerPaymentsDto> BPUnreconPaymentList { get; set; }
+        public decimal PendingAmount { get; set; }
+        public int? TransactionId { get; set; }
+        public int? LedgerId { get; set; }
         public virtual List<BillLinesDto> BillLines { get; set; }
         public bool IsAllowedRole { get; set; }
     }

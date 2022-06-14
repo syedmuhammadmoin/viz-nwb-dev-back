@@ -29,7 +29,7 @@ namespace Domain.Entities
         public Level4 PaymentRegister { get; private set; }
         [MaxLength(500)]
         public string Description { get; private set; }
-        public int CampusId { get; private set; }
+        public int? CampusId { get; private set; }
         [ForeignKey("CampusId")]
         public Campus Campus { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
@@ -48,6 +48,7 @@ namespace Domain.Entities
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
         public DocumentStatus? BankReconStatus { get; private set; }
+        public int? DocumentLedgerId { get; set; }
         public int StatusId { get; private set; }
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get; private set; }
