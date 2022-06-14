@@ -334,6 +334,41 @@ namespace Application.Services
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
                             await AddToLedger(getCreditNote);
+
+                            if (getCreditNote.DocumentLedgerId != 0 && getCreditNote.DocumentLedgerId != null)
+                            {
+                                TransactionReconcileService trecon = new TransactionReconcileService(_unitOfWork);
+                                //Getting transaction with Payment Transaction Id
+                                var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(true, (int)getCreditNote.TransactionId)).FirstOrDefault();
+                                if (getUnreconciledDocumentAmount == null)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>("Ledger not found");
+                                }
+
+                                var reconModel = new CreateTransactionReconcileDto()
+                                {
+                                    PaymentLedgerId = getUnreconciledDocumentAmount.Id,
+                                    DocumentLedgerId = (int)getCreditNote.DocumentLedgerId,
+                                    Amount = getCreditNote.TotalAmount
+                                };
+
+                                //Checking Reconciliation Validation
+                                var checkValidation = trecon.CheckReconValidation(reconModel);
+                                if (!checkValidation.IsSuccess)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>(checkValidation.Message);
+                                }
+
+                                var reconcile = await trecon.ReconciliationProcess(reconModel);
+                                if (!reconcile.IsSuccess)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>(reconcile.Message);
+                                }
+                            }
+
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "CreditNote Approved");
                         }
