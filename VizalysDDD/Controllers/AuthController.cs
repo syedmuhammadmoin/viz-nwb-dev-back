@@ -63,7 +63,7 @@ namespace Vizalys.Api.Controllers
         }
 
         //  /api/auth/GetUserByID
-        [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.View, Permissions.AuthClaims.Delete, Permissions.AuthClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.Create, Permissions.AuthClaims.View, Permissions.AuthClaims.Delete, Permissions.AuthClaims.Edit })]
         [HttpGet("Users/{id:Guid}")]
         public async Task<ActionResult<Response<EditUserDto>>> GetUserAsync(string id)
         {
@@ -139,7 +139,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.View, Permissions.AuthClaims.Delete, Permissions.AuthClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.Create, Permissions.AuthClaims.View, Permissions.AuthClaims.Delete, Permissions.AuthClaims.Edit })]
         [HttpGet("Roles/{id:Guid}")]
         public async Task<ActionResult<Response<RegisterRoleDto>>> GetRolesAsync(string id)
         {
@@ -161,6 +161,12 @@ namespace Vizalys.Api.Controllers
                 return Ok(result); // Status Code : 200
 
             return BadRequest(result); // Status code : 400
+        }
+
+        [HttpGet("Roles/Dropdown")]
+        public async Task<ActionResult<Response<IEnumerable<IdentityRole>>>> GetRolesDropDown()
+        {
+            return Ok(await _userService.GetRolesDropDown()); // Status Code : 200
         }
 
         // /api/auth/Claims

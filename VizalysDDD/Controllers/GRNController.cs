@@ -44,7 +44,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(results); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.GRNClaims.View, Permissions.GRNClaims.Delete, Permissions.GRNClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.GRNClaims.Create, Permissions.GRNClaims.View, Permissions.GRNClaims.Delete, Permissions.GRNClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<GRNDto>>> GetByIdAsync(int id)
         {
@@ -69,7 +69,6 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.GRNClaims.View })]
         [HttpPost("workflow")]
         public async Task<ActionResult<Response<bool>>> CheckWorkFlow([FromBody] ApprovalDto data)
         {

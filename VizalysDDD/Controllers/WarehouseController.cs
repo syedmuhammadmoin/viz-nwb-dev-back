@@ -44,7 +44,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(warehouse); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.WarehouseClaims.View, Permissions.WarehouseClaims.Delete, Permissions.WarehouseClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.WarehouseClaims.Create, Permissions.WarehouseClaims.View, Permissions.WarehouseClaims.Delete, Permissions.WarehouseClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<WarehouseDto>>> GetByIdAsync(int id)
         {

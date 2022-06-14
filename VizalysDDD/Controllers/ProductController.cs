@@ -43,7 +43,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(product); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.ProductsClaims.View, Permissions.ProductsClaims.Delete, Permissions.ProductsClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.ProductsClaims.Create, Permissions.ProductsClaims.View, Permissions.ProductsClaims.Delete, Permissions.ProductsClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<ProductDto>>> GetByIdAsync(int id)
         {
