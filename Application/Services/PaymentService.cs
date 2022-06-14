@@ -644,7 +644,6 @@ namespace Application.Services
 
             if (payrollTransactions.Count == 0)
                 return new Response<List<PaymentDto>>(null,"list is empty");
-
             var getPayments = _unitOfWork.Payment.Find(new PaymentSpecs(DocType.PayrollPayment, false)).ToList();
 
             var response = new List<PaymentDto>();
@@ -655,7 +654,7 @@ namespace Application.Services
                 var payment = getPayments.FirstOrDefault(x => x.DocumentLedgerId == payrollLedgerId);
                 if (payment != null)
                 {
-                    response.Add(MapToValue(_mapper.Map<PaymentDto>(payment)));
+                    response.Add(_mapper.Map<PaymentDto>(payment));
                 }
             }
             var result = response.OrderBy(x => x.BusinessPartnerId).ToList();

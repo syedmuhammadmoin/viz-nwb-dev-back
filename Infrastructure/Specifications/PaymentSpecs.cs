@@ -80,13 +80,11 @@ namespace Infrastructure.Specifications
             && (e.TransactionId != 0 || e.TransactionId != null) 
             &&(e.Status.State == DocumentStatus.Draft || e.Status.State == DocumentStatus.Rejected)))
         {
-            {
-                AddInclude(i => i.BusinessPartner);
-                AddInclude(i => i.Account);
-                AddInclude(i => i.Campus);
-                AddInclude(i => i.Status);
-                AddInclude(i => i.PaymentRegister);
-            }
+            AddInclude(i => i.BusinessPartner);
+            AddInclude(i => i.Account);
+            AddInclude(i => i.Campus);
+            AddInclude(i => i.Status);
+            AddInclude(i => i.PaymentRegister);
         }
         public PaymentSpecs(DocType docType) : base(e => ((e.PaymentFormType == docType)))
         {
