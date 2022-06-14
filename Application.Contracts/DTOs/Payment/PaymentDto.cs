@@ -22,7 +22,7 @@ namespace Application.Contracts.DTOs
         public Guid PaymentRegisterId { get; set; }
         public string PaymentRegisterName { get; set; }
         public string Description { get; set; }
-        public int CampusId { get; set; }
+        public int? CampusId { get; set; }
         public string CampusName { get; set; }
         public decimal GrossPayment { get; set; }
         public decimal Discount { get; set; }

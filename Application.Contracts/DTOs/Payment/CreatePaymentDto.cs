@@ -26,8 +26,7 @@ namespace Application.Contracts.DTOs
         [Required]
         [MaxLength(500)]
         public string Description { get; set; }
-        [Required]
-        public int CampusId { get; set; }
+        public int? CampusId { get; set; }
         [Required]
         [Range(1, double.MaxValue, ErrorMessage = "Gross amount must be greater than 0")]
         public decimal GrossPayment { get; set; }
