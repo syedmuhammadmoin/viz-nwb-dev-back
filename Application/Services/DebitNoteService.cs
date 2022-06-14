@@ -74,10 +74,31 @@ namespace Application.Services
                 return new Response<DebitNoteDto>("Not found");
 
             var debitNoteDto = _mapper.Map<DebitNoteDto>(dbn);
-
-            debitNoteDto.IsAllowedRole = false;
+            
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.DebitNote)).FirstOrDefault();
 
+            if ((debitNoteDto.State == DocumentStatus.Unpaid || debitNoteDto.State == DocumentStatus.Partial || debitNoteDto.State == DocumentStatus.Paid) && debitNoteDto.TransactionId != null)
+            {
+                return new Response<DebitNoteDto>(MapToValue(debitNoteDto), "Returning value");
+            }
+
+            debitNoteDto.IsAllowedRole = false;
+
+            if (dbn.DocumentLedgerId != null)
+            {
+                var ledger = _unitOfWork.Ledger.Find(new LedgerSpecs((int)dbn.DocumentLedgerId, false)).FirstOrDefault();
+                if (ledger != null)
+                {
+                    string[] docId = ledger.Transactions.DocNo.Split("-");
+                    debitNoteDto.DocumentReconcile = new PaidDocListDto
+                    {
+                        Id = Int32.Parse(docId[1]),
+                        DocNo = ledger.Transactions.DocNo,
+                        DocType = ledger.Transactions.DocType,
+                        Amount = ledger.Amount
+                    };
+                }
+            }
 
             if (workflow != null)
             {
@@ -300,6 +321,41 @@ namespace Application.Services
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
                             await AddToLedger(getDebitNote);
+
+                            if (getDebitNote.DocumentLedgerId != 0 && getDebitNote.DocumentLedgerId != null)
+                            {
+                                TransactionReconcileService trecon = new TransactionReconcileService(_unitOfWork);
+                                //Getting transaction with Payment Transaction Id
+                                var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(true, (int)getDebitNote.TransactionId)).FirstOrDefault();
+                                if (getUnreconciledDocumentAmount == null)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>("Ledger not found");
+                                }
+
+                                var reconModel = new CreateTransactionReconcileDto()
+                                {
+                                    PaymentLedgerId = getUnreconciledDocumentAmount.Id,
+                                    DocumentLedgerId = (int)getDebitNote.DocumentLedgerId,
+                                    Amount = getDebitNote.TotalAmount
+                                };
+
+                                //Checking Reconciliation Validation
+                                var checkValidation = trecon.CheckReconValidation(reconModel);
+                                if (!checkValidation.IsSuccess)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>(checkValidation.Message);
+                                }
+
+                                var reconcile = await trecon.ReconciliationProcess(reconModel);
+                                if (!reconcile.IsSuccess)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>(reconcile.Message);
+                                }
+                            }
+
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "DebitNote Approved");
                         }
@@ -323,6 +379,45 @@ namespace Application.Services
                 _unitOfWork.Rollback();
                 return new Response<bool>(ex.Message);
             }
+        }
+        private DebitNoteDto MapToValue(DebitNoteDto data)
+        {
+            //Getting transaction with Payment Transaction Id
+            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs((int)data.TransactionId, true)).FirstOrDefault();
+
+            // Checking if given amount is greater than unreconciled document amount
+            var transactionReconciles = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(getUnreconciledDocumentAmount.Id, true)).ToList();
+
+            //For Paid Document List
+            var paidDocList = new List<PaidDocListDto>();
+            // if reconciles transaction found
+
+            if (transactionReconciles.Count() > 0)
+            {
+                //Adding Paid Doc List
+                foreach (var tranRecon in transactionReconciles)
+                {
+                    string[] docId = tranRecon.DocumentLedger.Transactions.DocNo.Split("-");
+                    paidDocList.Add(new PaidDocListDto
+                    {
+                        Id = Int32.Parse(docId[1]),
+                        DocNo = tranRecon.DocumentLedger.Transactions.DocNo,
+                        DocType = tranRecon.DocumentLedger.Transactions.DocType,
+                        Amount = tranRecon.Amount
+                    });
+                }
+            }
+
+            //Getting Pending DebitNoteDto Amount
+            var unReconciledAmount = data.TotalAmount - transactionReconciles.Sum(e => e.Amount);
+
+            data.LedgerId = getUnreconciledDocumentAmount.Id;
+            data.ReconciledAmount = transactionReconciles.Sum(e => e.Amount);
+            data.PaidAmountList = paidDocList;
+            data.UnreconciledAmount = unReconciledAmount;
+
+            // Returning DebitNoteDto with all values assigned
+            return data;
         }
     }
 }
