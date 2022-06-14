@@ -651,8 +651,8 @@ namespace Application.Services
 
             foreach (var t in payrollTransactions)
             {
-                var payment = getPayments.FirstOrDefault(x => x.DocumentLedgerId == t.TransactionId);
-
+                var payrollLedgerId = _unitOfWork.Ledger.Find(new LedgerSpecs(true, (int)t.TransactionId)).Select(i => i.Id).FirstOrDefault();
+                var payment = getPayments.FirstOrDefault(x => x.DocumentLedgerId == payrollLedgerId);
                 if (payment != null)
                 {
                     response.Add(MapToValue(_mapper.Map<PaymentDto>(payment)));
