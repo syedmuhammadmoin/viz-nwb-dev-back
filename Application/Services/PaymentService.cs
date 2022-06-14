@@ -644,7 +644,7 @@ namespace Application.Services
             var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, "")).ToList();
 
             if (payrollTransactions.Count == 0)
-                return new Response<List<PaymentDto>>("list is empty");
+                return new Response<List<PaymentDto>>(null,"list is empty");
 
             var getPayments = _unitOfWork.Payment.Find(new PaymentSpecs(DocType.PayrollPayment, false)).ToList();
 
@@ -652,12 +652,11 @@ namespace Application.Services
 
             foreach (var t in payrollTransactions)
             {
-                var payment = getPayments.FirstOrDefault(x => x.TransactionId == t.TransactionId);
-                var paymentDto = _mapper.Map<PaymentDto>(payment);
+                var payment = getPayments.FirstOrDefault(x => x.DocumentLedgerId == t.TransactionId);
 
                 if (payment != null)
                 {
-                    response.Add(paymentDto);
+                    response.Add(MapToValue(_mapper.Map<PaymentDto>(payment)));
                 }
             }
             var result = response.OrderBy(x => x.BusinessPartnerId).ToList();
