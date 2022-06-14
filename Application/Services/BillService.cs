@@ -289,7 +289,7 @@ namespace Application.Services
 
         private async Task AddToLedger(BillMaster bill)
         {
-            var transaction = new Transactions(bill.DocNo, DocType.Bill);
+            var transaction = new Transactions(bill.Id, bill.DocNo, DocType.Bill);
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
@@ -335,6 +335,7 @@ namespace Application.Services
             await _unitOfWork.Ledger.Add(addPayableInLedger);
             await _unitOfWork.SaveAsync();
         }
+
         private BillDto MapToValue(BillDto data)
         {
             //Getting transaction with Payment Transaction Id
@@ -351,10 +352,9 @@ namespace Application.Services
                 //Adding Paid Doc List
                 foreach (var tranRecon in transactionReconciles)
                 {
-                    string[] docId = tranRecon.PaymentLedger.Transactions.DocNo.Split("-");
                     paidDocList.Add(new PaidDocListDto
                     {
-                        Id = Int32.Parse(docId[1]),
+                        Id = tranRecon.PaymentLedger.Transactions.DocId,
                         DocNo = tranRecon.PaymentLedger.Transactions.DocNo,
                         DocType = tranRecon.PaymentLedger.Transactions.DocType,
                         Amount = tranRecon.Amount
@@ -375,7 +375,7 @@ namespace Application.Services
                 //For Getting Business Partner Unreconciled Payments and CreditNote
                 var BPUnreconPayments = getUnreconPayment.Result.Select(i => new UnreconciledBusinessPartnerPaymentsDto()
                 {
-                    Id = i.DocumentId,
+                    Id = i.DocId,
                     DocNo = i.DocNo,
                     DocType = i.DocType,
                     Amount = i.UnreconciledAmount,

@@ -369,7 +369,7 @@ namespace Application.Services
 
         private async Task AddToLedger(PayrollTransactionMaster payrollTransaction)
         {
-            var transaction = new Transactions(payrollTransaction.DocNo, DocType.PayrollTransaction);
+            var transaction = new Transactions(payrollTransaction.Id, payrollTransaction.DocNo, DocType.PayrollTransaction);
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
@@ -570,10 +570,9 @@ namespace Application.Services
                     //Adding Paid Doc List
                     foreach (var tranRecon in transactionReconciles)
                     {
-                        string[] docId = tranRecon.PaymentLedger.Transactions.DocNo.Split("-");
                         paidDocList.Add(new PaidDocListDto
                         {
-                            Id = Int32.Parse(docId[1]),
+                            Id = tranRecon.PaymentLedger.Transactions.DocId,
                             DocNo = tranRecon.PaymentLedger.Transactions.DocNo,
                             DocType = tranRecon.PaymentLedger.Transactions.DocType,
                             Amount = tranRecon.Amount
@@ -594,7 +593,7 @@ namespace Application.Services
                     //For Getting Business Partner Unreconciled Payments and CreditNote
                     var BPUnreconPayments = getUnreconPayment.Result.Select(i => new UnreconciledBusinessPartnerPaymentsDto()
                     {
-                        Id = i.DocumentId,
+                        Id = i.DocId,
                         DocNo = i.DocNo,
                         DocType = i.DocType,
                         Amount = i.UnreconciledAmount,

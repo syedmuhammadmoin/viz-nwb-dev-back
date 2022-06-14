@@ -225,7 +225,7 @@ namespace Application.Services
 
         private async Task AddToLedger(JournalEntryMaster jv)
         {
-            var transaction = new Transactions(jv.DocNo, DocType.JournalEntry);
+            var transaction = new Transactions(jv.Id, jv.DocNo, DocType.JournalEntry);
             var addTransaction = await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 

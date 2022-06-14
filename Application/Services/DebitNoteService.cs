@@ -89,10 +89,9 @@ namespace Application.Services
                 var ledger = _unitOfWork.Ledger.Find(new LedgerSpecs((int)dbn.DocumentLedgerId, false)).FirstOrDefault();
                 if (ledger != null)
                 {
-                    string[] docId = ledger.Transactions.DocNo.Split("-");
                     debitNoteDto.DocumentReconcile = new PaidDocListDto
                     {
-                        Id = Int32.Parse(docId[1]),
+                        Id = ledger.Transactions.DocId,
                         DocNo = ledger.Transactions.DocNo,
                         DocType = ledger.Transactions.DocType,
                         Amount = ledger.Amount
@@ -239,7 +238,7 @@ namespace Application.Services
 
         private async Task AddToLedger(DebitNoteMaster dbn)
         {
-            var transaction = new Transactions(dbn.DocNo, DocType.DebitNote);
+            var transaction = new Transactions(dbn.Id, dbn.DocNo, DocType.DebitNote);
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
@@ -380,6 +379,7 @@ namespace Application.Services
                 return new Response<bool>(ex.Message);
             }
         }
+
         private DebitNoteDto MapToValue(DebitNoteDto data)
         {
             //Getting transaction with Payment Transaction Id
@@ -397,10 +397,9 @@ namespace Application.Services
                 //Adding Paid Doc List
                 foreach (var tranRecon in transactionReconciles)
                 {
-                    string[] docId = tranRecon.DocumentLedger.Transactions.DocNo.Split("-");
                     paidDocList.Add(new PaidDocListDto
                     {
-                        Id = Int32.Parse(docId[1]),
+                        Id = tranRecon.DocumentLedger.Transactions.DocId,
                         DocNo = tranRecon.DocumentLedger.Transactions.DocNo,
                         DocType = tranRecon.DocumentLedger.Transactions.DocType,
                         Amount = tranRecon.Amount

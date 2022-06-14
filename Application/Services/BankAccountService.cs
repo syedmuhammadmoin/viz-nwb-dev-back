@@ -45,7 +45,7 @@ namespace Application.Services
 
                 await _unitOfWork.Level4.Add(ClAccount);
 
-                var transaction = new Transactions("1", DocType.BankAccount);
+                var transaction = new Transactions(0, "1", DocType.BankAccount);
                 await _unitOfWork.Transaction.Add(transaction);
                 await _unitOfWork.SaveAsync();
 
@@ -59,7 +59,7 @@ namespace Application.Services
                 await _unitOfWork.SaveAsync();
 
                 bankAccount.createDocNo();
-                transaction.updateDocNo(bankAccount.DocNo);
+                transaction.updateDocNo(bankAccount.Id, bankAccount.DocNo);
                 await _unitOfWork.SaveAsync();
 
                 //Adding BankAccount to Ledger

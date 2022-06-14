@@ -11,6 +11,7 @@ namespace Domain.Entities
 {
     public class Transactions : BaseEntity<int>
     {
+        public int DocId { get; set; }
         [MaxLength(20)]
         public string DocNo { get; private set; }
         public DocType DocType { get; private set; }
@@ -20,14 +21,16 @@ namespace Domain.Entities
 
         }
 
-        public Transactions(string docNo, DocType docType)
+        public Transactions(int docId, string docNo, DocType docType)
         {
+            DocId = docId;
             DocNo = docNo;
             DocType = docType;
         }
 
-        public void updateDocNo(string docNo)
+        public void updateDocNo(int docId, string docNo)
         {
+            DocId = docId;
             DocNo = docNo;
         }
     }

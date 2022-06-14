@@ -88,10 +88,9 @@ namespace Application.Services
                 var ledger = _unitOfWork.Ledger.Find(new LedgerSpecs((int)crn.DocumentLedgerId, false)).FirstOrDefault();
                 if (ledger != null)
                 {
-                    string[] docId = ledger.Transactions.DocNo.Split("-");
                     creditNoteDto.DocumentReconcile = new PaidDocListDto
                     {
-                        Id = Int32.Parse(docId[1]),
+                        Id = ledger.Transactions.DocId,
                         DocNo = ledger.Transactions.DocNo,
                         DocType = ledger.Transactions.DocType,
                         Amount = ledger.Amount
@@ -236,7 +235,7 @@ namespace Application.Services
 
         private async Task AddToLedger(CreditNoteMaster crn)
         {
-            var transaction = new Transactions(crn.DocNo, DocType.CreditNote);
+            var transaction = new Transactions(crn.Id, crn.DocNo, DocType.CreditNote);
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
@@ -414,7 +413,7 @@ namespace Application.Services
                     string[] docId = tranRecon.DocumentLedger.Transactions.DocNo.Split("-");
                     paidDocList.Add(new PaidDocListDto
                     {
-                        Id = Int32.Parse(docId[1]),
+                        Id = tranRecon.DocumentLedger.Transactions.DocId,
                         DocNo = tranRecon.DocumentLedger.Transactions.DocNo,
                         DocType = tranRecon.DocumentLedger.Transactions.DocType,
                         Amount = tranRecon.Amount

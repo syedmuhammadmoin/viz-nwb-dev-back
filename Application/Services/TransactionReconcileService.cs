@@ -212,12 +212,10 @@ namespace Application.Services
                 {
                     var reconciledPaymentAmount = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(line.Id, true)).Sum(p => p.Amount);
                     var unreconciledPaymentAmount = line.Amount - reconciledPaymentAmount;
-
-                    //Getting doc Id from doc no
-                    string[] docId = line.Transactions.DocNo.Split("-");
+                    
                     amountsForRecociliationList.Add(new AmountsForReconciliationDto
                     {
-                        DocumentId = Int32.Parse(docId[1]),
+                        DocId = line.Transactions.DocId,
                         PaymentLedgerId = line.Id,
                         DocNo = line.Transactions.DocNo,
                         DocType = line.Transactions.DocType,
