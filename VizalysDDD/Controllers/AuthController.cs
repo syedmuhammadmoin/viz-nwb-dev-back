@@ -127,7 +127,7 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result);// Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.Create, Permissions.AuthClaims.View, Permissions.AuthClaims.Delete, Permissions.AuthClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.WorkflowClaims.Create, Permissions.WorkflowClaims.View, Permissions.WorkflowClaims.Delete, Permissions.WorkflowClaims.Edit, Permissions.AuthClaims.Create, Permissions.AuthClaims.View, Permissions.AuthClaims.Delete, Permissions.AuthClaims.Edit })]
         [HttpGet("Roles")]
         public async Task<ActionResult<Response<IEnumerable<IdentityRole>>>> GetRolesAsync()
         {
