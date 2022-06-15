@@ -622,7 +622,7 @@ namespace Application.Services
 
         public Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data)
         {
-            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, false)).ToList();
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, "")).ToList();
 
             if (payrollTransactions.Count == 0)
                 return new Response<List<PayrollTransactionDto>>("list is empty");
