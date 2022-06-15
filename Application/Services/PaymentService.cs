@@ -699,12 +699,12 @@ namespace Application.Services
             }
         }
 
-        public Response<bool> GetPaymentForApproval(DeptFilter data)
+        public Response<List<PaymentDto>> GetPaymentForApproval(DeptFilter data)
         {
             var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, "")).ToList();
 
                 if (payrollTransactions.Count == 0)
-                return new Response<bool>("list is empty");
+                return new Response<List<PaymentDto>>(null, "list is empty");
 
             var getPayments = _unitOfWork.Payment.Find(new PaymentSpecs( DocType.PayrollPayment, true)).ToList();
            
@@ -712,18 +712,17 @@ namespace Application.Services
 
             foreach (var t in payrollTransactions)
             {
-                var payment = getPayments.FirstOrDefault(x => x.TransactionId == t.TransactionId);
-                var paymentDto = _mapper.Map<PaymentDto>(payment);
-
+                var payrollLedgerId = _unitOfWork.Ledger.Find(new LedgerSpecs(true, (int)t.TransactionId)).Select(i => i.Id).FirstOrDefault();
+                var payment = getPayments.FirstOrDefault(x => x.DocumentLedgerId == payrollLedgerId);
                 if (payment != null)
                 {
-                    response.Add(paymentDto);
+                    response.Add(_mapper.Map<PaymentDto>(payment));
                 }
             }
 
             var result = response.OrderBy(x => x.BusinessPartnerId).ToList();
 
-            return new Response<bool>(true, "Returning payroll payments");
+            return new Response<List<PaymentDto>>(result, "Returning payroll payments");
         }
 
         public async Task<Response<bool>> ProcessForApproval(CreateApprovalProcessDto data)

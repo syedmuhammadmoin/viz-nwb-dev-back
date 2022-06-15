@@ -21,7 +21,7 @@ namespace Application.Contracts.Interfaces
         Response<List<PaymentDto>> GetPaymentByDept(DeptFilter data);
         Task<Response<bool>> ProcessForEditPayrollPayment(int[] id);
         Task<Response<bool>> ProcessForApproval(CreateApprovalProcessDto data);
-        Response<bool> GetPaymentForApproval(DeptFilter data);
+        Response<List<PaymentDto>> GetPaymentForApproval(DeptFilter data);
 
     }
 }
