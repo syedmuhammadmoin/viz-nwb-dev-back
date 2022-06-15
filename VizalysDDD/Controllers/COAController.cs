@@ -21,7 +21,7 @@ namespace Vizalys.Api.Controllers
             _coaService = coaService;
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.ChartOfAccountClaims.View})]
+        [ClaimRequirement("Permission", new string[] { Permissions.ChartOfAccountClaims.View, Permissions.Level4Claims.Create, Permissions.Level4Claims.View, Permissions.Level4Claims.Delete, Permissions.Level4Claims.Edit })]
         [HttpGet]
         public async Task<ActionResult<Response<List<Level1Dto>>>> GetChartOfAccounts()
         {
