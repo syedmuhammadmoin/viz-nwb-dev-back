@@ -570,9 +570,9 @@ namespace Application.Services
 
         }
 
-        public async Task<Response<List<PaymentDto>>> CreatePayrollPaymentProcess(CreatePayrollPaymentDto data)
+        public async Task<Response<List<PayrollTransactionDto>>> CreatePayrollPaymentProcess(CreatePayrollPaymentDto data)
         {
-            var payrollPayment = new List<PaymentDto>();
+            var payrollPayment = new List<PayrollTransactionDto>();
 
             //checking whether any payment is created
             bool isPaymentCreated = false;
@@ -583,8 +583,10 @@ namespace Application.Services
                 if (bp != null)
                 {
                     if (bp.BusinessPartnerType != BusinessPartnerType.Employee)
-                        return new Response<List<PaymentDto>>("Business Partner is not employee");
+                        return new Response<List<PayrollTransactionDto>>("Business Partner is not employee");
                 }
+
+          
 
                 var checkPayrollPayment = _unitOfWork.Payment.Find(new PaymentSpecs(line.LedgerId, true)).FirstOrDefault();
 
@@ -592,7 +594,8 @@ namespace Application.Services
                 //    return new Response<PaymentDto>("Payroll payment for this payroll already exists");
                 if (checkPayrollPayment != null)
                 {
-                    payrollPayment.Add( _mapper.Map<PaymentDto>(checkPayrollPayment));
+                    var getPayrollEmployees = await _unitOfWork.PayrollTransaction.GetById(line.BusinessPartnerId, new PayrollTransactionSpecs(false));
+                    payrollPayment.Add( _mapper.Map<PayrollTransactionDto>(getPayrollEmployees));
                 }
                 else
                 {
@@ -622,7 +625,7 @@ namespace Application.Services
                         var result = await this.SubmitPay(payment);
                         if (!result.IsSuccess)
                         {
-                            return new Response<List<PaymentDto>>("");
+                            return new Response<List<PayrollTransactionDto>>("");
                         }
                     }
                     else
@@ -630,7 +633,7 @@ namespace Application.Services
                         var result = await this.SavePay(payment, 1);
                         if (!result.IsSuccess)
                         {
-                            return new Response<List<PaymentDto>>("");
+                            return new Response<List<PayrollTransactionDto>>("");
                         }
 
                     }
@@ -641,15 +644,15 @@ namespace Application.Services
             {
                 if(isPaymentCreated)
                 {
-                    return new Response<List<PaymentDto>>(payrollPayment, "Payroll Payments have been created except above in the grid");
+                    return new Response<List<PayrollTransactionDto>>(payrollPayment, "Payroll Payments have been created except above in the grid");
                 }
                 else
                 {
-                    return new Response<List<PaymentDto>>("Payroll Payments already exists");
+                    return new Response<List<PayrollTransactionDto>>("Payroll Payments already exists");
                 }
             }
           
-                return new Response<List<PaymentDto>>(null, "Payroll Payment created successfully");
+                return new Response<List<PayrollTransactionDto>>(null, "Payroll Payment created successfully");
         }
 
         public Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data)
