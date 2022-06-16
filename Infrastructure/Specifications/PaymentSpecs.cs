@@ -96,5 +96,12 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.PaymentRegister);
             }
         }
+
+        public PaymentSpecs(int ledgerId, bool isLedgerId) 
+            : base(x => 
+            isLedgerId ? x.DocumentLedgerId == ledgerId : false)
+        {
+
+        }
     }
 }
