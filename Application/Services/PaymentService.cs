@@ -657,7 +657,7 @@ namespace Application.Services
             var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, "")).ToList();
 
             if (payrollTransactions.Count == 0)
-                return new Response<List<PayrollTransactionDto>>("list is empty");
+                return new Response<List<PayrollTransactionDto>>(null,"list is empty");
 
             var response = new List<PayrollTransactionDto>();
 
