@@ -63,7 +63,7 @@ namespace Application.Services
             {
                 states.Add(filter.State);
             }
-            
+
             var specification = new PaymentSpecs(docDate, dueDate, states, filter, docType);
             var payment = await _unitOfWork.Payment.GetAll(specification);
 
@@ -76,14 +76,14 @@ namespace Application.Services
         }
 
         public async Task<Response<PaymentDto>> GetByIdAsync(int id, DocType docType)
-      {
+        {
             var specification = new PaymentSpecs(false, docType);
             var payment = await _unitOfWork.Payment.GetById(id, specification);
             if (payment == null)
                 return new Response<PaymentDto>("Not found");
 
             var paymentDto = _mapper.Map<PaymentDto>(payment);
- 
+
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(docType)).FirstOrDefault();
             if ((paymentDto.State == DocumentStatus.Unpaid || paymentDto.State == DocumentStatus.Partial || paymentDto.State == DocumentStatus.Paid) && paymentDto.TransactionId != null)
             {
@@ -105,7 +105,7 @@ namespace Application.Services
                     };
                 }
             }
-            
+
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
@@ -204,7 +204,7 @@ namespace Application.Services
 
             if (payment.DocumentLedgerId != null)
                 entity.DocumentLedgerId = payment.DocumentLedgerId;
-            
+
             _unitOfWork.CreateTransaction();
             try
             {
@@ -544,7 +544,7 @@ namespace Application.Services
             var getBankReconStatus = _unitOfWork.Payment.Find(new PaymentSpecs(id)).ToList();
 
             if (getBankReconStatus.Count == 0)
-                 return new Response<List<UnReconStmtDto>>(unreconciledBankPaymentsStatus, "Unreconciled bank statements not found");
+                return new Response<List<UnReconStmtDto>>(unreconciledBankPaymentsStatus, "Unreconciled bank statements not found");
 
             foreach (var e in getBankReconStatus)
             {
@@ -570,54 +570,86 @@ namespace Application.Services
 
         }
 
-        public async Task<Response<PaymentDto>> CreatePayrollPaymentProcess(CreatePayrollPaymentDto data)
+        public async Task<Response<List<PaymentDto>>> CreatePayrollPaymentProcess(CreatePayrollPaymentDto data)
         {
+            var payrollPayment = new List<PaymentDto>();
+
+            //checking whether any payment is created
+            bool isPaymentCreated = false;
+
             foreach (var line in data.CreatePayrollTransLines)
             {
                 var bp = await _unitOfWork.BusinessPartner.GetById(line.BusinessPartnerId);
                 if (bp != null)
                 {
                     if (bp.BusinessPartnerType != BusinessPartnerType.Employee)
-                        return new Response<PaymentDto>("Business Partner is not employee");
+                        return new Response<List<PaymentDto>>("Business Partner is not employee");
                 }
-                var payment = new CreatePaymentDto()
-                {
-                    PaymentType = PaymentType.Outflow,
-                    PaymentFormType = DocType.PayrollPayment,
-                    BusinessPartnerId = line.BusinessPartnerId,
-                    AccountId = line.AccountPayableId,
-                    CampusId = data.CampusId,
-                    GrossPayment = line.NetSalary,
-                    PaymentDate = data.PaymentDate,
-                    PaymentRegisterType = data.PaymentRegisterType,
-                    PaymentRegisterId = data.PaymentRegisterId,
-                    Description = data.Description,
-                    Discount = 0,
-                    SalesTax = 0,
-                    IncomeTax = 0,
-                    DocumentLedgerId = line.LedgerId,
-                    isSubmit = false
-                };
 
-                if (payment.isSubmit)
+                var checkPayrollPayment = _unitOfWork.Payment.Find(new PaymentSpecs(line.LedgerId, true)).FirstOrDefault();
+
+                //if (checkPayrollPayment.Any())
+                //    return new Response<PaymentDto>("Payroll payment for this payroll already exists");
+                if (checkPayrollPayment != null)
                 {
-                    var result = await this.SubmitPay(payment);
-                    if (!result.IsSuccess)
-                    {
-                        return new Response<PaymentDto>(""); ;
-                    }
+                    payrollPayment.Add( _mapper.Map<PaymentDto>(checkPayrollPayment));
                 }
                 else
                 {
-                    var result = await this.SavePay(payment, 1);
-                    if (!result.IsSuccess)
+                    isPaymentCreated = true;
+                    
+                    var payment = new CreatePaymentDto()
                     {
-                        return new Response<PaymentDto>(""); ;
+                        PaymentType = PaymentType.Outflow,
+                        PaymentFormType = DocType.PayrollPayment,
+                        BusinessPartnerId = line.BusinessPartnerId,
+                        AccountId = line.AccountPayableId,
+                        CampusId = data.CampusId,
+                        GrossPayment = line.NetSalary,
+                        PaymentDate = data.PaymentDate,
+                        PaymentRegisterType = data.PaymentRegisterType,
+                        PaymentRegisterId = data.PaymentRegisterId,
+                        Description = data.Description,
+                        Discount = 0,
+                        SalesTax = 0,
+                        IncomeTax = 0,
+                        DocumentLedgerId = line.LedgerId,
+                        isSubmit = false
+                    };
+
+                    if (payment.isSubmit)
+                    {
+                        var result = await this.SubmitPay(payment);
+                        if (!result.IsSuccess)
+                        {
+                            return new Response<List<PaymentDto>>("");
+                        }
+                    }
+                    else
+                    {
+                        var result = await this.SavePay(payment, 1);
+                        if (!result.IsSuccess)
+                        {
+                            return new Response<List<PaymentDto>>("");
+                        }
+
                     }
                 }
             }
 
-            return new Response<PaymentDto>(null, "Payroll Payment created successfully");
+            if (payrollPayment.Count() > 0)
+            {
+                if(isPaymentCreated)
+                {
+                    return new Response<List<PaymentDto>>(payrollPayment, "Payroll Payments have been created except above in the grid");
+                }
+                else
+                {
+                    return new Response<List<PaymentDto>>("Payroll Payments already exists");
+                }
+            }
+          
+                return new Response<List<PaymentDto>>(null, "Payroll Payment created successfully");
         }
 
         public Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data)
@@ -643,7 +675,7 @@ namespace Application.Services
             var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, "")).ToList();
 
             if (payrollTransactions.Count == 0)
-                return new Response<List<PaymentDto>>(null,"list is empty");
+                return new Response<List<PaymentDto>>(null, "list is empty");
             var getPayments = _unitOfWork.Payment.Find(new PaymentSpecs(DocType.PayrollPayment, false)).ToList();
 
             var response = new List<PaymentDto>();
@@ -703,11 +735,11 @@ namespace Application.Services
         {
             var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, "")).ToList();
 
-                if (payrollTransactions.Count == 0)
+            if (payrollTransactions.Count == 0)
                 return new Response<List<PaymentDto>>(null, "list is empty");
 
-            var getPayments = _unitOfWork.Payment.Find(new PaymentSpecs( DocType.PayrollPayment, true)).ToList();
-           
+            var getPayments = _unitOfWork.Payment.Find(new PaymentSpecs(DocType.PayrollPayment, true)).ToList();
+
             var response = new List<PaymentDto>();
 
             foreach (var t in payrollTransactions)
@@ -760,7 +792,7 @@ namespace Application.Services
             //For Paid Document List
             var paidDocList = new List<PaidDocListDto>();
             // if reconciles transaction found
-            
+
             if (transactionReconciles.Count() > 0)
             {
                 //Adding Paid Doc List
