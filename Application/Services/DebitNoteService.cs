@@ -281,6 +281,12 @@ namespace Application.Services
 
             await _unitOfWork.Ledger.Add(addPayableInLedger);
             await _unitOfWork.SaveAsync();
+
+            //Getting transaction with Payment Transaction Id
+            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(transaction.Id, true)).FirstOrDefault();
+
+            dbn.setLedgerId(getUnreconciledDocumentAmount.Id);
+            await _unitOfWork.SaveAsync();
         }
 
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
@@ -410,7 +416,6 @@ namespace Application.Services
             //Getting Pending DebitNoteDto Amount
             var unReconciledAmount = data.TotalAmount - transactionReconciles.Sum(e => e.Amount);
 
-            data.LedgerId = getUnreconciledDocumentAmount.Id;
             data.ReconciledAmount = transactionReconciles.Sum(e => e.Amount);
             data.PaidAmountList = paidDocList;
             data.UnreconciledAmount = unReconciledAmount;

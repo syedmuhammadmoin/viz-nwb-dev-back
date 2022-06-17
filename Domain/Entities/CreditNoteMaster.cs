@@ -36,7 +36,8 @@ namespace Domain.Entities
         public int? TransactionId { get; private set; }
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
-        public int? DocumentLedgerId { get; set; }
+        public int? LedgerId { get; private set; }
+        public int? DocumentLedgerId { get; private set; }
         public virtual List<CreditNoteLines> CreditNoteLines { get; private set; }
 
         protected CreditNoteMaster()
@@ -51,6 +52,11 @@ namespace Domain.Entities
         {
             TransactionId = transactionId;
         }
+        public void setLedgerId(int ledgerId)
+        {
+            LedgerId = ledgerId;
+        }
+
         public void setReceivableAccount(Guid receivableAccountId)
         {
             ReceivableAccountId = receivableAccountId;

@@ -36,6 +36,7 @@ namespace Domain.Entities
         public int CampusId { get; private set; }
         [ForeignKey("CampusId")]
         public Campus Campus { get; private set; }
+        public int? LedgerId { get; private set; }
         public int? TransactionId { get; private set; }
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
@@ -53,6 +54,10 @@ namespace Domain.Entities
         public void setTransactionId(int transactionId)
         {
             TransactionId = transactionId;
+        }
+        public void setLedgerId(int ledgerId)
+        {
+            LedgerId = ledgerId;
         }
         public void setReceivableAccount(Guid receivableAccountId)
         {

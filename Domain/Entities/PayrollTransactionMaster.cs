@@ -45,6 +45,7 @@ namespace Domain.Entities
         public int? TransactionId { get;private set; }
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get;private set; }
+        public int? LedgerId { get; private set; }
         public virtual List<PayrollTransactionLines> PayrollTransactionLines { get;private set; }
 
         public PayrollTransactionMaster(int month, int year, int employeeId,Guid bpsAccountId, string bpsName, int designationId, int departmentId, Guid accountPayableId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId, List<PayrollTransactionLines> payrollTransactionLines)
@@ -103,6 +104,10 @@ namespace Domain.Entities
         public void setTransactionId(int transactionId)
         {
             TransactionId = transactionId;
+        }
+        public void setLedgerId(int ledgerId)
+        {
+            LedgerId = ledgerId;
         }
         public void CreateDocNo()
         {

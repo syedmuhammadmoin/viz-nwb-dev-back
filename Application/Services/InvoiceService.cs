@@ -346,6 +346,12 @@ namespace Application.Services
 
             await _unitOfWork.Ledger.Add(addReceivableInLedger);
             await _unitOfWork.SaveAsync();
+
+            //Getting transaction with Payment Transaction Id
+            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(transaction.Id, true)).FirstOrDefault();
+
+            inv.setLedgerId(getUnreconciledDocumentAmount.Id);
+            await _unitOfWork.SaveAsync();
         }
 
         private InvoiceDto MapToValue(InvoiceDto data)
@@ -400,7 +406,7 @@ namespace Application.Services
             data.TotalPaid = transactionReconciles.Sum(e => e.Amount);
             data.PaidAmountList = paidDocList;
             data.PendingAmount = pendingAmount;
-            data.LedgerId = getUnreconciledDocumentAmount.Id;
+           
 
             // Returning invoiceDTO with all values assigned
             return data;
