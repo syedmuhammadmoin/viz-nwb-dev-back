@@ -575,8 +575,6 @@ namespace Application.Services
             var payrollPayment = new List<PayrollTransactionDto>();
 
             //checking whether any payment is created
-            bool isPaymentCreated = false;
-
             foreach (var line in data.CreatePayrollTransLines)
             {
                 var bp = await _unitOfWork.BusinessPartner.GetById(line.BusinessPartnerId);
@@ -586,21 +584,11 @@ namespace Application.Services
                         return new Response<List<PayrollTransactionDto>>("Business Partner is not employee");
                 }
 
-          
-
                 var checkPayrollPayment = _unitOfWork.Payment.Find(new PaymentSpecs(line.LedgerId, true)).FirstOrDefault();
 
-                //if (checkPayrollPayment.Any())
-                //    return new Response<PaymentDto>("Payroll payment for this payroll already exists");
-                if (checkPayrollPayment != null)
+                if (checkPayrollPayment == null)
                 {
-                    var getPayrollEmployees = await _unitOfWork.PayrollTransaction.GetById(line.BusinessPartnerId, new PayrollTransactionSpecs(false));
-                    payrollPayment.Add( _mapper.Map<PayrollTransactionDto>(getPayrollEmployees));
-                }
-                else
-                {
-                    isPaymentCreated = true;
-                    
+                 
                     var payment = new CreatePaymentDto()
                     {
                         PaymentType = PaymentType.Outflow,
@@ -635,24 +623,16 @@ namespace Application.Services
                         {
                             return new Response<List<PayrollTransactionDto>>("");
                         }
-
                     }
                 }
             }
 
             if (payrollPayment.Count() > 0)
             {
-                if(isPaymentCreated)
-                {
-                    return new Response<List<PayrollTransactionDto>>(payrollPayment, "Payroll Payments have been created except above in the grid");
-                }
-                else
-                {
-                    return new Response<List<PayrollTransactionDto>>("Payroll Payments already exists");
-                }
+                return new Response<List<PayrollTransactionDto>>("Payroll Payments already exists");
             }
-          
-                return new Response<List<PayrollTransactionDto>>(null, "Payroll Payment created successfully");
+
+            return new Response<List<PayrollTransactionDto>>(null, "Payroll Payment created successfully");
         }
 
         public Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data)
@@ -660,7 +640,7 @@ namespace Application.Services
             var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, "")).ToList();
 
             if (payrollTransactions.Count == 0)
-                return new Response<List<PayrollTransactionDto>>(null,"list is empty");
+                return new Response<List<PayrollTransactionDto>>(null, "list is empty");
 
             var response = new List<PayrollTransactionDto>();
 
