@@ -427,7 +427,12 @@ namespace Application.Services
 
                 await _unitOfWork.Ledger.Add(addNetPaymentInRecordLedger);
             }
+            await _unitOfWork.SaveAsync();
 
+            //Getting transaction with Payment Transaction Id
+            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(transaction.Id, true)).FirstOrDefault();
+
+            payment.setLedgerId(getUnreconciledDocumentAmount.Id);
             await _unitOfWork.SaveAsync();
         }
 
@@ -781,7 +786,6 @@ namespace Application.Services
                 //Adding Paid Doc List
                 foreach (var tranRecon in transactionReconciles)
                 {
-                    string[] docId = tranRecon.DocumentLedger.Transactions.DocNo.Split("-");
                     paidDocList.Add(new PaidDocListDto
                     {
                         Id = tranRecon.DocumentLedger.Transactions.DocId,
@@ -795,7 +799,6 @@ namespace Application.Services
             //Getting Pending Invoice Amount
             var unReconciledAmount = data.NetPayment - transactionReconciles.Sum(e => e.Amount);
 
-            data.LedgerId = getUnreconciledDocumentAmount.Id;
             data.ReconciledAmount = transactionReconciles.Sum(e => e.Amount);
             data.PaidAmountList = paidDocList;
             data.UnreconciledAmount = unReconciledAmount;
