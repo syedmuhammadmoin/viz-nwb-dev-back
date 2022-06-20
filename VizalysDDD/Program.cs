@@ -52,6 +52,7 @@ builder.Services.AddScoped<IDesignationService, DesignationService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IPayrollItemService, PayrollItemService>();
 builder.Services.AddScoped<IPayrollTransactionService, PayrollTransactionService>();
+builder.Services.AddScoped<ITaxService, TaxService>();
 
 //Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

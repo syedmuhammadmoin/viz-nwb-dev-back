@@ -71,6 +71,7 @@ namespace Infrastructure.Context
         public DbSet<PayrollItemEmployee> PayrollItemEmployees { get; set; }
         public DbSet<PayrollTransactionMaster> PayrollTransactionMaster { get; set; }
         public DbSet<PayrollTransactionLines> PayrollTransactionLines { get; set; }
+        public DbSet<Taxes> Taxes { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -728,6 +729,16 @@ namespace Infrastructure.Context
                 Level3_id = new Guid("52200000-5566-7788-99AA-BBCCDDEEFF00"),
                 Level1_id = new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00")
             });
+
+            //Adding seeds in TaxAccounts
+            modelBuilder.Entity<Taxes>()
+                .HasData(
+                    new Taxes(1, "Sales Tax Asset", TaxType.SalesTaxAsset),
+                    new Taxes(2, "Sales Tax Liability", TaxType.SalesTaxLiability),
+                    new Taxes(3, "Income Tax Asset", TaxType.IncomeTaxAsset),
+                    new Taxes(4, "Income Tax Liability", TaxType.IncomeTaxLiability),
+                    new Taxes(5, "SRB", TaxType.SRB)
+                    );
         }
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
