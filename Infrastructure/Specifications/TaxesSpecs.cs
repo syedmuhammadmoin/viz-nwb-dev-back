@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Filters;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,10 @@ namespace Infrastructure.Specifications
         public TaxesSpecs()
         {
             AddInclude(i => i.Account);
+        }
+        public TaxesSpecs(TaxType taxType) : base(x => x.TaxType == taxType)
+        {
+
         }
     }
 }
