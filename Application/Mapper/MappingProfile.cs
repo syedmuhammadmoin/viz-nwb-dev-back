@@ -345,6 +345,12 @@ namespace Application.Mapper
               .ForMember(dto => dto.Account, core => core.MapFrom(a => a.Account.Name));
 
             CreateMap<CreatePayrollTransactionDto, PayrollTransactionMaster>();
+
+            // Tax Mapping
+            CreateMap<Taxes, TaxDto>()
+                .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
+            CreateMap<UpdateTaxDto, Taxes>();
+
         }
     }
 }
