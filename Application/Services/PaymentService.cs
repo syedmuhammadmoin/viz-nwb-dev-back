@@ -227,7 +227,7 @@ namespace Application.Services
             }
         }
 
-        private async Task AddToLedger(Payment payment)
+        private async Task AddToLedger(Payment payment, Guid taxAccountId)
         {
             var transaction = new Transactions(payment.Id, payment.DocNo, payment.PaymentFormType);
             await _unitOfWork.Transaction.Add(transaction);
@@ -273,7 +273,7 @@ namespace Application.Services
                 {
                     var addSRBInRecordLedger = new RecordLedger(
                         transaction.Id,
-                    payment.AccountId,
+                    taxAccountId,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -291,7 +291,7 @@ namespace Application.Services
                     var addSalesTaxInRecordLedger = new RecordLedger(
 
                     transaction.Id,
-                    payment.AccountId,
+                    taxAccountId,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -308,7 +308,7 @@ namespace Application.Services
                     var addIncomeTaxInRecordLedger = new RecordLedger(
 
                     transaction.Id,
-                    payment.AccountId,
+                    taxAccountId,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -369,7 +369,7 @@ namespace Application.Services
                 {
                     var addSRBInRecordLedger = new RecordLedger(
                      transaction.Id,
-                    payment.AccountId,
+                    taxAccountId,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -387,7 +387,7 @@ namespace Application.Services
                     var addSalesTaxInRecordLedger = new RecordLedger(
 
                     transaction.Id,
-                    payment.AccountId,
+                    taxAccountId,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -404,7 +404,7 @@ namespace Application.Services
                     var addIncomeTaxInRecordLedger = new RecordLedger(
 
                     transaction.Id,
-                    payment.AccountId,
+                    taxAccountId,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -471,9 +471,60 @@ namespace Application.Services
                     {
                         getPayment.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
+
                         {
+                            var incomeTax = getPayment.IncomeTax;
+                            var salesTax = getPayment.SalesTax;
+                            var sRBTax = getPayment.SRBTax;
+
+                            Guid taxAccount = new Guid("00000000-0000-0000-0000-000000000000");
+                            
+
+                            if (incomeTax > 0 && getPayment.PaymentType == PaymentType.Inflow)
+                            {
+                                var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.IncomeTaxAsset)).Select(i => i.AccountId).FirstOrDefault();
+
+                                if (getTaxAccount == null)
+                                    return new Response<bool>("Kindly set Income Tax Account");
+                                taxAccount = (Guid)getTaxAccount;
+                            }
+                            if (incomeTax > 0 && getPayment.PaymentType == PaymentType.Outflow)
+                            {
+                                var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.IncomeTaxLiability)).Select(i => i.AccountId).FirstOrDefault();
+
+                                if (getTaxAccount == null)
+                                    return new Response<bool>("Kindly set Income Tax Account");
+                                taxAccount = (Guid)getTaxAccount;
+                            }
+                            if (salesTax > 0 && getPayment.PaymentType == PaymentType.Inflow)
+                            {
+                                var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.SalesTaxAsset)).Select(i => i.AccountId).FirstOrDefault();
+
+                                if (getTaxAccount == null)
+                                    return new Response<bool>("Kindly set Sale Tax Account");
+                                taxAccount = (Guid)getTaxAccount;
+                            }
+                            if (salesTax > 0 && getPayment.PaymentType == PaymentType.Outflow)
+                            {
+                                var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.SalesTaxLiability)).Select(i => i.AccountId).FirstOrDefault();
+
+                                if (getTaxAccount == null)
+                                    return new Response<bool>("Kindly set Sale Tax Account");
+                                taxAccount = (Guid)getTaxAccount;
+                            }
+
+                            if (sRBTax > 0 && (getPayment.PaymentType == PaymentType.Outflow || getPayment.PaymentType == PaymentType.Inflow))
+                            {
+                                var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.SRB)).Select(i => i.AccountId).FirstOrDefault();
+
+                                if (getTaxAccount == null)
+                                    return new Response<bool>("Kindly set SRB Tax Account");
+                                taxAccount = (Guid)getTaxAccount;
+                            }
+
+
                             getPayment.setReconStatus(DocumentStatus.Unreconciled);
-                            await AddToLedger(getPayment);
+                            await AddToLedger(getPayment, taxAccount);
                             if (getPayment.DocumentLedgerId != 0 && getPayment.DocumentLedgerId != null)
                             {
                                 TransactionReconcileService trecon = new TransactionReconcileService(_unitOfWork);
