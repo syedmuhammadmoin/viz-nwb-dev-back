@@ -16,12 +16,12 @@ namespace Application.Contracts.Interfaces
         Task<PaginationResponse<List<PaymentDto>>> GetAllAsync(TransactionFormFilter filter,DocType docType);
         Task<Response<PaymentDto>> GetByIdAsync(int id, DocType docType);
         Response<List<UnReconStmtDto>> GetBankUnreconciledPayments(Guid id);
-        Task<Response<PaymentDto>> CreatePayrollPaymentProcess(CreatePayrollPaymentDto data);
+        Task<Response<List<PayrollTransactionDto>>> CreatePayrollPaymentProcess(CreatePayrollPaymentDto data);
         Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data);
         Response<List<PaymentDto>> GetPaymentByDept(DeptFilter data);
         Task<Response<bool>> ProcessForEditPayrollPayment(int[] id);
         Task<Response<bool>> ProcessForApproval(CreateApprovalProcessDto data);
-        Response<bool> GetPaymentForApproval(DeptFilter data);
+        Response<List<PaymentDto>> GetPaymentForApproval(DeptFilter data);
 
     }
 }

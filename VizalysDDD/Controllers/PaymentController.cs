@@ -85,7 +85,7 @@ namespace Vizalys.Api.Controllers
         }
 
         [Authorize]
-        [ClaimRequirement("Permission", new string[] { Permissions.BankReconClaims.Create, Permissions.BankReconClaims.View })]
+        [ClaimRequirement("Permission", new string[] { Permissions.BankReconClaims.Edit, Permissions.BankReconClaims.Create, Permissions.BankReconClaims.View })]
         [HttpGet("bankStatus/{id:Guid}")]
         public ActionResult<Response<List<UnReconStmtDto>>> GetBankUnreconciledPayments(Guid id)
         {
@@ -97,7 +97,7 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpPost("createProcess")]
-        public async Task<ActionResult<bool>> CreatePayrollPaymentProcess([FromBody] CreatePayrollPaymentDto data)
+        public async Task<ActionResult<Response<List<PaymentDto>>>> CreatePayrollPaymentProcess([FromBody] CreatePayrollPaymentDto data)
         {
             try
             {
@@ -181,7 +181,7 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpPost("GetforPayrollPaymentApproval")]
-        public ActionResult<Response<bool>> GetPaymentForApproval(DeptFilter data)
+        public ActionResult<Response<List<PaymentDto>>> GetPaymentForApproval(DeptFilter data)
         {
             try
             {

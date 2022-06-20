@@ -68,7 +68,7 @@ namespace Vizalys.Api.Controllers
         }
 
         [Authorize]
-        [ClaimRequirement("Permission", new string[] { Permissions.BankReconClaims.Create, Permissions.BankReconClaims.View })]
+        [ClaimRequirement("Permission", new string[] { Permissions.BankReconClaims.Edit, Permissions.BankReconClaims.Create, Permissions.BankReconClaims.View })]
         [HttpGet("bankStatus/{id:int}")]
         public ActionResult<Response<List<UnReconStmtDto>>> GetBankUnreconciledStmts(int id)
         {

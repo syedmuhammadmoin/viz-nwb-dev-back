@@ -78,7 +78,15 @@ namespace Infrastructure.Specifications
                 && (x.TransactionId != null || x.TransactionId != 0)
             )
         {
+            AddInclude(a => a.AccountPayable);
+            AddInclude(a => a.Department);
+            AddInclude(a => a.Designation);
+            AddInclude(a => a.Employee);
+            AddInclude(i => i.PayrollTransactionLines);
             AddInclude(i => i.Status);
+            AddInclude("PayrollTransactionLines.PayrollItem");
+            AddInclude("PayrollTransactionLines.Account");
+            ApplyAsNoTracking();
         }
 
         public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, bool isPayrollTransactoin)

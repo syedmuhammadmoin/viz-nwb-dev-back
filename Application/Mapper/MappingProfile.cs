@@ -330,6 +330,7 @@ namespace Application.Mapper
             // PayrollTransaction Mapping
             CreateMap<PayrollTransactionMaster, PayrollTransactionDto>()
               .ForMember(dto => dto.Employee, core => core.MapFrom(a => a.Employee.Name))
+              .ForMember(dto => dto.CNIC, core => core.MapFrom(a => a.Employee.CNIC))
               .ForMember(dto => dto.BusinessPartnerId, core => core.MapFrom(a => a.Employee.BusinessPartnerId))
               .ForMember(dto => dto.AccountPayable, core => core.MapFrom(a => a.AccountPayable.Name))
               .ForMember(dto => dto.Department, core => core.MapFrom(a => a.Department.Name))
