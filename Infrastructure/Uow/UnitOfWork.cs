@@ -56,6 +56,8 @@ namespace Infrastructure.Uow
         public IPayrollItemRepository PayrollItem { get; private set; }
         public IPayrollItemEmpRepository PayrollItemEmployee { get; private set; }
         public IPayrollTransactionRepository PayrollTransaction { get; private set; }
+        
+        public ITaxRepository Taxes { get; private set; }
 
 
         public UnitOfWork(ApplicationDbContext context)
@@ -97,6 +99,7 @@ namespace Infrastructure.Uow
             PayrollItem = new PayrollItemRepository(context);
             PayrollItemEmployee = new PayrollItemEmpRepository(context);
             PayrollTransaction = new PayrollTransactionRepository(context);
+            Taxes = new TaxRepository(context);
         }
 
         public async Task SaveAsync()
