@@ -25,7 +25,6 @@ namespace Application.Contracts.DTOs
         public int? CampusId { get; set; }
         public string CampusName { get; set; }
         public decimal GrossPayment { get; set; }
-        public decimal Discount { get; set; }
         public decimal SalesTax { get; set; }
         public decimal IncomeTax { get; set; }
         public decimal SRBTax { get; set; }
