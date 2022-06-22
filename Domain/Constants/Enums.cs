@@ -106,6 +106,7 @@ namespace Domain.Constants
         SalesTaxLiability,
         IncomeTaxAsset,
         IncomeTaxLiability,
-        SRB
+        SRBTaxAsset,
+        SRBTaxLiability
     }
 }
