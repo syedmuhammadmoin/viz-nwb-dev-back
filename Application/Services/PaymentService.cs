@@ -252,22 +252,6 @@ namespace Application.Services
 
                 await _unitOfWork.Ledger.Add(addGrossAmountInRecordLedger);
 
-                if (payment.Discount > 0)
-                {
-                    var addDiscountInRecordLedger = new RecordLedger(
-                        transaction.Id,
-                    payment.AccountId,
-                    payment.BusinessPartnerId,
-                    null,
-                    payment.Description,
-                    'D',
-                    payment.Discount,
-                    payment.CampusId,
-                    payment.PaymentDate
-                        );
-
-                    await _unitOfWork.Ledger.Add(addDiscountInRecordLedger);
-                }
 
                 if (payment.SRBTax > 0)
                 {
@@ -337,7 +321,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'D',
-                    (payment.GrossPayment - payment.Discount - payment.SalesTax - payment.IncomeTax - payment.SRBTax),
+                    (payment.GrossPayment - payment.SalesTax - payment.IncomeTax - payment.SRBTax),
                     payment.CampusId,
                     payment.PaymentDate);
 
@@ -359,23 +343,6 @@ namespace Application.Services
                     );
 
                 await _unitOfWork.Ledger.Add(addGrossAmountInRecordLedger);
-
-                if (payment.Discount > 0)
-                {
-                    var addDiscountInRecordLedger = new RecordLedger(
-                    transaction.Id,
-                    payment.AccountId,
-                    payment.BusinessPartnerId,
-                    null,
-                    payment.Description,
-                    'C',
-                    payment.Discount,
-                    payment.CampusId,
-                    payment.PaymentDate
-                        );
-
-                    await _unitOfWork.Ledger.Add(addDiscountInRecordLedger);
-                }
 
                 if (payment.SRBTax > 0)
                 {
@@ -445,7 +412,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'C',
-                    (payment.GrossPayment - payment.Discount - payment.SalesTax - payment.IncomeTax - payment.SRBTax),
+                    (payment.GrossPayment - payment.SalesTax - payment.IncomeTax - payment.SRBTax),
                     payment.CampusId,
                     payment.PaymentDate);
 
@@ -593,7 +560,7 @@ namespace Application.Services
 
             foreach (var e in getBankReconStatus)
             {
-                var netPayment = e.GrossPayment - e.Discount - e.IncomeTax - e.SalesTax - e.SRBTax;
+                var netPayment = e.GrossPayment - e.IncomeTax - e.SalesTax - e.SRBTax;
                 var reconciledPayment = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(e.Id, true)).Sum(a => a.Amount);
 
 
@@ -646,7 +613,6 @@ namespace Application.Services
                         PaymentRegisterType = data.PaymentRegisterType,
                         PaymentRegisterId = data.PaymentRegisterId,
                         Description = data.Description,
-                        Discount = 0,
                         SalesTax = 0,
                         IncomeTax = 0,
                         DocumentLedgerId = line.LedgerId,
