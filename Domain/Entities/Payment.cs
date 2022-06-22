@@ -35,8 +35,6 @@ namespace Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal GrossPayment { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Discount { get; private set; }
-        [Column(TypeName = "decimal(18,2)")]
         public decimal SalesTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal SRBTax { get; private set; }
