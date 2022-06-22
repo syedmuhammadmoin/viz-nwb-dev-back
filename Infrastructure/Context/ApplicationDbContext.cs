@@ -737,7 +737,8 @@ namespace Infrastructure.Context
                     new Taxes(2, "Sales Tax Liability", TaxType.SalesTaxLiability),
                     new Taxes(3, "Income Tax Asset", TaxType.IncomeTaxAsset),
                     new Taxes(4, "Income Tax Liability", TaxType.IncomeTaxLiability),
-                    new Taxes(5, "SRB", TaxType.SRB)
+                    new Taxes(5, "SRB Tax Asset", TaxType.SRBTaxAsset),
+                    new Taxes(6, "SRB Tax Liability", TaxType.SRBTaxLiability)
                     );
         }
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
