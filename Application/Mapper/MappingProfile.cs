@@ -198,7 +198,7 @@ namespace Application.Mapper
                     a.BankReconStatus == DocumentStatus.Reconciled ? "Reconciled" : a.Status.Status));
 
             CreateMap<CreatePaymentDto, Payment>()
-                .ForMember(core => core.NetPayment, dto => dto.MapFrom(a => (a.GrossPayment - a.Discount - a.IncomeTax - a.SalesTax - a.SRBTax)));
+                .ForMember(core => core.NetPayment, dto => dto.MapFrom(a => (a.GrossPayment - a.IncomeTax - a.SalesTax - a.SRBTax)));
 
             // CashAccount Mapping
             CreateMap<CashAccount, CashAccountDto>()
@@ -345,6 +345,12 @@ namespace Application.Mapper
               .ForMember(dto => dto.Account, core => core.MapFrom(a => a.Account.Name));
 
             CreateMap<CreatePayrollTransactionDto, PayrollTransactionMaster>();
+
+            // Tax Mapping
+            CreateMap<Taxes, TaxDto>()
+                .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
+            CreateMap<UpdateTaxDto, Taxes>();
+
         }
     }
 }

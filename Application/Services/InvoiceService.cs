@@ -160,7 +160,20 @@ namespace Application.Services
                         getInvoice.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
-                            await AddToLedger(getInvoice);
+
+                            var totalTax = getInvoice.InvoiceLines.Sum(i => i.Tax);
+
+                            Guid taxAccount = new Guid("00000000-0000-0000-0000-000000000000");
+                            if (totalTax > 0)
+                            {
+                                var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.SalesTaxLiability)).Select(i => i.AccountId).FirstOrDefault();
+
+                                if (getTaxAccount == null)
+                                    return new Response<bool>("Kindly set TaxAccountId");
+                                    taxAccount = (Guid)getTaxAccount;
+                            }
+
+                            await AddToLedger(getInvoice, taxAccount);
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "Invoice Approved");
                         }
@@ -285,7 +298,7 @@ namespace Application.Services
             }
         }
 
-        private async Task AddToLedger(InvoiceMaster inv)
+        private async Task AddToLedger(InvoiceMaster inv, Guid taxAccountId)
         {
             var transaction = new Transactions(inv.Id, inv.DocNo, DocType.Invoice);
             await _unitOfWork.Transaction.Add(transaction);
@@ -293,7 +306,8 @@ namespace Application.Services
 
             inv.setTransactionId(transaction.Id);
             await _unitOfWork.SaveAsync();
-
+            
+            
             //Inserting line amount into recordledger table
             foreach (var line in inv.InvoiceLines)
             {
@@ -318,7 +332,7 @@ namespace Application.Services
                 {
                     var addSalesTaxInRecordLedger = new RecordLedger(
                         transaction.Id,
-                        line.AccountId,
+                        taxAccountId,
                         inv.CustomerId,
                         line.WarehouseId,
                         line.Description,

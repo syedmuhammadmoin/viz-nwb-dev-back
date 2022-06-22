@@ -100,4 +100,13 @@ namespace Domain.Constants
         AssignmentAllowance,
         TaxDeduction
     }
+    public enum TaxType
+    {
+        SalesTaxAsset,
+        SalesTaxLiability,
+        IncomeTaxAsset,
+        IncomeTaxLiability,
+        SRBTaxAsset,
+        SRBTaxLiability
+    }
 }

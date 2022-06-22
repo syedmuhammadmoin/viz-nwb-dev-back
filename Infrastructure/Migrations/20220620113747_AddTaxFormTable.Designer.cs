@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220620113747_AddTaxFormTable")]
+    partial class AddTaxFormTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2617,6 +2619,9 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("DocNo")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -3385,15 +3390,8 @@ namespace Infrastructure.Migrations
                         {
                             Id = 5,
                             IsDelete = false,
-                            Name = "SRB Tax Asset",
+                            Name = "SRB",
                             TaxType = 4
-                        },
-                        new
-                        {
-                            Id = 6,
-                            IsDelete = false,
-                            Name = "SRB Tax Liability",
-                            TaxType = 5
                         });
                 });
 

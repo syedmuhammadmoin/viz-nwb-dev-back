@@ -31,8 +31,6 @@ namespace Application.Contracts.DTOs
         [Range(1, double.MaxValue, ErrorMessage = "Gross amount must be greater than 0")]
         public decimal GrossPayment { get; set; }
         [Range(0.00, double.MaxValue, ErrorMessage = "Please enter a positive value")]
-        public decimal Discount { get; set; }
-        [Range(0.00, double.MaxValue, ErrorMessage = "Please enter a positive value")]
         public decimal SalesTax { get; set; }
         [Range(0.00, double.MaxValue, ErrorMessage = "Please enter a positive value")]
         public decimal IncomeTax { get; set; }
