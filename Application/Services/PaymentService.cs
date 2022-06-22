@@ -85,7 +85,7 @@ namespace Application.Services
             var paymentDto = _mapper.Map<PaymentDto>(payment);
 
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(docType)).FirstOrDefault();
-            if ((paymentDto.State == DocumentStatus.Unpaid || paymentDto.State == DocumentStatus.Partial || paymentDto.State == DocumentStatus.Paid) && paymentDto.TransactionId != null)
+            if ((paymentDto.State == DocumentStatus.Unpaid || paymentDto.State == DocumentStatus.Partial || paymentDto.State == DocumentStatus.Paid) && paymentDto.TransactionId != null && paymentDto.LedgerId != null)
             {
                 return new Response<PaymentDto>(MapToValue(paymentDto), "Returning value");
             }
@@ -227,7 +227,7 @@ namespace Application.Services
             }
         }
 
-        private async Task AddToLedger(Payment payment, Guid taxAccountId)
+        private async Task<Response<bool>> AddToLedger(Payment payment, Guid incomeTaxAccountId, Guid salesTaxAccountId, Guid srbTaxAccountId)
         {
             var transaction = new Transactions(payment.Id, payment.DocNo, payment.PaymentFormType);
             await _unitOfWork.Transaction.Add(transaction);
@@ -271,9 +271,13 @@ namespace Application.Services
 
                 if (payment.SRBTax > 0)
                 {
+                    var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.SRBTaxAsset)).Select(i => i.AccountId).FirstOrDefault();
+                    if (getTaxAccount == null) 
+                        return new Response<bool>("SRB Tax Account not found");
+
                     var addSRBInRecordLedger = new RecordLedger(
-                        transaction.Id,
-                    taxAccountId,
+                    transaction.Id,
+                    (Guid)getTaxAccount,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -288,10 +292,14 @@ namespace Application.Services
 
                 if (payment.SalesTax > 0)
                 {
+                    var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.SalesTaxAsset)).Select(i => i.AccountId).FirstOrDefault();
+                    if (getTaxAccount == null) 
+                        return new Response<bool>("Sales Tax Account not found");
+
                     var addSalesTaxInRecordLedger = new RecordLedger(
 
                     transaction.Id,
-                    taxAccountId,
+                    (Guid)getTaxAccount,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -305,10 +313,14 @@ namespace Application.Services
 
                 if (payment.IncomeTax > 0)
                 {
+                    var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.IncomeTaxAsset)).Select(i => i.AccountId).FirstOrDefault();
+                    if (getTaxAccount == null)
+                        return new Response<bool>("Sales Tax Account not found");
+
                     var addIncomeTaxInRecordLedger = new RecordLedger(
 
                     transaction.Id,
-                    taxAccountId,
+                    (Guid)getTaxAccount,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -367,9 +379,13 @@ namespace Application.Services
 
                 if (payment.SRBTax > 0)
                 {
+                    var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.SRBTaxLiability)).Select(i => i.AccountId).FirstOrDefault();
+                    if (getTaxAccount == null)
+                        return new Response<bool>("SRB Tax Account not found");
+
                     var addSRBInRecordLedger = new RecordLedger(
-                     transaction.Id,
-                    taxAccountId,
+                    transaction.Id,
+                    (Guid)getTaxAccount,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -384,10 +400,14 @@ namespace Application.Services
 
                 if (payment.SalesTax > 0)
                 {
+                    var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.SalesTaxLiability)).Select(i => i.AccountId).FirstOrDefault();
+                    if (getTaxAccount == null)
+                        return new Response<bool>("Sales Tax Account not found");
+
                     var addSalesTaxInRecordLedger = new RecordLedger(
 
                     transaction.Id,
-                    taxAccountId,
+                    (Guid)getTaxAccount,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -401,10 +421,14 @@ namespace Application.Services
 
                 if (payment.IncomeTax > 0)
                 {
+                    var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.IncomeTaxLiability)).Select(i => i.AccountId).FirstOrDefault();
+                    if (getTaxAccount == null)
+                        return new Response<bool>("SRB Tax Account not found");
+
                     var addIncomeTaxInRecordLedger = new RecordLedger(
 
                     transaction.Id,
-                    taxAccountId,
+                    (Guid)getTaxAccount,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -432,8 +456,12 @@ namespace Application.Services
             //Getting transaction with Payment Transaction Id
             var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(transaction.Id, true)).FirstOrDefault();
 
-            payment.setLedgerId(getUnreconciledDocumentAmount.Id);
+            if (getUnreconciledDocumentAmount != null)
+                payment.setLedgerId(getUnreconciledDocumentAmount.Id);
+
             await _unitOfWork.SaveAsync();
+
+            return new Response<bool>(true, "Payment Registered Successfully");
         }
 
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
@@ -473,58 +501,19 @@ namespace Application.Services
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
 
                         {
-                            var incomeTax = getPayment.IncomeTax;
-                            var salesTax = getPayment.SalesTax;
-                            var sRBTax = getPayment.SRBTax;
+                            var totalAddedTax = (getPayment.IncomeTax + getPayment.SalesTax + getPayment.SRBTax);
 
-                            Guid taxAccount = new Guid("00000000-0000-0000-0000-000000000000");
-                            
-
-                            if (incomeTax > 0 && getPayment.PaymentType == PaymentType.Inflow)
-                            {
-                                var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.IncomeTaxAsset)).Select(i => i.AccountId).FirstOrDefault();
-
-                                if (getTaxAccount == null)
-                                    return new Response<bool>("Kindly set Income Tax Account");
-                                taxAccount = (Guid)getTaxAccount;
-                            }
-                            if (incomeTax > 0 && getPayment.PaymentType == PaymentType.Outflow)
-                            {
-                                var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.IncomeTaxLiability)).Select(i => i.AccountId).FirstOrDefault();
-
-                                if (getTaxAccount == null)
-                                    return new Response<bool>("Kindly set Income Tax Account");
-                                taxAccount = (Guid)getTaxAccount;
-                            }
-                            if (salesTax > 0 && getPayment.PaymentType == PaymentType.Inflow)
-                            {
-                                var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.SalesTaxAsset)).Select(i => i.AccountId).FirstOrDefault();
-
-                                if (getTaxAccount == null)
-                                    return new Response<bool>("Kindly set Sale Tax Account");
-                                taxAccount = (Guid)getTaxAccount;
-                            }
-                            if (salesTax > 0 && getPayment.PaymentType == PaymentType.Outflow)
-                            {
-                                var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.SalesTaxLiability)).Select(i => i.AccountId).FirstOrDefault();
-
-                                if (getTaxAccount == null)
-                                    return new Response<bool>("Kindly set Sale Tax Account");
-                                taxAccount = (Guid)getTaxAccount;
-                            }
-
-                            if (sRBTax > 0 && (getPayment.PaymentType == PaymentType.Outflow || getPayment.PaymentType == PaymentType.Inflow))
-                            {
-                                var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.SRB)).Select(i => i.AccountId).FirstOrDefault();
-
-                                if (getTaxAccount == null)
-                                    return new Response<bool>("Kindly set SRB Tax Account");
-                                taxAccount = (Guid)getTaxAccount;
-                            }
-
+                            Guid incomeTaxAccount = new Guid("00000000-0000-0000-0000-000000000000");
+                            Guid salesTaxAccount = new Guid("00000000-0000-0000-0000-000000000000");
+                            Guid srbTaxAccount = new Guid("00000000-0000-0000-0000-000000000000");
 
                             getPayment.setReconStatus(DocumentStatus.Unreconciled);
-                            await AddToLedger(getPayment, taxAccount);
+                            var res = await AddToLedger(getPayment, incomeTaxAccount, salesTaxAccount, srbTaxAccount);
+                            if (!res.IsSuccess)
+                            {
+                                _unitOfWork.Rollback();
+                                return new Response<bool>(res.Message);
+                            }
                             if (getPayment.DocumentLedgerId != 0 && getPayment.DocumentLedgerId != null)
                             {
                                 TransactionReconcileService trecon = new TransactionReconcileService(_unitOfWork);
@@ -644,7 +633,7 @@ namespace Application.Services
 
                 if (checkPayrollPayment == null)
                 {
-                 
+
                     var payment = new CreatePaymentDto()
                     {
                         PaymentType = PaymentType.Outflow,
