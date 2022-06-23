@@ -72,6 +72,7 @@ namespace Infrastructure.Context
         public DbSet<PayrollTransactionMaster> PayrollTransactionMaster { get; set; }
         public DbSet<PayrollTransactionLines> PayrollTransactionLines { get; set; }
         public DbSet<Taxes> Taxes { get; set; }
+        public DbSet<UnitOfMeasurement> UnitOfMeasurement { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

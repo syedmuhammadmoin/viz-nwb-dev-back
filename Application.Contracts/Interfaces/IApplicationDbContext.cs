@@ -61,6 +61,7 @@ namespace Application.Interfaces
         public DbSet<PayrollTransactionMaster> PayrollTransactionMaster { get; set; }
         public DbSet<PayrollTransactionLines> PayrollTransactionLines { get; set; }
         public DbSet<Taxes> Taxes { get; set; }
+        public DbSet<UnitOfMeasurement> UnitOfMeasurement { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

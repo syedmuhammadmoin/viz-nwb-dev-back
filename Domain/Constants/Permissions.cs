@@ -207,6 +207,13 @@ namespace Domain.Constants
             public const string Edit = "Permissions.TaxesClaims.Edit";
             public const string Delete = "Permissions.TaxesClaims.Delete";
         }
+        public static class UnitOfMeasurementClaims
+        {
+            public const string View = "Permissions.UnitOfMeasurementClaims.View";
+            public const string Create = "Permissions.UnitOfMeasurementClaims.Create";
+            public const string Edit = "Permissions.UnitOfMeasurementClaims.Edit";
+            public const string Delete = "Permissions.UnitOfMeasurementClaims.Delete";
+        }
         //Transaction Forms
         public static class InvoiceClaims
         {

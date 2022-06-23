@@ -351,6 +351,9 @@ namespace Application.Mapper
                 .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
             CreateMap<UpdateTaxDto, Taxes>();
 
+            // UnitOfMeasurement Mapping
+            CreateMap<UnitOfMeasurement, UnitOfMeasurementDto>();
+            CreateMap<CreateUnitOfMeasurementDto, UnitOfMeasurement>();
         }
     }
 }
