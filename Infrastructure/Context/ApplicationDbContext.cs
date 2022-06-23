@@ -73,6 +73,8 @@ namespace Infrastructure.Context
         public DbSet<PayrollTransactionLines> PayrollTransactionLines { get; set; }
         public DbSet<Taxes> Taxes { get; set; }
         public DbSet<UnitOfMeasurement> UnitOfMeasurement { get; set; }
+        public DbSet<IssuanceMaster> IssuanceMaster { get; set; }
+        public DbSet<IssuanceLines> IssuanceLines { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -161,6 +163,12 @@ namespace Infrastructure.Context
             modelBuilder.Entity<PayrollTransactionLines>()
             .HasOne(tc => tc.PayrollTransactionMaster)
             .WithMany(c => c.PayrollTransactionLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //Issuance
+            modelBuilder.Entity<IssuanceLines>()
+            .HasOne(tc => tc.IssuanceMaster)
+            .WithMany(c => c.IssuanceLines)
             .OnDelete(DeleteBehavior.Cascade);
 
             //Changing Identity users and roles tables name
