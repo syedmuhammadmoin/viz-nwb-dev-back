@@ -58,6 +58,7 @@ namespace Infrastructure.Uow
         public IPayrollTransactionRepository PayrollTransaction { get; private set; }
         public ITaxRepository Taxes { get; private set; }
         public IUnitOfMeasurementRepository UnitOfMeasurement { get; private set; }
+        public IIssuanceRepository Issuance { get; private set; }
 
 
         public UnitOfWork(ApplicationDbContext context)
@@ -101,6 +102,7 @@ namespace Infrastructure.Uow
             PayrollTransaction = new PayrollTransactionRepository(context);
             Taxes = new TaxRepository(context);
             UnitOfMeasurement = new UnitOfMeasurementRepository(context);
+            Issuance = new IssuanceRepository(context);
         }
 
         public async Task SaveAsync()
