@@ -354,6 +354,21 @@ namespace Application.Mapper
             // UnitOfMeasurement Mapping
             CreateMap<UnitOfMeasurement, UnitOfMeasurementDto>();
             CreateMap<CreateUnitOfMeasurementDto, UnitOfMeasurement>();
+
+            // Issuance Mapping
+            CreateMap<IssuanceMaster, IssuanceDto>()
+              .ForMember(dto => dto.EmployeeName, core => core.MapFrom(a => a.Employee.Name))
+               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
+               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+
+            CreateMap<IssuanceLines, IssuanceLinesDto>()
+              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
+              .ForMember(dto => dto.WarehouseName, core => core.MapFrom(a => a.Warehouse.Name));
+
+            CreateMap<CreateIssuanceDto, IssuanceMaster>();
+
+            CreateMap<CreateIssuanceLinesDto, IssuanceLines>();
         }
     }
 }
