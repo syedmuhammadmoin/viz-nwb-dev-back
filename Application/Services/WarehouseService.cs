@@ -81,7 +81,17 @@ namespace Application.Services
                 return new Response<List<WarehouseDto>>("List is empty");
 
             return new Response<List<WarehouseDto>>(_mapper.Map<List<WarehouseDto>>(warehouses), "Returning List");
+        }
 
+        public async Task<Response<List<WarehouseDto>>> GetWarehouseByCampusDropDown(int campusId)
+        {
+            var specification = new WarehouseSpecs(campusId);
+
+            var warehouses = await _unitOfWork.Warehouse.GetAll(specification);
+            if (!warehouses.Any())
+                return new Response<List<WarehouseDto>>("List is empty");
+
+            return new Response<List<WarehouseDto>>(_mapper.Map<List<WarehouseDto>>(warehouses), "Returning List");
         }
     }
 }
