@@ -54,6 +54,7 @@ builder.Services.AddScoped<IPayrollItemService, PayrollItemService>();
 builder.Services.AddScoped<IPayrollTransactionService, PayrollTransactionService>();
 builder.Services.AddScoped<ITaxService, TaxService>();
 builder.Services.AddScoped<IUnitOfMeasurementService, UnitOfMeasurementService>();
+builder.Services.AddScoped<IIssuanceService, IssuanceService>();
 
 //Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
