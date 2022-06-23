@@ -68,7 +68,8 @@ namespace Domain.Constants
         Requisition,
         Receipt,
         PayrollTransaction,
-        PayrollPayment
+        PayrollPayment,
+        Issuance
     }
     public enum ActionButton
     {
