@@ -80,7 +80,8 @@ namespace Application.Mapper
 
             // Product Mapping
             CreateMap<Product, ProductDto>()
-                .ForMember(dto => dto.CategoryName, core => core.MapFrom(a => a.Category.Name));
+                .ForMember(dto => dto.CategoryName, core => core.MapFrom(a => a.Category.Name))
+                .ForMember(dto => dto.UnitOfMeasurementName, core => core.MapFrom(a => a.UnitOfMeasurement.Name));
             CreateMap<CreateProductDto, Product>();
 
             // JournalEntry Mapping
