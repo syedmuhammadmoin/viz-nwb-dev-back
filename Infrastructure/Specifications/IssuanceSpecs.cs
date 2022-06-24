@@ -36,6 +36,7 @@ namespace Infrastructure.Specifications
             }
             else
             {
+                AddInclude(i => i.Campus);
                 AddInclude(i => i.Employee);
                 AddInclude(i => i.Status);
                 AddInclude("IssuanceLines.Warehouse");
