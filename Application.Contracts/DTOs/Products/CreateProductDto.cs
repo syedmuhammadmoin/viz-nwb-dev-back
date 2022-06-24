@@ -19,6 +19,8 @@ namespace Application.Contracts.DTOs
         [Required]
         public int CategoryId { get; set; }
         [Required]
+        public int UnitOfMeasurementId { get; set; }
+        [Required]
         public decimal SalesPrice { get; set; }
         [Required]
         public decimal PurchasePrice { get; set; }
