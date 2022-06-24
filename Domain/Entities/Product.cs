@@ -18,6 +18,9 @@ namespace Domain.Entities
         public int CategoryId { get; private set; }
         [ForeignKey("CategoryId")]
         public Category Category { get; private set; }
+        public int UnitOfMeasurementId { get; private set; }
+        [ForeignKey("UnitOfMeasurementId")]
+        public UnitOfMeasurement UnitOfMeasurement { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal SalesPrice { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
