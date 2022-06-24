@@ -48,6 +48,7 @@ namespace Domain.Interfaces
         IPayrollTransactionRepository PayrollTransaction { get; }
         IUnitOfMeasurementRepository UnitOfMeasurement { get; }
         ITaxRepository Taxes { get; }
+        IIssuanceRepository Issuance { get; }
 
         Task SaveAsync();
         void CreateTransaction();

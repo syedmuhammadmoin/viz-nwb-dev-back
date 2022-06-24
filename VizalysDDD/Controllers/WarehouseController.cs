@@ -74,5 +74,11 @@ namespace Vizalys.Api.Controllers
         {
             return Ok(await _warehouseService.GetWarehouseDropDown()); // Status Code : 200
         }
+
+        [HttpGet("GetWarehouseByCampus/{id:int}")]
+        public async Task<ActionResult<Response<List<WarehouseDto>>>> GetWarehouseByCampusDropDown(int id)
+        {
+            return Ok(await _warehouseService.GetWarehouseByCampusDropDown(id)); // Status Code : 200
+        }
     }
 }

@@ -9,9 +9,8 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IWarehouseService : ICrudService<CreateWarehouseDto, WarehouseDto, int, TransactionFormFilter>
+    public interface IIssuanceService : ICrudService<CreateIssuanceDto, IssuanceDto, int, TransactionFormFilter>
     {
-        Task<Response<List<WarehouseDto>>> GetWarehouseDropDown();
-        Task<Response<List<WarehouseDto>>> GetWarehouseByCampusDropDown(int campusId);
+        Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
     }
 }

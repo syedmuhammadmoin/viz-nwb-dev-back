@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220623123855_AddIssuanceTable")]
+    partial class AddIssuanceTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3095,14 +3097,9 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("SalesTax")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("UnitOfMeasurementId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("UnitOfMeasurementId");
 
                     b.ToTable("Products");
                 });
@@ -4974,15 +4971,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.UnitOfMeasurement", "UnitOfMeasurement")
-                        .WithMany()
-                        .HasForeignKey("UnitOfMeasurementId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Category");
-
-                    b.Navigation("UnitOfMeasurement");
                 });
 
             modelBuilder.Entity("Domain.Entities.PurchaseOrderLines", b =>

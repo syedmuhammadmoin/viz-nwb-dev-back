@@ -467,6 +467,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.PayrollPaymentClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.TaxesClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.UnitOfMeasurementClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.IssuanceClaims), id);
 
 
             //Getting all claims for this role
@@ -588,6 +589,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.PayrollPaymentClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.TaxesClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.UnitOfMeasurementClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.IssuanceClaims), "12");
 
             var allClaimValues = allPermissions.Select(a => a.Value).ToList();
             return new Response<List<string>>(allClaimValues,"Returning all claims");
