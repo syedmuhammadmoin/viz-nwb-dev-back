@@ -153,6 +153,7 @@ namespace Application.Services
                             getIssuance.setStatus(transition.NextStatusId);
                             if (transition.NextStatus.State == DocumentStatus.Unpaid)
                             {
+                                await _unitOfWork.SaveAsync();
                                 _unitOfWork.Commit();
                                 return new Response<bool>(true, "Issuance Approved");
                             }
@@ -261,7 +262,7 @@ namespace Application.Services
                 _unitOfWork.Commit();
 
                 //returning response
-                return new Response<IssuanceDto>(_mapper.Map<IssuanceDto>(issuance), "Created successfully");
+                return new Response<IssuanceDto>(_mapper.Map<IssuanceDto>(issuance), "Updated successfully");
             }
             catch (Exception ex)
             {
