@@ -220,7 +220,7 @@ namespace Application.Services
 
             if (checkingActiveWorkFlows == null)
             {
-                return new Response<IssuanceDto>("No workflow found for Credit Note");
+                return new Response<IssuanceDto>("No workflow found for Issuance");
             }
 
             if (entity.Id == null)
