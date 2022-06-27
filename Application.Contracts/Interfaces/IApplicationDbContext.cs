@@ -64,6 +64,7 @@ namespace Application.Interfaces
         public DbSet<UnitOfMeasurement> UnitOfMeasurement { get; set; }
         public DbSet<IssuanceMaster> IssuanceMaster { get; set; }
         public DbSet<IssuanceLines> IssuanceLines { get; set; }
+        public DbSet<Stock> Stock { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }
