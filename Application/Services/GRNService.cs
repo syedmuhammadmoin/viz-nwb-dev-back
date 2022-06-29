@@ -190,13 +190,31 @@ namespace Application.Services
         private async Task<Response<GRNDto>> SaveGRN(CreateGRNDto entity, int status)
         {
             //setting PurchaseOrderId
-            var getPO = await _unitOfWork.PurchaseOrder.GetById(entity.PurchaseOrderId);
+            var getPO = await _unitOfWork.PurchaseOrder.GetById(entity.PurchaseOrderId, new PurchaseOrderSpecs(entity.PurchaseOrderId));
 
             if (getPO == null)
                 return new Response<GRNDto>("Purchase Order is required");
 
             if (entity.GRNLines.Count() == 0)
                 return new Response<GRNDto>("Lines are required");
+
+            foreach (var Line in entity.GRNLines)
+            {
+                var getPOLine = getPO.PurchaseOrderLines.Find(i => i.ItemId == Line.ItemId && i.WarehouseId == Line.WarehouseId);
+
+                var getPOPendingQty = _unitOfWork.POToGRNLineReconcile.Find(new POToGRNLineReconcileSpecs(getPOLine.Id)).LastOrDefault();
+
+                if (getPOPendingQty == null)
+                {
+                    if (Line.Quantity > getPOLine.Quantity)
+                        return new Response<GRNDto>("GRN Items can't be greater than Purchase order");
+                }
+                else
+                {
+                    if (Line.Quantity > getPOPendingQty.Quantity)
+                        return new Response<GRNDto>("GRN Items can't be greater than Purchase order");
+                }
+            }
 
             //Checking duplicate Lines if any
             var duplicates = entity.GRNLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
@@ -303,7 +321,7 @@ namespace Application.Services
         {
             var getGrn = await _unitOfWork.GRN.GetById(grnId, new GRNSpecs(grnId));
 
-            var getpurchaseOrder = await _unitOfWork.PurchaseOrder.GetById(purchaseOrderId, new PurchaseOrderSpecs(purchaseOrderId));
+            var getpurchaseOrder = await _unitOfWork.PurchaseOrder.GetById(purchaseOrderId, new PurchaseOrderSpecs(false));
 
             foreach (var line in getpurchaseOrder.PurchaseOrderLines)
             {
@@ -316,7 +334,7 @@ namespace Application.Services
 
                 if (getGRNLine != null)
                 {
-                    if (getPOPendingQty != null) 
+                    if (getPOPendingQty != null)
                     {
                         qty = getPOPendingQty.Quantity - getGRNLine.Quantity;
                     }
@@ -347,7 +365,7 @@ namespace Application.Services
                 }
             }
 
-            var isPOLinesReconciled = getpurchaseOrder.PurchaseOrderLines.Where(x => x.Status == DocumentStatus.Unpaid || x.Status == DocumentStatus.Partial).FirstOrDefault(); 
+            var isPOLinesReconciled = getpurchaseOrder.PurchaseOrderLines.Where(x => x.Status == DocumentStatus.Unpaid || x.Status == DocumentStatus.Partial).FirstOrDefault();
 
             if (isPOLinesReconciled == null)
             {
