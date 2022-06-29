@@ -190,7 +190,7 @@ namespace Application.Services
         private async Task<Response<GRNDto>> SaveGRN(CreateGRNDto entity, int status)
         {
             //setting PurchaseOrderId
-            var getPO = await _unitOfWork.PurchaseOrder.GetById(entity.PurchaseOrderId, new PurchaseOrderSpecs(entity.PurchaseOrderId));
+            var getPO = await _unitOfWork.PurchaseOrder.GetById(entity.PurchaseOrderId, new PurchaseOrderSpecs(false));
 
             if (getPO == null)
                 return new Response<GRNDto>("Purchase Order is required");
@@ -260,7 +260,7 @@ namespace Application.Services
         private async Task<Response<GRNDto>> UpdateGRN(CreateGRNDto entity, int status)
         {
             //setting PurchaseOrderId
-            var getPO = await _unitOfWork.PurchaseOrder.GetById(entity.PurchaseOrderId);
+            var getPO = await _unitOfWork.PurchaseOrder.GetById(entity.PurchaseOrderId, new PurchaseOrderSpecs(false));
 
             if (getPO == null)
                 return new Response<GRNDto>("Purchase Order not found");
