@@ -16,7 +16,7 @@ namespace Application.Contracts.DTOs
         public decimal Cost { get; set; }
         public decimal Tax { get; set; }
         public decimal SubTotal { get; set; }
-        public int? WarehouseId { get; set; }
+        public int WarehouseId { get; set; }
         public string Warehouse { get; set; }
         public int MasterId { get; set; }
     }
