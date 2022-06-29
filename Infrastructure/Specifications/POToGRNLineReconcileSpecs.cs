@@ -12,5 +12,11 @@ namespace Infrastructure.Specifications
         public POToGRNLineReconcileSpecs(int purchaseOrderLineId) : base(x => x.PurchaseOrderLineId == purchaseOrderLineId)
         {
         }
+
+        public POToGRNLineReconcileSpecs(bool isPO,int id ) 
+            : base(x => isPO ? x.PurchaseOrderId == id : x.GRNId == id)
+        {
+
+        }
     }
 }
