@@ -127,16 +127,16 @@ namespace Application.Services
             if (gRN == null)
                 return new Response<GRNDto>("Not found");
 
-            var requisitionDto = _mapper.Map<GRNDto>(gRN);
+            var grnDto = _mapper.Map<GRNDto>(gRN);
 
-            requisitionDto.IsAllowedRole = false;
+            grnDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.GRN)).FirstOrDefault();
 
 
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
-                    .FirstOrDefault(x => (x.CurrentStatusId == requisitionDto.StatusId));
+                    .FirstOrDefault(x => (x.CurrentStatusId == grnDto.StatusId));
 
                 if (transition != null)
                 {
@@ -145,12 +145,12 @@ namespace Application.Services
                     {
                         if (transition.AllowedRole.Name == role)
                         {
-                            requisitionDto.IsAllowedRole = true;
+                            grnDto.IsAllowedRole = true;
                         }
                     }
                 }
             }
-            return new Response<GRNDto>(requisitionDto, "Returning value");
+            return new Response<GRNDto>(grnDto, "Returning value");
 
         }
 
@@ -383,7 +383,7 @@ namespace Application.Services
                 }
             }
 
-            var isPOLinesReconciled = getpurchaseOrder.PurchaseOrderLines.Where(x => x.Status == DocumentStatus.Unpaid || x.Status == DocumentStatus.Partial).FirstOrDefault();
+            var isPOLinesReconciled = getpurchaseOrder.PurchaseOrderLines.Where(x => x.Status == DocumentStatus.Unreconciled || x.Status == DocumentStatus.Partial).FirstOrDefault();
 
             if (isPOLinesReconciled == null)
             {
@@ -395,5 +395,6 @@ namespace Application.Services
             }
 
         }
+
     }
 }

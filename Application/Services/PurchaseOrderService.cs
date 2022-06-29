@@ -61,11 +61,34 @@ namespace Application.Services
         {
             var specification = new PurchaseOrderSpecs(false);
             var po = await _unitOfWork.PurchaseOrder.GetById(id, specification);
-                       
+
             if (po == null)
                 return new Response<PurchaseOrderDto>("Not found");
 
             var poDto = _mapper.Map<PurchaseOrderDto>(po);
+
+            if ((poDto.State == DocumentStatus.Partial || poDto.State == DocumentStatus.Paid))
+            {
+                var getReference = new List<GRNAndPOReferenceDto>();
+
+                var gerLineReconcileRecord = _unitOfWork.POToGRNLineReconcile.Find(new POToGRNLineReconcileSpecs(true, id)).ToList();
+
+                var uniqueGRNIds = gerLineReconcileRecord.GroupBy(x => new { x.GRNId })
+                  .Where(g => g.Count() > 1 || g.Count() == 1)
+                 .Select(y => y.Key)
+                 .ToList();
+
+                foreach (var line in uniqueGRNIds)
+                {
+                    getReference.Add(new GRNAndPOReferenceDto
+                    {
+                        DocId = line.GRNId
+                    });
+                }
+
+
+                poDto.References = getReference;
+            }
 
             foreach (var line in poDto.PurchaseOrderLines)
             {
@@ -157,7 +180,7 @@ namespace Application.Services
                             {
                                 line.setStatus(DocumentStatus.Unreconciled);
                             }
-                            
+
                             await _unitOfWork.SaveAsync();
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "Purchase Order Approved");
