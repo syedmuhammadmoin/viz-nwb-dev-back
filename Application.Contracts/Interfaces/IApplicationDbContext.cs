@@ -65,6 +65,7 @@ namespace Application.Interfaces
         public DbSet<IssuanceMaster> IssuanceMaster { get; set; }
         public DbSet<IssuanceLines> IssuanceLines { get; set; }
         public DbSet<Stock> Stock { get; set; }
+        public DbSet<POToGRNLineReconcile> POToGRNLineReconcile { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }
