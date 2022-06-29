@@ -66,6 +66,8 @@ namespace Application.Services
                         getGRN.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
+                            await ReconcilePOLines(getGRN.Id, getGRN.PurchaseOrderId);
+
                             await _unitOfWork.SaveAsync();
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "GRN Approved");
@@ -196,6 +198,15 @@ namespace Application.Services
             if (entity.GRNLines.Count() == 0)
                 return new Response<GRNDto>("Lines are required");
 
+            //Checking duplicate Lines if any
+            var duplicates = entity.GRNLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
+             .Where(g => g.Count() > 1)
+             .Select(y => y.Key)
+             .ToList();
+
+            if (duplicates.Any())
+                return new Response<GRNDto>("Duplicate Lines found");
+
             var gRN = _mapper.Map<GRNMaster>(entity);
 
             //Setting PurchaseId
@@ -239,6 +250,15 @@ namespace Application.Services
             if (entity.GRNLines.Count() == 0)
                 return new Response<GRNDto>("Lines are required");
 
+            //Checking duplicate Lines if any
+            var duplicates = entity.GRNLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
+             .Where(g => g.Count() > 1)
+             .Select(y => y.Key)
+             .ToList();
+
+            if (duplicates.Any())
+                return new Response<GRNDto>("Duplicate Lines found");
+
             var specification = new GRNSpecs(true);
             var gRN = await _unitOfWork.GRN.GetById((int)entity.Id, specification);
 
@@ -277,6 +297,67 @@ namespace Application.Services
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task ReconcilePOLines(int grnId, int purchaseOrderId)
+        {
+            var getGrn = await _unitOfWork.GRN.GetById(grnId, new GRNSpecs(grnId));
+
+            var getpurchaseOrder = await _unitOfWork.PurchaseOrder.GetById(purchaseOrderId, new PurchaseOrderSpecs(purchaseOrderId));
+
+            foreach (var line in getpurchaseOrder.PurchaseOrderLines)
+            {
+                var getGRNLine = getGrn.GRNLines.Find(i => i.ItemId == line.ItemId && i.WarehouseId == line.WarehouseId);
+
+                //Getting Purchaseorder line pending quantity
+                var getPOPendingQty = _unitOfWork.POToGRNLineReconcile.Find(new POToGRNLineReconcileSpecs(line.Id)).LastOrDefault();
+
+                var qty = 0;
+
+                if (getGRNLine != null)
+                {
+                    if (getPOPendingQty != null) 
+                    {
+                        qty = getPOPendingQty.Quantity - getGRNLine.Quantity;
+                    }
+                    else
+                    {
+                        qty = line.Quantity - getGRNLine.Quantity;
+                    }
+
+                    if (qty > 0)
+                        line.setStatus(DocumentStatus.Partial);
+
+                    if (qty == 0)
+                        line.setStatus(DocumentStatus.Reconciled);
+
+                    var addGRNAndPO = new POToGRNLineReconcile
+                        (
+                        line.ItemId,
+                        qty,
+                        purchaseOrderId,
+                        grnId,
+                        line.Id,
+                        getGRNLine.Id,
+                        (int)line.WarehouseId
+                        );
+
+                    await _unitOfWork.POToGRNLineReconcile.Add(addGRNAndPO);
+                    await _unitOfWork.SaveAsync();
+                }
+            }
+
+            var isPOLinesReconciled = getpurchaseOrder.PurchaseOrderLines.Where(x => x.Status == DocumentStatus.Unpaid || x.Status == DocumentStatus.Partial).FirstOrDefault(); 
+
+            if (isPOLinesReconciled == null)
+            {
+                getpurchaseOrder.setStatus(5);
+            }
+            else
+            {
+                getpurchaseOrder.setStatus(4);
+            }
+
         }
     }
 }

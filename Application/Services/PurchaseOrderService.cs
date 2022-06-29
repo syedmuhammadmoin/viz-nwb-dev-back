@@ -61,19 +61,34 @@ namespace Application.Services
         {
             var specification = new PurchaseOrderSpecs(false);
             var po = await _unitOfWork.PurchaseOrder.GetById(id, specification);
+                       
             if (po == null)
                 return new Response<PurchaseOrderDto>("Not found");
 
-            var requisitionDto = _mapper.Map<PurchaseOrderDto>(po);
+            var poDto = _mapper.Map<PurchaseOrderDto>(po);
 
-            requisitionDto.IsAllowedRole = false;
+            foreach (var line in poDto.PurchaseOrderLines)
+            {
+                var getPOtoGRNReconcileLine = _unitOfWork.POToGRNLineReconcile.Find(new POToGRNLineReconcileSpecs(line.Id)).LastOrDefault();
+                if (getPOtoGRNReconcileLine != null)
+                {
+                    var getGRN = await _unitOfWork.GRN.GetById(getPOtoGRNReconcileLine.GRNId, new GRNSpecs(false));
+
+                    var getGRNLine = getGRN.GRNLines.Find(x => x.Id == getPOtoGRNReconcileLine.GRNLineId);
+
+                    line.PendingQuantity = getPOtoGRNReconcileLine.Quantity;
+                    line.ReceivedQuantity = line.Quantity - getPOtoGRNReconcileLine.Quantity;
+                }
+            }
+
+            poDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PurchaseOrder)).FirstOrDefault();
 
 
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
-                    .FirstOrDefault(x => (x.CurrentStatusId == requisitionDto.StatusId));
+                    .FirstOrDefault(x => (x.CurrentStatusId == poDto.StatusId));
 
                 if (transition != null)
                 {
@@ -82,12 +97,12 @@ namespace Application.Services
                     {
                         if (transition.AllowedRole.Name == role)
                         {
-                            requisitionDto.IsAllowedRole = true;
+                            poDto.IsAllowedRole = true;
                         }
                     }
                 }
             }
-            return new Response<PurchaseOrderDto>(requisitionDto, "Returning value");
+            return new Response<PurchaseOrderDto>(poDto, "Returning value");
         }
 
         public async Task<Response<PurchaseOrderDto>> UpdateAsync(CreatePurchaseOrderDto entity)
@@ -138,6 +153,11 @@ namespace Application.Services
                         getPurchaseOrder.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
+                            foreach (var line in getPurchaseOrder.PurchaseOrderLines)
+                            {
+                                line.setStatus(DocumentStatus.Unreconciled);
+                            }
+                            
                             await _unitOfWork.SaveAsync();
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "Purchase Order Approved");
@@ -190,6 +210,15 @@ namespace Application.Services
             if (entity.PurchaseOrderLines.Count() == 0)
                 return new Response<PurchaseOrderDto>("Lines are required");
 
+            //Checking duplicate Lines if any
+            var duplicates = entity.PurchaseOrderLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
+             .Where(g => g.Count() > 1)
+             .Select(y => y.Key)
+             .ToList();
+
+            if (duplicates.Any())
+                return new Response<PurchaseOrderDto>("Duplicate Lines found");
+
             var po = _mapper.Map<PurchaseOrderMaster>(entity);
 
             //Setting status
@@ -232,6 +261,15 @@ namespace Application.Services
 
             if (po.StatusId != 1 && po.StatusId != 2)
                 return new Response<PurchaseOrderDto>("Only draft document can be edited");
+
+            //Checking duplicate Lines if any
+            var duplicates = entity.PurchaseOrderLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
+             .Where(g => g.Count() > 1)
+             .Select(y => y.Key)
+             .ToList();
+
+            if (duplicates.Any())
+                return new Response<PurchaseOrderDto>("Duplicate Lines found");
 
             po.setStatus(status);
 
