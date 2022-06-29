@@ -50,6 +50,8 @@ namespace Domain.Interfaces
         ITaxRepository Taxes { get; }
         IIssuanceRepository Issuance { get; }
         IStockRepository Stock { get; }
+        IPOToGRNLineReconcileRepository POToGRNLineReconcile { get; }
+
 
         Task SaveAsync();
         void CreateTransaction();

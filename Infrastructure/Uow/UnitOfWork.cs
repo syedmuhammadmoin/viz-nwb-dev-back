@@ -60,6 +60,7 @@ namespace Infrastructure.Uow
         public IUnitOfMeasurementRepository UnitOfMeasurement { get; private set; }
         public IIssuanceRepository Issuance { get; private set; }
         public IStockRepository Stock { get; private set; }
+        public IPOToGRNLineReconcileRepository POToGRNLineReconcile { get; private set; }
 
 
         public UnitOfWork(ApplicationDbContext context)
@@ -105,6 +106,7 @@ namespace Infrastructure.Uow
             UnitOfMeasurement = new UnitOfMeasurementRepository(context);
             Issuance = new IssuanceRepository(context);
             Stock = new StockRepository(context);
+            POToGRNLineReconcile = new POToGRNLineReconcileRepository(context);
         }
 
         public async Task SaveAsync()
