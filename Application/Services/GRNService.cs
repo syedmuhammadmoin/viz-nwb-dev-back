@@ -268,6 +268,24 @@ namespace Application.Services
             if (entity.GRNLines.Count() == 0)
                 return new Response<GRNDto>("Lines are required");
 
+            foreach (var Line in entity.GRNLines)
+            {
+                var getPOLine = getPO.PurchaseOrderLines.Find(i => i.ItemId == Line.ItemId && i.WarehouseId == Line.WarehouseId);
+
+                var getPOPendingQty = _unitOfWork.POToGRNLineReconcile.Find(new POToGRNLineReconcileSpecs(getPOLine.Id)).LastOrDefault();
+
+                if (getPOPendingQty == null)
+                {
+                    if (Line.Quantity > getPOLine.Quantity)
+                        return new Response<GRNDto>("GRN Items can't be greater than Purchase order");
+                }
+                else
+                {
+                    if (Line.Quantity > getPOPendingQty.Quantity)
+                        return new Response<GRNDto>("GRN Items can't be greater than Purchase order");
+                }
+            }
+
             //Checking duplicate Lines if any
             var duplicates = entity.GRNLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
              .Where(g => g.Count() > 1)
