@@ -15,7 +15,7 @@ namespace Domain.Entities
         public Product Item { get; private set; }
         public int AvailableQuantity { get; private set; }
         public int ReservedQuantity { get; private set; }
-        public int? WarehouseId { get; private set; }
+        public int WarehouseId { get; private set; }
         [ForeignKey("WarehouseId")]
         public Warehouse Warehouse { get; private set; }
     }
