@@ -259,13 +259,18 @@ namespace Application.Mapper
             CreateMap<PurchaseOrderMaster, PurchaseOrderDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
-               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+               .ForMember(dto => dto.Status, core => core.MapFrom(
+                    a => a.Status.State == DocumentStatus.Unpaid ? "Open" :
+                    a.Status.State == DocumentStatus.Partial ? "Partial" :
+                    a.Status.State == DocumentStatus.Paid ? "Closed" : a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<PurchaseOrderLines, PurchaseOrderLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
-              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
+              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName))
+              .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity));
+            
 
             CreateMap<CreatePurchaseOrderDto, PurchaseOrderMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.PurchaseOrderLines.Sum(e => e.Quantity * e.Cost)))
