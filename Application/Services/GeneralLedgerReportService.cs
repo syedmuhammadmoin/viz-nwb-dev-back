@@ -95,6 +95,7 @@ namespace Application.Services
                             LedgerId = i,
                             AccountId = j.AccountId,
                             AccountName = j.AccountName,
+                            DocType = null,
                             Description = "Initial Balance",
                             Debit = i == 1 ? getCummulativeDebit(j.Debit) : cummulativeDebit += (j.Debit),
                             Credit = i == 1 ? getCummulativeCredit(j.Credit) : cummulativeCredit += (j.Credit),
