@@ -66,9 +66,20 @@ namespace Application.Services
                         getGRN.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
-                            await ReconcilePOLines(getGRN.Id, getGRN.PurchaseOrderId);
-
+                            var reconciled = await ReconcilePOLines(getGRN.Id, getGRN.PurchaseOrderId, getGRN.GRNLines);
+                            if (!reconciled.IsSuccess)
+                            {
+                                _unitOfWork.Rollback();
+                                return new Response<bool>(reconciled.Message);
+                            }
                             await _unitOfWork.SaveAsync();
+
+                            //foreach (var line in getGRN.GRNLines)
+                            //{
+                            //    await AddtoStock(line);
+                            //    await _unitOfWork.SaveAsync();
+                            //}
+
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "GRN Approved");
                         }
@@ -189,31 +200,21 @@ namespace Application.Services
 
         private async Task<Response<GRNDto>> SaveGRN(CreateGRNDto entity, int status)
         {
-            //setting PurchaseOrderId
-            var getPO = await _unitOfWork.PurchaseOrder.GetById(entity.PurchaseOrderId, new PurchaseOrderSpecs(false));
-
-            if (getPO == null)
-                return new Response<GRNDto>("Purchase Order is required");
-
             if (entity.GRNLines.Count() == 0)
                 return new Response<GRNDto>("Lines are required");
 
-            foreach (var Line in entity.GRNLines)
+            foreach (var grnLine in entity.GRNLines)
             {
-                var getPOLine = getPO.PurchaseOrderLines.Find(i => i.ItemId == Line.ItemId && i.WarehouseId == Line.WarehouseId);
+                //Getting Unreconciled Purchase Order lines
+                var getpurchaseOrderLine = _unitOfWork.PurchaseOrder
+                    .FindLines(new PurchaseOrderLinesSpecs(grnLine.ItemId, grnLine.WarehouseId, entity.PurchaseOrderId))
+                    .FirstOrDefault();
+                if (getpurchaseOrderLine == null)
+                    return new Response<GRNDto>("No Purchase order line found for reconciliaiton");
 
-                var getPOPendingQty = _unitOfWork.POToGRNLineReconcile.Find(new POToGRNLineReconcileSpecs(getPOLine.Id)).LastOrDefault();
-
-                if (getPOPendingQty == null)
-                {
-                    if (Line.Quantity > getPOLine.Quantity)
-                        return new Response<GRNDto>("GRN Items can't be greater than Purchase order");
-                }
-                else
-                {
-                    if (Line.Quantity > getPOPendingQty.Quantity)
-                        return new Response<GRNDto>("GRN Items can't be greater than Purchase order");
-                }
+                var checkValidation = CheckValidation(entity.PurchaseOrderId, getpurchaseOrderLine, _mapper.Map<GRNLines>(grnLine));
+                if (!checkValidation.IsSuccess)
+                    return new Response<GRNDto>(checkValidation.Message);
             }
 
             //Checking duplicate Lines if any
@@ -225,23 +226,20 @@ namespace Application.Services
             if (duplicates.Any())
                 return new Response<GRNDto>("Duplicate Lines found");
 
-            var gRN = _mapper.Map<GRNMaster>(entity);
-
-            //Setting PurchaseId
-            gRN.setPurchaseOrderId(getPO.Id);
+            var grn = _mapper.Map<GRNMaster>(entity);
 
             //Setting status
-            gRN.setStatus(status);
+            grn.setStatus(status);
 
             _unitOfWork.CreateTransaction();
             try
             {
                 //Saving in table
-                var result = await _unitOfWork.GRN.Add(gRN);
+                var result = await _unitOfWork.GRN.Add(grn);
                 await _unitOfWork.SaveAsync();
 
                 //For creating docNo
-                gRN.CreateDocNo();
+                grn.CreateDocNo();
                 await _unitOfWork.SaveAsync();
 
                 //Commiting the transaction 
@@ -268,22 +266,18 @@ namespace Application.Services
             if (entity.GRNLines.Count() == 0)
                 return new Response<GRNDto>("Lines are required");
 
-            foreach (var Line in entity.GRNLines)
+            foreach (var grnLine in entity.GRNLines)
             {
-                var getPOLine = getPO.PurchaseOrderLines.Find(i => i.ItemId == Line.ItemId && i.WarehouseId == Line.WarehouseId);
+                //Getting Unreconciled Purchase Order lines
+                var getpurchaseOrderLine = _unitOfWork.PurchaseOrder
+                    .FindLines(new PurchaseOrderLinesSpecs(grnLine.ItemId, grnLine.WarehouseId, entity.PurchaseOrderId))
+                    .FirstOrDefault();
+                if (getpurchaseOrderLine == null)
+                    return new Response<GRNDto>("No Purchase order line found for reconciliaiton");
 
-                var getPOPendingQty = _unitOfWork.POToGRNLineReconcile.Find(new POToGRNLineReconcileSpecs(getPOLine.Id)).LastOrDefault();
-
-                if (getPOPendingQty == null)
-                {
-                    if (Line.Quantity > getPOLine.Quantity)
-                        return new Response<GRNDto>("GRN Items can't be greater than Purchase order");
-                }
-                else
-                {
-                    if (Line.Quantity > getPOPendingQty.Quantity)
-                        return new Response<GRNDto>("GRN Items can't be greater than Purchase order");
-                }
+                var checkValidation = CheckValidation(entity.PurchaseOrderId, getpurchaseOrderLine, _mapper.Map<GRNLines>(grnLine));
+                if (!checkValidation.IsSuccess)
+                    return new Response<GRNDto>(checkValidation.Message);
             }
 
             //Checking duplicate Lines if any
@@ -335,55 +329,51 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public async Task ReconcilePOLines(int grnId, int purchaseOrderId)
+        public async Task<Response<bool>> ReconcilePOLines(int grnId, int purchaseOrderId, List<GRNLines> grnLines)
         {
-            var getGrn = await _unitOfWork.GRN.GetById(grnId, new GRNSpecs(grnId));
-
-            var getpurchaseOrder = await _unitOfWork.PurchaseOrder.GetById(purchaseOrderId, new PurchaseOrderSpecs(false));
-
-            foreach (var line in getpurchaseOrder.PurchaseOrderLines)
+            foreach (var grnLine in grnLines)
             {
-                var getGRNLine = getGrn.GRNLines.Find(i => i.ItemId == line.ItemId && i.WarehouseId == line.WarehouseId);
+                //Getting Unreconciled Purchase Order lines
+                var getpurchaseOrderLine = _unitOfWork.PurchaseOrder
+                    .FindLines(new PurchaseOrderLinesSpecs(grnLine.ItemId, grnLine.WarehouseId, purchaseOrderId))
+                    .FirstOrDefault();
+                if (getpurchaseOrderLine == null)
+                    return new Response<bool>("No Purchase order line found for reconciliaiton");
+                
+                var checkValidation = CheckValidation(purchaseOrderId, getpurchaseOrderLine, grnLine);
+                if (!checkValidation.IsSuccess)
+                    return new Response<bool>(checkValidation.Message);
 
-                //Getting Purchaseorder line pending quantity
-                var getPOPendingQty = _unitOfWork.POToGRNLineReconcile.Find(new POToGRNLineReconcileSpecs(line.Id)).LastOrDefault();
+                //Adding in Reconcilation table
+                var recons = new POToGRNLineReconcile(grnLine.ItemId, grnLine.Quantity,
+                    purchaseOrderId, grnId, getpurchaseOrderLine.Id, grnLine.Id, grnLine.WarehouseId);
+                await _unitOfWork.POToGRNLineReconcile.Add(recons);
+                await _unitOfWork.SaveAsync();
 
-                var qty = 0;
-
-                if (getGRNLine != null)
+                //Get total recon quantity
+                var reconciledTotalPOQty = _unitOfWork.POToGRNLineReconcile
+                    .Find(new POToGRNLineReconcileSpecs(purchaseOrderId, getpurchaseOrderLine.Id, getpurchaseOrderLine.ItemId, getpurchaseOrderLine.WarehouseId))
+                    .Sum(p => p.Quantity);
+                
+                // Updationg PO line status
+                if (getpurchaseOrderLine.Quantity == reconciledTotalPOQty)
                 {
-                    if (getPOPendingQty != null)
-                    {
-                        qty = getPOPendingQty.Quantity - getGRNLine.Quantity;
-                    }
-                    else
-                    {
-                        qty = line.Quantity - getGRNLine.Quantity;
-                    }
-
-                    if (qty > 0)
-                        line.setStatus(DocumentStatus.Partial);
-
-                    if (qty == 0)
-                        line.setStatus(DocumentStatus.Reconciled);
-
-                    var addGRNAndPO = new POToGRNLineReconcile
-                        (
-                        line.ItemId,
-                        qty,
-                        purchaseOrderId,
-                        grnId,
-                        line.Id,
-                        getGRNLine.Id,
-                        (int)line.WarehouseId
-                        );
-
-                    await _unitOfWork.POToGRNLineReconcile.Add(addGRNAndPO);
-                    await _unitOfWork.SaveAsync();
+                    getpurchaseOrderLine.setStatus(DocumentStatus.Reconciled);
                 }
+                else
+                {
+                    getpurchaseOrderLine.setStatus(DocumentStatus.Partial);
+                }
+                await _unitOfWork.SaveAsync();
             }
 
-            var isPOLinesReconciled = getpurchaseOrder.PurchaseOrderLines.Where(x => x.Status == DocumentStatus.Unreconciled || x.Status == DocumentStatus.Partial).FirstOrDefault();
+            //Update Purchase Order Master Status
+            var getpurchaseOrder = await _unitOfWork.PurchaseOrder
+                    .GetById(purchaseOrderId, new PurchaseOrderSpecs());
+            
+            var isPOLinesReconciled = getpurchaseOrder.PurchaseOrderLines
+                .Where(x => x.Status == DocumentStatus.Unreconciled || x.Status == DocumentStatus.Partial)
+                .FirstOrDefault();
 
             if (isPOLinesReconciled == null)
             {
@@ -394,7 +384,36 @@ namespace Application.Services
                 getpurchaseOrder.setStatus(4);
             }
 
+            await _unitOfWork.SaveAsync();
+
+            return new Response<bool>(true, "No validation error found");
         }
 
+        public async Task AddtoStock(GRNLines grn)
+        {
+            var addStock = new Stock(
+                grn.ItemId,
+                grn.Quantity,
+                0,
+                grn.WarehouseId
+                );
+
+            await _unitOfWork.Stock.Add(addStock);
+            await _unitOfWork.SaveAsync();
+
+        }
+
+        public Response<bool> CheckValidation(int purchaseOrderId, PurchaseOrderLines purchaseOrderLine, GRNLines grnLine)
+        {
+            // Checking if given amount is greater than unreconciled document amount
+            var reconciledPOQty = _unitOfWork.POToGRNLineReconcile
+                .Find(new POToGRNLineReconcileSpecs(purchaseOrderId, purchaseOrderLine.Id, purchaseOrderLine.ItemId, purchaseOrderLine.WarehouseId))
+                .Sum(p => p.Quantity);
+            var unreconciledPOQty = purchaseOrderLine.Quantity - reconciledPOQty;
+            if (grnLine.Quantity > unreconciledPOQty)
+                return new Response<bool>("Enter quantity is greater than pending quantity");
+
+            return new Response<bool>(true, "No validation error found");
+        }
     }
 }

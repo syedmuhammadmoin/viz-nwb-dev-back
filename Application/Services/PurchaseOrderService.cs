@@ -69,45 +69,12 @@ namespace Application.Services
 
             if ((poDto.State == DocumentStatus.Partial || poDto.State == DocumentStatus.Paid))
             {
-                var getReference = new List<GRNAndPOReferenceDto>();
+                return new Response<PurchaseOrderDto>(MapToValue(poDto), "Returning value");
 
-                var gerLineReconcileRecord = _unitOfWork.POToGRNLineReconcile.Find(new POToGRNLineReconcileSpecs(true, id)).ToList();
-
-                var uniqueGRNIds = gerLineReconcileRecord.GroupBy(x => new { x.GRNId })
-                  .Where(g => g.Count() > 1 || g.Count() == 1)
-                 .Select(y => y.Key)
-                 .ToList();
-
-                foreach (var line in uniqueGRNIds)
-                {
-                    getReference.Add(new GRNAndPOReferenceDto
-                    {
-                        DocId = line.GRNId
-                    });
-                }
-
-
-                poDto.References = getReference;
-            }
-
-            foreach (var line in poDto.PurchaseOrderLines)
-            {
-                var getPOtoGRNReconcileLine = _unitOfWork.POToGRNLineReconcile.Find(new POToGRNLineReconcileSpecs(line.Id)).LastOrDefault();
-                if (getPOtoGRNReconcileLine != null)
-                {
-                    var getGRN = await _unitOfWork.GRN.GetById(getPOtoGRNReconcileLine.GRNId, new GRNSpecs(false));
-
-                    var getGRNLine = getGRN.GRNLines.Find(x => x.Id == getPOtoGRNReconcileLine.GRNLineId);
-
-                    line.PendingQuantity = getPOtoGRNReconcileLine.Quantity;
-                    line.ReceivedQuantity = line.Quantity - getPOtoGRNReconcileLine.Quantity;
-                }
             }
 
             poDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PurchaseOrder)).FirstOrDefault();
-
-
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
@@ -320,6 +287,49 @@ namespace Application.Services
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+        private PurchaseOrderDto MapToValue(PurchaseOrderDto data)
+        {
+            //Get reconciled grns
+            var grnLineReconcileRecord = _unitOfWork.POToGRNLineReconcile
+                .Find(new POToGRNLineReconcileSpecs(true, data.Id))
+                .GroupBy(x => new { x.GRNId, x.GRN.DocNo })
+                .Where(g => g.Count() >= 1)
+                .Select(y => new
+                {
+                    GRNId = y.Key.GRNId,
+                    DocNo = y.Key.DocNo,
+                })
+                .ToList();
+
+            // Adding in grns in references list
+            var getReference = new List<GRNAndPOReferenceDto>();
+            if (grnLineReconcileRecord.Any())
+            {
+                foreach (var line in grnLineReconcileRecord)
+                {
+                    getReference.Add(new GRNAndPOReferenceDto
+                    {
+                        DocId = line.GRNId,
+                        DocNo = line.DocNo
+                    });
+                }
+            }
+            data.References = getReference;
+
+            // Get pending & received quantity...
+            foreach (var line in data.PurchaseOrderLines)
+            {
+                // Checking if given amount is greater than unreconciled document amount
+                line.ReceivedQuantity = _unitOfWork.POToGRNLineReconcile
+                    .Find(new POToGRNLineReconcileSpecs(data.Id, line.Id, line.ItemId, line.WarehouseId))
+                    .Sum(p => p.Quantity);
+
+                line.PendingQuantity = line.Quantity - line.ReceivedQuantity;
+            }
+
+            return data;
         }
 
     }
