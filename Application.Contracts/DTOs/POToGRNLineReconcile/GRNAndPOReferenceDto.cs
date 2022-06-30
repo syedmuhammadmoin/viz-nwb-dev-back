@@ -9,5 +9,6 @@ namespace Application.Contracts.DTOs
     public class GRNAndPOReferenceDto
     {
         public int DocId { get; set; }
+        public string DocNo { get; set; }
     }
 }
