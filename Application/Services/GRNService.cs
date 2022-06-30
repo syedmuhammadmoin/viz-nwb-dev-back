@@ -74,11 +74,9 @@ namespace Application.Services
                             }
                             await _unitOfWork.SaveAsync();
 
-                            //foreach (var line in getGRN.GRNLines)
-                            //{
-                            //    await AddtoStock(line);
-                            //    await _unitOfWork.SaveAsync();
-                            //}
+                            //Adding GRN Line in Stock
+                            await AddandUpdateStock(getGRN);
+
 
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "GRN Approved");
@@ -339,7 +337,7 @@ namespace Application.Services
                     .FirstOrDefault();
                 if (getpurchaseOrderLine == null)
                     return new Response<bool>("No Purchase order line found for reconciliaiton");
-                
+
                 var checkValidation = CheckValidation(purchaseOrderId, getpurchaseOrderLine, grnLine);
                 if (!checkValidation.IsSuccess)
                     return new Response<bool>(checkValidation.Message);
@@ -354,7 +352,7 @@ namespace Application.Services
                 var reconciledTotalPOQty = _unitOfWork.POToGRNLineReconcile
                     .Find(new POToGRNLineReconcileSpecs(purchaseOrderId, getpurchaseOrderLine.Id, getpurchaseOrderLine.ItemId, getpurchaseOrderLine.WarehouseId))
                     .Sum(p => p.Quantity);
-                
+
                 // Updationg PO line status
                 if (getpurchaseOrderLine.Quantity == reconciledTotalPOQty)
                 {
@@ -370,7 +368,7 @@ namespace Application.Services
             //Update Purchase Order Master Status
             var getpurchaseOrder = await _unitOfWork.PurchaseOrder
                     .GetById(purchaseOrderId, new PurchaseOrderSpecs());
-            
+
             var isPOLinesReconciled = getpurchaseOrder.PurchaseOrderLines
                 .Where(x => x.Status == DocumentStatus.Unreconciled || x.Status == DocumentStatus.Partial)
                 .FirstOrDefault();
@@ -389,18 +387,31 @@ namespace Application.Services
             return new Response<bool>(true, "No validation error found");
         }
 
-        public async Task AddtoStock(GRNLines grn)
+        public async Task AddandUpdateStock(GRNMaster grn)
         {
-            var addStock = new Stock(
-                grn.ItemId,
-                grn.Quantity,
-                0,
-                grn.WarehouseId
-                );
+            foreach (var line in grn.GRNLines)
+            {
+                var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs(line.ItemId, line.WarehouseId)).FirstOrDefault();
 
-            await _unitOfWork.Stock.Add(addStock);
-            await _unitOfWork.SaveAsync();
+                if (getStockRecord == null)
+                {
+                    var addStock = new Stock(
+                        line.ItemId,
+                        line.Quantity,
+                        0,
+                        line.WarehouseId
+                    );
 
+                    await _unitOfWork.Stock.Add(addStock);
+                }
+                else
+                {
+                    getStockRecord.updateStock(getStockRecord.AvailableQuantity + line.Quantity);
+                }
+
+                await _unitOfWork.SaveAsync();
+
+            }
         }
 
         public Response<bool> CheckValidation(int purchaseOrderId, PurchaseOrderLines purchaseOrderLine, GRNLines grnLine)
