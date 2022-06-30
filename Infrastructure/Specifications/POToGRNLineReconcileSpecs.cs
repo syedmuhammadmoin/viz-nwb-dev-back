@@ -9,14 +9,19 @@ namespace Infrastructure.Specifications
 {
     public class POToGRNLineReconcileSpecs : BaseSpecification<POToGRNLineReconcile>
     {
-        public POToGRNLineReconcileSpecs(int purchaseOrderLineId) : base(x => x.PurchaseOrderLineId == purchaseOrderLineId)
+        public POToGRNLineReconcileSpecs(int purchaseOrderId, int purchaseOrderLineId, int itemId, int warehouseId) 
+            : base(x => x.PurchaseOrderId == purchaseOrderId
+            && x.PurchaseOrderLineId == purchaseOrderLineId
+            && x.ItemId == itemId
+            && x.WarehouseId == warehouseId)
         {
+            ApplyAsNoTracking();
         }
 
         public POToGRNLineReconcileSpecs(bool isPO,int id ) 
             : base(x => isPO ? x.PurchaseOrderId == id : x.GRNId == id)
         {
-
+            AddInclude(x => x.GRN);
         }
     }
 }
