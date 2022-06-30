@@ -261,7 +261,7 @@ namespace Application.Mapper
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(
                     a => a.Status.State == DocumentStatus.Unpaid ? "Open" :
-                    a.Status.State == DocumentStatus.Partial ? "Partial" :
+                    a.Status.State == DocumentStatus.Partial ? "Open" :
                     a.Status.State == DocumentStatus.Paid ? "Closed" : a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
@@ -300,7 +300,8 @@ namespace Application.Mapper
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
-              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
+              .ForMember(dto => dto.PODocNo, core => core.MapFrom(a => a.PurchaseOrder.DocNo));
 
             CreateMap<GRNLines, GRNLinesDto>()
               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
