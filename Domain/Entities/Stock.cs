@@ -18,5 +18,18 @@ namespace Domain.Entities
         public int WarehouseId { get; private set; }
         [ForeignKey("WarehouseId")]
         public Warehouse Warehouse { get; private set; }
+
+        public Stock(int itemId, int availableQuantity, int reservedQuantity, int warehouseId)
+        {
+            ItemId = itemId;
+            AvailableQuantity = availableQuantity;
+            ReservedQuantity = reservedQuantity;
+            WarehouseId = warehouseId;
+        }
+
+        protected Stock()
+        {
+
+        }
     }
 }
