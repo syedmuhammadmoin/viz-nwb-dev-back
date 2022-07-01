@@ -270,7 +270,7 @@ namespace Application.Mapper
               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
               .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName))
               .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity));
-            
+
 
             CreateMap<CreatePurchaseOrderDto, PurchaseOrderMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.PurchaseOrderLines.Sum(e => e.Quantity * e.Cost)))
@@ -374,8 +374,14 @@ namespace Application.Mapper
               .ForMember(dto => dto.WarehouseName, core => core.MapFrom(a => a.Warehouse.Name));
 
             CreateMap<CreateIssuanceDto, IssuanceMaster>();
-
             CreateMap<CreateIssuanceLinesDto, IssuanceLines>();
+
+            // Stock Mapping
+            CreateMap<Stock, StockDto>()
+                .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
+                .ForMember(dto => dto.UnitOfMeasurement, core => core.MapFrom(a => a.Item.UnitOfMeasurement.Name))
+                .ForMember(dto => dto.Category, core => core.MapFrom(a => a.Item.Category.Name));
+            CreateMap<StockDto, Stock>();
         }
     }
 }
