@@ -26,9 +26,13 @@ namespace Domain.Entities
             ReservedQuantity = reservedQuantity;
             WarehouseId = warehouseId;
         }
-        public void updateStock(int availableQuantity)
+        public void updateAvailableQuantity(int availableQuantity)
         {
             AvailableQuantity = availableQuantity;
+        }
+        public void updateReservedQuantity(int reservedQuantity)
+        {
+            ReservedQuantity = reservedQuantity;
         }
 
         protected Stock()
