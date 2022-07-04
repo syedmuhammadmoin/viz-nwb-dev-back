@@ -152,7 +152,9 @@ namespace Application.Mapper
             CreateMap<BillLines, BillLinesDto>()
               .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId == null ? null : a.ItemId))
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
-              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName));
+              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
+              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
+              ;
 
             CreateMap<CreateBillDto, BillMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.BillLines.Sum(e => e.Quantity * e.Cost)))
@@ -292,7 +294,8 @@ namespace Application.Mapper
 
             CreateMap<RequisitionLines, RequisitionLinesDto>()
               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
-              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
+              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName))
+              .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity));
 
             CreateMap<CreateRequisitionDto, RequisitionMaster>();
 
