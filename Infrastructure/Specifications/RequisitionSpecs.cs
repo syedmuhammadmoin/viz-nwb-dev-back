@@ -39,9 +39,10 @@ namespace Infrastructure.Specifications
                 AddInclude("RequisitionLines.Warehouse");
             }
         }
-        public RequisitionSpecs() : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
+        public RequisitionSpecs()
+            : base(x => x.Status.State != DocumentStatus.Paid)
         {
-            AddInclude(i => i.Status);
+            AddInclude(i => i.RequisitionLines);
         }
     }
 }
