@@ -77,6 +77,7 @@ namespace Infrastructure.Context
         public DbSet<IssuanceLines> IssuanceLines { get; set; }
         public DbSet<Stock> Stock { get; set; }
         public DbSet<POToGRNLineReconcile> POToGRNLineReconcile { get; set; }
+        public DbSet<RequisitionToIssuanceLineReconcile> RequisitionToIssuanceLineReconcile { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
