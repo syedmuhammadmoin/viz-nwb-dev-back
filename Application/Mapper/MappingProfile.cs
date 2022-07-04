@@ -147,7 +147,8 @@ namespace Application.Mapper
               .ForMember(dto => dto.PayableAccountName, core => core.MapFrom(a => a.PayableAccount.Name))
               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State == DocumentStatus.Unpaid ? "Unpaid" : a.Status.Status))
-              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
+              .ForMember(dto => dto.GRNDocNo, core => core.MapFrom(a => a.GRN.DocNo));
 
             CreateMap<BillLines, BillLinesDto>()
               .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId == null ? null : a.ItemId))
