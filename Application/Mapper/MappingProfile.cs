@@ -284,7 +284,10 @@ namespace Application.Mapper
             CreateMap<RequisitionMaster, RequisitionDto>()
               .ForMember(dto => dto.BusinessPartner, core => core.MapFrom(a => a.BusinessPartner.Name))
                .ForMember(dto => dto.Campus, core => core.MapFrom(a => a.Campus.Name))
-               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+               .ForMember(dto => dto.Status, core => core.MapFrom(
+                    a => a.Status.State == DocumentStatus.Unpaid ? "Open" :
+                    a.Status.State == DocumentStatus.Partial ? "Open" :
+                    a.Status.State == DocumentStatus.Paid ? "Closed" : a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<RequisitionLines, RequisitionLinesDto>()
@@ -314,6 +317,7 @@ namespace Application.Mapper
 
             CreateMap<CreateGRNLinesDto, GRNLines>()
                .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
+           
             // EstimatedBudget Mapping
             CreateMap<EstimatedBudgetMaster, EstimatedBudgetDto>()
                 .ForMember(dto => dto.From, core => core.MapFrom(a => a.PreviousBudget.From))
@@ -367,7 +371,8 @@ namespace Application.Mapper
               .ForMember(dto => dto.EmployeeName, core => core.MapFrom(a => a.Employee.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State == DocumentStatus.Unpaid ? "Unpaid" : a.Status.Status))
-              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
+              .ForMember(dto => dto.RequisitionDocNo, core => core.MapFrom(a => a.Requisition.DocNo));
 
             CreateMap<IssuanceLines, IssuanceLinesDto>()
               .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
