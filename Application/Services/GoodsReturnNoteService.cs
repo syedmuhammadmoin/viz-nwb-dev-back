@@ -32,13 +32,13 @@ namespace Application.Services
 
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
-            var getGoodsReturnNote = await _unitOfWork.GoodsReturnNote.GetById(data.DocId, new GoodsReturnNoteSpecs(true));
+            var getGRN = await _unitOfWork.GoodsReturnNote.GetById(data.DocId, new GoodsReturnNoteSpecs(true));
 
-            if (getGoodsReturnNote == null)
+            if (getGRN == null)
             {
                 return new Response<bool>("GRN with the input id not found");
             }
-            if (getGoodsReturnNote.Status.State == DocumentStatus.Unpaid || getGoodsReturnNote.Status.State == DocumentStatus.Partial || getGoodsReturnNote.Status.State == DocumentStatus.Paid)
+            if (getGRN.Status.State == DocumentStatus.Unpaid || getGRN.Status.State == DocumentStatus.Partial || getGRN.Status.State == DocumentStatus.Paid)
             {
                 return new Response<bool>("GRN already approved");
             }
@@ -49,7 +49,7 @@ namespace Application.Services
                 return new Response<bool>("No activated workflow found for this document");
             }
             var transition = workflow.WorkflowTransitions
-                    .FirstOrDefault(x => (x.CurrentStatusId == getGoodsReturnNote.StatusId && x.Action == data.Action));
+                    .FirstOrDefault(x => (x.CurrentStatusId == getGRN.StatusId && x.Action == data.Action));
 
             if (transition == null)
             {
@@ -63,10 +63,10 @@ namespace Application.Services
                 {
                     if (transition.AllowedRole.Name == role)
                     {
-                        getGoodsReturnNote.setStatus(transition.NextStatusId);
+                        getGRN.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
-                            var reconciled = await ReconcileGRNLines(getGoodsReturnNote.Id, getGoodsReturnNote.GRNId, getGoodsReturnNote.GoodsReturnNoteLines);
+                            var reconciled = await ReconcileGRNLines(getGRN.Id, getGRN.GRNId, getGRN.GoodsReturnNoteLines);
                             if (!reconciled.IsSuccess)
                             {
                                 _unitOfWork.Rollback();
@@ -75,7 +75,7 @@ namespace Application.Services
                             await _unitOfWork.SaveAsync();
 
                             //Adding GRN Line in Stock
-                            await RemoveItemInStock(getGoodsReturnNote);
+                            await RemoveItemInStock(getGRN);
 
 
                             _unitOfWork.Commit();
@@ -204,13 +204,13 @@ namespace Application.Services
             foreach (var goodsReturnNoteLine in entity.GoodsReturnNoteLines)
             {
                 //Getting Unreconciled GoodsReturnNote lines
-                var getGoodsReturnNoteLine = _unitOfWork.GRN
+                var getGRNLine = _unitOfWork.GRN
                     .FindLines(new GRNLinesSpecs(goodsReturnNoteLine.ItemId, goodsReturnNoteLine.WarehouseId, entity.GRNId))
                     .FirstOrDefault();
-                if (getGoodsReturnNoteLine == null)
+                if (getGRNLine == null)
                     return new Response<GoodsReturnNoteDto>("No GoodsReturnNote line found for reconciliaiton");
 
-                var checkValidation = CheckValidation(entity.GRNId, getGoodsReturnNoteLine, _mapper.Map<GoodsReturnNoteLines>(goodsReturnNoteLine));
+                var checkValidation = CheckValidation(entity.GRNId, getGRNLine, _mapper.Map<GoodsReturnNoteLines>(goodsReturnNoteLine));
                 if (!checkValidation.IsSuccess)
                     return new Response<GoodsReturnNoteDto>(checkValidation.Message);
             }
@@ -256,9 +256,9 @@ namespace Application.Services
         private async Task<Response<GoodsReturnNoteDto>> UpdateGoodsReturnNote(CreateGoodsReturnNoteDto entity, int status)
         {
             //setting GoodsReturnNoteId
-            var getGoodsReturnNote = await _unitOfWork.GRN.GetById(entity.GRNId, new GRNSpecs(false));
+            var getGRN = await _unitOfWork.GRN.GetById(entity.GRNId, new GRNSpecs(false));
 
-            if (getGoodsReturnNote == null)
+            if (getGRN == null)
                 return new Response<GoodsReturnNoteDto>("GRN not found");
 
             if (entity.GoodsReturnNoteLines.Count() == 0)
@@ -267,13 +267,13 @@ namespace Application.Services
             foreach (var goodsReturnNoteLine in entity.GoodsReturnNoteLines)
             {
                 //Getting Unreconciled GoodsReturnNote lines
-                var getGoodsReturnNoteLine = _unitOfWork.GRN
+                var getGRNLine = _unitOfWork.GRN
                     .FindLines(new GRNLinesSpecs(goodsReturnNoteLine.ItemId, goodsReturnNoteLine.WarehouseId, entity.GRNId))
                     .FirstOrDefault();
-                if (getGoodsReturnNoteLine == null)
+                if (getGRNLine == null)
                     return new Response<GoodsReturnNoteDto>("No GoodsReturnNote line found for reconciliaiton");
 
-                var checkValidation = CheckValidation(entity.GRNId, getGoodsReturnNoteLine, _mapper.Map<GoodsReturnNoteLines>(goodsReturnNoteLine));
+                var checkValidation = CheckValidation(entity.GRNId, getGRNLine, _mapper.Map<GoodsReturnNoteLines>(goodsReturnNoteLine));
                 if (!checkValidation.IsSuccess)
                     return new Response<GoodsReturnNoteDto>(checkValidation.Message);
             }
@@ -296,7 +296,7 @@ namespace Application.Services
             if (gRN.StatusId != 1 && gRN.StatusId != 2)
                 return new Response<GoodsReturnNoteDto>("Only draft document can be edited");
             //Setting GoodsReturnNoteId
-            gRN.setGRNId(getGoodsReturnNote.Id);
+            gRN.setGRNId(getGRN.Id);
 
             //Setting status
             gRN.setStatus(status);
@@ -359,17 +359,17 @@ namespace Application.Services
 
                 //Adding in Reconcilation table
                 var recons = new GRNToGoodsReturnNoteReconcile(goodsReturnNoteLine.ItemId, goodsReturnNoteLine.Quantity,
-                    grnId, goodsReturnNoteId, getGRNLine.Id, goodsReturnNoteLine.Id, goodsReturnNoteLine.WarehouseId);
+                   goodsReturnNoteId, grnId, goodsReturnNoteLine.Id, getGRNLine.Id, goodsReturnNoteLine.WarehouseId);
                 await _unitOfWork.GRNToGoodsReturnNoteReconcile.Add(recons);
                 await _unitOfWork.SaveAsync();
 
                 //Get total recon quantity
-                var reconciledTotalPOQty = _unitOfWork.GRNToGoodsReturnNoteReconcile
+                var reconciledTotalGRNQty = _unitOfWork.GRNToGoodsReturnNoteReconcile
                     .Find(new GRNToGoodsReturnNoteReconcileSpecs(grnId, getGRNLine.Id, getGRNLine.ItemId, getGRNLine.WarehouseId))
                     .Sum(p => p.Quantity);
 
                 // Updationg PO line status
-                if (getGRNLine.Quantity == reconciledTotalPOQty)
+                if (getGRNLine.Quantity == reconciledTotalGRNQty)
                 {
                     getGRNLine.setStatus(DocumentStatus.Reconciled);
                 }
