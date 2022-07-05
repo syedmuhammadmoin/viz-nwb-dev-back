@@ -93,7 +93,7 @@ namespace Application.Services
 
 
             var jVDto = _mapper.Map<JournalEntryDto>(jv);
-
+            ReturningRemarks(jVDto, DocType.JournalEntry);
             jVDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.JournalEntry)).FirstOrDefault();
 
@@ -127,7 +127,7 @@ namespace Application.Services
         private async Task<Response<JournalEntryDto>> SubmitJV(CreateJournalEntryDto entity)
         {
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.JournalEntry)).FirstOrDefault();
-           
+
             if (checkingActiveWorkFlows == null)
             {
                 return new Response<JournalEntryDto>("No workflow found for journal voucher");
@@ -156,15 +156,30 @@ namespace Application.Services
             jv.setStatus(status);
 
             _unitOfWork.CreateTransaction();
+
+
             try
             {
                 //Saving in table
                 var result = await _unitOfWork.JournalEntry.Add(jv);
                 await _unitOfWork.SaveAsync();
+                JournalEntryDto data = new JournalEntryDto();
+                var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.JournalEntry))
+                  .Select(e => new RemarksDto()
+                  {
+                      Remarks = e.Remarks,
+                      UserName = e.User.UserName,
+                      CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                  }).ToList();
 
+                if (remarks.Count() > 0)
+                {
+                    data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+                }
                 //For creating docNo
                 jv.CreateDocNo();
                 await _unitOfWork.SaveAsync();
+                //Remarks
 
 
                 //Commiting the transaction
@@ -172,12 +187,14 @@ namespace Application.Services
 
                 //returning response
                 return new Response<JournalEntryDto>(_mapper.Map<JournalEntryDto>(result), "Created successfully");
+
             }
             catch (Exception ex)
             {
                 _unitOfWork.Rollback();
                 return new Response<JournalEntryDto>(ex.Message);
             }
+
         }
 
         private async Task<Response<JournalEntryDto>> UpdateJV(CreateJournalEntryDto entity, int status)
@@ -275,7 +292,12 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+            // Creating object of getUSer class
+            var getUser = new GetUser(this._httpContextAccessor);
+
+            var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+       
             _unitOfWork.CreateTransaction();
             try
             {
@@ -284,12 +306,24 @@ namespace Application.Services
                     if (transition.AllowedRole.Name == role)
                     {
                         getJournalEntry.setStatus(transition.NextStatusId);
+                        if (!String.IsNullOrEmpty(data.Remarks))
+                        {
+                            var addRemarks = new Remark()
+                            {
+                                DocId = getJournalEntry.Id,
+                                DocType = DocType.JournalEntry,
+                                Remarks = data.Remarks,
+                                UserId = userId
+                            };
+                            await _unitOfWork.Remarks.Add(addRemarks);
+                        }
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
                             await AddToLedger(getJournalEntry);
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "JournalEntry Approved");
                         }
+                 
                         if (transition.NextStatus.State == DocumentStatus.Rejected)
                         {
                             await _unitOfWork.SaveAsync();
@@ -302,6 +336,9 @@ namespace Application.Services
                     }
                 }
 
+              
+
+
                 return new Response<bool>("User does not have allowed role");
 
             }
@@ -310,6 +347,24 @@ namespace Application.Services
                 _unitOfWork.Rollback();
                 return new Response<bool>(ex.Message);
             }
+        }
+
+        private List<RemarksDto> ReturningRemarks(JournalEntryDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.JournalEntry))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
         }
     }
 }
