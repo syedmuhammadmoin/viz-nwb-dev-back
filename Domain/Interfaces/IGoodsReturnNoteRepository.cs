@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IGRNRepository : IGenericRepository<GRNMaster, int>
+    public interface IGoodsReturnNoteRepository : IGenericRepository<GoodsReturnNoteMaster, int>
     {
-        IEnumerable<GRNLines> FindLines(ISpecification<GRNLines> specification);
     }
 }
