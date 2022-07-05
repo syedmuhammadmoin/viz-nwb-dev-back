@@ -59,7 +59,6 @@ namespace Infrastructure.Uow
         public ITaxRepository Taxes { get; private set; }
         public IUnitOfMeasurementRepository UnitOfMeasurement { get; private set; }
         public IIssuanceRepository Issuance { get; private set; }
-        public IRemarkRepository Remarks { get; private set; }
 
 
         public UnitOfWork(ApplicationDbContext context)
@@ -104,7 +103,6 @@ namespace Infrastructure.Uow
             Taxes = new TaxRepository(context);
             UnitOfMeasurement = new UnitOfMeasurementRepository(context);
             Issuance = new IssuanceRepository(context);
-            Remarks = new RemarkRepository(context);
         }
 
         public async Task SaveAsync()

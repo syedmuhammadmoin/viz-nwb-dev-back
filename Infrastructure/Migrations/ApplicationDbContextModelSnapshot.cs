@@ -3316,51 +3316,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("RecordLedger");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Remark", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DocId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DocType")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Remarks")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Remarks");
-                });
-
             modelBuilder.Entity("Domain.Entities.RequisitionLines", b =>
                 {
                     b.Property<int>("Id")
@@ -5129,16 +5084,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Transactions");
 
                     b.Navigation("Warehouse");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Remark", b =>
-                {
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.RequisitionLines", b =>
