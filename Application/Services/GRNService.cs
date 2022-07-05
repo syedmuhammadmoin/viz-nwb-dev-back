@@ -416,7 +416,7 @@ namespace Application.Services
                 }
                 else
                 {
-                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - line.Quantity);
+                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
                 }
 
                 await _unitOfWork.SaveAsync();

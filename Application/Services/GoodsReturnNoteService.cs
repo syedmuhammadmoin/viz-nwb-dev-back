@@ -79,17 +79,17 @@ namespace Application.Services
 
 
                             _unitOfWork.Commit();
-                            return new Response<bool>(true, "GRN Approved");
+                            return new Response<bool>(true, "Goods Return Note Approved");
                         }
                         if (transition.NextStatus.State == DocumentStatus.Rejected)
                         {
                             await _unitOfWork.SaveAsync();
                             _unitOfWork.Commit();
-                            return new Response<bool>(true, "GRN Rejected");
+                            return new Response<bool>(true, "Goods Return Note Rejected");
                         }
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
-                        return new Response<bool>(true, "GRN Reviewed");
+                        return new Response<bool>(true, "Goods Return Note Reviewed");
                     }
                 }
 
@@ -351,7 +351,7 @@ namespace Application.Services
                     .FindLines(new GRNLinesSpecs(goodsReturnNoteLine.ItemId, goodsReturnNoteLine.WarehouseId, grnId))
                     .FirstOrDefault();
                 if (getGRNLine == null)
-                    return new Response<bool>("No Purchase order line found for reconciliaiton");
+                    return new Response<bool>("No GRN line found for reconciliaiton");
 
                 var checkValidation = CheckValidation(grnId, getGRNLine, goodsReturnNoteLine);
                 if (!checkValidation.IsSuccess)
@@ -414,7 +414,7 @@ namespace Application.Services
                 }
                 else
                 {
-                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
+                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - line.Quantity);
                 }
 
                 await _unitOfWork.SaveAsync();
