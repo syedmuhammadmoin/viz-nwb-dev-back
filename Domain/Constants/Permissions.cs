@@ -314,6 +314,14 @@ namespace Domain.Constants
             public const string Edit = "Permissions.IssuanceClaims.Edit";
             public const string Delete = "Permissions.IssuanceClaims.Delete";
         }
+        public static class GoodsReturnNoteClaims
+        {
+            public const string View = "Permissions.GoodsReturnNoteClaims.View";
+            public const string Create = "Permissions.GoodsReturnNoteClaims.Create";
+            public const string Edit = "Permissions.GoodsReturnNoteClaims.Edit";
+            public const string Delete = "Permissions.GoodsReturnNoteClaims.Delete";
+        }
+
         //Reporting Form
         public static class ChartOfAccountClaims
         {
