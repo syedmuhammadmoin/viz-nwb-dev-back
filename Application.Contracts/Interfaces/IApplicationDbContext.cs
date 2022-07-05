@@ -67,6 +67,9 @@ namespace Application.Interfaces
         public DbSet<Stock> Stock { get; set; }
         public DbSet<POToGRNLineReconcile> POToGRNLineReconcile { get; set; }
         public DbSet<RequisitionToIssuanceLineReconcile> RequisitionToIssuanceLineReconcile { get; set; }
+        public DbSet<GoodsReturnNoteMaster> GoodsReturnNoteMaster { get; set; }
+        public DbSet<GoodsReturnNoteLines> GoodsReturnNoteLines { get; set; }
+        public DbSet<GRNToGoodsReturnNoteReconcile> GRNToGoodsReturnNoteReconcile { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }
