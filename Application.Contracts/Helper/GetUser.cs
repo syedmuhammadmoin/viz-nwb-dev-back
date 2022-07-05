@@ -25,6 +25,17 @@ namespace Application.Contracts.Helper
             }
             return "UserName";
         }
+        public string GetCurrentUserId()
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext != null)
+            {
+                var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                return userId;
+            }
+            return "UserName";
+        }
+
         public IEnumerable<string> GetCurrentUserRoles()
         {
             var httpContext = _httpContextAccessor.HttpContext;
