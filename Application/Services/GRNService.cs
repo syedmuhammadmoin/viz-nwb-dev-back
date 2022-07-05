@@ -465,11 +465,11 @@ namespace Application.Services
             foreach (var line in data.GRNLines)
             {
                 // Checking if given amount is greater than unreconciled document amount
-                line.GRNQuantity = _unitOfWork.GRNToGoodsReturnNoteReconcile
+                line.ReceivedQuantity = _unitOfWork.GRNToGoodsReturnNoteReconcile
                     .Find(new GRNToGoodsReturnNoteReconcileSpecs(data.Id, line.Id, line.ItemId, line.WarehouseId))
                     .Sum(p => p.Quantity);
 
-                line.ReturnQuantity = line.Quantity - line.GRNQuantity;
+                line.PendingQuantity = line.Quantity - line.ReceivedQuantity;
             }
 
             return data;
