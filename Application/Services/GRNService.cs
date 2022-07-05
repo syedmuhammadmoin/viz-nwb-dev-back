@@ -66,6 +66,11 @@ namespace Application.Services
                         getGRN.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
+                            foreach (var line in getGRN.GRNLines)
+                            {
+                                line.setStatus(DocumentStatus.Unreconciled);
+                            }
+
                             var reconciled = await ReconcilePOLines(getGRN.Id, getGRN.PurchaseOrderId, getGRN.GRNLines);
                             if (!reconciled.IsSuccess)
                             {
