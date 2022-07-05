@@ -77,7 +77,6 @@ namespace Infrastructure.Context
         public DbSet<IssuanceLines> IssuanceLines { get; set; }
         public DbSet<Remark> Remarks { get; set; }
 
-        public DbSet<Remark> Remarks { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
