@@ -11,5 +11,7 @@ namespace Application.Contracts.DTOs
     {
         public int DocId { get; set; }
         public ActionButton Action { get; set; }
+        public string Remarks { get; set; }
+
     }
 }
