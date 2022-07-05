@@ -384,11 +384,11 @@ namespace Application.Services
             var getGRN = await _unitOfWork.GRN
                     .GetById(grnId, new GRNSpecs());
 
-            var isPOLinesReconciled = getGRN.GRNLines
+            var isGRMLinesReconciled = getGRN.GRNLines
                 .Where(x => x.Status == DocumentStatus.Unreconciled || x.Status == DocumentStatus.Partial)
                 .FirstOrDefault();
 
-            if (isPOLinesReconciled == null)
+            if (isGRMLinesReconciled == null)
             {
                 getGRN.setStatus(5);
             }
