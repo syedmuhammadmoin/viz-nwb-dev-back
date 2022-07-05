@@ -31,9 +31,16 @@ namespace Domain.Entities
         public int MasterId { get; private set; }
         [ForeignKey("MasterId")]
         public GRNMaster GRNMaster { get; private set; }
+
+        public void setStatus(DocumentStatus status)
+        {
+            Status = status;
+        }
         protected GRNLines()
         {
 
         }
+
+
     }
 }
