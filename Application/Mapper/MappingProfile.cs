@@ -370,6 +370,10 @@ namespace Application.Mapper
             CreateMap<CreateIssuanceDto, IssuanceMaster>();
 
             CreateMap<CreateIssuanceLinesDto, IssuanceLines>();
+
+            // Department Mapping
+            CreateMap<Remark, RemarksDto>();
+            CreateMap<RemarksDto, Remark>();
         }
     }
 }
