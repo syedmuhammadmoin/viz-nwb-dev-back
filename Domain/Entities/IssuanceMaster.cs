@@ -18,6 +18,9 @@ namespace Domain.Entities
         public DateTime IssuanceDate { get; private set; }
         [MaxLength(20)]
         public string DocNo { get; private set; }
+        public int? RequisitionId { get; private set; }
+        [ForeignKey("RequisitionId")]
+        public RequisitionMaster Requisition { get; private set; }
         public int CampusId { get; private set; }
         [ForeignKey("CampusId")]
         public Campus Campus { get; private set; }

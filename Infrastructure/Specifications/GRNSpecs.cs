@@ -45,5 +45,9 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.Status);
         }
+        public GRNSpecs(int id) : base(x => x.Id == id)
+        {
+            AddInclude(i => i.GRNLines);
+        }
     }
 }

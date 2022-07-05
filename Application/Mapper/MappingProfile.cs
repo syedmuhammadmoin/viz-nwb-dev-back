@@ -81,7 +81,10 @@ namespace Application.Mapper
             // Product Mapping
             CreateMap<Product, ProductDto>()
                 .ForMember(dto => dto.CategoryName, core => core.MapFrom(a => a.Category.Name))
-                .ForMember(dto => dto.UnitOfMeasurementName, core => core.MapFrom(a => a.UnitOfMeasurement.Name));
+                .ForMember(dto => dto.UnitOfMeasurementName, core => core.MapFrom(a => a.UnitOfMeasurement.Name))
+                .ForMember(dto => dto.CostAccountId, core => core.MapFrom(a => a.Category.CostAccountId))
+                .ForMember(dto => dto.RevenueAccountId, core => core.MapFrom(a => a.Category.RevenueAccountId))
+                .ForMember(dto => dto.InventoryAccountId, core => core.MapFrom(a => a.Category.InventoryAccountId));
             CreateMap<CreateProductDto, Product>();
 
             // JournalEntry Mapping
@@ -147,12 +150,15 @@ namespace Application.Mapper
               .ForMember(dto => dto.PayableAccountName, core => core.MapFrom(a => a.PayableAccount.Name))
               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State == DocumentStatus.Unpaid ? "Unpaid" : a.Status.Status))
-              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
+              .ForMember(dto => dto.GRNDocNo, core => core.MapFrom(a => a.GRN.DocNo));
 
             CreateMap<BillLines, BillLinesDto>()
               .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId == null ? null : a.ItemId))
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
-              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName));
+              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
+              .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
+              ;
 
             CreateMap<CreateBillDto, BillMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.BillLines.Sum(e => e.Quantity * e.Cost)))
@@ -259,13 +265,18 @@ namespace Application.Mapper
             CreateMap<PurchaseOrderMaster, PurchaseOrderDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
-               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+               .ForMember(dto => dto.Status, core => core.MapFrom(
+                    a => a.Status.State == DocumentStatus.Unpaid ? "Open" :
+                    a.Status.State == DocumentStatus.Partial ? "Open" :
+                    a.Status.State == DocumentStatus.Paid ? "Closed" : a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<PurchaseOrderLines, PurchaseOrderLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
-              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
+              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName))
+              .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity));
+
 
             CreateMap<CreatePurchaseOrderDto, PurchaseOrderMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.PurchaseOrderLines.Sum(e => e.Quantity * e.Cost)))
@@ -279,12 +290,16 @@ namespace Application.Mapper
             CreateMap<RequisitionMaster, RequisitionDto>()
               .ForMember(dto => dto.BusinessPartner, core => core.MapFrom(a => a.BusinessPartner.Name))
                .ForMember(dto => dto.Campus, core => core.MapFrom(a => a.Campus.Name))
-               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+               .ForMember(dto => dto.Status, core => core.MapFrom(
+                    a => a.Status.State == DocumentStatus.Unpaid ? "Open" :
+                    a.Status.State == DocumentStatus.Partial ? "Open" :
+                    a.Status.State == DocumentStatus.Paid ? "Closed" : a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<RequisitionLines, RequisitionLinesDto>()
               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
-              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
+              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName))
+              .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity));
 
             CreateMap<CreateRequisitionDto, RequisitionMaster>();
 
@@ -295,7 +310,8 @@ namespace Application.Mapper
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
-              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
+              .ForMember(dto => dto.PODocNo, core => core.MapFrom(a => a.PurchaseOrder.DocNo));
 
             CreateMap<GRNLines, GRNLinesDto>()
               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
@@ -308,6 +324,7 @@ namespace Application.Mapper
 
             CreateMap<CreateGRNLinesDto, GRNLines>()
                .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
+           
             // EstimatedBudget Mapping
             CreateMap<EstimatedBudgetMaster, EstimatedBudgetDto>()
                 .ForMember(dto => dto.From, core => core.MapFrom(a => a.PreviousBudget.From))
@@ -361,15 +378,22 @@ namespace Application.Mapper
               .ForMember(dto => dto.EmployeeName, core => core.MapFrom(a => a.Employee.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State == DocumentStatus.Unpaid ? "Unpaid" : a.Status.Status))
-              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
+              .ForMember(dto => dto.RequisitionDocNo, core => core.MapFrom(a => a.Requisition.DocNo));
 
             CreateMap<IssuanceLines, IssuanceLinesDto>()
               .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
               .ForMember(dto => dto.WarehouseName, core => core.MapFrom(a => a.Warehouse.Name));
 
             CreateMap<CreateIssuanceDto, IssuanceMaster>();
-
             CreateMap<CreateIssuanceLinesDto, IssuanceLines>();
+
+            // Stock Mapping
+            CreateMap<Stock, StockDto>()
+                .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
+                .ForMember(dto => dto.UnitOfMeasurement, core => core.MapFrom(a => a.Item.UnitOfMeasurement.Name))
+                .ForMember(dto => dto.Category, core => core.MapFrom(a => a.Item.Category.Name));
+            CreateMap<StockDto, Stock>();
         }
     }
 }

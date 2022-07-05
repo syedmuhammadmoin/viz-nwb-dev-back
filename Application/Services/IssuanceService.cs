@@ -153,12 +153,34 @@ namespace Application.Services
                             getIssuance.setStatus(transition.NextStatusId);
                             if (transition.NextStatus.State == DocumentStatus.Unpaid)
                             {
+                                if (getIssuance.RequisitionId != null)
+                                {
+                                    var reconciled = await ReconcileReqLines(getIssuance.Id, (int)getIssuance.RequisitionId, getIssuance.IssuanceLines);
+                                    if (!reconciled.IsSuccess)
+                                    {
+                                        _unitOfWork.Rollback();
+                                        return new Response<bool>(reconciled.Message);
+                                    }
+                                    await _unitOfWork.SaveAsync();
+                                }
+
+                                //updating reserved quantity in stock
+                                var updateStockOnApproveOrReject = UpdateStockOnApproveOrReject(_mapper.Map<IssuanceDto>(getIssuance), getIssuance.StatusId);
+                                if (!updateStockOnApproveOrReject.IsSuccess)
+                                    return new Response<bool>(updateStockOnApproveOrReject.Message);
+
+
                                 await _unitOfWork.SaveAsync();
                                 _unitOfWork.Commit();
                                 return new Response<bool>(true, "Issuance Approved");
                             }
                             if (transition.NextStatus.State == DocumentStatus.Rejected)
                             {
+                                //updating reserved quantity in stock
+                                var updateStockOnApproveOrReject = UpdateStockOnApproveOrReject(_mapper.Map<IssuanceDto>(getIssuance), getIssuance.StatusId);
+                                if (!updateStockOnApproveOrReject.IsSuccess)
+                                    return new Response<bool>(updateStockOnApproveOrReject.Message);
+
                                 await _unitOfWork.SaveAsync();
                                 _unitOfWork.Commit();
                                 return new Response<bool>(true, "Issuance Rejected");
@@ -168,9 +190,7 @@ namespace Application.Services
                             return new Response<bool>(true, "Issuance Reviewed");
                         }
                     }
-
                     return new Response<bool>("User does not have allowed role");
-
                 }
                 catch (Exception ex)
                 {
@@ -185,6 +205,38 @@ namespace Application.Services
         {
             if (entity.IssuanceLines.Count() == 0)
                 return new Response<IssuanceDto>("Lines are required");
+
+            if (entity.RequisitionId!= null)
+            {
+                foreach (var issuanceLine in entity.IssuanceLines)
+                {
+                    //Getting Unreconciled Requisition lines
+                    var getrequisitionLine = _unitOfWork.Requisition
+                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, issuanceLine.WarehouseId, (int)entity.RequisitionId))
+                        .FirstOrDefault();
+
+                    if (getrequisitionLine == null)
+                        return new Response<IssuanceDto>("No Requisition line found for reconciliaiton");
+
+                    var checkValidation = CheckValidation((int)entity.RequisitionId, getrequisitionLine, _mapper.Map<IssuanceLines>(issuanceLine));
+                    if (!checkValidation.IsSuccess)
+                        return new Response<IssuanceDto>(checkValidation.Message);
+                }
+            }
+
+            //Checking available quantity in stock
+            var checkOrUpdateQty = CheckOrUpdateQty(entity);
+            if (!checkOrUpdateQty.IsSuccess)
+                return new Response<IssuanceDto>(checkOrUpdateQty.Message);
+
+            //Checking duplicate Lines if any
+            var duplicates = entity.IssuanceLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
+             .Where(g => g.Count() > 1)
+             .Select(y => y.Key)
+             .ToList();
+
+            if (duplicates.Any())
+                return new Response<IssuanceDto>("Duplicate Lines found");
 
             var issuance = _mapper.Map<IssuanceMaster>(entity);
 
@@ -239,6 +291,38 @@ namespace Application.Services
             if (entity.IssuanceLines.Count() == 0)
                 return new Response<IssuanceDto>("Lines are required");
 
+            if (entity.RequisitionId != null)
+            {
+                foreach (var issuanceLine in entity.IssuanceLines)
+                {
+                    //Getting Unreconciled Requisition lines
+                    var getrequisitionLine = _unitOfWork.Requisition
+                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, issuanceLine.WarehouseId, (int)entity.RequisitionId))
+                        .FirstOrDefault();
+
+                    if (getrequisitionLine == null)
+                        return new Response<IssuanceDto>("No Requisition line found for reconciliaiton");
+
+                    var checkValidation = CheckValidation((int)entity.RequisitionId, getrequisitionLine, _mapper.Map<IssuanceLines>(issuanceLine));
+                    if (!checkValidation.IsSuccess)
+                        return new Response<IssuanceDto>(checkValidation.Message);
+                }
+            }
+
+            //Checking available quantity in stock
+            var checkOrUpdateQty = CheckOrUpdateQty(entity);
+            if (!checkOrUpdateQty.IsSuccess)
+                return new Response<IssuanceDto>(checkOrUpdateQty.Message);
+
+            //Checking duplicate Lines if any
+            var duplicates = entity.IssuanceLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
+             .Where(g => g.Count() > 1)
+             .Select(y => y.Key)
+             .ToList();
+
+            if (duplicates.Any())
+                return new Response<IssuanceDto>("Duplicate Lines found");
+
             var specification = new IssuanceSpecs(true);
             var issuance = await _unitOfWork.Issuance.GetById((int)entity.Id, specification);
 
@@ -271,9 +355,126 @@ namespace Application.Services
             }
         }
 
+        private Response<bool> CheckOrUpdateQty(CreateIssuanceDto issuance)
+        {
+            foreach (var line in issuance.IssuanceLines)
+            {
+                var getStockRecord =  _unitOfWork.Stock.Find(new StockSpecs(line.ItemId, line.WarehouseId)).FirstOrDefault();
+
+                if (getStockRecord == null)
+                    return new Response<bool>("Item not found in stock");
+
+                if (line.Quantity > getStockRecord.AvailableQuantity)
+                    return new Response<bool>("Selected item quantity is exceeding available quantity");
+
+                getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity  +  line.Quantity);
+                getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - line.Quantity);
+
+            }
+            return new Response<bool>(true, "");
+        }
+
+        private Response<bool> UpdateStockOnApproveOrReject(IssuanceDto issuance, int statusId)
+        {
+            foreach (var line in issuance.IssuanceLines)
+            {
+                var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs(line.ItemId, line.WarehouseId)).FirstOrDefault();
+
+                if (getStockRecord == null)
+                    return new Response<bool>("Item not found in stock");
+                
+                // updating reserved quantity for APPROVED Issuance
+                if(issuance.StatusId == 8)
+                {
+                    getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity - line.Quantity);
+                }
+
+                // updating reserved quantity for REJECTED Issuance
+                if (issuance.StatusId == 2)
+                {
+                    getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity - line.Quantity);
+                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
+                }
+            }
+            return new Response<bool>(true, "");
+        }
+
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public Response<bool> CheckValidation(int requisitionId, RequisitionLines requisitionLine, IssuanceLines issuanceLine)
+        {
+            // Checking if given amount is greater than unreconciled document amount
+            var reconciledRequistionQty = _unitOfWork.RequisitionToIssuanceLineReconcile
+                .Find(new RequisitionToIssuanceLineReconcileSpecs(requisitionId, requisitionLine.Id, requisitionLine.ItemId, requisitionLine.WarehouseId))
+                .Sum(p => p.Quantity);
+            var unreconciledRequisitionQty = requisitionLine.Quantity - reconciledRequistionQty;
+            if (issuanceLine.Quantity > unreconciledRequisitionQty)
+                return new Response<bool>("Enter quantity is greater than pending quantity");
+
+            return new Response<bool>(true, "No validation error found");
+        }
+
+        public async Task<Response<bool>> ReconcileReqLines(int issuanceId, int requisitionId, List<IssuanceLines> IssuanceLines)
+        {
+            foreach (var IssuanceLine in IssuanceLines)
+            {
+                //Getting Unreconciled Requisition lines
+                var getRequisitionLine = _unitOfWork.Requisition
+                    .FindLines(new RequisitionLinesSpecs(IssuanceLine.ItemId, IssuanceLine.WarehouseId, requisitionId))
+                    .FirstOrDefault();
+                if (getRequisitionLine == null)
+                    return new Response<bool>("No Requisition line found for reconciliaiton");
+
+                var checkValidation = CheckValidation(requisitionId, getRequisitionLine, IssuanceLine);
+                if (!checkValidation.IsSuccess)
+                    return new Response<bool>(checkValidation.Message);
+
+                //Adding in Reconcilation table
+                var recons = new RequisitionToIssuanceLineReconcile(IssuanceLine.ItemId, IssuanceLine.Quantity,
+                    requisitionId, issuanceId, getRequisitionLine.Id, IssuanceLine.Id, IssuanceLine.WarehouseId);
+                await _unitOfWork.RequisitionToIssuanceLineReconcile.Add(recons);
+                await _unitOfWork.SaveAsync();
+
+                //Get total recon quantity
+                var reconciledTotalReqQty = _unitOfWork.RequisitionToIssuanceLineReconcile
+                    .Find(new RequisitionToIssuanceLineReconcileSpecs(requisitionId, getRequisitionLine.Id, getRequisitionLine.ItemId, getRequisitionLine.WarehouseId))
+                    .Sum(p => p.Quantity);
+
+                // Updationg Requisition line status
+                if (getRequisitionLine.Quantity == reconciledTotalReqQty)
+                {
+                    getRequisitionLine.setStatus(DocumentStatus.Reconciled);
+                }
+                else
+                {
+                    getRequisitionLine.setStatus(DocumentStatus.Partial);
+                }
+                await _unitOfWork.SaveAsync();
+            }
+
+            //Update Requisition Master Status
+            var getrequisition = await _unitOfWork.Requisition
+                    .GetById(requisitionId, new RequisitionSpecs());
+
+            var isRequisitionLinesReconciled = getrequisition.RequisitionLines
+                .Where(x => x.Status == DocumentStatus.Unreconciled || x.Status == DocumentStatus.Partial)
+                .FirstOrDefault();
+
+            if (isRequisitionLinesReconciled == null)
+            {
+                getrequisition.setStatus(5);
+            }
+            else
+            {
+                getrequisition.setStatus(4);
+            }
+
+            await _unitOfWork.SaveAsync();
+
+            return new Response<bool>(true, "No validation error found");
         }
     }
 }

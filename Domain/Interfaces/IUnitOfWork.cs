@@ -49,6 +49,10 @@ namespace Domain.Interfaces
         IUnitOfMeasurementRepository UnitOfMeasurement { get; }
         ITaxRepository Taxes { get; }
         IIssuanceRepository Issuance { get; }
+        IStockRepository Stock { get; }
+        IPOToGRNLineReconcileRepository POToGRNLineReconcile { get; }
+        IRequisitionToIssuanceLineReconcileRepository RequisitionToIssuanceLineReconcile { get; }
+
 
         Task SaveAsync();
         void CreateTransaction();

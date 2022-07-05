@@ -18,7 +18,7 @@ namespace Application.Contracts.DTOs
         public int TransactionId { get; set; }
         public DateTime? DocDate { get; set; }
         public DateTime DocDate2 { get; set; }
-        public DocType DocType { get; set; }
+        public DocType? DocType { get; set; }
         public string DocNo { get; set; }
         public string Description { get; set; }
         public decimal Debit { get; set; }

@@ -19,6 +19,7 @@ namespace Application.Contracts.DTOs
         public string Contact { get; set; }
         [Required]
         public int CampusId { get; set; }
+        public int? GRNId { get; set; }
         [Required]
         public bool isSubmit { get; set; }
         [Required]

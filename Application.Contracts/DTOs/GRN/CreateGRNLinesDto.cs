@@ -22,6 +22,7 @@ namespace Application.Contracts.DTOs
         public decimal Cost { get; set; }
         [Range(0.00, 100.00, ErrorMessage = "Please enter a positive value")]
         public decimal Tax { get; set; }
-        public int? WarehouseId { get; set; }
+        [Required]
+        public int WarehouseId { get; set; }
     }
 }

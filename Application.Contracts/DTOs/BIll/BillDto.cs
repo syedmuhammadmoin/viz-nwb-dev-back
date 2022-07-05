@@ -32,6 +32,8 @@ namespace Application.Contracts.DTOs
         public IEnumerable<PaidDocListDto> PaidAmountList { get; set; }
         public IEnumerable<UnreconciledBusinessPartnerPaymentsDto> BPUnreconPaymentList { get; set; }
         public decimal PendingAmount { get; set; }
+        public int? GRNId { get; set; }
+        public string GRNDocNo { get; set; }
         public int? TransactionId { get; set; }
         public int? LedgerId { get; set; }
         public virtual List<BillLinesDto> BillLines { get; set; }

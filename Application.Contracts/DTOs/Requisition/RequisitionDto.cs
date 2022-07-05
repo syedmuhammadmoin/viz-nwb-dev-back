@@ -20,6 +20,7 @@ namespace Application.Contracts.DTOs
         public int CampusId { get; set; }
         public DocumentStatus State { get; set; }
         public DateTime RequisitionDate { get; set; }
+        public IEnumerable<IssuanceAndRequisitionReferencesDto> References { get; set; }
         public virtual List<RequisitionLinesDto> RequisitionLines { get; set; }
         public bool IsAllowedRole { get; set; }
     }

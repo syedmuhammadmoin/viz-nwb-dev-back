@@ -20,6 +20,8 @@ namespace Application.Contracts.DTOs
         public int CampusId { get; set; }
         public string CampusName { get; set; }
         public DocumentStatus State { get; set; }
+        public string RequisitionDocNo { get; set; }
+        public int? RequisitionId { get; set; }
         public virtual List<IssuanceLinesDto> IssuanceLines { get; set; }
         public bool IsAllowedRole { get; set; }
     }

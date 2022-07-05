@@ -61,19 +61,24 @@ namespace Application.Services
         {
             var specification = new PurchaseOrderSpecs(false);
             var po = await _unitOfWork.PurchaseOrder.GetById(id, specification);
+
             if (po == null)
                 return new Response<PurchaseOrderDto>("Not found");
 
-            var requisitionDto = _mapper.Map<PurchaseOrderDto>(po);
+            var poDto = _mapper.Map<PurchaseOrderDto>(po);
 
-            requisitionDto.IsAllowedRole = false;
+            if ((poDto.State == DocumentStatus.Partial || poDto.State == DocumentStatus.Paid))
+            {
+                return new Response<PurchaseOrderDto>(MapToValue(poDto), "Returning value");
+
+            }
+
+            poDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PurchaseOrder)).FirstOrDefault();
-
-
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
-                    .FirstOrDefault(x => (x.CurrentStatusId == requisitionDto.StatusId));
+                    .FirstOrDefault(x => (x.CurrentStatusId == poDto.StatusId));
 
                 if (transition != null)
                 {
@@ -82,12 +87,12 @@ namespace Application.Services
                     {
                         if (transition.AllowedRole.Name == role)
                         {
-                            requisitionDto.IsAllowedRole = true;
+                            poDto.IsAllowedRole = true;
                         }
                     }
                 }
             }
-            return new Response<PurchaseOrderDto>(requisitionDto, "Returning value");
+            return new Response<PurchaseOrderDto>(poDto, "Returning value");
         }
 
         public async Task<Response<PurchaseOrderDto>> UpdateAsync(CreatePurchaseOrderDto entity)
@@ -138,6 +143,11 @@ namespace Application.Services
                         getPurchaseOrder.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
+                            foreach (var line in getPurchaseOrder.PurchaseOrderLines)
+                            {
+                                line.setStatus(DocumentStatus.Unreconciled);
+                            }
+
                             await _unitOfWork.SaveAsync();
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "Purchase Order Approved");
@@ -190,6 +200,15 @@ namespace Application.Services
             if (entity.PurchaseOrderLines.Count() == 0)
                 return new Response<PurchaseOrderDto>("Lines are required");
 
+            //Checking duplicate Lines if any
+            var duplicates = entity.PurchaseOrderLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
+             .Where(g => g.Count() > 1)
+             .Select(y => y.Key)
+             .ToList();
+
+            if (duplicates.Any())
+                return new Response<PurchaseOrderDto>("Duplicate Lines found");
+
             var po = _mapper.Map<PurchaseOrderMaster>(entity);
 
             //Setting status
@@ -233,6 +252,15 @@ namespace Application.Services
             if (po.StatusId != 1 && po.StatusId != 2)
                 return new Response<PurchaseOrderDto>("Only draft document can be edited");
 
+            //Checking duplicate Lines if any
+            var duplicates = entity.PurchaseOrderLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
+             .Where(g => g.Count() > 1)
+             .Select(y => y.Key)
+             .ToList();
+
+            if (duplicates.Any())
+                return new Response<PurchaseOrderDto>("Duplicate Lines found");
+
             po.setStatus(status);
 
             _unitOfWork.CreateTransaction();
@@ -259,6 +287,49 @@ namespace Application.Services
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+        private PurchaseOrderDto MapToValue(PurchaseOrderDto data)
+        {
+            //Get reconciled grns
+            var grnLineReconcileRecord = _unitOfWork.POToGRNLineReconcile
+                .Find(new POToGRNLineReconcileSpecs(true, data.Id))
+                .GroupBy(x => new { x.GRNId, x.GRN.DocNo })
+                .Where(g => g.Count() >= 1)
+                .Select(y => new
+                {
+                    GRNId = y.Key.GRNId,
+                    DocNo = y.Key.DocNo,
+                })
+                .ToList();
+
+            // Adding in grns in references list
+            var getReference = new List<GRNAndPOReferenceDto>();
+            if (grnLineReconcileRecord.Any())
+            {
+                foreach (var line in grnLineReconcileRecord)
+                {
+                    getReference.Add(new GRNAndPOReferenceDto
+                    {
+                        DocId = line.GRNId,
+                        DocNo = line.DocNo
+                    });
+                }
+            }
+            data.References = getReference;
+
+            // Get pending & received quantity...
+            foreach (var line in data.PurchaseOrderLines)
+            {
+                // Checking if given amount is greater than unreconciled document amount
+                line.ReceivedQuantity = _unitOfWork.POToGRNLineReconcile
+                    .Find(new POToGRNLineReconcileSpecs(data.Id, line.Id, line.ItemId, line.WarehouseId))
+                    .Sum(p => p.Quantity);
+
+                line.PendingQuantity = line.Quantity - line.ReceivedQuantity;
+            }
+
+            return data;
         }
 
     }

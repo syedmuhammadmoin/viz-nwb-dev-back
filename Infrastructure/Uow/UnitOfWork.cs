@@ -59,6 +59,9 @@ namespace Infrastructure.Uow
         public ITaxRepository Taxes { get; private set; }
         public IUnitOfMeasurementRepository UnitOfMeasurement { get; private set; }
         public IIssuanceRepository Issuance { get; private set; }
+        public IStockRepository Stock { get; private set; }
+        public IPOToGRNLineReconcileRepository POToGRNLineReconcile { get; private set; }
+        public IRequisitionToIssuanceLineReconcileRepository RequisitionToIssuanceLineReconcile { get; private set; }
 
 
         public UnitOfWork(ApplicationDbContext context)
@@ -103,6 +106,9 @@ namespace Infrastructure.Uow
             Taxes = new TaxRepository(context);
             UnitOfMeasurement = new UnitOfMeasurementRepository(context);
             Issuance = new IssuanceRepository(context);
+            Stock = new StockRepository(context);
+            POToGRNLineReconcile = new POToGRNLineReconcileRepository(context);
+            RequisitionToIssuanceLineReconcile = new RequisitionToIssuanceLineReconcileRepository(context);
         }
 
         public async Task SaveAsync()

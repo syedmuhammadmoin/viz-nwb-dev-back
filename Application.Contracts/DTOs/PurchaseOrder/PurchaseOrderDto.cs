@@ -24,6 +24,7 @@ namespace Application.Contracts.DTOs
         public decimal TotalBeforeTax { get; set; }
         public decimal TotalTax { get; set; }
         public decimal TotalAmount { get; set; }
+        public IEnumerable<GRNAndPOReferenceDto> References { get; set; }
         public virtual List<PurchaseOrderLinesDto> PurchaseOrderLines { get; set; }
         public bool IsAllowedRole { get; set; }
     }
