@@ -13,7 +13,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public int VendorId { get; set; }
         [Required]
-        public DateTime GrnDate { get; set; }
+        public DateTime GoodsReturnDate { get; set; }
         [StringLength(20)]
         public string Contact { get; set; }
         [Required]
