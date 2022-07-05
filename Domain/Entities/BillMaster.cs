@@ -44,7 +44,7 @@ namespace Domain.Entities
         public int? TransactionId { get; private set; }
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
-        public int GRNId { get; private set; }
+        public int? GRNId { get; private set; }
         [ForeignKey("GRNId")]
         public GRNMaster GRN { get; private set; }
         public virtual List<BillLines> BillLines { get; private set; }
