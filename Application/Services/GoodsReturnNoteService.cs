@@ -256,7 +256,7 @@ namespace Application.Services
         private async Task<Response<GoodsReturnNoteDto>> UpdateGoodsReturnNote(CreateGoodsReturnNoteDto entity, int status)
         {
             //setting GoodsReturnNoteId
-            var getGoodsReturnNote = await _unitOfWork.GoodsReturnNote.GetById(entity.GRNId, new GoodsReturnNoteSpecs(false));
+            var getGoodsReturnNote = await _unitOfWork.GRN.GetById(entity.GRNId, new GRNSpecs(false));
 
             if (getGoodsReturnNote == null)
                 return new Response<GoodsReturnNoteDto>("GRN not found");
