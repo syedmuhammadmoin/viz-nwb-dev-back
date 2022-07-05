@@ -61,7 +61,6 @@ namespace Infrastructure.Uow
         public IIssuanceRepository Issuance { get; private set; }
         public IRemarkRepository Remarks { get; private set; }
 
-        public IRemarkRepository Remarks { get; private set; }
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
