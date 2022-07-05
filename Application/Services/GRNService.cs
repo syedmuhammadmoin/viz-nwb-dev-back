@@ -138,6 +138,11 @@ namespace Application.Services
 
             var grnDto = _mapper.Map<GRNDto>(gRN);
 
+            if ((grnDto.State == DocumentStatus.Partial || grnDto.State == DocumentStatus.Paid))
+            {
+                return new Response<GRNDto>(MapToValue(grnDto), "Returning value");
+            }
+
             grnDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.GRN)).FirstOrDefault();
 
@@ -406,7 +411,7 @@ namespace Application.Services
                 }
                 else
                 {
-                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
+                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - line.Quantity);
                 }
 
                 await _unitOfWork.SaveAsync();
@@ -425,6 +430,49 @@ namespace Application.Services
                 return new Response<bool>("Enter quantity is greater than pending quantity");
 
             return new Response<bool>(true, "No validation error found");
+        }
+       
+        private GRNDto MapToValue(GRNDto data)
+        {
+            //Get reconciled goodsReturnNote
+            var goodsReturnNoteReconcileRecord = _unitOfWork.GRNToGoodsReturnNoteReconcile
+                .Find(new GRNToGoodsReturnNoteReconcileSpecs(true, data.Id))
+                .GroupBy(x => new { x.GRNId, x.GRN.DocNo })
+                .Where(g => g.Count() >= 1)
+                .Select(y => new
+                {
+                    GRNId = y.Key.GRNId,
+                    DocNo = y.Key.DocNo,
+                })
+                .ToList();
+
+            // Adding in grns in references list
+            var getReference = new List<GoodsReturnNoteAndGRNReferenceDto>();
+            if (goodsReturnNoteReconcileRecord.Any())
+            {
+                foreach (var line in goodsReturnNoteReconcileRecord)
+                {
+                    getReference.Add(new GoodsReturnNoteAndGRNReferenceDto
+                    {
+                        DocId = line.GRNId,
+                        DocNo = line.DocNo
+                    });
+                }
+            }
+            data.References = getReference;
+
+            // Get pending & received quantity...
+            foreach (var line in data.GRNLines)
+            {
+                // Checking if given amount is greater than unreconciled document amount
+                line.GRNQuantity = _unitOfWork.GRNToGoodsReturnNoteReconcile
+                    .Find(new GRNToGoodsReturnNoteReconcileSpecs(data.Id, line.Id, line.ItemId, line.WarehouseId))
+                    .Sum(p => p.Quantity);
+
+                line.ReturnQuantity = line.Quantity - line.GRNQuantity;
+            }
+
+            return data;
         }
     }
 }
