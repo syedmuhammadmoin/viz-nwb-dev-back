@@ -13,8 +13,8 @@ namespace Application.Contracts.DTOs
         public string Item { get; set; }
         public string Description { get; set; }
         public int Quantity { get; set; }
-        public int GRNQuantity { get; set; }
-        public int ReturnQuantity { get; set; }
+        public int ReceivedQuantity { get; set; }
+        public int PendingQuantity { get; set; }
         public decimal Cost { get; set; }
         public decimal Tax { get; set; }
         public decimal SubTotal { get; set; }
