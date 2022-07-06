@@ -44,7 +44,7 @@ namespace Infrastructure.Specifications
         public GRNSpecs()
             : base(x => x.Status.State != DocumentStatus.Paid)
         {
-            AddInclude(i => i.Status);
+            AddInclude(i => i.GRNLines);
         }
         public GRNSpecs(int id) : base(x => x.Id == id)
         {

@@ -9,19 +9,19 @@ namespace Infrastructure.Specifications
 {
     public class GRNToGoodsReturnNoteReconcileSpecs : BaseSpecification<GRNToGoodsReturnNoteReconcile>
     {
-        public GRNToGoodsReturnNoteReconcileSpecs(int purchaseOrderId, int purchaseOrderLineId, int itemId, int warehouseId)
-            : base(x => x.GRNId == purchaseOrderId
-            && x.GRNLineId == purchaseOrderLineId
+        public GRNToGoodsReturnNoteReconcileSpecs(int grnId, int grnLineId, int itemId, int warehouseId)
+            : base(x => x.GRNId == grnId
+            && x.GRNLineId == grnLineId
             && x.ItemId == itemId
             && x.WarehouseId == warehouseId)
         {
             ApplyAsNoTracking();
         }
 
-        public GRNToGoodsReturnNoteReconcileSpecs(bool isPO, int id)
-            : base(x => isPO ? x.GRNId == id : x.GRNId == id)
+        public GRNToGoodsReturnNoteReconcileSpecs(bool isGRN, int id)
+            : base(x => isGRN ? x.GRNId == id : x.GoodsReturnNoteId == id)
         {
-            AddInclude(x => x.GRN);
+            AddInclude(x => x.GoodsReturnNote);
         }
     }
 }
