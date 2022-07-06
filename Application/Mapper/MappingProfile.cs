@@ -383,9 +383,9 @@ namespace Application.Mapper
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State == DocumentStatus.Unpaid ? "Unpaid" : a.Status.Status))
               .ForMember(dto => dto.Status, core => core.MapFrom(
-                    a => a.Status.State == DocumentStatus.Unpaid ? "Open" :
-                    a.Status.State == DocumentStatus.Partial ? "Open" :
-                    a.Status.State == DocumentStatus.Paid ? "Closed" : a.Status.Status))
+                    a => a.Status.State == DocumentStatus.Unpaid ? "Approved" :
+                    a.Status.State == DocumentStatus.Partial ? "Approved" :
+                    a.Status.State == DocumentStatus.Paid ? "Approved" : a.Status.Status))
               .ForMember(dto => dto.RequisitionDocNo, core => core.MapFrom(a => a.Requisition.DocNo));
 
             CreateMap<IssuanceLines, IssuanceLinesDto>()
