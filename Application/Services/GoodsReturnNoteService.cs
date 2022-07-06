@@ -412,9 +412,15 @@ namespace Application.Services
                 {
                     return new Response<bool>("Item not found in stock");
                 }
-                else
+
+                if (getStockRecord.AvailableQuantity >= line.Quantity)
                 {
                     getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - line.Quantity);
+
+                }
+                else
+                {
+                    return new Response<bool>("Item quantity is more than its availibility");
                 }
 
                 await _unitOfWork.SaveAsync();
