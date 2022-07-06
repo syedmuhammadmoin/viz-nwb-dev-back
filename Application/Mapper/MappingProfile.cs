@@ -309,7 +309,10 @@ namespace Application.Mapper
             CreateMap<GRNMaster, GRNDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
-               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+               .ForMember(dto => dto.Status, core => core.MapFrom(
+                    a => a.Status.State == DocumentStatus.Unpaid ? "Approved" :
+                    a.Status.State == DocumentStatus.Partial ? "Approved" :
+                    a.Status.State == DocumentStatus.Paid ? "Approved" : a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
               .ForMember(dto => dto.PODocNo, core => core.MapFrom(a => a.PurchaseOrder.DocNo));
 
