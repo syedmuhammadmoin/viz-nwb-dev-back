@@ -19,7 +19,7 @@ namespace Infrastructure.Specifications
         }
 
         public GRNToGoodsReturnNoteReconcileSpecs(int id)
-            : base(x => x.GoodsReturnNoteId == id)
+            : base(x => x.GRNId == id)
         {
             AddInclude(x => x.GoodsReturnNote);
         }
