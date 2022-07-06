@@ -385,6 +385,7 @@ namespace Application.Mapper
                     a => a.Status.State == DocumentStatus.Unpaid ? "Approved" :
                     a.Status.State == DocumentStatus.Partial ? "Approved" :
                     a.Status.State == DocumentStatus.Paid ? "Approved" : a.Status.Status))
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
               .ForMember(dto => dto.RequisitionDocNo, core => core.MapFrom(a => a.Requisition.DocNo));
 
             CreateMap<IssuanceLines, IssuanceLinesDto>()
