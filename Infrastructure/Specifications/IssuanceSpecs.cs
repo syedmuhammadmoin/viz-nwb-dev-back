@@ -44,5 +44,10 @@ namespace Infrastructure.Specifications
                 AddInclude("IssuanceLines.Item");
             }
         }
+        public IssuanceSpecs()
+            : base(x => x.Status.State != DocumentStatus.Paid)
+        {
+            AddInclude(i => i.IssuanceLines);
+        }
     }
 }

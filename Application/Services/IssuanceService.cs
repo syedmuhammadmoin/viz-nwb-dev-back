@@ -76,13 +76,19 @@ namespace Application.Services
 
             var issuanceDto = _mapper.Map<IssuanceDto>(issuance);
 
-            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Issuance)).FirstOrDefault();
-            if ((issuanceDto.State == DocumentStatus.Unpaid || issuanceDto.State == DocumentStatus.Partial || issuanceDto.State == DocumentStatus.Paid))
+            if ((issuanceDto.State == DocumentStatus.Partial || issuanceDto.State == DocumentStatus.Paid))
             {
-                return new Response<IssuanceDto>(issuanceDto, "Returning value");
+                return new Response<IssuanceDto>(MapToValue(issuanceDto), "Returning value");
+
             }
 
             issuanceDto.IsAllowedRole = false;
+
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Issuance)).FirstOrDefault();
+            //if ((issuanceDto.State == DocumentStatus.Unpaid || issuanceDto.State == DocumentStatus.Partial || issuanceDto.State == DocumentStatus.Paid))
+            //{
+            //    return new Response<IssuanceDto>(issuanceDto, "Returning value");
+            //}
 
             if (workflow != null)
             {
@@ -476,5 +482,50 @@ namespace Application.Services
 
             return new Response<bool>(true, "No validation error found");
         }
+
+        private IssuanceDto MapToValue(IssuanceDto data)
+        {
+            //Get reconciled grns
+            var grnLineReconcileRecord = _unitOfWork.IssuanceToGRNLineReconcile
+                .Find(new IssuanceToGRNLineReconcileSpecs(true, data.Id))
+                .GroupBy(x => new { x.GRNId, x.GRN.DocNo })
+                .Where(g => g.Count() >= 1)
+                .Select(y => new
+                {
+                    GRNId = y.Key.GRNId,
+                    DocNo = y.Key.DocNo,
+                })
+                .ToList();
+
+            // Adding in grns in references list
+            var getReference = new List<ReferncesDto>();
+            if (grnLineReconcileRecord.Any())
+            {
+                foreach (var line in grnLineReconcileRecord)
+                {
+                    getReference.Add(new ReferncesDto
+                    {
+                        DocId = line.GRNId,
+                        DocNo = line.DocNo,
+                        DocType = DocType.GRN
+                    });
+                }
+            }
+            data.References = getReference;
+
+            // Get pending & received quantity...
+            foreach (var line in data.IssuanceLines)
+            {
+                // Checking if given amount is greater than unreconciled document amount
+                line.ReceivedQuantity = _unitOfWork.IssuanceToGRNLineReconcile
+                    .Find(new IssuanceToGRNLineReconcileSpecs(data.Id, line.Id, line.ItemId, line.WarehouseId))
+                    .Sum(p => p.Quantity);
+
+                line.PendingQuantity = line.Quantity - line.ReceivedQuantity;
+            }
+
+            return data;
+        }
+
     }
 }
