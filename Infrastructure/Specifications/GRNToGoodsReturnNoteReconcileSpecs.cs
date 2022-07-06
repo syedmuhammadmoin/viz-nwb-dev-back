@@ -18,8 +18,8 @@ namespace Infrastructure.Specifications
             ApplyAsNoTracking();
         }
 
-        public GRNToGoodsReturnNoteReconcileSpecs(bool isGRN, int id)
-            : base(x => isGRN ? x.GRNId == id : x.GoodsReturnNoteId == id)
+        public GRNToGoodsReturnNoteReconcileSpecs(int id)
+            : base(x => x.GoodsReturnNoteId == id)
         {
             AddInclude(x => x.GoodsReturnNote);
         }

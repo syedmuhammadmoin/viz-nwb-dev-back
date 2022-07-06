@@ -562,7 +562,7 @@ namespace Application.Services
         {
             //Get reconciled goodsReturnNote
             var goodsReturnNoteReconcileRecord = _unitOfWork.GRNToGoodsReturnNoteReconcile
-                .Find(new GRNToGoodsReturnNoteReconcileSpecs(false, data.Id))
+                .Find(new GRNToGoodsReturnNoteReconcileSpecs(data.Id))
                 .GroupBy(x => new { x.GoodsReturnNoteId, x.GoodsReturnNote.DocNo })
                 .Where(g => g.Count() >= 1)
                 .Select(y => new
