@@ -390,7 +390,8 @@ namespace Application.Mapper
 
             CreateMap<IssuanceLines, IssuanceLinesDto>()
               .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
-              .ForMember(dto => dto.WarehouseName, core => core.MapFrom(a => a.Warehouse.Name));
+              .ForMember(dto => dto.WarehouseName, core => core.MapFrom(a => a.Warehouse.Name))
+              .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity));
 
             CreateMap<CreateIssuanceDto, IssuanceMaster>();
             CreateMap<CreateIssuanceLinesDto, IssuanceLines>();
