@@ -301,15 +301,16 @@ namespace Application.Services
                 .ToList();
 
             // Adding in issuances in references list
-            var getReference = new List<IssuanceAndRequisitionReferencesDto>();
+            var getReference = new List<ReferncesDto>();
             if (grnLineReconcileRecord.Any())
             {
                 foreach (var line in grnLineReconcileRecord)
                 {
-                    getReference.Add(new IssuanceAndRequisitionReferencesDto
+                    getReference.Add(new ReferncesDto
                     {
                         DocId = line.IssuanceId,
-                        DocNo = line.DocNo
+                        DocNo = line.DocNo,
+                        DocType = DocType.Issuance
                     });
                 }
             }

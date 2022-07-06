@@ -304,15 +304,16 @@ namespace Application.Services
                 .ToList();
 
             // Adding in grns in references list
-            var getReference = new List<GRNAndPOReferenceDto>();
+            var getReference = new List<ReferncesDto>();
             if (grnLineReconcileRecord.Any())
             {
                 foreach (var line in grnLineReconcileRecord)
                 {
-                    getReference.Add(new GRNAndPOReferenceDto
+                    getReference.Add(new ReferncesDto
                     {
                         DocId = line.GRNId,
-                        DocNo = line.DocNo
+                        DocNo = line.DocNo,
+                        DocType = DocType.GRN
                     });
                 }
             }

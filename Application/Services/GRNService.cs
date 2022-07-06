@@ -452,15 +452,16 @@ namespace Application.Services
                 .ToList();
 
             // Adding in grns in references list
-            var getReference = new List<GoodsReturnNoteAndGRNReferenceDto>();
+            var getReference = new List<ReferncesDto>();
             if (goodsReturnNoteReconcileRecord.Any())
             {
                 foreach (var line in goodsReturnNoteReconcileRecord)
                 {
-                    getReference.Add(new GoodsReturnNoteAndGRNReferenceDto
+                    getReference.Add(new ReferncesDto
                     {
                         DocId = line.GRNId,
-                        DocNo = line.DocNo
+                        DocNo = line.DocNo,
+                        DocType = DocType.GoodsReturnNote,
                     });
                 }
             }

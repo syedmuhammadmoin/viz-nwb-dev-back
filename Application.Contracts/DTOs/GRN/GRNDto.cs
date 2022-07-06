@@ -25,7 +25,7 @@ namespace Application.Contracts.DTOs
         public decimal TotalTax { get; set; }
         public decimal TotalAmount { get; set; }
         public string PODocNo { get; set; }
-        public IEnumerable<GoodsReturnNoteAndGRNReferenceDto> References { get; set; }
+        public IEnumerable<ReferncesDto> References { get; set; }
         public virtual List<GRNLinesDto> GRNLines { get; set; }
         public bool IsAllowedRole { get; set; }
     }
