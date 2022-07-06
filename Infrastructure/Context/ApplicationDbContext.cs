@@ -81,6 +81,7 @@ namespace Infrastructure.Context
         public DbSet<GoodsReturnNoteMaster> GoodsReturnNoteMaster { get; set; }
         public DbSet<GoodsReturnNoteLines> GoodsReturnNoteLines { get; set; }
         public DbSet<GRNToGoodsReturnNoteReconcile> GRNToGoodsReturnNoteReconcile { get; set; }
+        public DbSet<IssuanceToGRNLineReconcile> IssuanceToGRNLineReconcile { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

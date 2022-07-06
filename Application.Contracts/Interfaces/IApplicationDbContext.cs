@@ -70,6 +70,7 @@ namespace Application.Interfaces
         public DbSet<GoodsReturnNoteMaster> GoodsReturnNoteMaster { get; set; }
         public DbSet<GoodsReturnNoteLines> GoodsReturnNoteLines { get; set; }
         public DbSet<GRNToGoodsReturnNoteReconcile> GRNToGoodsReturnNoteReconcile { get; set; }
+        public DbSet<IssuanceToGRNLineReconcile> IssuanceToGRNLineReconcile { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }
