@@ -562,12 +562,12 @@ namespace Application.Services
         {
             //Get reconciled goodsReturnNote
             var goodsReturnNoteReconcileRecord = _unitOfWork.GRNToGoodsReturnNoteReconcile
-                .Find(new GRNToGoodsReturnNoteReconcileSpecs(true, data.Id))
-                .GroupBy(x => new { x.GRNId, x.GRN.DocNo })
+                .Find(new GRNToGoodsReturnNoteReconcileSpecs(false, data.Id))
+                .GroupBy(x => new { x.GoodsReturnNoteId, x.GoodsReturnNote.DocNo })
                 .Where(g => g.Count() >= 1)
                 .Select(y => new
                 {
-                    GRNId = y.Key.GRNId,
+                    GoodsReturnNoteId = y.Key.GoodsReturnNoteId,
                     DocNo = y.Key.DocNo,
                 })
                 .ToList();
@@ -580,7 +580,7 @@ namespace Application.Services
                 {
                     getReference.Add(new ReferncesDto
                     {
-                        DocId = line.GRNId,
+                        DocId = line.GoodsReturnNoteId,
                         DocNo = line.DocNo,
                         DocType = DocType.GoodsReturnNote,
                     });
