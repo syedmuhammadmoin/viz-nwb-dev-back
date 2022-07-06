@@ -75,8 +75,12 @@ namespace Application.Services
                             await _unitOfWork.SaveAsync();
 
                             //Adding GRN Line in Stock
-                            await RemoveItemInStock(getGRN);
-
+                            var removeItemsFromStock =  await RemoveItemInStock(getGRN);
+                            if (!removeItemsFromStock.IsSuccess)
+                            {
+                                _unitOfWork.Rollback();
+                                return new Response<bool>(removeItemsFromStock.Message);
+                            }
 
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "Goods Return Note Approved");
