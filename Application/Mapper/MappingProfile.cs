@@ -381,7 +381,6 @@ namespace Application.Mapper
             CreateMap<IssuanceMaster, IssuanceDto>()
               .ForMember(dto => dto.EmployeeName, core => core.MapFrom(a => a.Employee.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
-               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State == DocumentStatus.Unpaid ? "Unpaid" : a.Status.Status))
               .ForMember(dto => dto.Status, core => core.MapFrom(
                     a => a.Status.State == DocumentStatus.Unpaid ? "Approved" :
                     a.Status.State == DocumentStatus.Partial ? "Approved" :
