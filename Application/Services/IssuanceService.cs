@@ -159,6 +159,11 @@ namespace Application.Services
                             getIssuance.setStatus(transition.NextStatusId);
                             if (transition.NextStatus.State == DocumentStatus.Unpaid)
                             {
+                                foreach (var line in getIssuance.IssuanceLines)
+                                {
+                                    line.setStatus(DocumentStatus.Unreconciled);
+                                }
+
                                 if (getIssuance.RequisitionId != null)
                                 {
                                     var reconciled = await ReconcileReqLines(getIssuance.Id, (int)getIssuance.RequisitionId, getIssuance.IssuanceLines);
