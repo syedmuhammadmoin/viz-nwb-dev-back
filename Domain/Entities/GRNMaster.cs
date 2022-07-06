@@ -28,9 +28,12 @@ namespace Domain.Entities
         public int CampusId { get; private set; }
         [ForeignKey("CampusId")]
         public Campus Campus { get; private set; }
-        public int PurchaseOrderId { get; private set; }
+        public int? PurchaseOrderId { get; private set; }
         [ForeignKey("PurchaseOrderId")]
         public PurchaseOrderMaster PurchaseOrder { get; private set; }
+        public int? IssuanceId { get; private set; }
+        [ForeignKey("IssuanceId")]
+        public IssuanceMaster Issuance { get; private set; }
         public int StatusId { get; private set; }
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get; private set; }
