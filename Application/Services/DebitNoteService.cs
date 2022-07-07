@@ -76,7 +76,7 @@ namespace Application.Services
             var debitNoteDto = _mapper.Map<DebitNoteDto>(dbn);
 
             //Returning
-            ReturningRemarks(debitNoteDto, DocType.Invoice);
+            ReturningRemarks(debitNoteDto, DocType.DebitNote);
 
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.DebitNote)).FirstOrDefault();
 
