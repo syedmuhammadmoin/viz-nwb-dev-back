@@ -119,15 +119,26 @@ namespace Application.Services
             }
         }
 
-        public async Task<PaginationResponse<List<GoodsReturnNoteDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<GoodsReturnNoteDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new GoodsReturnNoteSpecs(filter);
+            var docDate = new List<DateTime?>();
+            var states = new List<DocumentStatus?>();
+            if (filter.DocDate != null)
+            {
+                docDate.Add(filter.DocDate);
+            }
+            if (filter.State != null)
+            {
+                states.Add(filter.State);
+            }
+            
+            var specification = new GoodsReturnNoteSpecs(docDate, states, filter);
             var goodsReturnNotes = await _unitOfWork.GoodsReturnNote.GetAll(specification);
 
             if (goodsReturnNotes.Count() == 0)
                 return new PaginationResponse<List<GoodsReturnNoteDto>>(_mapper.Map<List<GoodsReturnNoteDto>>(goodsReturnNotes), "List is empty");
 
-            var totalRecords = await _unitOfWork.GoodsReturnNote.TotalRecord();
+            var totalRecords = await _unitOfWork.GoodsReturnNote.TotalRecord(specification);
 
             return new PaginationResponse<List<GoodsReturnNoteDto>>(_mapper.Map<List<GoodsReturnNoteDto>>(goodsReturnNotes),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");

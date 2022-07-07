@@ -10,7 +10,10 @@ namespace Infrastructure.Specifications
 {
     public class StockSpecs : BaseSpecification<Stock>
     {
-        public StockSpecs(PaginationFilter filter)
+        public StockSpecs(TransactionFormFilter filter)
+            : base(c => c.Item.ProductName.Contains(filter.Name != null ? filter.Name : "")
+            && c.Warehouse.Name.Contains(filter.Warehouse != null ? filter.Warehouse : "")
+            )
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

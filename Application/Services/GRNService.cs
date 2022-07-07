@@ -132,15 +132,26 @@ namespace Application.Services
             }
         }
 
-        public async Task<PaginationResponse<List<GRNDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<GRNDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new GRNSpecs(filter);
+            var docDate = new List<DateTime?>();
+            var states = new List<DocumentStatus?>();
+            if (filter.DocDate != null)
+            {
+                docDate.Add(filter.DocDate);
+            }
+            if (filter.State != null)
+            {
+                states.Add(filter.State);
+            }
+
+            var specification = new GRNSpecs(docDate, states, filter);
             var gRN = await _unitOfWork.GRN.GetAll(specification);
 
             if (gRN.Count() == 0)
                 return new PaginationResponse<List<GRNDto>>(_mapper.Map<List<GRNDto>>(gRN), "List is empty");
 
-            var totalRecords = await _unitOfWork.GRN.TotalRecord();
+            var totalRecords = await _unitOfWork.GRN.TotalRecord(specification);
 
             return new PaginationResponse<List<GRNDto>>(_mapper.Map<List<GRNDto>>(gRN),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");

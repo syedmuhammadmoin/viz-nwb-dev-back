@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IGRNService : ICrudService<CreateGRNDto, GRNDto, int, PaginationFilter>
+    public interface IGRNService : ICrudService<CreateGRNDto, GRNDto, int, TransactionFormFilter>
     {
         Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
     }

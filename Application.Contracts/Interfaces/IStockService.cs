@@ -11,6 +11,6 @@ namespace Application.Contracts.Interfaces
 {
     public interface IStockService
     {
-        Task<PaginationResponse<List<StockDto>>> GetAllAsync(PaginationFilter filter);
+        Task<PaginationResponse<List<StockDto>>> GetAllAsync(TransactionFormFilter filter);
     }
 }
