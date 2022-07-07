@@ -116,15 +116,27 @@ namespace Application.Services
                     return new Response<bool>("Model is empty");
                 }
 
+                var getEmployee = await _unitOfWork.Employee.GetById(model.EmployeeId);
+
+                if (model.EmployeeId != getEmployee.Id)
+                {
+                    return new Response<bool>("Only Employees can be a user");
+                }
+
                 //Checking password
                 if (model.Password != model.ConfirmPassword)
                     return new Response<bool>("Confirm password doesn't match with the password");
 
+               //setting Employee Email from user
+                getEmployee.setEmployeeEmail(model.Email);
+                await _unitOfWork.SaveAsync();
+
                 //Registering user
                 var user = new User
                 {
+                    EmployeeId = getEmployee.Id,
                     Email = model.Email,
-                    UserName = model.UserName,
+                    UserName = model.Email,
                 };
 
                 var userCreated = await _userManager.CreateAsync(user, model.Password);
@@ -174,13 +186,13 @@ namespace Application.Services
             return new Response<IEnumerable<User>>(users, currentUser);
         }
 
-        public async Task<Response<EditUserDto>> GetUserAsync(string id)
+        public async Task<Response<UserDto>> GetUserAsync(string id)
         {
             //Getting user by id
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return new Response<EditUserDto>("User not found");
+                return new Response<UserDto>("User not found");
             }
 
             //Declaring user roles list
@@ -204,14 +216,15 @@ namespace Application.Services
             }
 
             //Setting user model
-            var model = new EditUserDto()
+            var model = new UserDto()
             {
+                EmployeeId = user.EmployeeId,
                 UserId = id,
                 UserName = user.UserName,
                 Email = user.Email,
                 UserRoles = viewModel
             };
-            return new Response<EditUserDto>(model, "Returning Roles");
+            return new Response<UserDto>(model, "Returning Roles");
         }
 
         public async Task<Response<bool>> UpdateUserAsync(string id, EditUserDto model)

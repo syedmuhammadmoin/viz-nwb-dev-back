@@ -16,8 +16,6 @@ namespace Infrastructure.Seeds
         {
             var defaultUser = new User
             {
-                FirstName = "Naveed",
-                LastName = "Karim",
                 UserName = "Naveed",
                 Email = "superadmin@vizalys.com",
                 EmailConfirmed = true

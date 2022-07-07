@@ -10,7 +10,7 @@ namespace Application.Contracts.DTOs
     public class RegisterUserDto
     {
         [Required]
-        public string UserName { get; set; }
+        public int EmployeeId { get; set; }
         [Required]
         [StringLength(50)]
         [EmailAddress]
@@ -68,5 +68,19 @@ namespace Application.Contracts.DTOs
         [Required]
         [StringLength(50, MinimumLength = 5)]
         public string ConfirmPassword { get; set; }
+    }
+
+    public class UserDto
+    {
+        public int? EmployeeId { get; set; }
+        public string UserId { get; set; }
+        [Required]
+        [StringLength(50, MinimumLength = 3)]
+        public string UserName { get; set; }
+        [Required]
+        [StringLength(50)]
+        [EmailAddress]
+        public string Email { get; set; }
+        public IList<UserRolesDto> UserRoles { get; set; }
     }
 }
