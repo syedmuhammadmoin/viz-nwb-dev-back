@@ -26,7 +26,7 @@ namespace Application.Contracts.DTOs
     }
     public class EditUserDto
     {
-        public string UserId { get; set; }
+        public string EmployeeId { get; set; }
         [Required]
         [StringLength(50, MinimumLength = 3)]
         public string UserName { get; set; }
