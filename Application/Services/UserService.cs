@@ -213,7 +213,7 @@ namespace Application.Services
             //Setting user model
             var model = new EditUserDto()
             {
-                UserId = id,
+                EmployeeId = id,
                 UserName = user.UserName,
                 Email = user.Email,
                 UserRoles = viewModel
