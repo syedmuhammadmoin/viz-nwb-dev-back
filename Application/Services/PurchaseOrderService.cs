@@ -42,19 +42,33 @@ namespace Application.Services
             }
         }
 
-        public async Task<PaginationResponse<List<PurchaseOrderDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<PurchaseOrderDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new PurchaseOrderSpecs(filter);
+            var docDate = new List<DateTime?>();
+            var dueDate = new List<DateTime?>();
+            var states = new List<DocumentStatus?>();
+            if (filter.DocDate != null)
+            {
+                docDate.Add(filter.DocDate);
+            }
+            if (filter.DueDate != null)
+            {
+                dueDate.Add(filter.DueDate);
+            }
+            if (filter.State != null)
+            {
+                states.Add(filter.State);
+            }
+            var specification = new PurchaseOrderSpecs(docDate, dueDate, states, filter);
             var po = await _unitOfWork.PurchaseOrder.GetAll(specification);
 
             if (po.Count() == 0)
                 return new PaginationResponse<List<PurchaseOrderDto>>(_mapper.Map<List<PurchaseOrderDto>>(po), "List is empty");
 
-            var totalRecords = await _unitOfWork.PurchaseOrder.TotalRecord();
+            var totalRecords = await _unitOfWork.PurchaseOrder.TotalRecord(specification);
 
             return new PaginationResponse<List<PurchaseOrderDto>>(_mapper.Map<List<PurchaseOrderDto>>(po),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
-
         }
 
         public async Task<Response<PurchaseOrderDto>> GetByIdAsync(int id)
