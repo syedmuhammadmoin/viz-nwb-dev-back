@@ -574,8 +574,8 @@ namespace Application.Services
             if ((data.State == DocumentStatus.Partial || data.State == DocumentStatus.Paid))
             {
                 //Get reconciled goodsReturnNote
-                var goodsReturnNoteReconcileRecord = _unitOfWork.GRNToGoodsReturnNoteReconcile
-                    .Find(new GRNToGoodsReturnNoteReconcileSpecs(data.Id))
+                var goodsReturnNoteReconcileRecord = _unitOfWork.GRNToGoodsReturnNoteLineReconcile
+                    .Find(new GRNToGoodsReturnNoteLineReconcileSpecs(data.Id))
                     .GroupBy(x => new { x.GoodsReturnNoteId, x.GoodsReturnNote.DocNo })
                     .Where(g => g.Count() >= 1)
                     .Select(y => new
@@ -622,8 +622,8 @@ namespace Application.Services
             foreach (var line in data.GRNLines)
             {
                 // Checking if given amount is greater than unreconciled document amount
-                line.ReceivedQuantity = _unitOfWork.GRNToGoodsReturnNoteReconcile
-                    .Find(new GRNToGoodsReturnNoteReconcileSpecs(data.Id, line.Id, line.ItemId, line.WarehouseId))
+                line.ReceivedQuantity = _unitOfWork.GRNToGoodsReturnNoteLineReconcile
+                    .Find(new GRNToGoodsReturnNoteLineReconcileSpecs(data.Id, line.Id, line.ItemId, line.WarehouseId))
                     .Sum(p => p.Quantity);
 
                 line.PendingQuantity = line.Quantity - line.ReceivedQuantity;

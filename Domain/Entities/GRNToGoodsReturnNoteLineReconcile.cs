@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class GRNToGoodsReturnNoteReconcile : BaseEntity<int>
+    public class GRNToGoodsReturnNoteLineReconcile : BaseEntity<int>
     {
         public int ItemId { get; private set; }
         [ForeignKey("ItemId")]
@@ -30,7 +30,7 @@ namespace Domain.Entities
         [ForeignKey("WarehouseId")]
         public Warehouse Warehouse { get; private set; }
 
-        public GRNToGoodsReturnNoteReconcile(int itemId, int quantity, int goodsReturnNoteId, int gRNId, int goodsReturnNoteLineId, int gRNLineId, int warehouse)
+        public GRNToGoodsReturnNoteLineReconcile(int itemId, int quantity, int goodsReturnNoteId, int gRNId, int goodsReturnNoteLineId, int gRNLineId, int warehouse)
         {
             ItemId = itemId;
             Quantity = quantity;
@@ -40,7 +40,7 @@ namespace Domain.Entities
             GRNLineId = gRNLineId;
             WarehouseId = warehouse;
         }
-        protected GRNToGoodsReturnNoteReconcile()
+        protected GRNToGoodsReturnNoteLineReconcile()
         {
 
         }

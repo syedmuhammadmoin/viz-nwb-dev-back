@@ -63,7 +63,7 @@ namespace Infrastructure.Uow
         public IPOToGRNLineReconcileRepository POToGRNLineReconcile { get; private set; }
         public IRequisitionToIssuanceLineReconcileRepository RequisitionToIssuanceLineReconcile { get; private set; }
         public IGoodsReturnNoteRepository GoodsReturnNote { get; private set; }
-        public IGRNToGoodsReturnNoteReconcileRepository GRNToGoodsReturnNoteReconcile { get; private set; }
+        public IGRNToGoodsReturnNoteLineReconcileRepository GRNToGoodsReturnNoteLineReconcile { get; private set; }
         public IIssuanceToGRNLineReconcileRepository IssuanceToGRNLineReconcile { get; private set; }
 
 
@@ -113,7 +113,7 @@ namespace Infrastructure.Uow
             POToGRNLineReconcile = new POToGRNLineReconcileRepository(context);
             RequisitionToIssuanceLineReconcile = new RequisitionToIssuanceLineReconcileRepository(context);
             GoodsReturnNote = new GoodsReturnNoteRepository(context);
-            GRNToGoodsReturnNoteReconcile = new GRNToGoodsReturnNoteReconcileRepository(context);
+            GRNToGoodsReturnNoteLineReconcile = new GRNToGoodsReturnNoteLineReconcileRepository(context);
             IssuanceToGRNLineReconcile = new IssuanceToGRNLineReconcileRepository(context);
         }
 

@@ -340,8 +340,8 @@ namespace Application.Services
         public Response<bool> CheckValidation(int grnId, GRNLines grnLine, GoodsReturnNoteLines goodsReturnNoteLine)
         {
             // Checking if given amount is greater than unreconciled document amount
-            var reconciledGRNQty = _unitOfWork.GRNToGoodsReturnNoteReconcile
-                .Find(new GRNToGoodsReturnNoteReconcileSpecs(grnId, grnLine.Id, grnLine.ItemId, grnLine.WarehouseId))
+            var reconciledGRNQty = _unitOfWork.GRNToGoodsReturnNoteLineReconcile
+                .Find(new GRNToGoodsReturnNoteLineReconcileSpecs(grnId, grnLine.Id, grnLine.ItemId, grnLine.WarehouseId))
                 .Sum(p => p.Quantity);
 
             var unreconciledGRNQty = grnLine.Quantity - reconciledGRNQty;
@@ -373,14 +373,14 @@ namespace Application.Services
                     return new Response<bool>(checkValidation.Message);
 
                 //Adding in Reconcilation table
-                var recons = new GRNToGoodsReturnNoteReconcile(goodsReturnNoteLine.ItemId, goodsReturnNoteLine.Quantity,
+                var recons = new GRNToGoodsReturnNoteLineReconcile(goodsReturnNoteLine.ItemId, goodsReturnNoteLine.Quantity,
                    goodsReturnNoteId, grnId, goodsReturnNoteLine.Id, getGRNLine.Id, goodsReturnNoteLine.WarehouseId);
-                await _unitOfWork.GRNToGoodsReturnNoteReconcile.Add(recons);
+                await _unitOfWork.GRNToGoodsReturnNoteLineReconcile.Add(recons);
                 await _unitOfWork.SaveAsync();
 
                 //Get total recon quantity
-                var reconciledTotalGRNQty = _unitOfWork.GRNToGoodsReturnNoteReconcile
-                    .Find(new GRNToGoodsReturnNoteReconcileSpecs(grnId, getGRNLine.Id, getGRNLine.ItemId, getGRNLine.WarehouseId))
+                var reconciledTotalGRNQty = _unitOfWork.GRNToGoodsReturnNoteLineReconcile
+                    .Find(new GRNToGoodsReturnNoteLineReconcileSpecs(grnId, getGRNLine.Id, getGRNLine.ItemId, getGRNLine.WarehouseId))
                     .Sum(p => p.Quantity);
 
                 // Updationg PO line status

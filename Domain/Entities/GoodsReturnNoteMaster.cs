@@ -16,7 +16,7 @@ namespace Domain.Entities
         public virtual BusinessPartner Vendor { get; private set; }
         [MaxLength(20)]
         public string DocNo { get; private set; }
-        public DateTime GRTNDate { get; private set; }
+        public DateTime ReturnDate { get; private set; }
         [MaxLength(20)]
         public string Contact { get; private set; }
         [Column(TypeName = "decimal(18,2)")]

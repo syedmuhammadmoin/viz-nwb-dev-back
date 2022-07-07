@@ -13,7 +13,7 @@ namespace Infrastructure.Specifications
     {
         public GoodsReturnNoteSpecs(List<DateTime?> docDate,
             List<DocumentStatus?> states, TransactionFormFilter filter)
-            : base(x => (docDate.Count() > 0 ? docDate.Contains(x.GRTNDate) : true)
+            : base(x => (docDate.Count() > 0 ? docDate.Contains(x.ReturnDate) : true)
             && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
             && x.Vendor.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
             && (states.Count() > 0 ? states.Contains(x.Status.State) : true))

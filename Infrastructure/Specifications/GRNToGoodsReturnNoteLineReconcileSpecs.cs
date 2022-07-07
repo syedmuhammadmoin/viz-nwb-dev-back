@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Specifications
 {
-    public class GRNToGoodsReturnNoteReconcileSpecs : BaseSpecification<GRNToGoodsReturnNoteReconcile>
+    public class GRNToGoodsReturnNoteLineReconcileSpecs : BaseSpecification<GRNToGoodsReturnNoteLineReconcile>
     {
-        public GRNToGoodsReturnNoteReconcileSpecs(int grnId, int grnLineId, int itemId, int warehouseId)
+        public GRNToGoodsReturnNoteLineReconcileSpecs(int grnId, int grnLineId, int itemId, int warehouseId)
             : base(x => x.GRNId == grnId
             && x.GRNLineId == grnLineId
             && x.ItemId == itemId
@@ -18,7 +18,7 @@ namespace Infrastructure.Specifications
             ApplyAsNoTracking();
         }
 
-        public GRNToGoodsReturnNoteReconcileSpecs(int id)
+        public GRNToGoodsReturnNoteLineReconcileSpecs(int id)
             : base(x => x.GRNId == id)
         {
             AddInclude(x => x.GoodsReturnNote);
