@@ -10,8 +10,7 @@ namespace Application.Contracts.DTOs
     public class RegisterUserDto
     {
         [Required]
-        [StringLength(50, MinimumLength = 3)]
-        public string UserName { get; set; }
+        public int EmployeeId { get; set; }
         [Required]
         [StringLength(50)]
         [EmailAddress]
