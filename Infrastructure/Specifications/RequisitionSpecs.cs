@@ -11,7 +11,12 @@ namespace Infrastructure.Specifications
 {
     public class RequisitionSpecs : BaseSpecification<RequisitionMaster>
     {
-        public RequisitionSpecs(PaginationFilter filter)
+        public RequisitionSpecs(List<DateTime?> docDate,
+            List<DocumentStatus?> states, TransactionFormFilter filter)
+            : base(x => (docDate.Count() > 0 ? docDate.Contains(x.RequisitionDate) : true)
+            && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
+            && x.BusinessPartner.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
+            && (states.Count() > 0 ? states.Contains(x.Status.State) : true))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
