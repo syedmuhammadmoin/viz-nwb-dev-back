@@ -34,7 +34,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.GoodsReturnNoteClaims.Create, Permissions.GoodsReturnNoteClaims.View, Permissions.GoodsReturnNoteClaims.Delete, Permissions.GoodsReturnNoteClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<GoodsReturnNoteDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<GoodsReturnNoteDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var results = await _goodsReturnNoteService.GetAllAsync(filter);
             if (results.IsSuccess)

@@ -24,7 +24,7 @@ namespace Vizalys.Api.Controllers
         }
         [ClaimRequirement("Permission", new string[] { Permissions.StockClaims.View})]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<StockDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<StockDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var results = await _stockService.GetAllAsync(filter);
             if (results.IsSuccess)
