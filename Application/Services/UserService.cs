@@ -132,7 +132,12 @@ namespace Application.Services
                 await _unitOfWork.SaveAsync();
 
                 //Registering user
-                var user = new User(getEmployee.Id); 
+                var user = new User
+                {
+                    EmployeeId = getEmployee.Id,
+                    Email = model.Email,
+                    UserName = model.Email,
+                };
 
                 var userCreated = await _userManager.CreateAsync(user, model.Password);
 
