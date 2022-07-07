@@ -52,15 +52,18 @@ namespace Domain.Entities
         [MaxLength(80)]
         public string DutyShift { get; private set; }
         public int? NoOfIncrements { get; private set; }
+        public string Email { get; private set; }
         public bool isActive { get; private set; }
 
         public void setBusinessPartnerId(int businessPartnerId) 
         {
             BusinessPartnerId = businessPartnerId;
         }
-        
+        public void setEmployeeEmail(string email)
+        {
+            Email = email;
+        }
 
-        
         protected Employee()
         {
 
