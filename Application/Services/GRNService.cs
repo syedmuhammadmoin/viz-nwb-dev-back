@@ -166,10 +166,7 @@ namespace Application.Services
 
             var grnDto = _mapper.Map<GRNDto>(gRN);
 
-            if ((grnDto.State == DocumentStatus.Partial || grnDto.State == DocumentStatus.Paid))
-            {
-                return new Response<GRNDto>(MapToValue(grnDto), "Returning value");
-            }
+            var mappingValue = new Response<GRNDto>(MapToValue(grnDto), "Returning value");
 
             grnDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.GRN)).FirstOrDefault();
@@ -574,30 +571,34 @@ namespace Application.Services
 
             var getReference = new List<ReferncesDto>();
 
-            //Get reconciled goodsReturnNote
-            var goodsReturnNoteReconcileRecord = _unitOfWork.GRNToGoodsReturnNoteReconcile
-                .Find(new GRNToGoodsReturnNoteReconcileSpecs(data.Id))
-                .GroupBy(x => new { x.GoodsReturnNoteId, x.GoodsReturnNote.DocNo })
-                .Where(g => g.Count() >= 1)
-                .Select(y => new
-                {
-                    GoodsReturnNoteId = y.Key.GoodsReturnNoteId,
-                    DocNo = y.Key.DocNo,
-                })
-                .ToList();
-
-            if (goodsReturnNoteReconcileRecord.Any())
+            if ((data.State == DocumentStatus.Partial || data.State == DocumentStatus.Paid))
             {
-                foreach (var line in goodsReturnNoteReconcileRecord)
-                {
-                    getReference.Add(new ReferncesDto
+                //Get reconciled goodsReturnNote
+                var goodsReturnNoteReconcileRecord = _unitOfWork.GRNToGoodsReturnNoteReconcile
+                    .Find(new GRNToGoodsReturnNoteReconcileSpecs(data.Id))
+                    .GroupBy(x => new { x.GoodsReturnNoteId, x.GoodsReturnNote.DocNo })
+                    .Where(g => g.Count() >= 1)
+                    .Select(y => new
                     {
-                        DocId = line.GoodsReturnNoteId,
-                        DocNo = line.DocNo,
-                        DocType = DocType.GoodsReturnNote,
-                    });
+                        GoodsReturnNoteId = y.Key.GoodsReturnNoteId,
+                        DocNo = y.Key.DocNo,
+                    })
+                    .ToList();
+
+                if (goodsReturnNoteReconcileRecord.Any())
+                {
+                    foreach (var line in goodsReturnNoteReconcileRecord)
+                    {
+                        getReference.Add(new ReferncesDto
+                        {
+                            DocId = line.GoodsReturnNoteId,
+                            DocNo = line.DocNo,
+                            DocType = DocType.GoodsReturnNote,
+                        });
+                    }
                 }
             }
+            
 
             //Get bill reference in GRN
             var getBillForGRNReference = _unitOfWork.Bill
