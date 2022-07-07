@@ -560,6 +560,9 @@ namespace Application.Services
 
         private GRNDto MapToValue(GRNDto data)
         {
+
+            var getReference = new List<ReferncesDto>();
+
             //Get reconciled goodsReturnNote
             var goodsReturnNoteReconcileRecord = _unitOfWork.GRNToGoodsReturnNoteReconcile
                 .Find(new GRNToGoodsReturnNoteReconcileSpecs(data.Id))
@@ -572,8 +575,25 @@ namespace Application.Services
                 })
                 .ToList();
 
-            // Adding in grns in references list
-            var getReference = new List<ReferncesDto>();
+            //Get bill reference in GRN
+            var getBillForGRNReference = _unitOfWork.Bill
+               .Find(new BillSpecs(data.Id, true)).FirstOrDefault();
+
+
+
+
+            // Adding in Bill reference in GRN 
+
+            if (getBillForGRNReference != null)
+            {
+                getReference.Add(new ReferncesDto
+                {
+                    DocId = getBillForGRNReference.Id,
+                    DocNo = getBillForGRNReference.DocNo,
+                    DocType = DocType.Bill,
+                });
+            }
+
             if (goodsReturnNoteReconcileRecord.Any())
             {
                 foreach (var line in goodsReturnNoteReconcileRecord)
@@ -586,6 +606,7 @@ namespace Application.Services
                     });
                 }
             }
+
             data.References = getReference;
 
             // Get pending & received quantity...
