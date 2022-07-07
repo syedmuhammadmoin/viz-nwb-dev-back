@@ -20,6 +20,7 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Status);
             AddInclude(i => i.Vendor);
             AddInclude(i => i.PurchaseOrder);
+            AddInclude(i => i.Issuance);
             AddInclude("GRNLines.Item");
             AddInclude("GRNLines.Warehouse");
         }
@@ -37,6 +38,7 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Status);
                 AddInclude(i => i.Vendor);
                 AddInclude(i => i.PurchaseOrder);
+                AddInclude(i => i.Issuance);
                 AddInclude("GRNLines.Item");
                 AddInclude("GRNLines.Warehouse");
             }
