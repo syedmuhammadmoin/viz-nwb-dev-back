@@ -75,7 +75,7 @@ namespace Application.Services
 
             var creditNoteDto = _mapper.Map<CreditNoteDto>(crn);
             //Returning
-            ReturningRemarks(creditNoteDto, DocType.Invoice); 
+            ReturningRemarks(creditNoteDto, DocType.CreditNote); 
 
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.CreditNote)).FirstOrDefault();
             if ((creditNoteDto.State == DocumentStatus.Unpaid || creditNoteDto.State == DocumentStatus.Partial || creditNoteDto.State == DocumentStatus.Paid) && creditNoteDto.TransactionId != null)
