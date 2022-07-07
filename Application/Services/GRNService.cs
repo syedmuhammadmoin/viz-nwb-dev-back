@@ -575,25 +575,6 @@ namespace Application.Services
                 })
                 .ToList();
 
-            //Get bill reference in GRN
-            var getBillForGRNReference = _unitOfWork.Bill
-               .Find(new BillSpecs(data.Id, true)).FirstOrDefault();
-
-
-
-
-            // Adding in Bill reference in GRN 
-
-            if (getBillForGRNReference != null)
-            {
-                getReference.Add(new ReferncesDto
-                {
-                    DocId = getBillForGRNReference.Id,
-                    DocNo = getBillForGRNReference.DocNo,
-                    DocType = DocType.Bill,
-                });
-            }
-
             if (goodsReturnNoteReconcileRecord.Any())
             {
                 foreach (var line in goodsReturnNoteReconcileRecord)
@@ -605,6 +586,22 @@ namespace Application.Services
                         DocType = DocType.GoodsReturnNote,
                     });
                 }
+            }
+
+            //Get bill reference in GRN
+            var getBillForGRNReference = _unitOfWork.Bill
+               .Find(new BillSpecs(data.Id, true)).FirstOrDefault();
+
+            // Adding in Bill reference in GRN 
+
+            if (getBillForGRNReference != null)
+            {
+                data.BillReference = (new ReferncesDto
+                {
+                    DocId = getBillForGRNReference.Id,
+                    DocNo = getBillForGRNReference.DocNo,
+                    DocType = DocType.Bill,
+                });
             }
 
             data.References = getReference;
