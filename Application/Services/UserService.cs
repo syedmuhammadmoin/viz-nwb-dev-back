@@ -111,16 +111,9 @@ namespace Application.Services
             _unitOfWork.CreateTransaction();
             try
             {
-                var getEmployee = await _unitOfWork.Employee.GetById(model.EmployeeId);
-               
                 if (model == null)
                 {
                     return new Response<bool>("Model is empty");
-                }
-
-                if (model.EmployeeId != getEmployee.Id)
-                {
-                    return new Response<bool>("User can only be employees");
                 }
 
                 //Checking password
@@ -131,7 +124,7 @@ namespace Application.Services
                 var user = new User
                 {
                     Email = model.Email,
-                    UserName = getEmployee.Name,
+                    UserName = model.UserName,
                 };
 
                 var userCreated = await _userManager.CreateAsync(user, model.Password);
@@ -213,7 +206,7 @@ namespace Application.Services
             //Setting user model
             var model = new EditUserDto()
             {
-                EmployeeId = id,
+                UserId = id,
                 UserName = user.UserName,
                 Email = user.Email,
                 UserRoles = viewModel

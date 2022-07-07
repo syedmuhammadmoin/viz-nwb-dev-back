@@ -10,7 +10,7 @@ namespace Application.Contracts.DTOs
     public class RegisterUserDto
     {
         [Required]
-        public int EmployeeId { get; set; }
+        public string UserName { get; set; }
         [Required]
         [StringLength(50)]
         [EmailAddress]
@@ -26,7 +26,7 @@ namespace Application.Contracts.DTOs
     }
     public class EditUserDto
     {
-        public string EmployeeId { get; set; }
+        public string UserId { get; set; }
         [Required]
         [StringLength(50, MinimumLength = 3)]
         public string UserName { get; set; }
