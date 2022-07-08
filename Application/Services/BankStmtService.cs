@@ -70,6 +70,11 @@ namespace Application.Services
                 _unitOfWork.Rollback();
                 return new Response<BankStmtDto>("All fields are required in spreadsheet");
             }
+            catch (InvalidCastException)
+            {
+                _unitOfWork.Rollback();
+                return new Response<BankStmtDto>("Date Format should be DD/MM/YYYY");
+            }
             catch (Exception ex)
             {
                 _unitOfWork.Rollback();
@@ -146,6 +151,7 @@ namespace Application.Services
                     var rowCount = worksheet.Dimension.Rows;
                     for (int row = 2; row <= rowCount; row++)
                     {
+                        var checkDate = ((DateTime)worksheet.Cells[row, 2].Value);
                         
                         list.Add(new CreateBankStmtLinesDto()
                         {
