@@ -16,7 +16,7 @@ namespace Application.Contracts.Interfaces
         Task<Response<bool>> LoginUserAsync(LoginDto model);
         Task<Response<bool>> RegisterUserAsync(RegisterUserDto model);
         Task<Response<IEnumerable<User>>> GetUsersAsync();
-        Task<Response<EditUserDto>> GetUserAsync(string id);
+        Task<Response<UserDto>> GetUserAsync(string id);
         Task<Response<bool>> UpdateUserAsync(string id, EditUserDto data);
         Task<Response<bool>> ResetUserPassword(string id, ResetPasswordDto data);
         Task<Response<bool>> ChangePassword(string id, ChangePasswordDto model);

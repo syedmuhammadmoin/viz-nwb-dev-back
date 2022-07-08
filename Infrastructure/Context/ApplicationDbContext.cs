@@ -78,6 +78,10 @@ namespace Infrastructure.Context
         public DbSet<Stock> Stock { get; set; }
         public DbSet<POToGRNLineReconcile> POToGRNLineReconcile { get; set; }
         public DbSet<RequisitionToIssuanceLineReconcile> RequisitionToIssuanceLineReconcile { get; set; }
+        public DbSet<GoodsReturnNoteMaster> GoodsReturnNoteMaster { get; set; }
+        public DbSet<GoodsReturnNoteLines> GoodsReturnNoteLines { get; set; }
+        public DbSet<GRNToGoodsReturnNoteLineReconcile> GRNToGoodsReturnNoteLineReconcile { get; set; }
+        public DbSet<IssuanceToGRNLineReconcile> IssuanceToGRNLineReconcile { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -172,6 +176,12 @@ namespace Infrastructure.Context
             modelBuilder.Entity<IssuanceLines>()
             .HasOne(tc => tc.IssuanceMaster)
             .WithMany(c => c.IssuanceLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //GoodsReturnNote
+            modelBuilder.Entity<GoodsReturnNoteLines>()
+            .HasOne(tc => tc.GoodsReturnNoteMaster)
+            .WithMany(c => c.GoodsReturnNoteLines)
             .OnDelete(DeleteBehavior.Cascade);
 
             //Changing Identity users and roles tables name

@@ -35,7 +35,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.GRNClaims.Create, Permissions.GRNClaims.View, Permissions.GRNClaims.Delete, Permissions.GRNClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<GRNDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<GRNDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var results = await _gRNService.GetAllAsync(filter);
             if (results.IsSuccess)

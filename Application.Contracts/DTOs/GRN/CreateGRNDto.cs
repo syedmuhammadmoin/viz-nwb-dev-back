@@ -18,8 +18,8 @@ namespace Application.Contracts.DTOs
         public string Contact { get; set; }
         [Required]
         public int CampusId { get; set; }
-        [Required]
-        public int PurchaseOrderId { get; set; }
+        public int? PurchaseOrderId { get; set; }
+        public int? IssuanceId { get; set; }
         [Required]
         public bool isSubmit { get; set; }
         public virtual List<CreateGRNLinesDto> GRNLines { get; set; }

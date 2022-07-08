@@ -1132,6 +1132,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("EarnedLeaves")
                         .HasColumnType("int");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Faculty")
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
@@ -1288,7 +1291,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("EstimatedBudgetMaster");
                 });
 
-            modelBuilder.Entity("Domain.Entities.GRNLines", b =>
+            modelBuilder.Entity("Domain.Entities.GoodsReturnNoteLines", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1346,6 +1349,140 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId");
 
+                    b.ToTable("GoodsReturnNoteLines");
+                });
+
+            modelBuilder.Entity("Domain.Entities.GoodsReturnNoteMaster", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CampusId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Contact")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DocNo")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("GRNId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ReturnDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalBeforeTax")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalTax")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("VendorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampusId");
+
+                    b.HasIndex("GRNId");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("VendorId");
+
+                    b.ToTable("GoodsReturnNoteMaster");
+                });
+
+            modelBuilder.Entity("Domain.Entities.GRNLines", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MasterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("SubTotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Tax")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("WarehouseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("MasterId");
+
+                    b.HasIndex("WarehouseId");
+
                     b.ToTable("GRNLines");
                 });
 
@@ -1381,6 +1518,9 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("IssuanceId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -1388,7 +1528,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("PurchaseOrderId")
+                    b.Property<int?>("PurchaseOrderId")
                         .HasColumnType("int");
 
                     b.Property<int>("StatusId")
@@ -1410,6 +1550,8 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CampusId");
 
+                    b.HasIndex("IssuanceId");
+
                     b.HasIndex("PurchaseOrderId");
 
                     b.HasIndex("StatusId");
@@ -1417,6 +1559,69 @@ namespace Infrastructure.Migrations
                     b.HasIndex("VendorId");
 
                     b.ToTable("GRNMaster");
+                });
+
+            modelBuilder.Entity("Domain.Entities.GRNToGoodsReturnNoteLineReconcile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("GRNId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GRNLineId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GoodsReturnNoteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GoodsReturnNoteLineId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WarehouseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GRNId");
+
+                    b.HasIndex("GRNLineId");
+
+                    b.HasIndex("GoodsReturnNoteId");
+
+                    b.HasIndex("GoodsReturnNoteLineId");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.ToTable("GRNToGoodsReturnNoteLineReconcile");
                 });
 
             modelBuilder.Entity("Domain.Entities.InvoiceLines", b =>
@@ -1604,6 +1809,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<int>("WarehouseId")
                         .HasColumnType("int");
 
@@ -1673,6 +1881,69 @@ namespace Infrastructure.Migrations
                     b.HasIndex("StatusId");
 
                     b.ToTable("IssuanceMaster");
+                });
+
+            modelBuilder.Entity("Domain.Entities.IssuanceToGRNLineReconcile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("GRNId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GRNLineId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("IssuanceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IssuanceLineId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WarehouseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GRNId");
+
+                    b.HasIndex("GRNLineId");
+
+                    b.HasIndex("IssuanceId");
+
+                    b.HasIndex("IssuanceLineId");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.ToTable("IssuanceToGRNLineReconcile");
                 });
 
             modelBuilder.Entity("Domain.Entities.JournalEntryLines", b =>
@@ -3830,13 +4101,8 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("FirstName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LastName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<int?>("EmployeeId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -3872,6 +4138,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -4716,6 +4984,68 @@ namespace Infrastructure.Migrations
                     b.Navigation("PreviousBudget");
                 });
 
+            modelBuilder.Entity("Domain.Entities.GoodsReturnNoteLines", b =>
+                {
+                    b.HasOne("Domain.Entities.Product", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.GoodsReturnNoteMaster", "GoodsReturnNoteMaster")
+                        .WithMany("GoodsReturnNoteLines")
+                        .HasForeignKey("MasterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Warehouse", "Warehouse")
+                        .WithMany()
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("GoodsReturnNoteMaster");
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("Domain.Entities.GoodsReturnNoteMaster", b =>
+                {
+                    b.HasOne("Domain.Entities.Campus", "Campus")
+                        .WithMany()
+                        .HasForeignKey("CampusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.GRNMaster", "GRN")
+                        .WithMany()
+                        .HasForeignKey("GRNId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.BusinessPartner", "Vendor")
+                        .WithMany()
+                        .HasForeignKey("VendorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Campus");
+
+                    b.Navigation("GRN");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("Vendor");
+                });
+
             modelBuilder.Entity("Domain.Entities.GRNLines", b =>
                 {
                     b.HasOne("Domain.Entities.Product", "Item")
@@ -4751,11 +5081,15 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.IssuanceMaster", "Issuance")
+                        .WithMany()
+                        .HasForeignKey("IssuanceId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.PurchaseOrderMaster", "PurchaseOrder")
                         .WithMany()
                         .HasForeignKey("PurchaseOrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
                         .WithMany()
@@ -4771,11 +5105,64 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Campus");
 
+                    b.Navigation("Issuance");
+
                     b.Navigation("PurchaseOrder");
 
                     b.Navigation("Status");
 
                     b.Navigation("Vendor");
+                });
+
+            modelBuilder.Entity("Domain.Entities.GRNToGoodsReturnNoteLineReconcile", b =>
+                {
+                    b.HasOne("Domain.Entities.GRNMaster", "GRN")
+                        .WithMany()
+                        .HasForeignKey("GRNId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.GRNLines", "GRNLines")
+                        .WithMany()
+                        .HasForeignKey("GRNLineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.GoodsReturnNoteMaster", "GoodsReturnNote")
+                        .WithMany()
+                        .HasForeignKey("GoodsReturnNoteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.GoodsReturnNoteLines", "GoodsReturnNoteLines")
+                        .WithMany()
+                        .HasForeignKey("GoodsReturnNoteLineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Product", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Warehouse", "Warehouse")
+                        .WithMany()
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("GRN");
+
+                    b.Navigation("GRNLines");
+
+                    b.Navigation("GoodsReturnNote");
+
+                    b.Navigation("GoodsReturnNoteLines");
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("Domain.Entities.InvoiceLines", b =>
@@ -4912,6 +5299,57 @@ namespace Infrastructure.Migrations
                     b.Navigation("Requisition");
 
                     b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("Domain.Entities.IssuanceToGRNLineReconcile", b =>
+                {
+                    b.HasOne("Domain.Entities.GRNMaster", "GRN")
+                        .WithMany()
+                        .HasForeignKey("GRNId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.GRNLines", "GRNLines")
+                        .WithMany()
+                        .HasForeignKey("GRNLineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.IssuanceMaster", "Issuance")
+                        .WithMany()
+                        .HasForeignKey("IssuanceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.IssuanceLines", "IssuanceLines")
+                        .WithMany()
+                        .HasForeignKey("IssuanceLineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Product", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Warehouse", "Warehouse")
+                        .WithMany()
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("GRN");
+
+                    b.Navigation("GRNLines");
+
+                    b.Navigation("Issuance");
+
+                    b.Navigation("IssuanceLines");
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("Domain.Entities.JournalEntryLines", b =>
@@ -5495,6 +5933,16 @@ namespace Infrastructure.Migrations
                     b.Navigation("PaymentLedger");
                 });
 
+            modelBuilder.Entity("Domain.Entities.User", b =>
+                {
+                    b.HasOne("Domain.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Employee");
+                });
+
             modelBuilder.Entity("Domain.Entities.Warehouse", b =>
                 {
                     b.HasOne("Domain.Entities.Campus", "Campus")
@@ -5619,6 +6067,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.EstimatedBudgetMaster", b =>
                 {
                     b.Navigation("EstimatedBudgetLines");
+                });
+
+            modelBuilder.Entity("Domain.Entities.GoodsReturnNoteMaster", b =>
+                {
+                    b.Navigation("GoodsReturnNoteLines");
                 });
 
             modelBuilder.Entity("Domain.Entities.GRNMaster", b =>

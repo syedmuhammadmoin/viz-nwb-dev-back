@@ -66,11 +66,28 @@ namespace Application.Services
                         getGRN.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
-                            var reconciled = await ReconcilePOLines(getGRN.Id, getGRN.PurchaseOrderId, getGRN.GRNLines);
-                            if (!reconciled.IsSuccess)
+                            foreach (var line in getGRN.GRNLines)
                             {
-                                _unitOfWork.Rollback();
-                                return new Response<bool>(reconciled.Message);
+                                line.setStatus(DocumentStatus.Unreconciled);
+                            }
+
+                            if (getGRN.PurchaseOrderId != null)
+                            {
+                                var reconciled = await ReconcilePOLines(getGRN.Id, (int)getGRN.PurchaseOrderId, getGRN.GRNLines);
+                                if (!reconciled.IsSuccess)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>(reconciled.Message);
+                                }
+                            }
+                            else
+                            {
+                                var reconciled = await ReconcileIssuanceLines(getGRN.Id, (int)getGRN.IssuanceId, getGRN.GRNLines);
+                                if (!reconciled.IsSuccess)
+                                {
+                                    _unitOfWork.Rollback();
+                                    return new Response<bool>(reconciled.Message);
+                                }
                             }
                             await _unitOfWork.SaveAsync();
 
@@ -115,15 +132,26 @@ namespace Application.Services
             }
         }
 
-        public async Task<PaginationResponse<List<GRNDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<GRNDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new GRNSpecs(filter);
+            var docDate = new List<DateTime?>();
+            var states = new List<DocumentStatus?>();
+            if (filter.DocDate != null)
+            {
+                docDate.Add(filter.DocDate);
+            }
+            if (filter.State != null)
+            {
+                states.Add(filter.State);
+            }
+
+            var specification = new GRNSpecs(docDate, states, filter);
             var gRN = await _unitOfWork.GRN.GetAll(specification);
 
             if (gRN.Count() == 0)
                 return new PaginationResponse<List<GRNDto>>(_mapper.Map<List<GRNDto>>(gRN), "List is empty");
 
-            var totalRecords = await _unitOfWork.GRN.TotalRecord();
+            var totalRecords = await _unitOfWork.GRN.TotalRecord(specification);
 
             return new PaginationResponse<List<GRNDto>>(_mapper.Map<List<GRNDto>>(gRN),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
@@ -137,6 +165,8 @@ namespace Application.Services
                 return new Response<GRNDto>("Not found");
 
             var grnDto = _mapper.Map<GRNDto>(gRN);
+
+            var mappingValue = new Response<GRNDto>(MapToValue(grnDto), "Returning value");
 
             grnDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.GRN)).FirstOrDefault();
@@ -201,18 +231,38 @@ namespace Application.Services
             if (entity.GRNLines.Count() == 0)
                 return new Response<GRNDto>("Lines are required");
 
+            if ((entity.IssuanceId == null && entity.PurchaseOrderId == null))
+                return new Response<GRNDto>("Document Refernce Id is required");
+
+
             foreach (var grnLine in entity.GRNLines)
             {
-                //Getting Unreconciled Purchase Order lines
-                var getpurchaseOrderLine = _unitOfWork.PurchaseOrder
-                    .FindLines(new PurchaseOrderLinesSpecs(grnLine.ItemId, grnLine.WarehouseId, entity.PurchaseOrderId))
+                if (entity.PurchaseOrderId != null)
+                {
+                    //Getting Unreconciled Purchase Order lines
+                    var getpurchaseOrderLine = _unitOfWork.PurchaseOrder
+                    .FindLines(new PurchaseOrderLinesSpecs(grnLine.ItemId, grnLine.WarehouseId, (int)entity.PurchaseOrderId))
                     .FirstOrDefault();
-                if (getpurchaseOrderLine == null)
-                    return new Response<GRNDto>("No Purchase order line found for reconciliaiton");
+                    if (getpurchaseOrderLine == null)
+                        return new Response<GRNDto>("No Purchase order line found for reconciliaiton");
 
-                var checkValidation = CheckValidation(entity.PurchaseOrderId, getpurchaseOrderLine, _mapper.Map<GRNLines>(grnLine));
-                if (!checkValidation.IsSuccess)
-                    return new Response<GRNDto>(checkValidation.Message);
+                    var checkValidation = CheckValidationForPO((int)entity.PurchaseOrderId, getpurchaseOrderLine, _mapper.Map<GRNLines>(grnLine));
+                    if (!checkValidation.IsSuccess)
+                        return new Response<GRNDto>(checkValidation.Message);
+                }
+                else
+                {
+                    //Getting Unreconciled Issuance lines
+                    var getIsuuanceLine = _unitOfWork.Issuance
+                    .FindLines(new IssuanceLinesSpecs(grnLine.ItemId, grnLine.WarehouseId, (int)entity.IssuanceId))
+                    .FirstOrDefault();
+                    if (getIsuuanceLine == null)
+                        return new Response<GRNDto>("No Issuance line found for reconciliaiton");
+
+                    var checkValidation = CheckValidationForIssuance((int)entity.IssuanceId, getIsuuanceLine, _mapper.Map<GRNLines>(grnLine));
+                    if (!checkValidation.IsSuccess)
+                        return new Response<GRNDto>(checkValidation.Message);
+                }
             }
 
             //Checking duplicate Lines if any
@@ -256,7 +306,7 @@ namespace Application.Services
         private async Task<Response<GRNDto>> UpdateGRN(CreateGRNDto entity, int status)
         {
             //setting PurchaseOrderId
-            var getPO = await _unitOfWork.PurchaseOrder.GetById(entity.PurchaseOrderId, new PurchaseOrderSpecs(false));
+            var getPO = await _unitOfWork.PurchaseOrder.GetById((int)entity.PurchaseOrderId, new PurchaseOrderSpecs(false));
 
             if (getPO == null)
                 return new Response<GRNDto>("Purchase Order not found");
@@ -266,16 +316,32 @@ namespace Application.Services
 
             foreach (var grnLine in entity.GRNLines)
             {
-                //Getting Unreconciled Purchase Order lines
-                var getpurchaseOrderLine = _unitOfWork.PurchaseOrder
-                    .FindLines(new PurchaseOrderLinesSpecs(grnLine.ItemId, grnLine.WarehouseId, entity.PurchaseOrderId))
-                    .FirstOrDefault();
-                if (getpurchaseOrderLine == null)
-                    return new Response<GRNDto>("No Purchase order line found for reconciliaiton");
+                if (entity.PurchaseOrderId != null)
+                {
+                    //Getting Unreconciled Purchase Order lines
+                    var getpurchaseOrderLine = _unitOfWork.PurchaseOrder
+                        .FindLines(new PurchaseOrderLinesSpecs(grnLine.ItemId, grnLine.WarehouseId, (int)entity.PurchaseOrderId))
+                        .FirstOrDefault();
+                    if (getpurchaseOrderLine == null)
+                        return new Response<GRNDto>("No Purchase order line found for reconciliaiton");
 
-                var checkValidation = CheckValidation(entity.PurchaseOrderId, getpurchaseOrderLine, _mapper.Map<GRNLines>(grnLine));
-                if (!checkValidation.IsSuccess)
-                    return new Response<GRNDto>(checkValidation.Message);
+                    var checkValidation = CheckValidationForPO((int)entity.PurchaseOrderId, getpurchaseOrderLine, _mapper.Map<GRNLines>(grnLine));
+                    if (!checkValidation.IsSuccess)
+                        return new Response<GRNDto>(checkValidation.Message);
+                }
+                else
+                {
+                    //Getting Unreconciled Issuance lines
+                    var getIsuuanceLine = _unitOfWork.Issuance
+                    .FindLines(new IssuanceLinesSpecs(grnLine.ItemId, grnLine.WarehouseId, (int)entity.IssuanceId))
+                    .FirstOrDefault();
+                    if (getIsuuanceLine == null)
+                        return new Response<GRNDto>("No Issuance line found for reconciliaiton");
+
+                    var checkValidation = CheckValidationForIssuance((int)entity.IssuanceId, getIsuuanceLine, _mapper.Map<GRNLines>(grnLine));
+                    if (!checkValidation.IsSuccess)
+                        return new Response<GRNDto>(checkValidation.Message);
+                }
             }
 
             //Checking duplicate Lines if any
@@ -338,7 +404,7 @@ namespace Application.Services
                 if (getpurchaseOrderLine == null)
                     return new Response<bool>("No Purchase order line found for reconciliaiton");
 
-                var checkValidation = CheckValidation(purchaseOrderId, getpurchaseOrderLine, grnLine);
+                var checkValidation = CheckValidationForPO(purchaseOrderId, getpurchaseOrderLine, grnLine);
                 if (!checkValidation.IsSuccess)
                     return new Response<bool>(checkValidation.Message);
 
@@ -387,6 +453,66 @@ namespace Application.Services
             return new Response<bool>(true, "No validation error found");
         }
 
+        public async Task<Response<bool>> ReconcileIssuanceLines(int grnId, int issuanceId, List<GRNLines> grnLines)
+        {
+            foreach (var grnLine in grnLines)
+            {
+                //Getting Unreconciled Purchase Order lines
+                var getIssuanceLine = _unitOfWork.Issuance
+                    .FindLines(new IssuanceLinesSpecs(grnLine.ItemId, grnLine.WarehouseId, issuanceId))
+                    .FirstOrDefault();
+                if (getIssuanceLine == null)
+                    return new Response<bool>("No Purchase order line found for reconciliaiton");
+
+                var checkValidation = CheckValidationForIssuance(issuanceId, getIssuanceLine, grnLine);
+                if (!checkValidation.IsSuccess)
+                    return new Response<bool>(checkValidation.Message);
+
+                //Adding in Reconcilation table
+                var recons = new IssuanceToGRNLineReconcile(grnLine.ItemId, grnLine.Quantity,
+                    issuanceId, grnId, getIssuanceLine.Id, grnLine.Id, grnLine.WarehouseId);
+                await _unitOfWork.IssuanceToGRNLineReconcile.Add(recons);
+                await _unitOfWork.SaveAsync();
+
+                //Get total recon quantity
+                var reconciledTotalPOQty = _unitOfWork.IssuanceToGRNLineReconcile
+                    .Find(new IssuanceToGRNLineReconcileSpecs(issuanceId, getIssuanceLine.Id, getIssuanceLine.ItemId, getIssuanceLine.WarehouseId))
+                    .Sum(p => p.Quantity);
+
+                // Updationg PO line status
+                if (getIssuanceLine.Quantity == reconciledTotalPOQty)
+                {
+                    getIssuanceLine.setStatus(DocumentStatus.Reconciled);
+                }
+                else
+                {
+                    getIssuanceLine.setStatus(DocumentStatus.Partial);
+                }
+                await _unitOfWork.SaveAsync();
+            }
+
+            //Update Purchase Order Master Status
+            var getissuance = await _unitOfWork.Issuance
+                    .GetById(issuanceId, new IssuanceSpecs());
+
+            var isPOLinesReconciled = getissuance.IssuanceLines
+                .Where(x => x.Status == DocumentStatus.Unreconciled || x.Status == DocumentStatus.Partial)
+                .FirstOrDefault();
+
+            if (isPOLinesReconciled == null)
+            {
+                getissuance.setStatus(5);
+            }
+            else
+            {
+                getissuance.setStatus(4);
+            }
+
+            await _unitOfWork.SaveAsync();
+
+            return new Response<bool>(true, "No validation error found");
+        }
+
         public async Task AddandUpdateStock(GRNMaster grn)
         {
             foreach (var line in grn.GRNLines)
@@ -414,7 +540,7 @@ namespace Application.Services
             }
         }
 
-        public Response<bool> CheckValidation(int purchaseOrderId, PurchaseOrderLines purchaseOrderLine, GRNLines grnLine)
+        public Response<bool> CheckValidationForPO(int purchaseOrderId, PurchaseOrderLines purchaseOrderLine, GRNLines grnLine)
         {
             // Checking if given amount is greater than unreconciled document amount
             var reconciledPOQty = _unitOfWork.POToGRNLineReconcile
@@ -425,6 +551,85 @@ namespace Application.Services
                 return new Response<bool>("Enter quantity is greater than pending quantity");
 
             return new Response<bool>(true, "No validation error found");
+        }
+
+        public Response<bool> CheckValidationForIssuance(int issuanceId, IssuanceLines issuanceLine, GRNLines grnLine)
+        {
+            // Checking if given amount is greater than unreconciled document amount
+            var reconciledIssuanceQty = _unitOfWork.IssuanceToGRNLineReconcile
+                .Find(new IssuanceToGRNLineReconcileSpecs(issuanceId, issuanceLine.Id, issuanceLine.ItemId, issuanceLine.WarehouseId))
+                .Sum(p => p.Quantity);
+            var unreconciledIssuanceQty = issuanceLine.Quantity - reconciledIssuanceQty;
+            if (grnLine.Quantity > unreconciledIssuanceQty)
+                return new Response<bool>("Enter quantity is greater than pending quantity");
+
+            return new Response<bool>(true, "No validation error found");
+        }
+
+        private GRNDto MapToValue(GRNDto data)
+        {
+
+            var getReference = new List<ReferncesDto>();
+
+            if ((data.State == DocumentStatus.Partial || data.State == DocumentStatus.Paid))
+            {
+                //Get reconciled goodsReturnNote
+                var goodsReturnNoteReconcileRecord = _unitOfWork.GRNToGoodsReturnNoteLineReconcile
+                    .Find(new GRNToGoodsReturnNoteLineReconcileSpecs(data.Id))
+                    .GroupBy(x => new { x.GoodsReturnNoteId, x.GoodsReturnNote.DocNo })
+                    .Where(g => g.Count() >= 1)
+                    .Select(y => new
+                    {
+                        GoodsReturnNoteId = y.Key.GoodsReturnNoteId,
+                        DocNo = y.Key.DocNo,
+                    })
+                    .ToList();
+
+                if (goodsReturnNoteReconcileRecord.Any())
+                {
+                    foreach (var line in goodsReturnNoteReconcileRecord)
+                    {
+                        getReference.Add(new ReferncesDto
+                        {
+                            DocId = line.GoodsReturnNoteId,
+                            DocNo = line.DocNo,
+                            DocType = DocType.GoodsReturnNote,
+                        });
+                    }
+                }
+            }
+            
+
+            //Get bill reference in GRN
+            var getBillForGRNReference = _unitOfWork.Bill
+               .Find(new BillSpecs(data.Id, true)).FirstOrDefault();
+
+            // Adding in Bill reference in GRN 
+
+            if (getBillForGRNReference != null)
+            {
+                data.BillReference = (new ReferncesDto
+                {
+                    DocId = getBillForGRNReference.Id,
+                    DocNo = getBillForGRNReference.DocNo,
+                    DocType = DocType.Bill,
+                });
+            }
+
+            data.References = getReference;
+
+            // Get pending & received quantity...
+            foreach (var line in data.GRNLines)
+            {
+                // Checking if given amount is greater than unreconciled document amount
+                line.ReceivedQuantity = _unitOfWork.GRNToGoodsReturnNoteLineReconcile
+                    .Find(new GRNToGoodsReturnNoteLineReconcileSpecs(data.Id, line.Id, line.ItemId, line.WarehouseId))
+                    .Sum(p => p.Quantity);
+
+                line.PendingQuantity = line.Quantity - line.ReceivedQuantity;
+            }
+
+            return data;
         }
     }
 }

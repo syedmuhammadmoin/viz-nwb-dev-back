@@ -62,6 +62,9 @@ namespace Infrastructure.Uow
         public IStockRepository Stock { get; private set; }
         public IPOToGRNLineReconcileRepository POToGRNLineReconcile { get; private set; }
         public IRequisitionToIssuanceLineReconcileRepository RequisitionToIssuanceLineReconcile { get; private set; }
+        public IGoodsReturnNoteRepository GoodsReturnNote { get; private set; }
+        public IGRNToGoodsReturnNoteLineReconcileRepository GRNToGoodsReturnNoteLineReconcile { get; private set; }
+        public IIssuanceToGRNLineReconcileRepository IssuanceToGRNLineReconcile { get; private set; }
 
 
         public UnitOfWork(ApplicationDbContext context)
@@ -109,6 +112,9 @@ namespace Infrastructure.Uow
             Stock = new StockRepository(context);
             POToGRNLineReconcile = new POToGRNLineReconcileRepository(context);
             RequisitionToIssuanceLineReconcile = new RequisitionToIssuanceLineReconcileRepository(context);
+            GoodsReturnNote = new GoodsReturnNoteRepository(context);
+            GRNToGoodsReturnNoteLineReconcile = new GRNToGoodsReturnNoteLineReconcileRepository(context);
+            IssuanceToGRNLineReconcile = new IssuanceToGRNLineReconcileRepository(context);
         }
 
         public async Task SaveAsync()

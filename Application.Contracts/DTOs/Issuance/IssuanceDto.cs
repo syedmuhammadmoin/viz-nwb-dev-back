@@ -22,6 +22,7 @@ namespace Application.Contracts.DTOs
         public DocumentStatus State { get; set; }
         public string RequisitionDocNo { get; set; }
         public int? RequisitionId { get; set; }
+        public IEnumerable<ReferncesDto> References { get; set; }
         public virtual List<IssuanceLinesDto> IssuanceLines { get; set; }
         public bool IsAllowedRole { get; set; }
     }

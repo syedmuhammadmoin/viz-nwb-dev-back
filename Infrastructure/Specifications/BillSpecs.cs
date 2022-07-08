@@ -25,6 +25,7 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.PayableAccount);
             AddInclude(i => i.Status);
             AddInclude(i => i.Campus);
+            AddInclude(i => i.GRN);
             AddInclude("BillLines.Account");
             AddInclude("BillLines.Warehouse");
             AddInclude("BillLines.Item");
@@ -42,6 +43,7 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Campus);
                 AddInclude(i => i.Status);
                 AddInclude(i => i.PayableAccount);
+                AddInclude(i => i.GRN);
                 AddInclude("BillLines.Account");
                 AddInclude("BillLines.Warehouse");
                 AddInclude("BillLines.Item");
@@ -57,6 +59,9 @@ namespace Infrastructure.Specifications
         public BillSpecs() : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
         {
             AddInclude(i => i.Status);
+        }
+        public BillSpecs(int grnId, bool isGRN) : base(p => isGRN ? p.GRNId == grnId : true )
+        {
         }
     }
 }

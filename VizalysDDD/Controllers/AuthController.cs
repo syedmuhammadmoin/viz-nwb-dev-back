@@ -65,7 +65,7 @@ namespace Vizalys.Api.Controllers
         //  /api/auth/GetUserByID
         [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.Create, Permissions.AuthClaims.View, Permissions.AuthClaims.Delete, Permissions.AuthClaims.Edit })]
         [HttpGet("Users/{id:Guid}")]
-        public async Task<ActionResult<Response<EditUserDto>>> GetUserAsync(string id)
+        public async Task<ActionResult<Response<UserDto>>> GetUserAsync(string id)
         {
 
             var result = await _userService.GetUserAsync(id);

@@ -70,6 +70,7 @@ namespace Application.Services
             await _unitOfWork.SaveAsync();
             return new Response<ProductDto>(_mapper.Map<ProductDto>(product), "Updated successfully");
         }
+      
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
@@ -77,7 +78,7 @@ namespace Application.Services
 
         public async Task<Response<List<ProductDto>>> GetProductDropDown()
         {
-            var products = await _unitOfWork.Product.GetAll();
+            var products = await _unitOfWork.Product.GetAll(new ProductSpecs());
             if (!products.Any())
                 return new Response<List<ProductDto>>("List is empty");
 

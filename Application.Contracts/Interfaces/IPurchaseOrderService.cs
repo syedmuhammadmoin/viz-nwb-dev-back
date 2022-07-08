@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IPurchaseOrderService : ICrudService<CreatePurchaseOrderDto, PurchaseOrderDto, int, PaginationFilter>
+    public interface IPurchaseOrderService : ICrudService<CreatePurchaseOrderDto, PurchaseOrderDto, int, TransactionFormFilter>
     {
         Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
     }

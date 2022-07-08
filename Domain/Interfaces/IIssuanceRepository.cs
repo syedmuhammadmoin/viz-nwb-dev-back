@@ -9,5 +9,6 @@ namespace Domain.Interfaces
 {
     public interface IIssuanceRepository : IGenericRepository<IssuanceMaster, int>
     {
+        IEnumerable<IssuanceLines> FindLines(ISpecification<IssuanceLines> specification);
     }
 }

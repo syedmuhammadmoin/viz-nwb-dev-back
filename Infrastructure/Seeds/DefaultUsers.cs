@@ -16,8 +16,6 @@ namespace Infrastructure.Seeds
         {
             var defaultUser = new User
             {
-                FirstName = "Naveed",
-                LastName = "Karim",
                 UserName = "Naveed",
                 Email = "superadmin@vizalys.com",
                 EmailConfirmed = true
@@ -76,6 +74,7 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaim(superAdmin, "TaxesClaims");
             await roleManager.AddPermissionClaim(superAdmin, "UnitOfMeasurementClaims");
             await roleManager.AddPermissionClaim(superAdmin, "IssuanceClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "GoodsReturnNoteClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "ChartOfAccountClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "GeneralLedgerClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "TrialBalanceClaims");

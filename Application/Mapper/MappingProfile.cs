@@ -309,13 +309,18 @@ namespace Application.Mapper
             CreateMap<GRNMaster, GRNDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
-               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+               .ForMember(dto => dto.Status, core => core.MapFrom(
+                    a => a.Status.State == DocumentStatus.Unpaid ? "Approved" :
+                    a.Status.State == DocumentStatus.Partial ? "Approved" :
+                    a.Status.State == DocumentStatus.Paid ? "Approved" : a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
-              .ForMember(dto => dto.PODocNo, core => core.MapFrom(a => a.PurchaseOrder.DocNo));
+              .ForMember(dto => dto.PODocNo, core => core.MapFrom(a => a.PurchaseOrder.DocNo))
+              .ForMember(dto => dto.IssuanceDocNo, core => core.MapFrom(a => a.Issuance.DocNo));
 
             CreateMap<GRNLines, GRNLinesDto>()
               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
-              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
+              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName))
+              .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity));
 
             CreateMap<CreateGRNDto, GRNMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.GRNLines.Sum(e => e.Quantity * e.Cost)))
@@ -377,13 +382,17 @@ namespace Application.Mapper
             CreateMap<IssuanceMaster, IssuanceDto>()
               .ForMember(dto => dto.EmployeeName, core => core.MapFrom(a => a.Employee.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
-               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State == DocumentStatus.Unpaid ? "Unpaid" : a.Status.Status))
+              .ForMember(dto => dto.Status, core => core.MapFrom(
+                    a => a.Status.State == DocumentStatus.Unpaid ? "Approved" :
+                    a.Status.State == DocumentStatus.Partial ? "Approved" :
+                    a.Status.State == DocumentStatus.Paid ? "Approved" : a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
               .ForMember(dto => dto.RequisitionDocNo, core => core.MapFrom(a => a.Requisition.DocNo));
 
             CreateMap<IssuanceLines, IssuanceLinesDto>()
               .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName))
-              .ForMember(dto => dto.WarehouseName, core => core.MapFrom(a => a.Warehouse.Name));
+              .ForMember(dto => dto.WarehouseName, core => core.MapFrom(a => a.Warehouse.Name))
+              .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity));
 
             CreateMap<CreateIssuanceDto, IssuanceMaster>();
             CreateMap<CreateIssuanceLinesDto, IssuanceLines>();
@@ -394,6 +403,26 @@ namespace Application.Mapper
                 .ForMember(dto => dto.UnitOfMeasurement, core => core.MapFrom(a => a.Item.UnitOfMeasurement.Name))
                 .ForMember(dto => dto.Category, core => core.MapFrom(a => a.Item.Category.Name));
             CreateMap<StockDto, Stock>();
+
+            // GoodsReturnNote Mapping
+            CreateMap<GoodsReturnNoteMaster, GoodsReturnNoteDto>()
+              .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
+               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
+               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
+              .ForMember(dto => dto.GRNDocNo, core => core.MapFrom(a => a.GRN.DocNo));
+
+            CreateMap<GoodsReturnNoteLines, GoodsReturnNoteLinesDto>()
+              .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
+              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
+
+            CreateMap<CreateGoodsReturnNoteDto, GoodsReturnNoteMaster>()
+               .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.GoodsReturnNoteLines.Sum(e => e.Quantity * e.Cost)))
+               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.GoodsReturnNoteLines.Sum(e => e.Quantity * e.Cost * e.Tax / 100)))
+               .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.GoodsReturnNoteLines.Sum(e => (e.Quantity * e.Cost) + (e.Quantity * e.Cost * e.Tax / 100))));
+
+            CreateMap<CreateGoodsReturnNoteLinesDto, GoodsReturnNoteLines>()
+               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
         }
     }
 }

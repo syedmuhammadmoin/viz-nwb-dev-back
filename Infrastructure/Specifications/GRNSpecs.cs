@@ -11,7 +11,12 @@ namespace Infrastructure.Specifications
 {
     public class GRNSpecs : BaseSpecification<GRNMaster>
     {
-        public GRNSpecs(PaginationFilter filter)
+        public GRNSpecs(List<DateTime?> docDate,
+            List<DocumentStatus?> states, TransactionFormFilter filter) 
+            : base(x => (docDate.Count() > 0 ? docDate.Contains(x.GrnDate) : true)
+            && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
+            && x.Vendor.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
+            && (states.Count() > 0 ? states.Contains(x.Status.State) : true))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
@@ -20,6 +25,7 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Status);
             AddInclude(i => i.Vendor);
             AddInclude(i => i.PurchaseOrder);
+            AddInclude(i => i.Issuance);
             AddInclude("GRNLines.Item");
             AddInclude("GRNLines.Warehouse");
         }
@@ -37,13 +43,15 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Status);
                 AddInclude(i => i.Vendor);
                 AddInclude(i => i.PurchaseOrder);
+                AddInclude(i => i.Issuance);
                 AddInclude("GRNLines.Item");
                 AddInclude("GRNLines.Warehouse");
             }
         }
-        public GRNSpecs() : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
+        public GRNSpecs()
+            : base(x => x.Status.State != DocumentStatus.Paid)
         {
-            AddInclude(i => i.Status);
+            AddInclude(i => i.GRNLines);
         }
         public GRNSpecs(int id) : base(x => x.Id == id)
         {

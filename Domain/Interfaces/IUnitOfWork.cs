@@ -52,7 +52,9 @@ namespace Domain.Interfaces
         IStockRepository Stock { get; }
         IPOToGRNLineReconcileRepository POToGRNLineReconcile { get; }
         IRequisitionToIssuanceLineReconcileRepository RequisitionToIssuanceLineReconcile { get; }
-
+        IGRNToGoodsReturnNoteLineReconcileRepository GRNToGoodsReturnNoteLineReconcile { get; }
+        IGoodsReturnNoteRepository GoodsReturnNote { get; }
+        IIssuanceToGRNLineReconcileRepository IssuanceToGRNLineReconcile { get; }
 
         Task SaveAsync();
         void CreateTransaction();
