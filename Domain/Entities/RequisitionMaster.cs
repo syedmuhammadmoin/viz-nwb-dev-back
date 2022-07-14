@@ -11,9 +11,9 @@ namespace Domain.Entities
 {
     public class RequisitionMaster : BaseEntity<int>
     {
-        public int BusinessPartnerId { get; private set; }
-        [ForeignKey("BusinessPartnerId")]
-        public BusinessPartner BusinessPartner { get; private set; }
+        public int EmployeeId { get; private set; }
+        [ForeignKey("EmployeeId")]
+        public Employee Employee { get; private set; }
         [MaxLength(30)]
         public string DocNo { get; private set; }
         public int StatusId { get; private set; }
