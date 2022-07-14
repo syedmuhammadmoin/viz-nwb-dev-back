@@ -223,7 +223,7 @@ namespace Application.Services
                 {
                     //Getting Unreconciled Requisition lines
                     var getrequisitionLine = _unitOfWork.Requisition
-                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, issuanceLine.WarehouseId, (int)entity.RequisitionId))
+                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId,  (int)entity.RequisitionId))
                         .FirstOrDefault();
 
                     if (getrequisitionLine == null)
@@ -308,7 +308,7 @@ namespace Application.Services
                 {
                     //Getting Unreconciled Requisition lines
                     var getrequisitionLine = _unitOfWork.Requisition
-                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, issuanceLine.WarehouseId, (int)entity.RequisitionId))
+                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, (int)entity.RequisitionId))
                         .FirstOrDefault();
 
                     if (getrequisitionLine == null)
@@ -419,7 +419,7 @@ namespace Application.Services
         {
             // Checking if given amount is greater than unreconciled document amount
             var reconciledRequistionQty = _unitOfWork.RequisitionToIssuanceLineReconcile
-                .Find(new RequisitionToIssuanceLineReconcileSpecs(requisitionId, requisitionLine.Id, requisitionLine.ItemId, requisitionLine.WarehouseId))
+                .Find(new RequisitionToIssuanceLineReconcileSpecs(requisitionId, requisitionLine.Id, requisitionLine.ItemId))
                 .Sum(p => p.Quantity);
             var unreconciledRequisitionQty = requisitionLine.Quantity - reconciledRequistionQty;
             if (issuanceLine.Quantity > unreconciledRequisitionQty)
@@ -434,7 +434,7 @@ namespace Application.Services
             {
                 //Getting Unreconciled Requisition lines
                 var getRequisitionLine = _unitOfWork.Requisition
-                    .FindLines(new RequisitionLinesSpecs(IssuanceLine.ItemId, IssuanceLine.WarehouseId, requisitionId))
+                    .FindLines(new RequisitionLinesSpecs(IssuanceLine.ItemId,  requisitionId))
                     .FirstOrDefault();
                 if (getRequisitionLine == null)
                     return new Response<bool>("No Requisition line found for reconciliaiton");
@@ -451,7 +451,7 @@ namespace Application.Services
 
                 //Get total recon quantity
                 var reconciledTotalReqQty = _unitOfWork.RequisitionToIssuanceLineReconcile
-                    .Find(new RequisitionToIssuanceLineReconcileSpecs(requisitionId, getRequisitionLine.Id, getRequisitionLine.ItemId, getRequisitionLine.WarehouseId))
+                    .Find(new RequisitionToIssuanceLineReconcileSpecs(requisitionId, getRequisitionLine.Id, getRequisitionLine.ItemId))
                     .Sum(p => p.Quantity);
 
                 // Updationg Requisition line status
