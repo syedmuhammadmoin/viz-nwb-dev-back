@@ -13,6 +13,7 @@ namespace Application.Contracts.DTOs
         public string DocNo { get; set; }
         public int VendorId { get; set; }
         public string VendorName { get; set; }
+        public BusinessPartnerType Type { get; set; }
         public DateTime GrnDate { get; set; }
         public int CampusId { get; set; }
         public string CampusName { get; set; }
