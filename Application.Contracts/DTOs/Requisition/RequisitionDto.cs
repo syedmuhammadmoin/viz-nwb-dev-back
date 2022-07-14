@@ -11,8 +11,8 @@ namespace Application.Contracts.DTOs
     public class RequisitionDto
     {
         public int Id { get; set; }
-        public int BusinessPartnerId { get; set; }
-        public string BusinessPartner { get; set; }
+        public int EmployeeId { get; set; }
+        public string EmployeeName { get; set; }
         public string DocNo { get; set; }
         public int StatusId { get; set; }
         public string Status { get; set; }

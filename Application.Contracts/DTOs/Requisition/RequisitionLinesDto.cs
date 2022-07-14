@@ -16,7 +16,7 @@ namespace Application.Contracts.DTOs
         public int Quantity { get; set; }
         public int IssuedQuantity { get; set; }
         public int PendingQuantity { get; set; }
-        public int WarehouseId { get; set; }
+        public int? WarehouseId { get; set; }
         public string Warehouse { get; set; }
         public int MasterId { get; set; }
     }

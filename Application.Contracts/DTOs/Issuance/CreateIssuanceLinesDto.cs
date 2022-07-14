@@ -17,6 +17,7 @@ namespace Application.Contracts.DTOs
         [Required]
         [StringLength(200)]
         public string Description { get; set; }
+        [Required]
         public int WarehouseId { get; set; }
     }
 }
