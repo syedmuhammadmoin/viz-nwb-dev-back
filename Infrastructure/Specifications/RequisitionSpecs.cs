@@ -15,7 +15,7 @@ namespace Infrastructure.Specifications
             List<DocumentStatus?> states, TransactionFormFilter filter)
             : base(x => (docDate.Count() > 0 ? docDate.Contains(x.RequisitionDate) : true)
             && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
-            && x.BusinessPartner.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
+            && x.Employee.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
             && (states.Count() > 0 ? states.Contains(x.Status.State) : true))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
@@ -23,7 +23,7 @@ namespace Infrastructure.Specifications
             ApplyOrderByDescending(i => i.Id);
             AddInclude(i => i.Campus);
             AddInclude(i => i.Status);
-            AddInclude(i => i.BusinessPartner);
+            AddInclude(i => i.Employee);
             AddInclude("RequisitionLines.Item");
             AddInclude("RequisitionLines.Warehouse");
         }
@@ -39,7 +39,7 @@ namespace Infrastructure.Specifications
             {
                 AddInclude(i => i.Campus);
                 AddInclude(i => i.Status);
-                AddInclude(i => i.BusinessPartner);
+                AddInclude(i => i.Employee);
                 AddInclude("RequisitionLines.Item");
                 AddInclude("RequisitionLines.Warehouse");
             }
