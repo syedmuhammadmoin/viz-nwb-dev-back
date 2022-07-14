@@ -288,7 +288,7 @@ namespace Application.Mapper
 
             // Requisition Mapping
             CreateMap<RequisitionMaster, RequisitionDto>()
-              .ForMember(dto => dto.BusinessPartner, core => core.MapFrom(a => a.BusinessPartner.Name))
+              .ForMember(dto => dto.EmployeeName, core => core.MapFrom(a => a.Employee.Name))
                .ForMember(dto => dto.Campus, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(
                     a => a.Status.State == DocumentStatus.Unpaid ? "Open" :
@@ -308,6 +308,7 @@ namespace Application.Mapper
             // GRN Mapping
             CreateMap<GRNMaster, GRNDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
+              .ForMember(dto => dto.Type, core => core.MapFrom(a => a.Vendor.BusinessPartnerType))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(
                     a => a.Status.State == DocumentStatus.Unpaid ? "Approved" :
