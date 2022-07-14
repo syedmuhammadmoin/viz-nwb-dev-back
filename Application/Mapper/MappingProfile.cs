@@ -424,6 +424,22 @@ namespace Application.Mapper
 
             CreateMap<CreateGoodsReturnNoteLinesDto, GoodsReturnNoteLines>()
                .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
+
+            // IssuanceReturn Mapping
+            CreateMap<IssuanceReturnMaster, IssuanceReturnDto>()
+              .ForMember(dto => dto.EmployeeName, core => core.MapFrom(a => a.Employee.Name))
+               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
+               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
+              .ForMember(dto => dto.IssuanceDocNo, core => core.MapFrom(a => a.Issuance.DocNo));
+
+            CreateMap<IssuanceReturnLines, IssuanceReturnLinesDto>()
+              .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
+              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
+
+            CreateMap<CreateIssuanceReturnDto, IssuanceReturnMaster>();
+
+            CreateMap<CreateIssuanceReturnLinesDto, IssuanceReturnLines>();
         }
     }
 }
