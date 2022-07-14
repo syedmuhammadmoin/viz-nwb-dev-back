@@ -65,7 +65,7 @@ namespace Infrastructure.Uow
         public IGoodsReturnNoteRepository GoodsReturnNote { get; private set; }
         public IGRNToGoodsReturnNoteLineReconcileRepository GRNToGoodsReturnNoteLineReconcile { get; private set; }
         public IIssuanceToGRNLineReconcileRepository IssuanceToGRNLineReconcile { get; private set; }
-
+        public IIssuanceReturnRepository IssuanceReturn { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -115,6 +115,7 @@ namespace Infrastructure.Uow
             GoodsReturnNote = new GoodsReturnNoteRepository(context);
             GRNToGoodsReturnNoteLineReconcile = new GRNToGoodsReturnNoteLineReconcileRepository(context);
             IssuanceToGRNLineReconcile = new IssuanceToGRNLineReconcileRepository(context);
+            IssuanceReturn = new IssuanceReturnRepository(context);
         }
 
         public async Task SaveAsync()
