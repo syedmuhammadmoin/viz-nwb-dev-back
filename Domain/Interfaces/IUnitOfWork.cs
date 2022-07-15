@@ -54,7 +54,7 @@ namespace Domain.Interfaces
         IRequisitionToIssuanceLineReconcileRepository RequisitionToIssuanceLineReconcile { get; }
         IGRNToGoodsReturnNoteLineReconcileRepository GRNToGoodsReturnNoteLineReconcile { get; }
         IGoodsReturnNoteRepository GoodsReturnNote { get; }
-        IIssuanceToGRNLineReconcileRepository IssuanceToGRNLineReconcile { get; }
+        IIssuanceToIssuanceReturnLineReconcileRepository IssuanceToIssuanceReturnLineReconcile { get; }
         IIssuanceReturnRepository IssuanceReturn { get; }
 
         Task SaveAsync();
