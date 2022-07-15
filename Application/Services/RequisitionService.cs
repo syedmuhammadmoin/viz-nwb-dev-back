@@ -55,7 +55,6 @@ namespace Application.Services
                 states.Add(filter.State);
             }
 
-            var specification = new RequisitionSpecs(docDate, states, filter);
             var requisition = await _unitOfWork.Requisition.GetAll(new RequisitionSpecs(docDate, states, filter, false));
 
             if (requisition.Count() == 0)

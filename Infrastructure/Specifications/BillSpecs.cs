@@ -12,23 +12,26 @@ namespace Infrastructure.Specifications
     public class BillSpecs : BaseSpecification<BillMaster>
     {
         public BillSpecs(List<DateTime?> docDate, List<DateTime?> dueDate,
-            List<DocumentStatus?> states, TransactionFormFilter filter) : base(x => (docDate.Count() > 0 ? docDate.Contains(x.BillDate) : true)
+            List<DocumentStatus?> states, TransactionFormFilter filter, bool isTotalRecord) : base(x => (docDate.Count() > 0 ? docDate.Contains(x.BillDate) : true)
             && (dueDate.Count() > 0 ? dueDate.Contains(x.DueDate) : true)
             && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
             && x.Vendor.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
             && (states.Count() > 0 ? states.Contains(x.Status.State) : true))
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
-            AddInclude(i => i.Vendor);
-            AddInclude(i => i.PayableAccount);
-            AddInclude(i => i.Status);
-            AddInclude(i => i.Campus);
-            AddInclude(i => i.GRN);
-            AddInclude("BillLines.Account");
-            AddInclude("BillLines.Warehouse");
-            AddInclude("BillLines.Item");
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+                AddInclude(i => i.Vendor);
+                AddInclude(i => i.PayableAccount);
+                AddInclude(i => i.Status);
+                AddInclude(i => i.Campus);
+                AddInclude(i => i.GRN);
+                AddInclude("BillLines.Account");
+                AddInclude("BillLines.Warehouse");
+                AddInclude("BillLines.Item");
+            }
         }
         public BillSpecs(bool forEdit)
         {

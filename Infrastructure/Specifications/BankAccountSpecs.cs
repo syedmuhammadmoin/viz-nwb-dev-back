@@ -10,17 +10,19 @@ namespace Infrastructure.Specifications
 {
     public class BankAccountSpecs : BaseSpecification<BankAccount>
     {
-        public BankAccountSpecs(TransactionFormFilter filter) 
+        public BankAccountSpecs(TransactionFormFilter filter, bool isTotalRecord) 
             : base(c => (c.BankName.Contains(filter.Name != null ? filter.Name : "")
          && c.AccountTitle.Contains(filter.Account != null ? filter.Account : "")))
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
-            AddInclude(i => i.Campus);
-            AddInclude(i => i.ChAccount);
-            AddInclude(i => i.ClearingAccount);
-
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+                AddInclude(i => i.Campus);
+                AddInclude(i => i.ChAccount);
+                AddInclude(i => i.ClearingAccount);
+            }
         }
 
         public BankAccountSpecs()

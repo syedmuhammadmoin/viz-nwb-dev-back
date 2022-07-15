@@ -11,19 +11,23 @@ namespace Infrastructure.Specifications
 {
     public class JournalEntrySpecs : BaseSpecification<JournalEntryMaster>
     {
-        public JournalEntrySpecs(List<DateTime?> docDate, List<DateTime?> dueDate, List<DocumentStatus?> states, TransactionFormFilter filter) 
+        public JournalEntrySpecs(List<DateTime?> docDate, List<DateTime?> dueDate,
+            List<DocumentStatus?> states, TransactionFormFilter filter, bool isTotalRecord)
             : base(c => (docDate.Count() > 0 ? docDate.Contains(c.Date) : true)
                 && c.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
                 && (states.Count() > 0 ? states.Contains(c.Status.State) : true))
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            AddInclude(i => i.Campus);
-            AddInclude(i => i.Status);
-            ApplyOrderByDescending(i => i.Id);
-            AddInclude("JournalEntryLines.BusinessPartner");
-            AddInclude("JournalEntryLines.Account");
-            AddInclude("JournalEntryLines.Warehouse");
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                AddInclude(i => i.Campus);
+                AddInclude(i => i.Status);
+                ApplyOrderByDescending(i => i.Id);
+                AddInclude("JournalEntryLines.BusinessPartner");
+                AddInclude("JournalEntryLines.Account");
+                AddInclude("JournalEntryLines.Warehouse");
+            }
         }
 
         public JournalEntrySpecs(bool forEdit)

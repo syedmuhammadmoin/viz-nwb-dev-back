@@ -59,7 +59,6 @@ namespace Application.Services
             {
                 states.Add(filter.State);
             }
-            var specification = new PurchaseOrderSpecs(docDate, dueDate, states, filter);
             var po = await _unitOfWork.PurchaseOrder.GetAll(new PurchaseOrderSpecs(docDate, dueDate, states, filter, false));
 
             if (po.Count() == 0)

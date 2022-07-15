@@ -61,13 +61,12 @@ namespace Application.Services
                 states.Add(filter.State);
             }
 
-            var specification = new BillSpecs(docDate, dueDate, states, filter);
-            var bills = await _unitOfWork.Bill.GetAll(specification);
+            var bills = await _unitOfWork.Bill.GetAll(new BillSpecs(docDate, dueDate, states, filter, false));
 
             if (bills.Count() == 0)
                 return new PaginationResponse<List<BillDto>>(_mapper.Map<List<BillDto>>(bills), "List is empty");
 
-            var totalRecords = await _unitOfWork.Bill.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Bill.TotalRecord(new BillSpecs(docDate, dueDate, states, filter, true));
 
             return new PaginationResponse<List<BillDto>>(_mapper.Map<List<BillDto>>(bills),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");

@@ -11,22 +11,25 @@ namespace Infrastructure.Specifications
 {
     public class DebitNoteSpecs : BaseSpecification<DebitNoteMaster>
     {
-        public DebitNoteSpecs(List<DateTime?> docDate,List<DocumentStatus?> states,
-            TransactionFormFilter filter) : base(c => (docDate.Count() > 0 ? docDate.Contains(c.NoteDate) : true)
+        public DebitNoteSpecs(List<DateTime?> docDate, List<DocumentStatus?> states,
+            TransactionFormFilter filter, bool isTotalRecord) : base(c => (docDate.Count() > 0 ? docDate.Contains(c.NoteDate) : true)
                 && c.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
                 && c.Vendor.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
                 && (states.Count() > 0 ? states.Contains(c.Status.State) : true))
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
-            AddInclude(i => i.Vendor);
-            AddInclude(i => i.PayableAccount);
-            AddInclude(i => i.Campus);
-            AddInclude(i => i.Status);
-            AddInclude("DebitNoteLines.Account");
-            AddInclude("DebitNoteLines.Warehouse");
-            AddInclude("DebitNoteLines.Item");
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+                AddInclude(i => i.Vendor);
+                AddInclude(i => i.PayableAccount);
+                AddInclude(i => i.Campus);
+                AddInclude(i => i.Status);
+                AddInclude("DebitNoteLines.Account");
+                AddInclude("DebitNoteLines.Warehouse");
+                AddInclude("DebitNoteLines.Item");
+            }
         }
 
         public DebitNoteSpecs(bool forEdit)

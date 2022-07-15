@@ -12,21 +12,24 @@ namespace Infrastructure.Specifications
     public class CreditNoteSpecs : BaseSpecification<CreditNoteMaster>
     {
         public CreditNoteSpecs(List<DateTime?> docDate, List<DocumentStatus?> states,
-            TransactionFormFilter filter) : base(c => (docDate.Count() > 0 ? docDate.Contains(c.NoteDate) : true)
+            TransactionFormFilter filter, bool isTotalRecord) : base(c => (docDate.Count() > 0 ? docDate.Contains(c.NoteDate) : true)
                 && c.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
                 && c.Customer.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
                 && (states.Count() > 0 ? states.Contains(c.Status.State) : true))
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
-            AddInclude(i => i.Customer);
-            AddInclude(i => i.ReceivableAccount);
-            AddInclude(i => i.Status);
-            AddInclude(i => i.Campus);
-            AddInclude("CreditNoteLines.Account");
-            AddInclude("CreditNoteLines.Warehouse");
-            AddInclude("CreditNoteLines.Item");
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+                AddInclude(i => i.Customer);
+                AddInclude(i => i.ReceivableAccount);
+                AddInclude(i => i.Status);
+                AddInclude(i => i.Campus);
+                AddInclude("CreditNoteLines.Account");
+                AddInclude("CreditNoteLines.Warehouse");
+                AddInclude("CreditNoteLines.Item");
+            }
         }
 
         public CreditNoteSpecs(bool forEdit)

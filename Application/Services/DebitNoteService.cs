@@ -54,13 +54,13 @@ namespace Application.Services
             {
                 states.Add(filter.State);
             }
-            var specification = new DebitNoteSpecs(docDate, states, filter);
+            var specification = new DebitNoteSpecs(docDate, states, filter, false);
             var dbns = await _unitOfWork.DebitNote.GetAll(specification);
 
             if (dbns.Count() == 0)
                 return new PaginationResponse<List<DebitNoteDto>>(_mapper.Map<List<DebitNoteDto>>(dbns), "List is empty");
 
-            var totalRecords = await _unitOfWork.DebitNote.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.DebitNote.TotalRecord(new DebitNoteSpecs(docDate, states, filter, true));
 
             return new PaginationResponse<List<DebitNoteDto>>(_mapper.Map<List<DebitNoteDto>>(dbns),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");

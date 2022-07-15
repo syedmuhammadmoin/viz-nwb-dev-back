@@ -12,21 +12,24 @@ namespace Infrastructure.Specifications
     public class PaymentSpecs : BaseSpecification<Payment>
     {
         public PaymentSpecs(List<DateTime?> docDate, List<DateTime?> dueDate,
-            List<DocumentStatus?> states, TransactionFormFilter filter, DocType docType) : base(e => (e.PaymentFormType == docType)
+            List<DocumentStatus?> states, TransactionFormFilter filter, DocType docType, bool isTotalRecord) : base(e => (e.PaymentFormType == docType)
         && (docDate.Count() > 0 ? docDate.Contains(e.PaymentDate) : true)
                 && e.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
                 && e.BusinessPartner.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
                 && (states.Count() > 0 ? states.Contains(e.Status.State) : true)
         )
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
-            AddInclude(i => i.BusinessPartner);
-            AddInclude(i => i.Account);
-            AddInclude(i => i.Campus);
-            AddInclude(i => i.Status);
-            AddInclude(i => i.PaymentRegister);
+            if (isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+                AddInclude(i => i.BusinessPartner);
+                AddInclude(i => i.Account);
+                AddInclude(i => i.Campus);
+                AddInclude(i => i.Status);
+                AddInclude(i => i.PaymentRegister);
+            }
         }
         public PaymentSpecs()
         {

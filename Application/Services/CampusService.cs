@@ -41,13 +41,13 @@ namespace Application.Services
 
         public async Task<PaginationResponse<List<CampusDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new CampusSpecs(filter);
-            var campus = await _unitOfWork.Campus.GetAll(specification);
+            
+            var campus = await _unitOfWork.Campus.GetAll(new CampusSpecs(filter, false));
 
             if (campus.Count() == 0)
                 return new PaginationResponse<List<CampusDto>>(_mapper.Map<List<CampusDto>>(campus), "List is empty");
 
-            var totalRecords = await _unitOfWork.Campus.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Campus.TotalRecord(new CampusSpecs(filter, true));
 
             return new PaginationResponse<List<CampusDto>>(_mapper.Map<List<CampusDto>>(campus), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

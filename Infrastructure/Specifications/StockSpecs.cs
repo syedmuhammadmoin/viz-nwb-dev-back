@@ -10,19 +10,22 @@ namespace Infrastructure.Specifications
 {
     public class StockSpecs : BaseSpecification<Stock>
     {
-        public StockSpecs(TransactionFormFilter filter)
+        public StockSpecs(TransactionFormFilter filter, bool isTotalRecord)
             : base(c => c.Item.ProductName.Contains(filter.Name != null ? filter.Name : "")
             && c.Warehouse.Name.Contains(filter.Warehouse != null ? filter.Warehouse : "")
             )
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
-            AddInclude(i => i.Warehouse);
-            AddInclude("Item.Category");
-            AddInclude("Item.UnitOfMeasurement");
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+                AddInclude(i => i.Warehouse);
+                AddInclude("Item.Category");
+                AddInclude("Item.UnitOfMeasurement");
+            }
         }
-        public StockSpecs(int itemId, int warehouseId) : base( x => x.ItemId == itemId && x.WarehouseId == warehouseId)
+        public StockSpecs(int itemId, int warehouseId) : base(x => x.ItemId == itemId && x.WarehouseId == warehouseId)
         {
         }
     }

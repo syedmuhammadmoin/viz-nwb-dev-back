@@ -36,7 +36,6 @@ namespace Application.Services
 
         public async Task<PaginationResponse<List<UnitOfMeasurementDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new UnitOfMeasurementSpecs(filter);
             var unitOfMeasurements = await _unitOfWork.UnitOfMeasurement.GetAll(new UnitOfMeasurementSpecs(filter, false));
 
             if (unitOfMeasurements.Count() == 0)

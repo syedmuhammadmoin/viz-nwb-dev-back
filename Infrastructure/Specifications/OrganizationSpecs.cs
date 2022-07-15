@@ -10,11 +10,14 @@ namespace Infrastructure.Specifications
 {
     public class OrganizationSpecs : BaseSpecification<Organization>
     {
-        public OrganizationSpecs(PaginationFilter filter)
+        public OrganizationSpecs(PaginationFilter filter, bool isTotalRecord)
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+            }
         }
     }
 }

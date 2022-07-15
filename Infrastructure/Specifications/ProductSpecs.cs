@@ -11,17 +11,20 @@ namespace Infrastructure.Specifications
 {
     public class ProductSpecs : BaseSpecification<Product>
     {
-        public ProductSpecs(TransactionFormFilter filter)
+        public ProductSpecs(TransactionFormFilter filter, bool isTotalRecord)
             : base(c => c.ProductName.Contains(filter.Name != null ? filter.Name : "")
            && (c.Barcode.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
            && (c.Category.Name.Contains(filter.Category != null ? filter.Category : "")
             )))
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
-            AddInclude(i => i.Category);
-            AddInclude(i => i.UnitOfMeasurement);
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+                AddInclude(i => i.Category);
+                AddInclude(i => i.UnitOfMeasurement);
+            }
         }
         public ProductSpecs()
         {

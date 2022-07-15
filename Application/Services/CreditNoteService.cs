@@ -54,13 +54,12 @@ namespace Application.Services
                 states.Add(filter.State);
             }
 
-            var specification = new CreditNoteSpecs(docDate, states, filter);
-            var crns = await _unitOfWork.CreditNote.GetAll(specification);
+            var crns = await _unitOfWork.CreditNote.GetAll(new CreditNoteSpecs(docDate, states, filter, false));
 
             if (crns.Count() == 0)
                 return new PaginationResponse<List<CreditNoteDto>>(_mapper.Map<List<CreditNoteDto>>(crns), "List is empty");
 
-            var totalRecords = await _unitOfWork.CreditNote.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.CreditNote.TotalRecord(new CreditNoteSpecs(docDate, states, filter, true));
 
             return new PaginationResponse<List<CreditNoteDto>>(_mapper.Map<List<CreditNoteDto>>(crns),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");

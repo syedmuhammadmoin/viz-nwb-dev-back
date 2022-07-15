@@ -49,13 +49,12 @@ namespace Application.Services
 
         public async Task<PaginationResponse<List<DepartmentDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new DepartmentSpecs(filter);
-            var departments = await _unitOfWork.Department.GetAll(specification);
+            var departments = await _unitOfWork.Department.GetAll(new DepartmentSpecs(filter, false));
 
             if (departments.Count() == 0)
                 return new PaginationResponse<List<DepartmentDto>>(_mapper.Map<List<DepartmentDto>>(departments), "List is empty");
 
-            var totalRecords = await _unitOfWork.Department.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Department.TotalRecord(new DepartmentSpecs(filter, true));
 
             return new PaginationResponse<List<DepartmentDto>>(_mapper.Map<List<DepartmentDto>>(departments), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
