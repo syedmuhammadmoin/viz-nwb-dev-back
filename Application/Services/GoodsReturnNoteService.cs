@@ -131,14 +131,12 @@ namespace Application.Services
             {
                 states.Add(filter.State);
             }
-            
-            var specification = new GoodsReturnNoteSpecs(docDate, states, filter);
-            var goodsReturnNotes = await _unitOfWork.GoodsReturnNote.GetAll(specification);
+            var goodsReturnNotes = await _unitOfWork.GoodsReturnNote.GetAll(new GoodsReturnNoteSpecs(docDate, states, filter, false));
 
             if (goodsReturnNotes.Count() == 0)
                 return new PaginationResponse<List<GoodsReturnNoteDto>>(_mapper.Map<List<GoodsReturnNoteDto>>(goodsReturnNotes), "List is empty");
 
-            var totalRecords = await _unitOfWork.GoodsReturnNote.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.GoodsReturnNote.TotalRecord(new GoodsReturnNoteSpecs(docDate, states, filter, true));
 
             return new PaginationResponse<List<GoodsReturnNoteDto>>(_mapper.Map<List<GoodsReturnNoteDto>>(goodsReturnNotes),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
