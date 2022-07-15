@@ -54,14 +54,12 @@ namespace Application.Services
             {
                 states.Add(filter.State);
             }
-
-            var specification = new IssuanceSpecs(docDate, states, filter);
-            var issuances = await _unitOfWork.Issuance.GetAll(specification);
+            var issuances = await _unitOfWork.Issuance.GetAll(new IssuanceSpecs(docDate, states, filter, false));
 
             if (issuances.Count() == 0)
                 return new PaginationResponse<List<IssuanceDto>>(_mapper.Map<List<IssuanceDto>>(issuances), "List is empty");
 
-            var totalRecords = await _unitOfWork.Issuance.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Issuance.TotalRecord(new IssuanceSpecs(docDate, states, filter, true));
 
             return new PaginationResponse<List<IssuanceDto>>(_mapper.Map<List<IssuanceDto>>(issuances),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
@@ -491,13 +489,13 @@ namespace Application.Services
         private IssuanceDto MapToValue(IssuanceDto data)
         {
             //Get reconciled grns
-            var grnLineReconcileRecord = _unitOfWork.IssuanceToGRNLineReconcile
-                .Find(new IssuanceToGRNLineReconcileSpecs(true, data.Id))
-                .GroupBy(x => new { x.GRNId, x.GRN.DocNo })
+            var grnLineReconcileRecord = _unitOfWork.IssuanceToIssuanceReturnLineReconcile
+                .Find(new IssuanceToIssuanceReturnLineReconcileSpecs(true, data.Id))
+                .GroupBy(x => new { x.IssuanceReturnId, x.IssuanceReturn.DocNo })
                 .Where(g => g.Count() >= 1)
                 .Select(y => new
                 {
-                    GRNId = y.Key.GRNId,
+                    GRNId = y.Key.IssuanceReturnId,
                     DocNo = y.Key.DocNo,
                 })
                 .ToList();
@@ -522,8 +520,8 @@ namespace Application.Services
             foreach (var line in data.IssuanceLines)
             {
                 // Checking if given amount is greater than unreconciled document amount
-                line.ReceivedQuantity = _unitOfWork.IssuanceToGRNLineReconcile
-                    .Find(new IssuanceToGRNLineReconcileSpecs(data.Id, line.Id, line.ItemId, line.WarehouseId))
+                line.ReceivedQuantity = _unitOfWork.IssuanceToIssuanceReturnLineReconcile
+                    .Find(new IssuanceToIssuanceReturnLineReconcileSpecs(data.Id, line.Id, line.ItemId, line.WarehouseId))
                     .Sum(p => p.Quantity);
 
                 line.PendingQuantity = line.Quantity - line.ReceivedQuantity;
