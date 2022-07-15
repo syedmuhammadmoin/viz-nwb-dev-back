@@ -12,22 +12,25 @@ namespace Infrastructure.Specifications
     public class GRNSpecs : BaseSpecification<GRNMaster>
     {
         public GRNSpecs(List<DateTime?> docDate,
-            List<DocumentStatus?> states, TransactionFormFilter filter) 
+            List<DocumentStatus?> states, TransactionFormFilter filter, bool isTotalRecord)
             : base(x => (docDate.Count() > 0 ? docDate.Contains(x.GrnDate) : true)
             && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
             && x.Vendor.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
             && (states.Count() > 0 ? states.Contains(x.Status.State) : true))
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
-            AddInclude(i => i.Campus);
-            AddInclude(i => i.Status);
-            AddInclude(i => i.Vendor);
-            AddInclude(i => i.PurchaseOrder);
-            AddInclude(i => i.Issuance);
-            AddInclude("GRNLines.Item");
-            AddInclude("GRNLines.Warehouse");
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+                AddInclude(i => i.Campus);
+                AddInclude(i => i.Status);
+                AddInclude(i => i.Vendor);
+                AddInclude(i => i.PurchaseOrder);
+                AddInclude(i => i.Issuance);
+                AddInclude("GRNLines.Item");
+                AddInclude("GRNLines.Warehouse");
+            }
         }
 
         public GRNSpecs(bool forEdit)
