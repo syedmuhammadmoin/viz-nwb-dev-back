@@ -56,12 +56,12 @@ namespace Application.Services
             }
 
             var specification = new RequisitionSpecs(docDate, states, filter);
-            var requisition = await _unitOfWork.Requisition.GetAll(specification);
+            var requisition = await _unitOfWork.Requisition.GetAll(new RequisitionSpecs(docDate, states, filter, false));
 
             if (requisition.Count() == 0)
                 return new PaginationResponse<List<RequisitionDto>>(_mapper.Map<List<RequisitionDto>>(requisition), "List is empty");
 
-            var totalRecords = await _unitOfWork.Requisition.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Requisition.TotalRecord(new RequisitionSpecs(docDate, states, filter, true));
 
             return new PaginationResponse<List<RequisitionDto>>(_mapper.Map<List<RequisitionDto>>(requisition),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");

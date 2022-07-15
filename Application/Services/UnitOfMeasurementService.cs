@@ -37,12 +37,12 @@ namespace Application.Services
         public async Task<PaginationResponse<List<UnitOfMeasurementDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var specification = new UnitOfMeasurementSpecs(filter);
-            var unitOfMeasurements = await _unitOfWork.UnitOfMeasurement.GetAll(specification);
+            var unitOfMeasurements = await _unitOfWork.UnitOfMeasurement.GetAll(new UnitOfMeasurementSpecs(filter, false));
 
             if (unitOfMeasurements.Count() == 0)
                 return new PaginationResponse<List<UnitOfMeasurementDto>>(_mapper.Map<List<UnitOfMeasurementDto>>(unitOfMeasurements), "List is empty");
 
-            var totalRecords = await _unitOfWork.UnitOfMeasurement.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.UnitOfMeasurement.TotalRecord(new UnitOfMeasurementSpecs(filter, true));
 
             return new PaginationResponse<List<UnitOfMeasurementDto>>(_mapper.Map<List<UnitOfMeasurementDto>>(unitOfMeasurements), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

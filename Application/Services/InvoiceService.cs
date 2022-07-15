@@ -59,13 +59,12 @@ namespace Application.Services
             {
                 states.Add(filter.State);
             }
-            var specification = new InvoiceSpecs(docDate, dueDate, states, filter);
-            var Invs = await _unitOfWork.Invoice.GetAll(specification);
+            var Invs = await _unitOfWork.Invoice.GetAll(new InvoiceSpecs(docDate, dueDate, states, filter, false));
 
             if (Invs.Count() == 0)
                 return new PaginationResponse<List<InvoiceDto>>(_mapper.Map<List<InvoiceDto>>(Invs), "List is empty");
 
-            var totalRecords = await _unitOfWork.Invoice.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Invoice.TotalRecord(new InvoiceSpecs(docDate, dueDate, states, filter, true));
 
             return new PaginationResponse<List<InvoiceDto>>(_mapper.Map<List<InvoiceDto>>(Invs),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");

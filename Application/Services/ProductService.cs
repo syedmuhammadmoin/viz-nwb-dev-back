@@ -37,13 +37,12 @@ namespace Application.Services
 
         public async Task<PaginationResponse<List<ProductDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new ProductSpecs(filter);
-            var product = await _unitOfWork.Product.GetAll(specification);
+            var product = await _unitOfWork.Product.GetAll(new ProductSpecs(filter, false));
 
             if (product.Count() == 0)
                 return new PaginationResponse<List<ProductDto>>(_mapper.Map<List<ProductDto>>(product), "List is empty");
 
-            var totalRecords = await _unitOfWork.Product.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Product.TotalRecord(new ProductSpecs(filter, true));
 
             return new PaginationResponse<List<ProductDto>>(_mapper.Map<List<ProductDto>>(product), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

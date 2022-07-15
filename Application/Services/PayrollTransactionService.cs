@@ -66,15 +66,13 @@ namespace Application.Services
             {
                 states.Add(filter.State);
             }
-
-            var specification = new PayrollTransactionSpecs(docDate, states, filter);
-            var payrollTransactions = await _unitOfWork.PayrollTransaction.GetAll(specification);
+            var payrollTransactions = await _unitOfWork.PayrollTransaction.GetAll(new PayrollTransactionSpecs(docDate, states, filter, false));
             var response = new List<PayrollTransactionDto>();
 
             if (payrollTransactions.Count() == 0)
                 return new PaginationResponse<List<PayrollTransactionDto>>(_mapper.Map<List<PayrollTransactionDto>>(response), "List is empty");
 
-            var totalRecords = await _unitOfWork.PayrollTransaction.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.PayrollTransaction.TotalRecord(new PayrollTransactionSpecs(docDate, states, filter, true));
 
 
             foreach (var i in payrollTransactions)
