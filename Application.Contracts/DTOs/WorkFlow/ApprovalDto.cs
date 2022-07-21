@@ -10,6 +10,8 @@ namespace Application.Contracts.DTOs
     public class ApprovalDto
     {
         public int DocId { get; set; }
-        public ActionButton Action { get; set; }
+        public ActionButton Action { get; set; }      
+        public string FileUpload { get; set; }
+
     }
 }
