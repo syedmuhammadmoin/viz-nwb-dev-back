@@ -1,4 +1,5 @@
-﻿using Domain.Constants;
+﻿using Application.Contracts.DTOs.FileUpload;
+using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,8 @@ namespace Application.Contracts.DTOs
         public decimal TotalAmount { get; set; }
         public decimal ReconciledAmount { get; set; }
         public IEnumerable<PaidDocListDto> PaidAmountList { get; set; }
+        public IEnumerable<FileUploadDto> FileUploadList { get; set; }
+
         public decimal UnreconciledAmount { get; set; }
         public PaidDocListDto DocumentReconcile { get; set; }
         public int? LedgerId { get; set; }
