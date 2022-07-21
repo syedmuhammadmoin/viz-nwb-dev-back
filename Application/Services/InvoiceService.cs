@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.FileUpload;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -7,6 +8,7 @@ using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
+using Infrastructure.Context;
 using Infrastructure.Specifications;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -22,12 +24,14 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ApplicationDbContext _context;
 
-        public InvoiceService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public InvoiceService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, ApplicationDbContext context)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _context = context;
         }
 
         public async Task<Response<InvoiceDto>> CreateAsync(CreateInvoiceDto entity)
@@ -79,6 +83,10 @@ namespace Application.Services
                 return new Response<InvoiceDto>("Not found");
 
             var invoiceDto = _mapper.Map<InvoiceDto>(inv);
+
+
+            ReturningFiles(invoiceDto, DocType.Invoice);
+
 
             if ((invoiceDto.State == DocumentStatus.Unpaid || invoiceDto.State == DocumentStatus.Partial || invoiceDto.State == DocumentStatus.Paid) && invoiceDto.TransactionId != null)
             {
@@ -149,6 +157,10 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+            // Creating object of getUSer class
+            var getUser = new GetUser(this._httpContextAccessor);
+
+            var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
             try
@@ -158,6 +170,9 @@ namespace Application.Services
                     if (transition.AllowedRole.Name == role)
                     {
                         getInvoice.setStatus(transition.NextStatusId);
+
+                      
+
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
 
@@ -170,7 +185,7 @@ namespace Application.Services
 
                                 if (getTaxAccount == null)
                                     return new Response<bool>("Kindly set TaxAccountId");
-                                    taxAccount = (Guid)getTaxAccount;
+                                taxAccount = (Guid)getTaxAccount;
                             }
 
                             await AddToLedger(getInvoice, taxAccount);
@@ -306,8 +321,8 @@ namespace Application.Services
 
             inv.setTransactionId(transaction.Id);
             await _unitOfWork.SaveAsync();
-            
-            
+
+
             //Inserting line amount into recordledger table
             foreach (var line in inv.InvoiceLines)
             {
@@ -372,9 +387,10 @@ namespace Application.Services
         {
             //Getting transaction with Payment Transaction Id
             var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs((int)data.TransactionId, true)).FirstOrDefault();
-            
+
             // Checking if given amount is greater than unreconciled document amount
             var transactionReconciles = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(getUnreconciledDocumentAmount.Id, false)).ToList();
+            // Uploads
 
             //For Paid Document List
             var paidDocList = new List<PaidDocListDto>();
@@ -413,18 +429,42 @@ namespace Application.Services
                     Amount = i.UnreconciledAmount,
                     PaymentLedgerId = i.PaymentLedgerId
                 }).ToList();
-                
+
                 data.BPUnreconPaymentList = BPUnreconPayments;
             }
 
             data.TotalPaid = transactionReconciles.Sum(e => e.Amount);
             data.PaidAmountList = paidDocList;
             data.PendingAmount = pendingAmount;
-           
+
 
             // Returning invoiceDTO with all values assigned
             return data;
         }
 
+       
+        private List<FileUploadDto> ReturningFiles(InvoiceDto data, DocType docType)
+        {
+
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.Invoice))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = $"{data.DocNo} - {e.Id}",
+                        DocType = DocType.Invoice,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+
+            }
+
+            return files;
+
+        }
     }
 }
