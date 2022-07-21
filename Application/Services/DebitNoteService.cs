@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.FileUpload;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -74,7 +75,12 @@ namespace Application.Services
                 return new Response<DebitNoteDto>("Not found");
 
             var debitNoteDto = _mapper.Map<DebitNoteDto>(dbn);
-            
+
+            //Returning
+        
+            ReturningFiles(debitNoteDto, DocType.DebitNote);
+
+
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.DebitNote)).FirstOrDefault();
 
             if ((debitNoteDto.State == DocumentStatus.Unpaid || debitNoteDto.State == DocumentStatus.Partial || debitNoteDto.State == DocumentStatus.Paid) && debitNoteDto.TransactionId != null)
@@ -314,6 +320,9 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+            var getUser = new GetUser(this._httpContextAccessor);
+
+            var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
             try
@@ -321,7 +330,7 @@ namespace Application.Services
                 foreach (var role in currentUserRoles)
                 {
                     if (transition.AllowedRole.Name == role)
-                    {
+                    {             
                         getDebitNote.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
@@ -422,6 +431,29 @@ namespace Application.Services
 
             // Returning DebitNoteDto with all values assigned
             return data;
+        }
+    
+        private List<FileUploadDto> ReturningFiles(DebitNoteDto data, DocType docType)
+        {
+
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.DebitNote))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = $"{data.DocNo} - {e.Id}",
+                        DocType = DocType.DebitNote,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+
+            }
+
+            return files;
         }
     }
 }
