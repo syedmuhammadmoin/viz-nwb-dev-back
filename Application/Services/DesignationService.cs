@@ -27,6 +27,7 @@ namespace Application.Services
 
         public async Task<Response<DesignationDto>> CreateAsync(DesignationDto[] entity)
         {
+            List<Designation> designationtList = new List<Designation>();
             foreach (var item in entity)
             {
                 var getDesignation = await _unitOfWork.Designation.GetById((int)item.Id);
@@ -34,15 +35,19 @@ namespace Application.Services
                 if (getDesignation != null)
                 {
                     _mapper.Map<DesignationDto, Designation>(item, getDesignation);
-                    await _unitOfWork.SaveAsync();
-
-                    //return new Response<DesignationDto>(_mapper.Map<DesignationDto>(getDesignation), "Updated successfully");
                 }
                 else
                 {
-                    await _unitOfWork.Designation.Add(_mapper.Map<Designation>(item));
-                    await _unitOfWork.SaveAsync();
+                    designationtList.Add(_mapper.Map<Designation>(item));
                 }
+            }
+
+            await _unitOfWork.SaveAsync();
+
+            if (designationtList.Any())
+            {
+                await _unitOfWork.Designation.AddRange(designationtList);
+                await _unitOfWork.SaveAsync();
             }
 
             return new Response<DesignationDto>(null, "Records populated successfully");
