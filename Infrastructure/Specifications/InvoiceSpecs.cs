@@ -59,5 +59,13 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.Status);
         }
+        
+        //For aging report
+        public InvoiceSpecs(string abc)
+            : base(c => c.Status.State == DocumentStatus.Unpaid || c.Status.State == DocumentStatus.Partial)
+        {
+            AddInclude(i => i.Customer);
+            ApplyAsNoTracking();
+        }
     }
 }
