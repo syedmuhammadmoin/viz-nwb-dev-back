@@ -25,26 +25,27 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<Response<DepartmentDto>> CreateAsync(DepartmentDto entity)
+        public async Task<Response<DepartmentDto>> CreateAsync(DepartmentDto[] entity)
         {
-            var department = _mapper.Map<Department>(entity);
-
-            var getDepartment = await _unitOfWork.Department.GetById((int)entity.Id);
-
-            if (getDepartment != null)
+            foreach (var item in entity)
             {
-                _mapper.Map<DepartmentDto, Department>(entity, getDepartment);
-                await _unitOfWork.SaveAsync();
+                var getDepartment = await _unitOfWork.Department.GetById((int)item.Id);
 
-                return new Response<DepartmentDto>(_mapper.Map<DepartmentDto>(getDepartment), "Updated successfully");
-            }
-            else
-            {
-                await _unitOfWork.Department.Add(department);
-                await _unitOfWork.SaveAsync();
+                if (getDepartment != null)
+                {
+                    _mapper.Map<DepartmentDto, Department>(item, getDepartment);
+                    await _unitOfWork.SaveAsync();
+
+                    //return new Response<DepartmentDto>(_mapper.Map<DepartmentDto>(getDepartment), "Updated successfully");
+                }
+                else
+                {
+                    await _unitOfWork.Department.Add(_mapper.Map<Department>(item));
+                    await _unitOfWork.SaveAsync();
+                }
             }
 
-            return new Response<DepartmentDto>(_mapper.Map<DepartmentDto>(getDepartment), "Created successfully");
+            return new Response<DepartmentDto>(null, "Records populated successfully");
         }
 
         public async Task<PaginationResponse<List<DepartmentDto>>> GetAllAsync(TransactionFormFilter filter)
@@ -78,7 +79,7 @@ namespace Application.Services
             return new Response<List<DepartmentDto>>(_mapper.Map<List<DepartmentDto>>(departments), "Returning List");
         }
 
-        public Task<Response<DepartmentDto>> UpdateAsync(DepartmentDto entity)
+        public Task<Response<DepartmentDto>> UpdateAsync(DepartmentDto[] entity)
         {
             throw new NotImplementedException();
         }

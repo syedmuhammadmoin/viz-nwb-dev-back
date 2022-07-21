@@ -25,25 +25,27 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<Response<DesignationDto>> CreateAsync(DesignationDto entity)
+        public async Task<Response<DesignationDto>> CreateAsync(DesignationDto[] entity)
         {
-            var designation = _mapper.Map<Designation>(entity);
-            var getDesignation = await _unitOfWork.Designation.GetById((int)entity.Id);
-
-            if (getDesignation != null)
+            foreach (var item in entity)
             {
-                _mapper.Map<DesignationDto, Designation>(entity, getDesignation);
-                await _unitOfWork.SaveAsync();
+                var getDesignation = await _unitOfWork.Designation.GetById((int)item.Id);
 
-                return new Response<DesignationDto>(_mapper.Map<DesignationDto>(getDesignation), "Updated successfully");
-            }
-            else
-            {
-                await _unitOfWork.Designation.Add(designation);
-                await _unitOfWork.SaveAsync();
+                if (getDesignation != null)
+                {
+                    _mapper.Map<DesignationDto, Designation>(item, getDesignation);
+                    await _unitOfWork.SaveAsync();
+
+                    //return new Response<DesignationDto>(_mapper.Map<DesignationDto>(getDesignation), "Updated successfully");
+                }
+                else
+                {
+                    await _unitOfWork.Designation.Add(_mapper.Map<Designation>(item));
+                    await _unitOfWork.SaveAsync();
+                }
             }
 
-            return new Response<DesignationDto>(_mapper.Map<DesignationDto>(getDesignation), "Created successfully");
+            return new Response<DesignationDto>(null, "Records populated successfully");
         }
 
         public async Task<PaginationResponse<List<DesignationDto>>> GetAllAsync(TransactionFormFilter filter)
@@ -77,7 +79,7 @@ namespace Application.Services
             return new Response<List<DesignationDto>>(_mapper.Map<List<DesignationDto>>(designations), "Returning List");
         }
 
-        public Task<Response<DesignationDto>> UpdateAsync(DesignationDto entity)
+        public Task<Response<DesignationDto>> UpdateAsync(DesignationDto[] entity)
         {
             throw new NotImplementedException();
         }
