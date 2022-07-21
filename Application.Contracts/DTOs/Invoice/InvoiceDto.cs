@@ -1,10 +1,12 @@
-﻿using Domain.Constants;
+﻿using Application.Contracts.DTOs.FileUpload;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace Application.Contracts.DTOs
 {
@@ -29,6 +31,9 @@ namespace Application.Contracts.DTOs
         public decimal TotalAmount { get; set; }
         public decimal TotalPaid { get; set; }
         public IEnumerable<PaidDocListDto> PaidAmountList { get; set; }
+        public IEnumerable<FileUploadDto> FileUploadList { get; set; }
+
+
         public IEnumerable<UnreconciledBusinessPartnerPaymentsDto> BPUnreconPaymentList { get; set; }
         public decimal PendingAmount { get; set; }
         public int? TransactionId { get; set; }
