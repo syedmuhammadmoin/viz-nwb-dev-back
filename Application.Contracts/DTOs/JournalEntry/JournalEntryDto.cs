@@ -1,4 +1,5 @@
-﻿using Domain.Constants;
+﻿using Application.Contracts.DTOs.FileUpload;
+using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace Application.Contracts.DTOs
         public string CampusName { get; set; }
         public int TransactionId { get; set; }
         public virtual List<JournalEntryLinesDto> JournalEntryLines { get; set; }
+        public IEnumerable<FileUploadDto> FileUploadList { get; set; }
+
         public bool IsAllowedRole { get; set; }
     }
 }
