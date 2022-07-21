@@ -16,10 +16,12 @@ namespace Vizalys.Api.Controllers
     public class DebitNoteController : ControllerBase
     {
         private readonly IDebitNoteService _debitNoteService;
-
-        public DebitNoteController(IDebitNoteService debitNoteService)
+        private readonly IFileuploadServices _fileuploadServices;
+        public DebitNoteController(IDebitNoteService debitNoteService, IFileuploadServices fileuploadServices)
         {
             _debitNoteService = debitNoteService;
+            _fileuploadServices = fileuploadServices;
+
         }
 
         [ClaimRequirement("Permission", new string[] { Permissions.DebitNoteClaims.Create })]
@@ -76,6 +78,26 @@ namespace Vizalys.Api.Controllers
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
             return BadRequest(result);
+        }
+        [HttpPost("DocUpload/{id:int}")]
+        public async Task<ActionResult<bool>> UploadFile(IFormFile file, int id)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = await _fileuploadServices.UploadFile(file, id, DocType.DebitNote);
+                    if (result.IsSuccess)
+                        return Ok(result); // Status Code : 200
+                    return BadRequest(result);
+                }
+                return BadRequest("Some properties are not valid"); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
         }
     }
 }
