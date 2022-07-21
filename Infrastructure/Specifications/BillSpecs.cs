@@ -63,5 +63,13 @@ namespace Infrastructure.Specifications
         public BillSpecs(int grnId, bool isGRN) : base(p => isGRN ? p.GRNId == grnId : true )
         {
         }
+
+        //For aging report
+        public BillSpecs(string abc)
+            : base(c => c.Status.State == DocumentStatus.Unpaid || c.Status.State == DocumentStatus.Partial)
+        {
+            AddInclude(i => i.Vendor);
+            ApplyAsNoTracking();
+        }
     }
 }

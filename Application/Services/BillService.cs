@@ -399,5 +399,30 @@ namespace Application.Services
             // Returning BillDto with all values assigned
             return data;
         }
+
+        public async Task<Response<List<BillDto>>> GetAgingReport()
+        {
+            var bills = await _unitOfWork.Bill.GetAll(new BillSpecs(""));
+
+            if (bills.Count() == 0)
+                return new PaginationResponse<List<BillDto>>(_mapper.Map<List<BillDto>>(bills), "List is empty");
+
+            var response = new List<BillDto>();
+            var billDto = _mapper.Map<List<BillDto>>(bills);
+            foreach (var i in billDto)
+            {
+                //Getting transaction with Payment Transaction Id
+                var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs((int)i.TransactionId, true)).FirstOrDefault();
+
+                // Checking if given amount is greater than unreconciled document amount
+                var transactionReconciles = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(getUnreconciledDocumentAmount.Id, false)).ToList();
+
+                //Getting Pending Invoice Amount
+                i.PendingAmount = i.TotalAmount - transactionReconciles.Sum(e => e.Amount);
+
+                //response.Add(await MapToValue(i));
+            }
+            return new Response<List<BillDto>>(billDto, "Returning Report");
+        }
     }
 }
