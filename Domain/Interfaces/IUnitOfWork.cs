@@ -56,6 +56,7 @@ namespace Domain.Interfaces
         IGoodsReturnNoteRepository GoodsReturnNote { get; }
         IIssuanceToGRNLineReconcileRepository IssuanceToGRNLineReconcile { get; }
 
+        IFileUploadRepository Fileupload { get; }
         Task SaveAsync();
         void CreateTransaction();
         void Commit();
