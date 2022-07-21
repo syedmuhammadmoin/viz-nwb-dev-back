@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.FileUpload;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -94,6 +95,10 @@ namespace Application.Services
 
             var jVDto = _mapper.Map<JournalEntryDto>(jv);
 
+
+
+            ReturningFiles(jVDto, DocType.JournalEntry);
+       
             jVDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.JournalEntry)).FirstOrDefault();
 
@@ -275,6 +280,9 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+            var getUser = new GetUser(this._httpContextAccessor);
+
+            var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
             try
@@ -284,6 +292,7 @@ namespace Application.Services
                     if (transition.AllowedRole.Name == role)
                     {
                         getJournalEntry.setStatus(transition.NextStatusId);
+              
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
                             await AddToLedger(getJournalEntry);
@@ -310,6 +319,30 @@ namespace Application.Services
                 _unitOfWork.Rollback();
                 return new Response<bool>(ex.Message);
             }
+        }
+  
+        private List<FileUploadDto> ReturningFiles(JournalEntryDto data, DocType docType)
+        {
+
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.JournalEntry))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = $"{data.DocNo} - {e.Id}",
+                        DocType = DocType.JournalEntry,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+
+            }
+
+            return files;
+
         }
     }
 }
