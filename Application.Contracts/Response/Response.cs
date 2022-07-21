@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Application.Contracts.DTOs;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +10,8 @@ namespace Application.Contracts.Response
 {
     public class Response<T>
     {
+        private FileStreamResult filess;
+
         public T Result { get; protected set; }
         public bool IsSuccess { get; protected set; }
         public string[] Errors { get; protected set; }
@@ -28,6 +32,11 @@ namespace Application.Contracts.Response
         {
             IsSuccess = false;
             Message = message;
+        }
+
+        public Response(FileStreamResult filess)
+        {
+            this.filess = filess;
         }
     }
 }
