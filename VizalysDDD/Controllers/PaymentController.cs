@@ -16,10 +16,11 @@ namespace Vizalys.Api.Controllers
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
-
-        public PaymentController(IPaymentService paymentService)
+        private readonly IFileuploadServices _fileuploadServices;
+        public PaymentController(IPaymentService paymentService, IFileuploadServices fileuploadServices)
         {
             _paymentService = paymentService;
+            _fileuploadServices = fileuploadServices;
         }
 
         [ClaimRequirement("Permission", new string[] { Permissions.PaymentClaims.Create, Permissions.PaymentClaims.View, Permissions.PaymentClaims.Delete, Permissions.PaymentClaims.Edit })]
@@ -209,6 +210,26 @@ namespace Vizalys.Api.Controllers
                 if (ModelState.IsValid)
                 {
                     var result = await _paymentService.ProcessForApproval(data);
+                    if (result.IsSuccess)
+                        return Ok(result); // Status Code : 200
+                    return BadRequest(result);
+                }
+                return BadRequest("Some properties are not valid"); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
+        [HttpPost("DocUpload/{id:int}")]
+        public async Task<ActionResult<bool>> UploadFile(IFormFile file, int id)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = await _fileuploadServices.UploadFile(file, id, DocType.Payment);
                     if (result.IsSuccess)
                         return Ok(result); // Status Code : 200
                     return BadRequest(result);
