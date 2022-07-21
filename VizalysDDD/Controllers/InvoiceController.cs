@@ -16,10 +16,12 @@ namespace Vizalys.Api.Controllers
     public class InvoiceController : ControllerBase
     {
         private readonly IInvoiceService _invoiceService;
+        private readonly IFileuploadServices _fileUploadService;
 
-        public InvoiceController(IInvoiceService invoiceService)
+        public InvoiceController(IInvoiceService invoiceService, IFileuploadServices fileUploadService)
         {
             _invoiceService = invoiceService;
+            _fileUploadService = fileUploadService;
         }
 
         [ClaimRequirement("Permission", new string[] { Permissions.InvoiceClaims.Create })]
@@ -76,6 +78,27 @@ namespace Vizalys.Api.Controllers
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
             return BadRequest(result);
+        }
+
+        [HttpPost("DocUpload/{id:int}")]
+        public async Task<ActionResult<Response<int>>> UploadFile(IFormFile file, int id)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = await _fileUploadService.UploadFile(file, id, DocType.Invoice);
+                    if (result.IsSuccess)
+                        return Ok(result); // Status Code : 200
+                    return BadRequest(result);
+                }
+                return BadRequest("Some properties are not valid"); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
         }
     }
 }
