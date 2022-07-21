@@ -1,4 +1,5 @@
-﻿using Domain.Constants;
+﻿using Application.Contracts.DTOs.FileUpload;
+using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,9 @@ namespace Application.Contracts.DTOs
         public int? LedgerId { get; set; }
         public int? TransactionId { get; set; }
         public virtual List<DebitNoteLinesDto> DebitNoteLines { get; set; }
+        public IEnumerable<FileUploadDto> FileUploadList { get; set; }
+
+
         public bool IsAllowedRole { get; set; }
     }
 }
