@@ -59,6 +59,7 @@ namespace Infrastructure.Uow
         public ITaxRepository Taxes { get; private set; }
         public IUnitOfMeasurementRepository UnitOfMeasurement { get; private set; }
         public IIssuanceRepository Issuance { get; private set; }
+        public IFileUploadRepository Fileupload { get; private set; }
         public IStockRepository Stock { get; private set; }
         public IPOToGRNLineReconcileRepository POToGRNLineReconcile { get; private set; }
         public IRequisitionToIssuanceLineReconcileRepository RequisitionToIssuanceLineReconcile { get; private set; }
@@ -82,7 +83,7 @@ namespace Infrastructure.Uow
             Bill = new BillRepository(context);
             CreditNote = new CreditNoteRepository(context);
             DebitNote = new DebitNoteRepository(context);
-            Payment = new PaymentRepository(context);   
+            Payment = new PaymentRepository(context);
             Transaction = new TransactionRepository(context);
             Ledger = new LedgerRepository(context);
             CashAccount = new CashAccountRepository(context);
@@ -110,6 +111,7 @@ namespace Infrastructure.Uow
             UnitOfMeasurement = new UnitOfMeasurementRepository(context);
             Issuance = new IssuanceRepository(context);
             Stock = new StockRepository(context);
+            Fileupload = new FileUploadRepository(context); Stock = new StockRepository(context);
             POToGRNLineReconcile = new POToGRNLineReconcileRepository(context);
             RequisitionToIssuanceLineReconcile = new RequisitionToIssuanceLineReconcileRepository(context);
             GoodsReturnNote = new GoodsReturnNoteRepository(context);
