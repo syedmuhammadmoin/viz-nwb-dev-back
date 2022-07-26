@@ -144,6 +144,13 @@ namespace Application.Services
                 return new Response<int>("Payroll transaction is already processed");
             }
 
+            var checkBasicPay = _unitOfWork.PayrollItem.Find(new PayrollItemSpecs(true)).FirstOrDefault();
+
+            if (checkBasicPay == null)
+            {
+                return new Response<int>("Employee basic pay is required");
+            }
+
             //getting payrollItems by empId
             var payrollTransactionLines = empDetails.PayrollItems
             .Where(x => ((x.IsActive == true) && (x.PayrollType != PayrollType.BasicPay && x.PayrollType != PayrollType.Increment)))
@@ -335,7 +342,10 @@ namespace Application.Services
             if (entity.Id == null)
             {
                 var result = await this.SavePayrollTransaction(entity, 6);
-                return new Response<PayrollTransactionDto>(null, result.Message);
+                if (result.IsSuccess)
+                    return new Response<PayrollTransactionDto>(new PayrollTransactionDto { Id = result.Result }, result.Message);
+
+                return new Response<PayrollTransactionDto>(result.Message);
             }
             else
             {

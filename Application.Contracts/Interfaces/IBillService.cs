@@ -12,5 +12,6 @@ namespace Application.Contracts.Interfaces
     public interface IBillService : ICrudService<CreateBillDto, BillDto, int, TransactionFormFilter>
     {
         Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
+        Task<Response<List<BillDto>>> GetAgingReport();
     }
 }
