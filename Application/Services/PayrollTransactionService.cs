@@ -93,7 +93,7 @@ namespace Application.Services
                 return new Response<PayrollTransactionDto>("Not found");
 
             var payrollTransactionDto = _mapper.Map<PayrollTransactionDto>(payrollTransaction);
-
+            ReturningRemarks(payrollTransactionDto, DocType.PayrollTransaction);
             payrollTransactionDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
 
@@ -482,6 +482,9 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+            var getUser = new GetUser(this._httpContextAccessor);
+
+            var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
             try
@@ -490,6 +493,18 @@ namespace Application.Services
                 {
                     if (transition.AllowedRole.Name == role)
                     {
+                        if (!String.IsNullOrEmpty(data.Remarks))
+                        {
+                            var addRemarks = new Remark()
+                            {
+                                DocId = getPayrollTransaction.Id,
+                                DocType = DocType.Invoice,
+                                Remarks = data.Remarks,
+                                UserId = userId
+                            };
+                            await _unitOfWork.Remarks.Add(addRemarks);
+                        }
+
                         getPayrollTransaction.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
@@ -834,6 +849,24 @@ namespace Application.Services
                 response.Add(MapToValue(i));
             }
             return new Response<List<PayrollTransactionDto>>(response.OrderBy(i => i.Employee).ToList(), "Returning List");
+        }
+
+        private List<RemarksDto> ReturningRemarks(PayrollTransactionDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.PayrollTransaction))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
         }
     }
 }
