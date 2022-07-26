@@ -36,6 +36,7 @@ namespace Application.Contracts.DTOs
         public DocumentStatus State { get; set; }
         public decimal TotalPaid { get; set; }
         public IEnumerable<PaidDocListDto> PaidAmountList { get; set; }
+        public IEnumerable<RemarksDto> RemarksList { get; set; }
         public IEnumerable<UnreconciledBusinessPartnerPaymentsDto> BPUnreconPaymentList { get; set; }
         public decimal PendingAmount { get; set; }
         public bool IsAllowedRole { get; set; }
