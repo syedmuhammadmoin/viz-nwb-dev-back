@@ -11,16 +11,19 @@ namespace Infrastructure.Specifications
 {
     public class BusinessPartnerSpecs : BaseSpecification<BusinessPartner>
     {
-        public BusinessPartnerSpecs(List<BusinessPartnerType?> businessPartnerTypes, BusinessPartnerFilter filter)
+        public BusinessPartnerSpecs(List<BusinessPartnerType?> businessPartnerTypes, BusinessPartnerFilter filter, bool isTotalRecord)
             : base(c => c.Name.Contains(filter.Name != null ? filter.Name : "")
                 && (c.BusinessPartnerType != BusinessPartnerType.Employee )
                 && (businessPartnerTypes.Count() > 0 ? businessPartnerTypes.Contains(c.BusinessPartnerType):true))
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
-            AddInclude(i=> i.AccountPayable);
-            AddInclude(i=> i.AccountReceivable);
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+                AddInclude(i => i.AccountPayable);
+                AddInclude(i => i.AccountReceivable);
+            }
         }
 
         public BusinessPartnerSpecs() : base(x => x.BusinessPartnerType != BusinessPartnerType.Employee)

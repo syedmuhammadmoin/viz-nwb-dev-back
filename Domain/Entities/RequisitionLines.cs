@@ -18,7 +18,7 @@ namespace Domain.Entities
         [MaxLength(100)]
         public string Description { get; private set; }
         public int Quantity { get; private set; }
-        public int WarehouseId { get; private set; }
+        public int? WarehouseId { get; private set; }
         [ForeignKey("WarehouseId")]
         public Warehouse Warehouse { get; private set; }
         public DocumentStatus Status { get; private set; }

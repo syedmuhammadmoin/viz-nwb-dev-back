@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class IssuanceToGRNLineReconcile : BaseEntity<int>
+    public class IssuanceToIssuanceReturnLineReconcile : BaseEntity<int>
     {
         public int ItemId { get; private set; }
         [ForeignKey("ItemId")]
@@ -17,30 +17,30 @@ namespace Domain.Entities
         public int IssuanceId { get; private set; }
         [ForeignKey("IssuanceId")]
         public IssuanceMaster Issuance { get; private set; }
-        public int GRNId { get; private set; }
-        [ForeignKey("GRNId")]
-        public GRNMaster GRN { get; private set; }
+        public int IssuanceReturnId { get; private set; }
+        [ForeignKey("IssuanceReturnId")]
+        public IssuanceReturnMaster IssuanceReturn { get; private set; }
         public int IssuanceLineId { get; private set; }
         [ForeignKey("IssuanceLineId")]
         public IssuanceLines IssuanceLines { get; private set; }
-        public int GRNLineId { get; private set; }
-        [ForeignKey("GRNLineId")]
-        public GRNLines GRNLines { get; private set; }
+        public int IssuanceReturnLineId { get; private set; }
+        [ForeignKey("IssuanceReturnLineId")]
+        public IssuanceReturnLines IssuanceReturnLines { get; private set; }
         public int WarehouseId { get; private set; }
         [ForeignKey("WarehouseId")]
         public Warehouse Warehouse { get; private set; }
 
-        public IssuanceToGRNLineReconcile(int itemId, int quantity, int issuanceId, int grnId, int issuanceLineId, int grnLineId,int warehouse)
+        public IssuanceToIssuanceReturnLineReconcile(int itemId, int quantity, int issuanceId, int issuanceReturnId, int issuanceLineId, int issuanceReturnLineId,int warehouse)
         {
             ItemId = itemId;
             Quantity = quantity;
-            GRNId = grnId;
+            IssuanceReturnId = issuanceReturnId;
             IssuanceId = issuanceId;
             IssuanceLineId = issuanceLineId;
-            GRNLineId = grnLineId;
+            IssuanceReturnLineId = issuanceReturnLineId;
             WarehouseId = warehouse;
         }
-        protected IssuanceToGRNLineReconcile()
+        protected IssuanceToIssuanceReturnLineReconcile()
         {
 
         }

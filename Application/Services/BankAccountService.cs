@@ -81,13 +81,12 @@ namespace Application.Services
 
         public async Task<PaginationResponse<List<BankAccountDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new BankAccountSpecs(filter);
-            var backAccount = await _unitOfWork.BankAccount.GetAll(specification);
+            var backAccount = await _unitOfWork.BankAccount.GetAll(new BankAccountSpecs(filter, false));
 
             if (!backAccount.Any())
                 return new PaginationResponse<List<BankAccountDto>>(_mapper.Map<List<BankAccountDto>>(backAccount), "List is empty");
 
-            var totalRecords = await _unitOfWork.BankAccount.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.BankAccount.TotalRecord(new BankAccountSpecs(filter, true));
 
             return new PaginationResponse<List<BankAccountDto>>(_mapper.Map<List<BankAccountDto>>(backAccount), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
 

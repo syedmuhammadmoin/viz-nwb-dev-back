@@ -48,13 +48,12 @@ namespace Application.Services
 
         public async Task<PaginationResponse<List<DesignationDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new DesignationSpecs(filter);
-            var designations = await _unitOfWork.Designation.GetAll(specification);
+            var designations = await _unitOfWork.Designation.GetAll(new DesignationSpecs(filter, false));
 
             if (designations.Count() == 0)
                 return new PaginationResponse<List<DesignationDto>>(_mapper.Map<List<DesignationDto>>(designations), "List is empty");
 
-            var totalRecords = await _unitOfWork.Designation.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Designation.TotalRecord(new DesignationSpecs(filter, true));
 
             return new PaginationResponse<List<DesignationDto>>(_mapper.Map<List<DesignationDto>>(designations), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

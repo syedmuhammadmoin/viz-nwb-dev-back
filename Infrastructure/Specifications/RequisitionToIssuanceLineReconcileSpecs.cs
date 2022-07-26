@@ -9,11 +9,11 @@ namespace Infrastructure.Specifications
 {
     public class RequisitionToIssuanceLineReconcileSpecs : BaseSpecification<RequisitionToIssuanceLineReconcile>
     {
-        public RequisitionToIssuanceLineReconcileSpecs(int requisitionId, int requisitionLineId, int itemId, int warehouseId)
+        public RequisitionToIssuanceLineReconcileSpecs(int requisitionId, int requisitionLineId, int itemId)
             : base(x => x.RequisitionId == requisitionId
             && x.RequisitionLineId == requisitionLineId
             && x.ItemId == itemId
-            && x.WarehouseId == warehouseId)
+            )
         {
             ApplyAsNoTracking();
         }

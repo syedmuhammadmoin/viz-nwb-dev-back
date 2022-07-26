@@ -70,7 +70,8 @@ namespace Domain.Constants
         PayrollTransaction,
         PayrollPayment,
         Issuance,
-        GoodsReturnNote
+        GoodsReturnNote,
+        IssuanceReturn
     }
     public enum ActionButton
     {

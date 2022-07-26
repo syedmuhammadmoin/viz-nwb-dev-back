@@ -72,13 +72,12 @@ namespace Application.Services
             {
                 states.Add(filter.State);
             }
-            var specification = new JournalEntrySpecs(docDate, dueDate, states, filter);
-            var jvs = await _unitOfWork.JournalEntry.GetAll(specification);
+            var jvs = await _unitOfWork.JournalEntry.GetAll(new JournalEntrySpecs(docDate, dueDate, states, filter, false));
 
             if (jvs.Count() == 0)
                 return new PaginationResponse<List<JournalEntryDto>>(_mapper.Map<List<JournalEntryDto>>(jvs), "List is empty");
 
-            var totalRecords = await _unitOfWork.JournalEntry.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.JournalEntry.TotalRecord(new JournalEntrySpecs(docDate, dueDate, states, filter, true));
 
             return new PaginationResponse<List<JournalEntryDto>>(_mapper.Map<List<JournalEntryDto>>(jvs),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220707141534_updateUserTable")]
-    partial class updateUserTable
+    [Migration("20220715134841_AddGoodsReturnNoteAndIssuanceReturnForm")]
+    partial class AddGoodsReturnNoteAndIssuanceReturnForm
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1885,7 +1885,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("IssuanceMaster");
                 });
 
-            modelBuilder.Entity("Domain.Entities.IssuanceToGRNLineReconcile", b =>
+            modelBuilder.Entity("Domain.Entities.IssuanceReturnLines", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1900,10 +1900,73 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("GRNId")
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ItemId")
                         .HasColumnType("int");
 
-                    b.Property<int>("GRNLineId")
+                    b.Property<int>("MasterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WarehouseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("MasterId");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.ToTable("IssuanceReturnLines");
+                });
+
+            modelBuilder.Entity("Domain.Entities.IssuanceReturnMaster", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CampusId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Contact")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DocNo")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDelete")
@@ -1912,7 +1975,60 @@ namespace Infrastructure.Migrations
                     b.Property<int>("IssuanceId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("IssuanceReturnDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampusId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("IssuanceId");
+
+                    b.HasIndex("StatusId");
+
+                    b.ToTable("IssuanceReturnMaster");
+                });
+
+            modelBuilder.Entity("Domain.Entities.IssuanceToIssuanceReturnLineReconcile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("IssuanceId")
+                        .HasColumnType("int");
+
                     b.Property<int>("IssuanceLineId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IssuanceReturnId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IssuanceReturnLineId")
                         .HasColumnType("int");
 
                     b.Property<int>("ItemId")
@@ -1933,19 +2049,19 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GRNId");
-
-                    b.HasIndex("GRNLineId");
-
                     b.HasIndex("IssuanceId");
 
                     b.HasIndex("IssuanceLineId");
+
+                    b.HasIndex("IssuanceReturnId");
+
+                    b.HasIndex("IssuanceReturnLineId");
 
                     b.HasIndex("ItemId");
 
                     b.HasIndex("WarehouseId");
 
-                    b.ToTable("IssuanceToGRNLineReconcile");
+                    b.ToTable("IssuanceToIssuanceReturnLineReconcile");
                 });
 
             modelBuilder.Entity("Domain.Entities.JournalEntryLines", b =>
@@ -3706,7 +3822,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("WarehouseId")
+                    b.Property<int?>("WarehouseId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -3728,9 +3844,6 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("BusinessPartnerId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CampusId")
                         .HasColumnType("int");
 
@@ -3744,6 +3857,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("DocNo")
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
@@ -3763,9 +3879,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BusinessPartnerId");
-
                     b.HasIndex("CampusId");
+
+                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("StatusId");
 
@@ -5303,17 +5419,44 @@ namespace Infrastructure.Migrations
                     b.Navigation("Status");
                 });
 
-            modelBuilder.Entity("Domain.Entities.IssuanceToGRNLineReconcile", b =>
+            modelBuilder.Entity("Domain.Entities.IssuanceReturnLines", b =>
                 {
-                    b.HasOne("Domain.Entities.GRNMaster", "GRN")
+                    b.HasOne("Domain.Entities.Product", "Item")
                         .WithMany()
-                        .HasForeignKey("GRNId")
+                        .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.GRNLines", "GRNLines")
+                    b.HasOne("Domain.Entities.IssuanceReturnMaster", "IssuanceReturnMaster")
+                        .WithMany("IssuanceReturnLines")
+                        .HasForeignKey("MasterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Warehouse", "Warehouse")
                         .WithMany()
-                        .HasForeignKey("GRNLineId")
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("IssuanceReturnMaster");
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("Domain.Entities.IssuanceReturnMaster", b =>
+                {
+                    b.HasOne("Domain.Entities.Campus", "Campus")
+                        .WithMany()
+                        .HasForeignKey("CampusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -5323,9 +5466,44 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Campus");
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Issuance");
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("Domain.Entities.IssuanceToIssuanceReturnLineReconcile", b =>
+                {
+                    b.HasOne("Domain.Entities.IssuanceMaster", "Issuance")
+                        .WithMany()
+                        .HasForeignKey("IssuanceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.IssuanceLines", "IssuanceLines")
                         .WithMany()
                         .HasForeignKey("IssuanceLineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.IssuanceReturnMaster", "IssuanceReturn")
+                        .WithMany()
+                        .HasForeignKey("IssuanceReturnId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.IssuanceReturnLines", "IssuanceReturnLines")
+                        .WithMany()
+                        .HasForeignKey("IssuanceReturnLineId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -5341,13 +5519,13 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("GRN");
-
-                    b.Navigation("GRNLines");
-
                     b.Navigation("Issuance");
 
                     b.Navigation("IssuanceLines");
+
+                    b.Navigation("IssuanceReturn");
+
+                    b.Navigation("IssuanceReturnLines");
 
                     b.Navigation("Item");
 
@@ -5799,8 +5977,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Warehouse", "Warehouse")
                         .WithMany()
                         .HasForeignKey("WarehouseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Item");
 
@@ -5811,15 +5988,15 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.RequisitionMaster", b =>
                 {
-                    b.HasOne("Domain.Entities.BusinessPartner", "BusinessPartner")
-                        .WithMany()
-                        .HasForeignKey("BusinessPartnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
                         .HasForeignKey("CampusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -5829,9 +6006,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("BusinessPartner");
-
                     b.Navigation("Campus");
+
+                    b.Navigation("Employee");
 
                     b.Navigation("Status");
                 });
@@ -6089,6 +6266,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.IssuanceMaster", b =>
                 {
                     b.Navigation("IssuanceLines");
+                });
+
+            modelBuilder.Entity("Domain.Entities.IssuanceReturnMaster", b =>
+                {
+                    b.Navigation("IssuanceReturnLines");
                 });
 
             modelBuilder.Entity("Domain.Entities.JournalEntryMaster", b =>

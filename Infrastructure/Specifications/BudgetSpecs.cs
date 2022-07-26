@@ -10,13 +10,17 @@ namespace Infrastructure.Specifications
 {
     public class BudgetSpecs : BaseSpecification<BudgetMaster>
     {
-        public BudgetSpecs(TransactionFormFilter filter)
+        public BudgetSpecs(TransactionFormFilter filter, bool isTotalRecord)
             : base(c => c.BudgetName.Contains(filter.Name != null ? filter.Name : ""))
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
-        }
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+            }
+         }
+
         public BudgetSpecs(bool forEdit)
         {
             if (forEdit)
@@ -32,7 +36,7 @@ namespace Infrastructure.Specifications
         {
         }
 
-        public BudgetSpecs(string budgetName) : base (a => budgetName == a.BudgetName)
+        public BudgetSpecs(string budgetName) : base(a => budgetName == a.BudgetName)
         {
             AddInclude(i => i.BudgetLines);
             AddInclude("BudgetLines.Account");

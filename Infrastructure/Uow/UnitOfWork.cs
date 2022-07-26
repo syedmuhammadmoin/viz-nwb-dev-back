@@ -64,8 +64,8 @@ namespace Infrastructure.Uow
         public IRequisitionToIssuanceLineReconcileRepository RequisitionToIssuanceLineReconcile { get; private set; }
         public IGoodsReturnNoteRepository GoodsReturnNote { get; private set; }
         public IGRNToGoodsReturnNoteLineReconcileRepository GRNToGoodsReturnNoteLineReconcile { get; private set; }
-        public IIssuanceToGRNLineReconcileRepository IssuanceToGRNLineReconcile { get; private set; }
-
+        public IIssuanceToIssuanceReturnLineReconcileRepository IssuanceToIssuanceReturnLineReconcile { get; private set; }
+        public IIssuanceReturnRepository IssuanceReturn { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -114,7 +114,8 @@ namespace Infrastructure.Uow
             RequisitionToIssuanceLineReconcile = new RequisitionToIssuanceLineReconcileRepository(context);
             GoodsReturnNote = new GoodsReturnNoteRepository(context);
             GRNToGoodsReturnNoteLineReconcile = new GRNToGoodsReturnNoteLineReconcileRepository(context);
-            IssuanceToGRNLineReconcile = new IssuanceToGRNLineReconcileRepository(context);
+            IssuanceToIssuanceReturnLineReconcile = new IssuanceToIssuanceReturnLineReconcileRepository(context);
+            IssuanceReturn = new IssuanceReturnRepository(context);
         }
 
         public async Task SaveAsync()
