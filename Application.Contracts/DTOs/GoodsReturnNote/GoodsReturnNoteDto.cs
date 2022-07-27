@@ -26,6 +26,7 @@ namespace Application.Contracts.DTOs
         public decimal TotalAmount { get; set; }
         public string GRNDocNo { get; set; }
         public virtual List<GoodsReturnNoteLinesDto> GoodsReturnNoteLines { get; set; }
+        public IEnumerable <RemarksDto> RemarksList { get; set; }
         public bool IsAllowedRole { get; set; }
     }
 }
