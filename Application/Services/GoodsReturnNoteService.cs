@@ -55,6 +55,8 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+            var getUser = new GetUser(this._httpContextAccessor);
+            var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
             try
@@ -64,6 +66,17 @@ namespace Application.Services
                     if (transition.AllowedRole.Name == role)
                     {
                         getGRN.setStatus(transition.NextStatusId);
+                        if (!String.IsNullOrEmpty(data.Remarks))
+                        {
+                            var addRemarks = new Remark()
+                            {
+                                DocId = getGRN.Id,
+                                DocType = DocType.GoodsReturnNote,
+                                Remarks = data.Remarks,
+                                UserId = userId
+                            };
+                            await _unitOfWork.Remarks.Add(addRemarks);
+                        }
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
                             var reconciled = await ReconcileGRNLines(getGRN.Id, getGRN.GRNId, getGRN.GoodsReturnNoteLines);
@@ -150,7 +163,7 @@ namespace Application.Services
                 return new Response<GoodsReturnNoteDto>("Not found");
 
             var goodsReturnNoteDto = _mapper.Map<GoodsReturnNoteDto>(goodsReturnNote);
-
+            ReturningRemarks(goodsReturnNoteDto, DocType.GoodsReturnNote);
             goodsReturnNoteDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.GoodsReturnNote)).FirstOrDefault();
 
@@ -440,6 +453,22 @@ namespace Application.Services
             }
             return new Response<bool>(true, "");
         }
+        private List<RemarksDto> ReturningRemarks(GoodsReturnNoteDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.GoodsReturnNote))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
 
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
+        }
     }
 }
