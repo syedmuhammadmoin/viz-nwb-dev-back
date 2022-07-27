@@ -10,14 +10,17 @@ namespace Infrastructure.Specifications
 {
     public class BankStmtSpecs : BaseSpecification<BankStmtMaster>
     {
-        public BankStmtSpecs(TransactionFormFilter filter)
+        public BankStmtSpecs(TransactionFormFilter filter, bool isTotalRecord)
          : base(c => c.BankAccount.BankName.Contains(filter.Name != null ? filter.Name : ""))
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
-            AddInclude(i => i.BankAccount);
-            AddInclude(i => i.BankStmtLines);
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+                AddInclude(i => i.BankAccount);
+                AddInclude(i => i.BankStmtLines);
+            }
         }
         public BankStmtSpecs()
         {

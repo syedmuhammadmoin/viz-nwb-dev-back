@@ -12,7 +12,7 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public int BusinessPartnerId { get; set; }
+        public int EmployeeId { get; set; }
         [Required]
         public DateTime RequisitionDate { get; set; }
         [Required]

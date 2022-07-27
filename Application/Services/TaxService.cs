@@ -27,13 +27,12 @@ namespace Application.Services
 
         public async Task<PaginationResponse<List<TaxDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new TaxesSpecs(filter);
-            var taxes = await _unitOfWork.Taxes.GetAll(specification);
+            var taxes = await _unitOfWork.Taxes.GetAll(new TaxesSpecs(filter, false));
 
             if (taxes.Count() == 0)
                 return new PaginationResponse<List<TaxDto>>(_mapper.Map<List<TaxDto>>(taxes), "List is empty");
 
-            var totalRecords = await _unitOfWork.Taxes.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Taxes.TotalRecord(new TaxesSpecs(filter, true));
 
             return new PaginationResponse<List<TaxDto>>(_mapper.Map<List<TaxDto>>(taxes), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

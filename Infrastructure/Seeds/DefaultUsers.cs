@@ -16,8 +16,6 @@ namespace Infrastructure.Seeds
         {
             var defaultUser = new User
             {
-                FirstName = "Naveed",
-                LastName = "Karim",
                 UserName = "Naveed",
                 Email = "superadmin@vizalys.com",
                 EmailConfirmed = true
@@ -76,6 +74,8 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaim(superAdmin, "TaxesClaims");
             await roleManager.AddPermissionClaim(superAdmin, "UnitOfMeasurementClaims");
             await roleManager.AddPermissionClaim(superAdmin, "IssuanceClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "GoodsReturnNoteClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "IssuanceReturnClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "ChartOfAccountClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "GeneralLedgerClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "TrialBalanceClaims");
@@ -83,6 +83,7 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaimReport(superAdmin, "BalanceSheetClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "ProfitLossClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "BudgetReportClaims");
+            await roleManager.AddPermissionClaimReport(superAdmin, "StockClaims");
         }
         public static async Task AddPermissionClaim(this RoleManager<IdentityRole> roleManager, IdentityRole role, string module)
         {

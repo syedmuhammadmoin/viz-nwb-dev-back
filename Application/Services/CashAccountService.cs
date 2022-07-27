@@ -73,13 +73,12 @@ namespace Application.Services
 
         public async Task<PaginationResponse<List<CashAccountDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new CashAccountSpecs(filter);
-            var cashAccount = await _unitOfWork.CashAccount.GetAll(specification);
+            var cashAccount = await _unitOfWork.CashAccount.GetAll(new CashAccountSpecs(filter, false));
 
             if (!cashAccount.Any())
                 return new PaginationResponse<List<CashAccountDto>>(_mapper.Map<List<CashAccountDto>>(cashAccount), "List is empty");
 
-            var totalRecords = await _unitOfWork.CashAccount.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.CashAccount.TotalRecord(new CashAccountSpecs(filter, true));
 
             return new PaginationResponse<List<CashAccountDto>>(_mapper.Map<List<CashAccountDto>>(cashAccount), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
 
@@ -133,6 +132,7 @@ namespace Application.Services
                 return new Response<CashAccountDto>(ex.Message);
             }
         }
+
         private async Task AddToLedger(CashAccount cashAccount)
         {
             var addBalanceInCashAccount = new RecordLedger(

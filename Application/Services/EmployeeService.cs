@@ -80,13 +80,12 @@ namespace Application.Services
 
         public async Task<PaginationResponse<List<EmployeeDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new EmployeeSpecs(filter);
-            var employees = await _unitOfWork.Employee.GetAll(specification);
+            var employees = await _unitOfWork.Employee.GetAll(new EmployeeSpecs(filter, false));
 
             if (employees.Count() == 0)
                 return new PaginationResponse<List<EmployeeDto>>(_mapper.Map<List<EmployeeDto>>(employees), "List is empty");
 
-            var totalRecords = await _unitOfWork.Employee.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Employee.TotalRecord(new EmployeeSpecs(filter, true));
 
             return new PaginationResponse<List<EmployeeDto>>(_mapper.Map<List<EmployeeDto>>(employees), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

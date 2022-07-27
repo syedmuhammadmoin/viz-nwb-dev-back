@@ -49,6 +49,13 @@ namespace Domain.Interfaces
         IUnitOfMeasurementRepository UnitOfMeasurement { get; }
         ITaxRepository Taxes { get; }
         IIssuanceRepository Issuance { get; }
+        IStockRepository Stock { get; }
+        IPOToGRNLineReconcileRepository POToGRNLineReconcile { get; }
+        IRequisitionToIssuanceLineReconcileRepository RequisitionToIssuanceLineReconcile { get; }
+        IGRNToGoodsReturnNoteLineReconcileRepository GRNToGoodsReturnNoteLineReconcile { get; }
+        IGoodsReturnNoteRepository GoodsReturnNote { get; }
+        IIssuanceToIssuanceReturnLineReconcileRepository IssuanceToIssuanceReturnLineReconcile { get; }
+        IIssuanceReturnRepository IssuanceReturn { get; }
         IRemarkRepository Remarks { get; }
 
         Task SaveAsync();

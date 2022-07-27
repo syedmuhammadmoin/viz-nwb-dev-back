@@ -70,6 +70,11 @@ namespace Application.Services
                 _unitOfWork.Rollback();
                 return new Response<BankStmtDto>("All fields are required in spreadsheet");
             }
+            catch (InvalidCastException)
+            {
+                _unitOfWork.Rollback();
+                return new Response<BankStmtDto>("Date Format should be DD/MM/YYYY");
+            }
             catch (Exception ex)
             {
                 _unitOfWork.Rollback();
@@ -80,13 +85,13 @@ namespace Application.Services
 
         public async Task<PaginationResponse<List<BankStmtDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new BankStmtSpecs(filter);
-            var bankStmts = await _unitOfWork.Bankstatement.GetAll(specification);
+            var bankStmts = await _unitOfWork.Bankstatement.GetAll(new BankStmtSpecs(filter, false)
+                );
 
             if (!bankStmts.Any())
                 return new PaginationResponse<List<BankStmtDto>>(_mapper.Map<List<BankStmtDto>>(bankStmts), "List is empty");
 
-            var totalRecords = await _unitOfWork.Bankstatement.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Bankstatement.TotalRecord(new BankStmtSpecs(filter, true));
 
             return new PaginationResponse<List<BankStmtDto>>(_mapper.Map<List<BankStmtDto>>(bankStmts),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
@@ -146,6 +151,7 @@ namespace Application.Services
                     var rowCount = worksheet.Dimension.Rows;
                     for (int row = 2; row <= rowCount; row++)
                     {
+                        var checkDate = ((DateTime)worksheet.Cells[row, 2].Value);
                         
                         list.Add(new CreateBankStmtLinesDto()
                         {

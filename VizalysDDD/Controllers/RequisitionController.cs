@@ -35,7 +35,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.RequisitionClaims.Create, Permissions.RequisitionClaims.View, Permissions.RequisitionClaims.Delete, Permissions.RequisitionClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<RequisitionDto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<RequisitionDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var results = await _requisitionService.GetAllAsync(filter);
             if (results.IsSuccess)

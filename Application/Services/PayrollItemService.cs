@@ -108,14 +108,12 @@ namespace Application.Services
             {
                 payrollType.Add(filter.PayrollType);
             }
-
-            var specification = new PayrollItemSpecs(payrollItemType, payrollType, filter);
-            var payrollItem = await _unitOfWork.PayrollItem.GetAll(specification);
+            var payrollItem = await _unitOfWork.PayrollItem.GetAll(new PayrollItemSpecs(payrollItemType, payrollType, filter, false));
 
             if (payrollItem.Count() == 0)
                 return new PaginationResponse<List<PayrollItemDto>>(_mapper.Map<List<PayrollItemDto>>(payrollItem), "List is empty");
 
-            var totalRecords = await _unitOfWork.PayrollItem.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.PayrollItem.TotalRecord(new PayrollItemSpecs(payrollItemType, payrollType, filter, true));
 
             return new PaginationResponse<List<PayrollItemDto>>(_mapper.Map<List<PayrollItemDto>>(payrollItem), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

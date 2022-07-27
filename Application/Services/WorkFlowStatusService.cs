@@ -36,13 +36,12 @@ namespace Application.Services
 
         public async Task<PaginationResponse<List<WorkFlowStatusDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new WorkFlowStatusSpecs(filter);
-            var status = await _unitOfWork.WorkFlowStatus.GetAll(specification);
+            var status = await _unitOfWork.WorkFlowStatus.GetAll(new WorkFlowStatusSpecs(filter, false));
 
             if (!status.Any())
                 return new PaginationResponse<List<WorkFlowStatusDto>>(_mapper.Map<List<WorkFlowStatusDto>>(status), "List is empty");
 
-            var totalRecords = await _unitOfWork.WorkFlowStatus.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.WorkFlowStatus.TotalRecord(new WorkFlowStatusSpecs(filter, true));
 
             return new PaginationResponse<List<WorkFlowStatusDto>>(_mapper.Map<List<WorkFlowStatusDto>>(status), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

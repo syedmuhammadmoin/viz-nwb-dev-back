@@ -9,5 +9,6 @@ namespace Domain.Interfaces
 {
     public interface IGRNRepository : IGenericRepository<GRNMaster, int>
     {
+        IEnumerable<GRNLines> FindLines(ISpecification<GRNLines> specification);
     }
 }

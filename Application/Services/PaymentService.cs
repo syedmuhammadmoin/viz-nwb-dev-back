@@ -63,14 +63,12 @@ namespace Application.Services
             {
                 states.Add(filter.State);
             }
-
-            var specification = new PaymentSpecs(docDate, dueDate, states, filter, docType);
-            var payment = await _unitOfWork.Payment.GetAll(specification);
+            var payment = await _unitOfWork.Payment.GetAll(new PaymentSpecs(docDate, dueDate, states, filter, docType, false));
 
             if (payment.Count() == 0)
                 return new PaginationResponse<List<PaymentDto>>(_mapper.Map<List<PaymentDto>>(payment), "List is empty");
 
-            var totalRecords = await _unitOfWork.Payment.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Payment.TotalRecord(new PaymentSpecs(docDate, dueDate, states, filter, docType, true));
 
             return new PaginationResponse<List<PaymentDto>>(_mapper.Map<List<PaymentDto>>(payment), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

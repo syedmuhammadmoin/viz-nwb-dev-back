@@ -10,12 +10,15 @@ namespace Infrastructure.Specifications
 {
     public class DepartmentSpecs : BaseSpecification<Department>
     {
-        public DepartmentSpecs(TransactionFormFilter filter)
-            : base(c=> c.Name.Contains(filter.Name != null ? filter.Name : ""))
+        public DepartmentSpecs(TransactionFormFilter filter, bool isTotalRecord)
+            : base(c => c.Name.Contains(filter.Name != null ? filter.Name : ""))
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+            }
         }
     }
 }

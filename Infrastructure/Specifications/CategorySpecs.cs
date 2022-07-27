@@ -10,15 +10,18 @@ namespace Infrastructure.Specifications
 {
     public class CategorySpecs : BaseSpecification<Category>
     {
-        public CategorySpecs(TransactionFormFilter filter) 
-            : base(c=> c.Name.Contains(filter.Name != null ? filter.Name : "")) 
+        public CategorySpecs(TransactionFormFilter filter, bool isTotalRecord)
+            : base(c => c.Name.Contains(filter.Name != null ? filter.Name : ""))
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
-            AddInclude(i => i.InventoryAccount);
-            AddInclude(i => i.CostAccount);
-            AddInclude(i => i.RevenueAccount);
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+                AddInclude(i => i.InventoryAccount);
+                AddInclude(i => i.CostAccount);
+                AddInclude(i => i.RevenueAccount);
+            }
         }
         public CategorySpecs()
         {

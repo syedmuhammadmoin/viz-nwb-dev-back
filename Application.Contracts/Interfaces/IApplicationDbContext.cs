@@ -64,6 +64,15 @@ namespace Application.Interfaces
         public DbSet<UnitOfMeasurement> UnitOfMeasurement { get; set; }
         public DbSet<IssuanceMaster> IssuanceMaster { get; set; }
         public DbSet<IssuanceLines> IssuanceLines { get; set; }
+        public DbSet<Stock> Stock { get; set; }
+        public DbSet<POToGRNLineReconcile> POToGRNLineReconcile { get; set; }
+        public DbSet<RequisitionToIssuanceLineReconcile> RequisitionToIssuanceLineReconcile { get; set; }
+        public DbSet<GoodsReturnNoteMaster> GoodsReturnNoteMaster { get; set; }
+        public DbSet<GoodsReturnNoteLines> GoodsReturnNoteLines { get; set; }
+        public DbSet<GRNToGoodsReturnNoteLineReconcile> GRNToGoodsReturnNoteLineReconcile { get; set; }
+        public DbSet<IssuanceToIssuanceReturnLineReconcile> IssuanceToIssuanceReturnLineReconcile { get; set; }
+        public DbSet<IssuanceReturnMaster> IssuanceReturnMaster { get; set; }
+        public DbSet<IssuanceReturnLines> IssuanceReturnLines { get; set; }
         public DbSet<Remark> Remarks { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

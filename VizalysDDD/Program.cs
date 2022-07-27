@@ -55,6 +55,9 @@ builder.Services.AddScoped<IPayrollTransactionService, PayrollTransactionService
 builder.Services.AddScoped<ITaxService, TaxService>();
 builder.Services.AddScoped<IUnitOfMeasurementService, UnitOfMeasurementService>();
 builder.Services.AddScoped<IIssuanceService, IssuanceService>();
+builder.Services.AddScoped<IStockService, StockService>();
+builder.Services.AddScoped<IGoodsReturnNoteService, GoodsReturnNoteService>();
+builder.Services.AddScoped<IIssuanceReturnService, IssuanceReturnService>();
 
 //Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

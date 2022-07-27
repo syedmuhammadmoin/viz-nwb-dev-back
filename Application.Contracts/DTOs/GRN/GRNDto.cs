@@ -13,6 +13,7 @@ namespace Application.Contracts.DTOs
         public string DocNo { get; set; }
         public int VendorId { get; set; }
         public string VendorName { get; set; }
+        public BusinessPartnerType Type { get; set; }
         public DateTime GrnDate { get; set; }
         public int CampusId { get; set; }
         public string CampusName { get; set; }
@@ -24,6 +25,11 @@ namespace Application.Contracts.DTOs
         public decimal TotalBeforeTax { get; set; }
         public decimal TotalTax { get; set; }
         public decimal TotalAmount { get; set; }
+        public string PODocNo { get; set; }
+        public string IssuanceDocNo { get; set; }
+        public IEnumerable<ReferncesDto> References { get; set; }
+
+        public ReferncesDto BillReference { get; set; }
         public virtual List<GRNLinesDto> GRNLines { get; set; }
         public bool IsAllowedRole { get; set; }
     }

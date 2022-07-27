@@ -11,13 +11,16 @@ namespace Infrastructure.Specifications
 {
     public class TaxesSpecs : BaseSpecification<Taxes>
     {
-        public TaxesSpecs(TransactionFormFilter filter)
+        public TaxesSpecs(TransactionFormFilter filter, bool isTotalRecord)
             : base(c => c.Name.Contains(filter.Name != null ? filter.Name : ""))
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
-            AddInclude(i => i.Account);
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+                AddInclude(i => i.Account);
+            }
         }
         public TaxesSpecs()
         {

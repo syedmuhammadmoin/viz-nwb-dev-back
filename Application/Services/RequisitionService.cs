@@ -30,7 +30,6 @@ namespace Application.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-
         public async Task<Response<RequisitionDto>> CreateAsync(CreateRequisitionDto entity)
         {
             if (entity.isSubmit)
@@ -43,15 +42,25 @@ namespace Application.Services
             }
         }
 
-        public async Task<PaginationResponse<List<RequisitionDto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<RequisitionDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new RequisitionSpecs(filter);
-            var requisition = await _unitOfWork.Requisition.GetAll(specification);
+            var docDate = new List<DateTime?>();
+            var states = new List<DocumentStatus?>();
+            if (filter.DocDate != null)
+            {
+                docDate.Add(filter.DocDate);
+            }
+            if (filter.State != null)
+            {
+                states.Add(filter.State);
+            }
+
+            var requisition = await _unitOfWork.Requisition.GetAll(new RequisitionSpecs(docDate, states, filter, false));
 
             if (requisition.Count() == 0)
                 return new PaginationResponse<List<RequisitionDto>>(_mapper.Map<List<RequisitionDto>>(requisition), "List is empty");
 
-            var totalRecords = await _unitOfWork.Requisition.TotalRecord();
+            var totalRecords = await _unitOfWork.Requisition.TotalRecord(new RequisitionSpecs(docDate, states, filter, true));
 
             return new PaginationResponse<List<RequisitionDto>>(_mapper.Map<List<RequisitionDto>>(requisition),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
@@ -65,6 +74,11 @@ namespace Application.Services
                 return new Response<RequisitionDto>("Not found");
 
             var requisitionDto = _mapper.Map<RequisitionDto>(requisition);
+
+            if ((requisitionDto.State == DocumentStatus.Partial || requisitionDto.State == DocumentStatus.Paid))
+            {
+                return new Response<RequisitionDto>(MapToValue(requisitionDto), "Returning value");
+            }
 
             requisitionDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Requisition)).FirstOrDefault();
@@ -138,6 +152,11 @@ namespace Application.Services
                         getRequisition.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
+                            foreach (var line in getRequisition.RequisitionLines)
+                            {
+                                line.setStatus(DocumentStatus.Unreconciled);
+                            }
+
                             await _unitOfWork.SaveAsync();
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "Requisition Approved");
@@ -188,6 +207,15 @@ namespace Application.Services
             if (entity.RequisitionLines.Count() == 0)
                 return new Response<RequisitionDto>("Lines are required");
 
+            //Checking duplicate Lines if any
+            var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId})
+             .Where(g => g.Count() > 1)
+             .Select(y => y.Key)
+             .ToList();
+
+            if (duplicates.Any())
+                return new Response<RequisitionDto>("Duplicate Lines found");
+
             var requisition = _mapper.Map<RequisitionMaster>(entity);
 
             //Setting status
@@ -230,7 +258,15 @@ namespace Application.Services
 
             if (requisition.StatusId != 1 && requisition.StatusId != 2)
                 return new Response<RequisitionDto>("Only draft document can be edited");
+            
+            //Checking duplicate Lines if any
+            var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
+             .Where(g => g.Count() > 1)
+             .Select(y => y.Key)
+             .ToList();
 
+            if (duplicates.Any())
+                return new Response<RequisitionDto>("Duplicate Lines found");
             //Setting status
             requisition.setStatus(status);
 
@@ -258,6 +294,50 @@ namespace Application.Services
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+        private RequisitionDto MapToValue(RequisitionDto data)
+        {
+            //Get reconciled issuances
+            var grnLineReconcileRecord = _unitOfWork.RequisitionToIssuanceLineReconcile
+                .Find(new RequisitionToIssuanceLineReconcileSpecs(true, data.Id))
+                .GroupBy(x => new { x.IssuanceId, x.Issuance.DocNo })
+                .Where(g => g.Count() >= 1)
+                .Select(y => new
+                {
+                    IssuanceId = y.Key.IssuanceId,
+                    DocNo = y.Key.DocNo,
+                })
+                .ToList();
+
+            // Adding in issuances in references list
+            var getReference = new List<ReferncesDto>();
+            if (grnLineReconcileRecord.Any())
+            {
+                foreach (var line in grnLineReconcileRecord)
+                {
+                    getReference.Add(new ReferncesDto
+                    {
+                        DocId = line.IssuanceId,
+                        DocNo = line.DocNo,
+                        DocType = DocType.Issuance
+                    });
+                }
+            }
+            data.References = getReference;
+
+            // Get pending & received quantity...
+            foreach (var line in data.RequisitionLines)
+            {
+                // Checking if given amount is greater than unreconciled document amount
+                line.IssuedQuantity = _unitOfWork.RequisitionToIssuanceLineReconcile
+                    .Find(new RequisitionToIssuanceLineReconcileSpecs(data.Id, line.Id, line.ItemId))
+                    .Sum(p => p.Quantity);
+
+                line.PendingQuantity = line.Quantity - line.IssuedQuantity;
+            }
+
+            return data;
         }
     }
 }

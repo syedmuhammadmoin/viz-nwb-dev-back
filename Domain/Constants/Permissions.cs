@@ -214,6 +214,7 @@ namespace Domain.Constants
             public const string Edit = "Permissions.UnitOfMeasurementClaims.Edit";
             public const string Delete = "Permissions.UnitOfMeasurementClaims.Delete";
         }
+       
         //Transaction Forms
         public static class InvoiceClaims
         {
@@ -313,6 +314,20 @@ namespace Domain.Constants
             public const string Edit = "Permissions.IssuanceClaims.Edit";
             public const string Delete = "Permissions.IssuanceClaims.Delete";
         }
+        public static class GoodsReturnNoteClaims
+        {
+            public const string View = "Permissions.GoodsReturnNoteClaims.View";
+            public const string Create = "Permissions.GoodsReturnNoteClaims.Create";
+            public const string Edit = "Permissions.GoodsReturnNoteClaims.Edit";
+            public const string Delete = "Permissions.GoodsReturnNoteClaims.Delete";
+        }
+        public static class IssuanceReturnClaims
+        {
+            public const string View = "Permissions.IssuanceReturnClaims.View";
+            public const string Create = "Permissions.IssuanceReturnClaims.Create";
+            public const string Edit = "Permissions.IssuanceReturnClaims.Edit";
+            public const string Delete = "Permissions.IssuanceReturnClaims.Delete";
+        }
         //Reporting Form
         public static class ChartOfAccountClaims
         {
@@ -337,6 +352,10 @@ namespace Domain.Constants
         public static class BudgetReportClaims
         {
             public const string View = "Permissions.BudgetReportClaims.View";
+        }
+        public static class StockClaims
+        {
+            public const string View = "Permissions.StockClaims.View";
         }
     }
 }

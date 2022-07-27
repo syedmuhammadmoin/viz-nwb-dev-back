@@ -10,13 +10,14 @@ namespace Application.Contracts.DTOs
     public class CreateIssuanceLinesDto
     {
         public int Id { get; set; }
-        public int? ItemId { get; set; }
+        public int ItemId { get; set; }
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be greater than 0")]
         public int Quantity { get; set; }
         [Required]
         [StringLength(200)]
         public string Description { get; set; }
-        public int? WarehouseId { get; set; }
+        [Required]
+        public int WarehouseId { get; set; }
     }
 }

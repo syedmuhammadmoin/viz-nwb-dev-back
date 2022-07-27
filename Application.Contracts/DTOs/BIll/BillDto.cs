@@ -33,6 +33,8 @@ namespace Application.Contracts.DTOs
         public IEnumerable<UnreconciledBusinessPartnerPaymentsDto> BPUnreconPaymentList { get; set; }
      
         public decimal PendingAmount { get; set; }
+        public int? GRNId { get; set; }
+        public string GRNDocNo { get; set; }
         public IEnumerable<RemarksDto> RemarksList { get; set; }
 
         public int? TransactionId { get; set; }

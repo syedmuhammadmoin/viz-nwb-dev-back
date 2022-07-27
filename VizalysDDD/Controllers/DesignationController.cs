@@ -42,7 +42,7 @@ namespace Vizalys.Api
         [EnableCors("PayrollModule")]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult<Response<DesignationDto>>> CreateAsync([FromHeader(Name = "key")] string key, DesignationDto entity)
+        public async Task<ActionResult<Response<DesignationDto>>> CreateAsync([FromHeader(Name = "key")] string key, DesignationDto[] entity)
         {
             if (key != "b4!V47w^e3QhItW_XY:jHgWQp%$&93nMS|h)Bj~R0&Q#J1m%lI^;b4C,&]Gf2(H_fu]5&X@1Oy~")
             {

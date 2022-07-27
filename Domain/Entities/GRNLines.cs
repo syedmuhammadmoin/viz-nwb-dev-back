@@ -1,4 +1,5 @@
 ﻿using Domain.Base;
+using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -23,15 +24,23 @@ namespace Domain.Entities
         public decimal Tax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal SubTotal { get; private set; }
-        public int? WarehouseId { get; private set; }
+        public DocumentStatus Status { get; private set; }
+        public int WarehouseId { get; private set; }
         [ForeignKey("WarehouseId")]
         public Warehouse Warehouse { get; private set; }
         public int MasterId { get; private set; }
         [ForeignKey("MasterId")]
         public GRNMaster GRNMaster { get; private set; }
+
+        public void setStatus(DocumentStatus status)
+        {
+            Status = status;
+        }
         protected GRNLines()
         {
 
         }
+
+
     }
 }

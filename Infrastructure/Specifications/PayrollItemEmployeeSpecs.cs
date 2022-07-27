@@ -11,28 +11,31 @@ namespace Infrastructure.Specifications
 {
     public class PayrollItemEmployeeSpecs : BaseSpecification<PayrollItemEmployee>
     {
-        public PayrollItemEmployeeSpecs(PaginationFilter filter)
+        public PayrollItemEmployeeSpecs(PaginationFilter filter, bool isTotalRecord)
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            AddInclude(i => i.Employee);
-            ApplyOrderByDescending(i => i.Id);
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                AddInclude(i => i.Employee);
+                ApplyOrderByDescending(i => i.Id);
+            }
         }
-        public PayrollItemEmployeeSpecs(int id, bool isPayrollItem)
+            public PayrollItemEmployeeSpecs(int id, bool isPayrollItem)
             : base(isPayrollItem ? a => a.PayrollItemId == id
             : a => a.EmployeeId == id)
         {
-            AddInclude(i => i.PayrollItem);
-            AddInclude(i => i.Employee);
-            AddInclude("PayrollItem.Account");
-            AddInclude("Employee.Designation");
-            AddInclude("Employee.Department");
-        }
+                AddInclude(i => i.PayrollItem);
+                AddInclude(i => i.Employee);
+                AddInclude("PayrollItem.Account");
+                AddInclude("Employee.Designation");
+                AddInclude("Employee.Department");
+            }
 
-        public PayrollItemEmployeeSpecs(int empId, PayrollType payrollType)
+            public PayrollItemEmployeeSpecs(int empId, PayrollType payrollType)
             : base(a => a.EmployeeId == empId && a.PayrollType == payrollType)
         {
-        }
+            }
 
+        }
     }
-}

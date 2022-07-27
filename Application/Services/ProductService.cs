@@ -37,13 +37,12 @@ namespace Application.Services
 
         public async Task<PaginationResponse<List<ProductDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new ProductSpecs(filter);
-            var product = await _unitOfWork.Product.GetAll(specification);
+            var product = await _unitOfWork.Product.GetAll(new ProductSpecs(filter, false));
 
             if (product.Count() == 0)
                 return new PaginationResponse<List<ProductDto>>(_mapper.Map<List<ProductDto>>(product), "List is empty");
 
-            var totalRecords = await _unitOfWork.Product.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Product.TotalRecord(new ProductSpecs(filter, true));
 
             return new PaginationResponse<List<ProductDto>>(_mapper.Map<List<ProductDto>>(product), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
@@ -70,6 +69,7 @@ namespace Application.Services
             await _unitOfWork.SaveAsync();
             return new Response<ProductDto>(_mapper.Map<ProductDto>(product), "Updated successfully");
         }
+      
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
@@ -77,7 +77,7 @@ namespace Application.Services
 
         public async Task<Response<List<ProductDto>>> GetProductDropDown()
         {
-            var products = await _unitOfWork.Product.GetAll();
+            var products = await _unitOfWork.Product.GetAll(new ProductSpecs());
             if (!products.Any())
                 return new Response<List<ProductDto>>("List is empty");
 

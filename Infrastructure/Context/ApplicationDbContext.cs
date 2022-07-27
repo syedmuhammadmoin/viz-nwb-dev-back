@@ -75,6 +75,16 @@ namespace Infrastructure.Context
         public DbSet<UnitOfMeasurement> UnitOfMeasurement { get; set; }
         public DbSet<IssuanceMaster> IssuanceMaster { get; set; }
         public DbSet<IssuanceLines> IssuanceLines { get; set; }
+        public DbSet<Stock> Stock { get; set; }
+        public DbSet<POToGRNLineReconcile> POToGRNLineReconcile { get; set; }
+        public DbSet<RequisitionToIssuanceLineReconcile> RequisitionToIssuanceLineReconcile { get; set; }
+        public DbSet<GoodsReturnNoteMaster> GoodsReturnNoteMaster { get; set; }
+        public DbSet<GoodsReturnNoteLines> GoodsReturnNoteLines { get; set; }
+        public DbSet<GRNToGoodsReturnNoteLineReconcile> GRNToGoodsReturnNoteLineReconcile { get; set; }
+        public DbSet<IssuanceToIssuanceReturnLineReconcile> IssuanceToIssuanceReturnLineReconcile { get; set; }
+        public DbSet<IssuanceReturnMaster> IssuanceReturnMaster { get; set; }
+        public DbSet<IssuanceReturnLines> IssuanceReturnLines { get; set; }
+
         public DbSet<Remark> Remarks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -169,6 +179,18 @@ namespace Infrastructure.Context
             modelBuilder.Entity<IssuanceLines>()
             .HasOne(tc => tc.IssuanceMaster)
             .WithMany(c => c.IssuanceLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //GoodsReturnNote
+            modelBuilder.Entity<GoodsReturnNoteLines>()
+            .HasOne(tc => tc.GoodsReturnNoteMaster)
+            .WithMany(c => c.GoodsReturnNoteLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //IssuanceReturn
+            modelBuilder.Entity<IssuanceReturnLines>()
+            .HasOne(tc => tc.IssuanceReturnMaster)
+            .WithMany(c => c.IssuanceReturnLines)
             .OnDelete(DeleteBehavior.Cascade);
 
             //Changing Identity users and roles tables name

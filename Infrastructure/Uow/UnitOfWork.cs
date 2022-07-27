@@ -59,6 +59,13 @@ namespace Infrastructure.Uow
         public ITaxRepository Taxes { get; private set; }
         public IUnitOfMeasurementRepository UnitOfMeasurement { get; private set; }
         public IIssuanceRepository Issuance { get; private set; }
+        public IStockRepository Stock { get; private set; }
+        public IPOToGRNLineReconcileRepository POToGRNLineReconcile { get; private set; }
+        public IRequisitionToIssuanceLineReconcileRepository RequisitionToIssuanceLineReconcile { get; private set; }
+        public IGoodsReturnNoteRepository GoodsReturnNote { get; private set; }
+        public IGRNToGoodsReturnNoteLineReconcileRepository GRNToGoodsReturnNoteLineReconcile { get; private set; }
+        public IIssuanceToIssuanceReturnLineReconcileRepository IssuanceToIssuanceReturnLineReconcile { get; private set; }
+        public IIssuanceReturnRepository IssuanceReturn { get; private set; }
         public IRemarkRepository Remarks { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
@@ -103,6 +110,13 @@ namespace Infrastructure.Uow
             Taxes = new TaxRepository(context);
             UnitOfMeasurement = new UnitOfMeasurementRepository(context);
             Issuance = new IssuanceRepository(context);
+            Stock = new StockRepository(context);
+            POToGRNLineReconcile = new POToGRNLineReconcileRepository(context);
+            RequisitionToIssuanceLineReconcile = new RequisitionToIssuanceLineReconcileRepository(context);
+            GoodsReturnNote = new GoodsReturnNoteRepository(context);
+            GRNToGoodsReturnNoteLineReconcile = new GRNToGoodsReturnNoteLineReconcileRepository(context);
+            IssuanceToIssuanceReturnLineReconcile = new IssuanceToIssuanceReturnLineReconcileRepository(context);
+            IssuanceReturn = new IssuanceReturnRepository(context);
             Remarks = new RemarkRepository(context);
         }
 
