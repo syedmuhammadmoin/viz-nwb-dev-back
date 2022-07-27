@@ -16,10 +16,12 @@ namespace Vizalys.Api.Controllers
     public class CreditNoteController : ControllerBase
     {
         private readonly ICreditNoteService _creditNoteService;
-
-        public CreditNoteController(ICreditNoteService creditNoteService)
+        private readonly IFileuploadServices _fileuploadServices;
+        public CreditNoteController(ICreditNoteService creditNoteService, IFileuploadServices fileuploadServices)
         {
             _creditNoteService = creditNoteService;
+            _fileuploadServices = fileuploadServices;
+
         }
 
         [ClaimRequirement("Permission", new string[] { Permissions.CreditNoteClaims.Create })]
@@ -76,6 +78,26 @@ namespace Vizalys.Api.Controllers
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
             return BadRequest(result);
+        }
+        [HttpPost("DocUpload/{id:int}")]
+        public async Task<ActionResult<bool>> UploadFile(IFormFile file, int id)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = await _fileuploadServices.UploadFile(file, id, DocType.CreditNote); ;
+                    if (result.IsSuccess)
+                        return Ok(result); // Status Code : 200
+                    return BadRequest(result);
+                }
+                return BadRequest("Some properties are not valid"); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
         }
     }
 }

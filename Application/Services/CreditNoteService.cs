@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.FileUpload;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -75,6 +76,10 @@ namespace Application.Services
             var creditNoteDto = _mapper.Map<CreditNoteDto>(crn);
             //Returning
             ReturningRemarks(creditNoteDto, DocType.CreditNote); 
+
+            //Returning
+      
+            ReturningFiles(creditNoteDto, DocType.CreditNote); 
 
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.CreditNote)).FirstOrDefault();
             if ((creditNoteDto.State == DocumentStatus.Unpaid || creditNoteDto.State == DocumentStatus.Partial || creditNoteDto.State == DocumentStatus.Paid) && creditNoteDto.TransactionId != null)
@@ -473,6 +478,30 @@ namespace Application.Services
             }
 
             return remarks;
+        }
+       
+        private List<FileUploadDto> ReturningFiles(CreditNoteDto data, DocType docType)
+        {
+
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.CreditNote))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = $"{data.DocNo} - {e.Id}",
+                        DocType = DocType.CreditNote,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+
+            }
+
+            return files;
+
         }
     }
 }

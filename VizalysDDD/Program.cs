@@ -3,6 +3,7 @@ using Application.Contracts.Interfaces;
 using Application.Services;
 using Domain.Interfaces;
 using Infrastructure;
+using Infrastructure.Repositories;
 using Infrastructure.Seeds;
 using Infrastructure.Uow;
 
@@ -55,9 +56,11 @@ builder.Services.AddScoped<IPayrollTransactionService, PayrollTransactionService
 builder.Services.AddScoped<ITaxService, TaxService>();
 builder.Services.AddScoped<IUnitOfMeasurementService, UnitOfMeasurementService>();
 builder.Services.AddScoped<IIssuanceService, IssuanceService>();
+builder.Services.AddScoped<IFileuploadServices, FileUploadService>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<IGoodsReturnNoteService, GoodsReturnNoteService>();
 builder.Services.AddScoped<IIssuanceReturnService, IssuanceReturnService>();
+
 
 //Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

@@ -58,6 +58,7 @@ namespace Domain.Interfaces
         IIssuanceReturnRepository IssuanceReturn { get; }
         IRemarkRepository Remarks { get; }
 
+        IFileUploadRepository Fileupload { get; }
         Task SaveAsync();
         void CreateTransaction();
         void Commit();

@@ -1,4 +1,5 @@
-﻿using Domain.Constants;
+﻿using Application.Contracts.DTOs.FileUpload;
+using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,8 @@ namespace Application.Contracts.DTOs
         public IEnumerable<UnreconciledBusinessPartnerPaymentsDto> BPUnreconPaymentList { get; set; }
      
         public decimal PendingAmount { get; set; }
+
+        public IEnumerable<FileUploadDto> FileUploadList { get; set; }
         public int? GRNId { get; set; }
         public string GRNDocNo { get; set; }
         public IEnumerable<RemarksDto> RemarksList { get; set; }

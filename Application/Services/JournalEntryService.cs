@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.FileUpload;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -93,6 +94,11 @@ namespace Application.Services
 
             var jVDto = _mapper.Map<JournalEntryDto>(jv);
             ReturningRemarks(jVDto, DocType.JournalEntry);
+
+
+
+            ReturningFiles(jVDto, DocType.JournalEntry);
+       
             jVDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.JournalEntry)).FirstOrDefault();
 
@@ -316,6 +322,7 @@ namespace Application.Services
                             };
                             await _unitOfWork.Remarks.Add(addRemarks);
                         }
+              
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
                             await AddToLedger(getJournalEntry);
@@ -364,6 +371,30 @@ namespace Application.Services
             }
 
             return remarks;
+        }
+  
+        private List<FileUploadDto> ReturningFiles(JournalEntryDto data, DocType docType)
+        {
+
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.JournalEntry))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = $"{data.DocNo} - {e.Id}",
+                        DocType = DocType.JournalEntry,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+
+            }
+
+            return files;
+
         }
     }
 }

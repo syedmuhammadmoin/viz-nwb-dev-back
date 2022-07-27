@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.FileUpload;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -77,6 +78,12 @@ namespace Application.Services
 
             //Returning
             ReturningRemarks(debitNoteDto, DocType.DebitNote);
+
+
+            //Returning
+        
+            ReturningFiles(debitNoteDto, DocType.DebitNote);
+
 
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.DebitNote)).FirstOrDefault();
 
@@ -322,7 +329,6 @@ namespace Application.Services
             var getUser = new GetUser(this._httpContextAccessor);
 
             var userId = getUser.GetCurrentUserId();
-
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
             try
@@ -330,7 +336,7 @@ namespace Application.Services
                 foreach (var role in currentUserRoles)
                 {
                     if (transition.AllowedRole.Name == role)
-                    {
+                    {             
                         getDebitNote.setStatus(transition.NextStatusId);
                         if (!String.IsNullOrEmpty(data.Remarks))
                         {
@@ -460,6 +466,29 @@ namespace Application.Services
             }
 
             return remarks;
+        }
+    
+        private List<FileUploadDto> ReturningFiles(DebitNoteDto data, DocType docType)
+        {
+
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.DebitNote))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = $"{data.DocNo} - {e.Id}",
+                        DocType = DocType.DebitNote,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+
+            }
+
+            return files;
         }
     }
 }

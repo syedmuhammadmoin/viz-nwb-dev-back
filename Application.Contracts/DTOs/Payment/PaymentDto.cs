@@ -1,4 +1,5 @@
-﻿using Domain.Constants;
+﻿using Application.Contracts.DTOs.FileUpload;
+using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,8 @@ namespace Application.Contracts.DTOs
         public int StatusId { get; set; }
         public string Status { get; set; }
         public DocumentStatus State { get; set; }
+        public IEnumerable<FileUploadDto> FileUploadList { get; set; }
+
         public bool IsAllowedRole { get; set; }
 
     }

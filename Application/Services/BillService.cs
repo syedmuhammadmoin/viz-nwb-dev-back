@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.FileUpload;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -78,9 +79,15 @@ namespace Application.Services
             var bill = await _unitOfWork.Bill.GetById(id, specification);
             if (bill == null)
                 return new Response<BillDto>("Not found");
+
             var billDto = _mapper.Map<BillDto>(bill);
             ReturningRemarks(billDto , DocType.Bill);
 
+
+         
+            ReturningFiles(billDto , DocType.Bill);
+
+            
             if ((billDto.State == DocumentStatus.Unpaid || billDto.State == DocumentStatus.Partial || billDto.State == DocumentStatus.Paid) && billDto.TransactionId != null)
             {
                 return new Response<BillDto>(MapToValue(billDto), "Returning value");
@@ -176,6 +183,7 @@ namespace Application.Services
                             await _unitOfWork.Remarks.Add(addRemarks);
                         }
 
+                       
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
                             await AddToLedger(getBill);
@@ -470,6 +478,29 @@ namespace Application.Services
             }
 
             return remarks;
+        }
+       
+        private List<FileUploadDto> ReturningFiles(BillDto data, DocType docType)
+        {
+
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.Bill))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = $"{data.DocNo} - {e.Id}",
+                        DocType = DocType.DebitNote,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+
+            }
+
+            return files;
         }
     }
 }
