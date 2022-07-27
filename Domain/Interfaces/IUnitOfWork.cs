@@ -56,6 +56,7 @@ namespace Domain.Interfaces
         IGoodsReturnNoteRepository GoodsReturnNote { get; }
         IIssuanceToIssuanceReturnLineReconcileRepository IssuanceToIssuanceReturnLineReconcile { get; }
         IIssuanceReturnRepository IssuanceReturn { get; }
+        IRemarkRepository Remarks { get; }
 
         Task SaveAsync();
         void CreateTransaction();

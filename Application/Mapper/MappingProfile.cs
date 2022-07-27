@@ -439,6 +439,11 @@ namespace Application.Mapper
             CreateMap<CreateIssuanceReturnDto, IssuanceReturnMaster>();
 
             CreateMap<CreateIssuanceReturnLinesDto, IssuanceReturnLines>();
+            CreateMap<CreateIssuanceLinesDto, IssuanceLines>();
+
+            // Department Mapping
+            CreateMap<Remark, RemarksDto>();
+            CreateMap<RemarksDto, Remark>();
         }
     }
 }

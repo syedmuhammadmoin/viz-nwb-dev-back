@@ -82,6 +82,9 @@ namespace Application.Services
 
             var paymentDto = _mapper.Map<PaymentDto>(payment);
 
+            //Returning
+            ReturningRemarks(paymentDto, DocType.Payment);
+
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(docType)).FirstOrDefault();
             if ((paymentDto.State == DocumentStatus.Unpaid || paymentDto.State == DocumentStatus.Partial || paymentDto.State == DocumentStatus.Paid) && paymentDto.TransactionId != null && paymentDto.LedgerId != null)
             {
@@ -454,6 +457,12 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+
+            // Creating object of getUSer class
+            var getUser = new GetUser(this._httpContextAccessor);
+
+            var userId = getUser.GetCurrentUserId();
+
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
             try
@@ -463,6 +472,17 @@ namespace Application.Services
                     if (transition.AllowedRole.Name == role)
                     {
                         getPayment.setStatus(transition.NextStatusId);
+                        if (!String.IsNullOrEmpty(data.Remarks))
+                        {
+                            var addRemarks = new Remark()
+                            {
+                                DocId = getPayment.Id,
+                                DocType = DocType.Payment,
+                                Remarks = data.Remarks,
+                                UserId = userId
+                            };
+                            await _unitOfWork.Remarks.Add(addRemarks);
+                        }
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
 
                         {
@@ -809,6 +829,23 @@ namespace Application.Services
 
             // Returning BillDto with all values assigned
             return data;
+        }
+        private List<RemarksDto> ReturningRemarks(PaymentDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Payment))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
         }
     }
 }

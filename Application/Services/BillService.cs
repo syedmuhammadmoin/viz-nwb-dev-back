@@ -79,7 +79,8 @@ namespace Application.Services
             if (bill == null)
                 return new Response<BillDto>("Not found");
             var billDto = _mapper.Map<BillDto>(bill);
-            
+            ReturningRemarks(billDto , DocType.Bill);
+
             if ((billDto.State == DocumentStatus.Unpaid || billDto.State == DocumentStatus.Partial || billDto.State == DocumentStatus.Paid) && billDto.TransactionId != null)
             {
                 return new Response<BillDto>(MapToValue(billDto), "Returning value");
@@ -150,6 +151,10 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+            // Creating object of getUSer class
+            var getUser = new GetUser(this._httpContextAccessor);
+
+            var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
             try
@@ -159,6 +164,18 @@ namespace Application.Services
                     if (transition.AllowedRole.Name == role)
                     {
                         getBill.setStatus(transition.NextStatusId);
+                        if (!String.IsNullOrEmpty(data.Remarks))
+                        {
+                            var addRemarks = new Remark()
+                            {
+                                DocId = getBill.Id,
+                                DocType = DocType.Bill,
+                                Remarks = data.Remarks,
+                                UserId = userId
+                            };
+                            await _unitOfWork.Remarks.Add(addRemarks);
+                        }
+
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
                             await AddToLedger(getBill);
@@ -366,6 +383,20 @@ namespace Application.Services
                     });
                 }
             }
+            // Remarks 
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Bill))
+                .Select(e => new RemarksDto()
+                {
+                    Remarks = e.Remarks,
+                    UserName = e.User.UserName,
+                    CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
 
             //Getting Pending Invoice Amount
             var pendingAmount = data.TotalAmount - transactionReconciles.Sum(e => e.Amount);
@@ -422,6 +453,23 @@ namespace Application.Services
                 //response.Add(await MapToValue(i));
             }
             return new Response<List<BillDto>>(billDto, "Returning Report");
+        }
+        private List<RemarksDto> ReturningRemarks(BillDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Bill))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
         }
     }
 }

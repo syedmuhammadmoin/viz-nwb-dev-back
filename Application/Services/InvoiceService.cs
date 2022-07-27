@@ -79,6 +79,8 @@ namespace Application.Services
 
             var invoiceDto = _mapper.Map<InvoiceDto>(inv);
 
+            ReturningRemarks(invoiceDto, DocType.Invoice);
+
             if ((invoiceDto.State == DocumentStatus.Unpaid || invoiceDto.State == DocumentStatus.Partial || invoiceDto.State == DocumentStatus.Paid) && invoiceDto.TransactionId != null)
             {
                 return new Response<InvoiceDto>(MapToValue(invoiceDto), "Returning value");
@@ -125,7 +127,7 @@ namespace Application.Services
 
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
-            var getInvoice = await _unitOfWork.Invoice.GetById(data.DocId, new InvoiceSpecs(true));
+            var    getInvoice  = await _unitOfWork.Invoice.GetById(data.DocId, new InvoiceSpecs(true));
 
             if (getInvoice == null)
             {
@@ -148,6 +150,11 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+
+            // Creating object of getUSer class
+            var getUser = new GetUser(this._httpContextAccessor);
+
+            var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
             try
@@ -157,6 +164,19 @@ namespace Application.Services
                     if (transition.AllowedRole.Name == role)
                     {
                         getInvoice.setStatus(transition.NextStatusId);
+
+                        if (!String.IsNullOrEmpty(data.Remarks))
+                        {
+                            var addRemarks = new Remark()
+                            {
+                                DocId = getInvoice.Id,
+                                DocType = DocType.Invoice,
+                                Remarks = data.Remarks,
+                                UserId = userId
+                            };
+                            await _unitOfWork.Remarks.Add(addRemarks);
+                        }
+
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
 
@@ -447,6 +467,23 @@ namespace Application.Services
             }
 
             return new Response<List<InvoiceDto>>(invoiceDto, "Returning Report");
+        }
+        private List<RemarksDto> ReturningRemarks(InvoiceDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Invoice))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
         }
     }
 }
