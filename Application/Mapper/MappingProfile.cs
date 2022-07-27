@@ -278,7 +278,7 @@ namespace Application.Mapper
 
             // Requisition Mapping
             CreateMap<RequisitionMaster, RequisitionDto>()
-              .ForMember(dto => dto.BusinessPartner, core => core.MapFrom(a => a.BusinessPartner.Name))
+              .ForMember(dto => dto.EmployeeName, core => core.MapFrom(a => a.Employee.Name))
                .ForMember(dto => dto.Campus, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
@@ -294,7 +294,14 @@ namespace Application.Mapper
             // GRN Mapping
             CreateMap<GRNMaster, GRNDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
+              .ForMember(dto => dto.Type, core => core.MapFrom(a => a.Vendor.BusinessPartnerType))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
+               .ForMember(dto => dto.Status, core => core.MapFrom(
+                    a => a.Status.State == DocumentStatus.Unpaid ? "Approved" :
+                    a.Status.State == DocumentStatus.Partial ? "Approved" :
+                    a.Status.State == DocumentStatus.Paid ? "Approved" : a.Status.Status))
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
+              .ForMember(dto => dto.PODocNo, core => core.MapFrom(a => a.PurchaseOrder.DocNo));
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
@@ -375,6 +382,29 @@ namespace Application.Mapper
             // Department Mapping
          
 
+            CreateMap<CreateGoodsReturnNoteLinesDto, GoodsReturnNoteLines>()
+               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
+
+            // IssuanceReturn Mapping
+            CreateMap<IssuanceReturnMaster, IssuanceReturnDto>()
+              .ForMember(dto => dto.EmployeeName, core => core.MapFrom(a => a.Employee.Name))
+               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
+               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
+              .ForMember(dto => dto.IssuanceDocNo, core => core.MapFrom(a => a.Issuance.DocNo));
+
+            CreateMap<IssuanceReturnLines, IssuanceReturnLinesDto>()
+              .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
+              .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
+
+            CreateMap<CreateIssuanceReturnDto, IssuanceReturnMaster>();
+
+            CreateMap<CreateIssuanceReturnLinesDto, IssuanceReturnLines>();
+            CreateMap<CreateIssuanceLinesDto, IssuanceLines>();
+
+            // Department Mapping
+            CreateMap<Remark, RemarksDto>();
+            CreateMap<RemarksDto, Remark>();
             CreateMap<FileUpload, FileUploadDto>();
             CreateMap<FileUploadDto, FileUpload>();
         }

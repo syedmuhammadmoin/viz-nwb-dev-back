@@ -42,13 +42,12 @@ namespace Application.Services
                 businessPartnerTypes.Add(filter.Type);
             }
 
-            var specification = new BusinessPartnerSpecs(businessPartnerTypes, filter);
-            var businessPartner = await _unitOfWork.BusinessPartner.GetAll(specification);
+            var businessPartner = await _unitOfWork.BusinessPartner.GetAll(new BusinessPartnerSpecs(businessPartnerTypes, filter, false));
 
             if (businessPartner.Count() == 0)
                 return new PaginationResponse<List<BusinessPartnerDto>>(_mapper.Map<List<BusinessPartnerDto>>(businessPartner), "List is empty");
 
-            var totalRecords = await _unitOfWork.BusinessPartner.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.BusinessPartner.TotalRecord(new BusinessPartnerSpecs(businessPartnerTypes, filter, true));
 
             return new PaginationResponse<List<BusinessPartnerDto>>(_mapper.Map<List<BusinessPartnerDto>>(businessPartner), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }

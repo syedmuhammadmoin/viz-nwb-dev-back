@@ -64,14 +64,12 @@ namespace Application.Services
             {
                 states.Add(filter.State);
             }
-
-            var specification = new PaymentSpecs(docDate, dueDate, states, filter, docType);
-            var payment = await _unitOfWork.Payment.GetAll(specification);
+            var payment = await _unitOfWork.Payment.GetAll(new PaymentSpecs(docDate, dueDate, states, filter, docType, false));
 
             if (payment.Count() == 0)
                 return new PaginationResponse<List<PaymentDto>>(_mapper.Map<List<PaymentDto>>(payment), "List is empty");
 
-            var totalRecords = await _unitOfWork.Payment.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Payment.TotalRecord(new PaymentSpecs(docDate, dueDate, states, filter, docType, true));
 
             return new PaginationResponse<List<PaymentDto>>(_mapper.Map<List<PaymentDto>>(payment), filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
@@ -84,6 +82,9 @@ namespace Application.Services
                 return new Response<PaymentDto>("Not found");
 
             var paymentDto = _mapper.Map<PaymentDto>(payment);
+
+            //Returning
+            ReturningRemarks(paymentDto, DocType.Payment);
 
             ReturningFiles(paymentDto, DocType.Payment);
 
@@ -459,6 +460,12 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+
+            // Creating object of getUSer class
+            var getUser = new GetUser(this._httpContextAccessor);
+
+            var userId = getUser.GetCurrentUserId();
+
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
             try
@@ -468,6 +475,17 @@ namespace Application.Services
                     if (transition.AllowedRole.Name == role)
                     {
                         getPayment.setStatus(transition.NextStatusId);
+                        if (!String.IsNullOrEmpty(data.Remarks))
+                        {
+                            var addRemarks = new Remark()
+                            {
+                                DocId = getPayment.Id,
+                                DocType = DocType.Payment,
+                                Remarks = data.Remarks,
+                                UserId = userId
+                            };
+                            await _unitOfWork.Remarks.Add(addRemarks);
+                        }
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
 
                         {
@@ -814,6 +832,23 @@ namespace Application.Services
 
             // Returning BillDto with all values assigned
             return data;
+        }
+        private List<RemarksDto> ReturningRemarks(PaymentDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Payment))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
         }
         private List<FileUploadDto> ReturningFiles(PaymentDto data, DocType docType)
         {

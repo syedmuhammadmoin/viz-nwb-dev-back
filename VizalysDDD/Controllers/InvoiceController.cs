@@ -80,6 +80,31 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result);
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.InvoiceClaims.Create, Permissions.InvoiceClaims.View, Permissions.InvoiceClaims.Delete, Permissions.InvoiceClaims.Edit })]
+        [HttpGet("getAgingReport")]
+        public async Task<ActionResult<Response<List<InvoiceDto>>>> GetAgingReport()
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = await _invoiceService.GetAgingReport();
+
+                    if (result.IsSuccess)
+                        return Ok(result); // Status Code : 200
+
+                    return BadRequest(result);
+
+                }
+                return BadRequest("Some properties are not valid"); // Status code : 400
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error retrieving data from the database");
+            }
+        }
+
         [HttpPost("DocUpload/{id:int}")]
         public async Task<ActionResult<Response<int>>> UploadFile(IFormFile file, int id)
         {

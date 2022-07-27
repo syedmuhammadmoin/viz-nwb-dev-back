@@ -11,18 +11,21 @@ namespace Infrastructure.Specifications
 {
     public class EmployeeSpecs : BaseSpecification<Employee>
     {
-        public EmployeeSpecs(TransactionFormFilter filter)
+        public EmployeeSpecs(TransactionFormFilter filter, bool isTotalRecord)
             : base(c => c.Name.Contains(filter.Name != null ? filter.Name : "")
                 && c.CNIC.Contains(filter.DocNo != null ? filter.DocNo : "")
                 && c.Department.Name.Contains(filter.Department != null ? filter.Department : "")
                 && c.Designation.Name.Contains(filter.Designation != null ? filter.Designation : "")
                 && (filter.IsActive != null ? c.isActive == filter.IsActive : true))
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
-            AddInclude(i => i.Department);
-            AddInclude(i => i.Designation);
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+                AddInclude(i => i.Department);
+                AddInclude(i => i.Designation);
+            }
         }
 
         public EmployeeSpecs()
@@ -36,7 +39,7 @@ namespace Infrastructure.Specifications
 
         }
 
-        public EmployeeSpecs(bool isActive, int?[] departmentIds) 
+        public EmployeeSpecs(bool isActive, int?[] departmentIds)
             : base(c => c.isActive == isActive &&
                 (departmentIds.Count() > 0 ? departmentIds.Contains(c.DepartmentId) : true))
         {

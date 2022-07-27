@@ -23,6 +23,7 @@ namespace Application.Contracts.DTOs
         public string CampusName { get; set; }
         public int TransactionId { get; set; }
         public virtual List<JournalEntryLinesDto> JournalEntryLines { get; set; }
+        public IEnumerable<RemarksDto> RemarksList { get; set; }
         public IEnumerable<FileUploadDto> FileUploadList { get; set; }
 
         public bool IsAllowedRole { get; set; }

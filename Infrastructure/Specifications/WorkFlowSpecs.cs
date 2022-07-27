@@ -11,14 +11,17 @@ namespace Infrastructure.Specifications
 {
     public class WorkFlowSpecs : BaseSpecification<WorkFlowMaster>
     {
-        public WorkFlowSpecs(TransactionFormFilter filter)
+        public WorkFlowSpecs(TransactionFormFilter filter, bool isTotalRecord)
             : base(c => c.Name.Contains(filter.Name != null ? filter.Name : ""))
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            ApplyOrderByDescending(i => i.Id);
-            AddInclude("WorkflowTransitions.CurrentStatus");
-            AddInclude("WorkflowTransitions.NextStatus");
+            if (!isTotalRecord)
+            {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                ApplyOrderByDescending(i => i.Id);
+                AddInclude("WorkflowTransitions.CurrentStatus");
+                AddInclude("WorkflowTransitions.NextStatus");
+            }
         }
         public WorkFlowSpecs(bool forEdit)
         {

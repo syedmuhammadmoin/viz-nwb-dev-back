@@ -40,13 +40,13 @@ namespace Application.Services
 
         public async Task<PaginationResponse<List<EstimatedBudgetDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new EstimatedBudgetSpecs(filter);
-            var estimatedEstimatedBudgets = await _unitOfWork.EstimatedBudget.GetAll(specification);
+
+            var estimatedEstimatedBudgets = await _unitOfWork.EstimatedBudget.GetAll(new EstimatedBudgetSpecs(filter, false));
 
             if (!estimatedEstimatedBudgets.Any())
                 return new PaginationResponse<List<EstimatedBudgetDto>>(_mapper.Map<List<EstimatedBudgetDto>>(estimatedEstimatedBudgets), "List is empty");
 
-            var totalRecords = await _unitOfWork.EstimatedBudget.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.EstimatedBudget.TotalRecord(new EstimatedBudgetSpecs(filter, true));
 
             return new PaginationResponse<List<EstimatedBudgetDto>>(_mapper.Map<List<EstimatedBudgetDto>>(estimatedEstimatedBudgets),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");

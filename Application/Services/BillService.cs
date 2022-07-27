@@ -62,13 +62,12 @@ namespace Application.Services
                 states.Add(filter.State);
             }
 
-            var specification = new BillSpecs(docDate, dueDate, states, filter);
-            var bills = await _unitOfWork.Bill.GetAll(specification);
+            var bills = await _unitOfWork.Bill.GetAll(new BillSpecs(docDate, dueDate, states, filter, false));
 
             if (bills.Count() == 0)
                 return new PaginationResponse<List<BillDto>>(_mapper.Map<List<BillDto>>(bills), "List is empty");
 
-            var totalRecords = await _unitOfWork.Bill.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Bill.TotalRecord(new BillSpecs(docDate, dueDate, states, filter, true));
 
             return new PaginationResponse<List<BillDto>>(_mapper.Map<List<BillDto>>(bills),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
@@ -82,6 +81,8 @@ namespace Application.Services
                 return new Response<BillDto>("Not found");
 
             var billDto = _mapper.Map<BillDto>(bill);
+            ReturningRemarks(billDto , DocType.Bill);
+
 
          
             ReturningFiles(billDto , DocType.Bill);
@@ -157,6 +158,10 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+            // Creating object of getUSer class
+            var getUser = new GetUser(this._httpContextAccessor);
+
+            var userId = getUser.GetCurrentUserId();
             var getUser = new GetUser(this._httpContextAccessor);
 
             var userId = getUser.GetCurrentUserId();
@@ -169,6 +174,18 @@ namespace Application.Services
                     if (transition.AllowedRole.Name == role)
                     {
                         getBill.setStatus(transition.NextStatusId);
+                        if (!String.IsNullOrEmpty(data.Remarks))
+                        {
+                            var addRemarks = new Remark()
+                            {
+                                DocId = getBill.Id,
+                                DocType = DocType.Bill,
+                                Remarks = data.Remarks,
+                                UserId = userId
+                            };
+                            await _unitOfWork.Remarks.Add(addRemarks);
+                        }
+
                        
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
@@ -377,6 +394,20 @@ namespace Application.Services
                     });
                 }
             }
+            // Remarks 
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Bill))
+                .Select(e => new RemarksDto()
+                {
+                    Remarks = e.Remarks,
+                    UserName = e.User.UserName,
+                    CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
 
             //Getting Pending Invoice Amount
             var pendingAmount = data.TotalAmount - transactionReconciles.Sum(e => e.Amount);
@@ -408,6 +439,48 @@ namespace Application.Services
 
             // Returning BillDto with all values assigned
             return data;
+        }
+
+        public async Task<Response<List<BillDto>>> GetAgingReport()
+        {
+            var bills = await _unitOfWork.Bill.GetAll(new BillSpecs(""));
+
+            if (bills.Count() == 0)
+                return new PaginationResponse<List<BillDto>>(_mapper.Map<List<BillDto>>(bills), "List is empty");
+
+            var response = new List<BillDto>();
+            var billDto = _mapper.Map<List<BillDto>>(bills);
+            foreach (var i in billDto)
+            {
+                //Getting transaction with Payment Transaction Id
+                var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs((int)i.TransactionId, true)).FirstOrDefault();
+
+                // Checking if given amount is greater than unreconciled document amount
+                var transactionReconciles = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(getUnreconciledDocumentAmount.Id, false)).ToList();
+
+                //Getting Pending Invoice Amount
+                i.PendingAmount = i.TotalAmount - transactionReconciles.Sum(e => e.Amount);
+
+                //response.Add(await MapToValue(i));
+            }
+            return new Response<List<BillDto>>(billDto, "Returning Report");
+        }
+        private List<RemarksDto> ReturningRemarks(BillDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Bill))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
         }
        
         private List<FileUploadDto> ReturningFiles(BillDto data, DocType docType)

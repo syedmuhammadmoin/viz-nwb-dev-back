@@ -25,13 +25,12 @@ namespace Application.Services
 
         public async Task<PaginationResponse<List<StockDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var specification = new StockSpecs(filter);
-            var stock = await _unitOfWork.Stock.GetAll(specification);
+            var stock = await _unitOfWork.Stock.GetAll(new StockSpecs(filter, false));
 
             if (stock.Count() == 0)
                 return new PaginationResponse<List<StockDto>>(_mapper.Map<List<StockDto>>(stock), "List is empty");
 
-            var totalRecords = await _unitOfWork.Stock.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Stock.TotalRecord(new StockSpecs(filter, true));
 
             return new PaginationResponse<List<StockDto>>(_mapper.Map<List<StockDto>>(stock),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");

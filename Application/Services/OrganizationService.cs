@@ -40,7 +40,7 @@ namespace Application.Services
 
         public async Task<PaginationResponse<List<OrganizationDto>>> GetAllAsync(PaginationFilter filter)
         {
-            var specification = new OrganizationSpecs(filter);
+            var specification = new OrganizationSpecs(filter, false);
             var orgs = await _unitOfWork.Organization.GetAll(specification);
 
             if (orgs.Count() == 0)

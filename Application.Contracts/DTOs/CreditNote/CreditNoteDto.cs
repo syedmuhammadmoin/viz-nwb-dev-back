@@ -32,6 +32,7 @@ namespace Application.Contracts.DTOs
         public decimal UnreconciledAmount { get; set; }
         public PaidDocListDto DocumentReconcile { get; set; }
         public int? LedgerId { get; set; }
+        public IEnumerable<RemarksDto> RemarksList { get; set; }
         public int? TransactionId { get; set; }
         public virtual List<CreditNoteLinesDto> CreditNoteLines { get; set; }
         public bool IsAllowedRole { get; set; }

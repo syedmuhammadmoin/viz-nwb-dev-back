@@ -59,13 +59,12 @@ namespace Application.Services
             {
                 states.Add(filter.State);
             }
-            var specification = new PurchaseOrderSpecs(docDate, dueDate, states, filter);
-            var po = await _unitOfWork.PurchaseOrder.GetAll(specification);
+            var po = await _unitOfWork.PurchaseOrder.GetAll(new PurchaseOrderSpecs(docDate, dueDate, states, filter, false));
 
             if (po.Count() == 0)
                 return new PaginationResponse<List<PurchaseOrderDto>>(_mapper.Map<List<PurchaseOrderDto>>(po), "List is empty");
 
-            var totalRecords = await _unitOfWork.PurchaseOrder.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.PurchaseOrder.TotalRecord(new PurchaseOrderSpecs(docDate, dueDate, states, filter, true));
 
             return new PaginationResponse<List<PurchaseOrderDto>>(_mapper.Map<List<PurchaseOrderDto>>(po),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");

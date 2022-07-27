@@ -75,6 +75,7 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaim(superAdmin, "UnitOfMeasurementClaims");
             await roleManager.AddPermissionClaim(superAdmin, "IssuanceClaims");
             await roleManager.AddPermissionClaim(superAdmin, "GoodsReturnNoteClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "IssuanceReturnClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "ChartOfAccountClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "GeneralLedgerClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "TrialBalanceClaims");

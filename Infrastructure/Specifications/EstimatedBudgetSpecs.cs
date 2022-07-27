@@ -10,26 +10,29 @@ namespace Infrastructure.Specifications
 {
     public class EstimatedBudgetSpecs : BaseSpecification<EstimatedBudgetMaster>
     {
-        public EstimatedBudgetSpecs(TransactionFormFilter filter)
+        public EstimatedBudgetSpecs(TransactionFormFilter filter, bool isTotalRecord)
             : base(c => c.EstimatedBudgetName.Contains(filter.Name != null ? filter.Name : ""))
         {
-            var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
-            ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-            AddInclude(i=> i.PreviousBudget);
-            ApplyOrderByDescending(i => i.Id);
-        }
-        public EstimatedBudgetSpecs(bool forEdit)
-        {
-            if (forEdit)
+            if (!isTotalRecord)
             {
+                var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
+                ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
                 AddInclude(i => i.PreviousBudget);
-                AddInclude(i => i.EstimatedBudgetLines);
+                ApplyOrderByDescending(i => i.Id);
             }
-            else
+        }
+            public EstimatedBudgetSpecs(bool forEdit)
             {
-                AddInclude(i => i.PreviousBudget);
-                AddInclude("EstimatedBudgetLines.Account");
+                if (forEdit)
+                {
+                    AddInclude(i => i.PreviousBudget);
+                    AddInclude(i => i.EstimatedBudgetLines);
+                }
+                else
+                {
+                    AddInclude(i => i.PreviousBudget);
+                    AddInclude("EstimatedBudgetLines.Account");
+                }
             }
         }
     }
-}

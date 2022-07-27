@@ -55,13 +55,13 @@ namespace Application.Services
             {
                 states.Add(filter.State);
             }
-            var specification = new DebitNoteSpecs(docDate, states, filter);
+            var specification = new DebitNoteSpecs(docDate, states, filter, false);
             var dbns = await _unitOfWork.DebitNote.GetAll(specification);
 
             if (dbns.Count() == 0)
                 return new PaginationResponse<List<DebitNoteDto>>(_mapper.Map<List<DebitNoteDto>>(dbns), "List is empty");
 
-            var totalRecords = await _unitOfWork.DebitNote.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.DebitNote.TotalRecord(new DebitNoteSpecs(docDate, states, filter, true));
 
             return new PaginationResponse<List<DebitNoteDto>>(_mapper.Map<List<DebitNoteDto>>(dbns),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
@@ -75,6 +75,10 @@ namespace Application.Services
                 return new Response<DebitNoteDto>("Not found");
 
             var debitNoteDto = _mapper.Map<DebitNoteDto>(dbn);
+
+            //Returning
+            ReturningRemarks(debitNoteDto, DocType.DebitNote);
+
 
             //Returning
         
@@ -320,6 +324,12 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+
+            // Creating object of getUSer class
+            var getUser = new GetUser(this._httpContextAccessor);
+
+            var userId = getUser.GetCurrentUserId();
+
             var getUser = new GetUser(this._httpContextAccessor);
 
             var userId = getUser.GetCurrentUserId();
@@ -332,6 +342,18 @@ namespace Application.Services
                     if (transition.AllowedRole.Name == role)
                     {             
                         getDebitNote.setStatus(transition.NextStatusId);
+                        if (!String.IsNullOrEmpty(data.Remarks))
+                        {
+                            var addRemarks = new Remark()
+                            {
+                                DocId = getDebitNote.Id,
+                                DocType = DocType.DebitNote,
+                                Remarks = data.Remarks,
+                                UserId = userId
+                            };
+                            await _unitOfWork.Remarks.Add(addRemarks);
+                        }
+
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
                             await AddToLedger(getDebitNote);
@@ -431,6 +453,23 @@ namespace Application.Services
 
             // Returning DebitNoteDto with all values assigned
             return data;
+        }
+        private List<RemarksDto> ReturningRemarks(DebitNoteDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.DebitNote))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
         }
     
         private List<FileUploadDto> ReturningFiles(DebitNoteDto data, DocType docType)

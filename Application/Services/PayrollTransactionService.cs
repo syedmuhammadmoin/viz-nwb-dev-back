@@ -66,15 +66,13 @@ namespace Application.Services
             {
                 states.Add(filter.State);
             }
-
-            var specification = new PayrollTransactionSpecs(docDate, states, filter);
-            var payrollTransactions = await _unitOfWork.PayrollTransaction.GetAll(specification);
+            var payrollTransactions = await _unitOfWork.PayrollTransaction.GetAll(new PayrollTransactionSpecs(docDate, states, filter, false));
             var response = new List<PayrollTransactionDto>();
 
             if (payrollTransactions.Count() == 0)
                 return new PaginationResponse<List<PayrollTransactionDto>>(_mapper.Map<List<PayrollTransactionDto>>(response), "List is empty");
 
-            var totalRecords = await _unitOfWork.PayrollTransaction.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.PayrollTransaction.TotalRecord(new PayrollTransactionSpecs(docDate, states, filter, true));
 
 
             foreach (var i in payrollTransactions)
@@ -93,7 +91,7 @@ namespace Application.Services
                 return new Response<PayrollTransactionDto>("Not found");
 
             var payrollTransactionDto = _mapper.Map<PayrollTransactionDto>(payrollTransaction);
-
+            ReturningRemarks(payrollTransactionDto, DocType.PayrollTransaction);
             payrollTransactionDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
 
@@ -144,6 +142,13 @@ namespace Application.Services
             if (checkingPayrollTrans != null)
             {
                 return new Response<int>("Payroll transaction is already processed");
+            }
+
+            var checkBasicPay = _unitOfWork.PayrollItem.Find(new PayrollItemSpecs(true)).FirstOrDefault();
+
+            if (checkBasicPay == null)
+            {
+                return new Response<int>("Employee basic pay is required");
             }
 
             //getting payrollItems by empId
@@ -337,7 +342,10 @@ namespace Application.Services
             if (entity.Id == null)
             {
                 var result = await this.SavePayrollTransaction(entity, 6);
-                return new Response<PayrollTransactionDto>(null, result.Message);
+                if (result.IsSuccess)
+                    return new Response<PayrollTransactionDto>(new PayrollTransactionDto { Id = result.Result }, result.Message);
+
+                return new Response<PayrollTransactionDto>(result.Message);
             }
             else
             {
@@ -482,6 +490,9 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+            var getUser = new GetUser(this._httpContextAccessor);
+
+            var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
             try
@@ -490,6 +501,18 @@ namespace Application.Services
                 {
                     if (transition.AllowedRole.Name == role)
                     {
+                        if (!String.IsNullOrEmpty(data.Remarks))
+                        {
+                            var addRemarks = new Remark()
+                            {
+                                DocId = getPayrollTransaction.Id,
+                                DocType = DocType.Invoice,
+                                Remarks = data.Remarks,
+                                UserId = userId
+                            };
+                            await _unitOfWork.Remarks.Add(addRemarks);
+                        }
+
                         getPayrollTransaction.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
@@ -834,6 +857,24 @@ namespace Application.Services
                 response.Add(MapToValue(i));
             }
             return new Response<List<PayrollTransactionDto>>(response.OrderBy(i => i.Employee).ToList(), "Returning List");
+        }
+
+        private List<RemarksDto> ReturningRemarks(PayrollTransactionDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.PayrollTransaction))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
         }
     }
 }

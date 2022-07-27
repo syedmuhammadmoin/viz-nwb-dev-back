@@ -9,5 +9,6 @@ namespace Domain.Interfaces
 {
     public interface IDesignationRepository : IGenericRepository<Designation, int>
     {
+        Task AddRange(List<Designation> list);
     }
 }

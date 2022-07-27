@@ -55,13 +55,12 @@ namespace Application.Services
                 states.Add(filter.State);
             }
 
-            var specification = new CreditNoteSpecs(docDate, states, filter);
-            var crns = await _unitOfWork.CreditNote.GetAll(specification);
+            var crns = await _unitOfWork.CreditNote.GetAll(new CreditNoteSpecs(docDate, states, filter, false));
 
             if (crns.Count() == 0)
                 return new PaginationResponse<List<CreditNoteDto>>(_mapper.Map<List<CreditNoteDto>>(crns), "List is empty");
 
-            var totalRecords = await _unitOfWork.CreditNote.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.CreditNote.TotalRecord(new CreditNoteSpecs(docDate, states, filter, true));
 
             return new PaginationResponse<List<CreditNoteDto>>(_mapper.Map<List<CreditNoteDto>>(crns),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
@@ -75,6 +74,9 @@ namespace Application.Services
                 return new Response<CreditNoteDto>("Not found");
 
             var creditNoteDto = _mapper.Map<CreditNoteDto>(crn);
+            //Returning
+            ReturningRemarks(creditNoteDto, DocType.CreditNote); 
+
             //Returning
       
             ReturningFiles(creditNoteDto, DocType.CreditNote); 
@@ -331,6 +333,12 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+
+            // Creating object of getUSer class
+            var getUser = new GetUser(this._httpContextAccessor);
+
+            var userId = getUser.GetCurrentUserId();
+
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
             try
@@ -340,6 +348,19 @@ namespace Application.Services
                     if (transition.AllowedRole.Name == role)
                     {
                         getCreditNote.setStatus(transition.NextStatusId);
+
+                        if (!String.IsNullOrEmpty(data.Remarks))
+                        {
+                            var addRemarks = new Remark()
+                            {
+                                DocId = getCreditNote.Id,
+                                DocType = DocType.CreditNote,
+                                Remarks = data.Remarks,
+                                UserId = userId
+                            };
+                            await _unitOfWork.Remarks.Add(addRemarks);
+                        }
+
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
                             await AddToLedger(getCreditNote);
@@ -440,6 +461,23 @@ namespace Application.Services
 
             // Returning CreditNoteDto with all values assigned
             return data;
+        }
+        private List<RemarksDto> ReturningRemarks(CreditNoteDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.CreditNote))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
         }
        
         private List<FileUploadDto> ReturningFiles(CreditNoteDto data, DocType docType)

@@ -10,8 +10,8 @@ namespace Infrastructure.Specifications
 {
     public class RequisitionLinesSpecs : BaseSpecification<RequisitionLines>
     {
-        public RequisitionLinesSpecs(int itemId, int warehouseId, int masterId)
-        : base(x => x.ItemId == itemId && x.WarehouseId == warehouseId && x.MasterId == masterId
+        public RequisitionLinesSpecs(int itemId, int masterId)
+        : base(x => x.ItemId == itemId && x.MasterId == masterId
         && (x.Status == DocumentStatus.Partial || x.Status == DocumentStatus.Unreconciled))
         {
         }

@@ -63,13 +63,12 @@ namespace Application.Services
             {
                 states.Add(filter.State);
             }
-            var specification = new InvoiceSpecs(docDate, dueDate, states, filter);
-            var Invs = await _unitOfWork.Invoice.GetAll(specification);
+            var Invs = await _unitOfWork.Invoice.GetAll(new InvoiceSpecs(docDate, dueDate, states, filter, false));
 
             if (Invs.Count() == 0)
                 return new PaginationResponse<List<InvoiceDto>>(_mapper.Map<List<InvoiceDto>>(Invs), "List is empty");
 
-            var totalRecords = await _unitOfWork.Invoice.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Invoice.TotalRecord(new InvoiceSpecs(docDate, dueDate, states, filter, true));
 
             return new PaginationResponse<List<InvoiceDto>>(_mapper.Map<List<InvoiceDto>>(Invs),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
@@ -83,6 +82,8 @@ namespace Application.Services
                 return new Response<InvoiceDto>("Not found");
 
             var invoiceDto = _mapper.Map<InvoiceDto>(inv);
+
+            ReturningRemarks(invoiceDto, DocType.Invoice);
 
 
             ReturningFiles(invoiceDto, DocType.Invoice);
@@ -134,7 +135,7 @@ namespace Application.Services
 
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
-            var getInvoice = await _unitOfWork.Invoice.GetById(data.DocId, new InvoiceSpecs(true));
+            var    getInvoice  = await _unitOfWork.Invoice.GetById(data.DocId, new InvoiceSpecs(true));
 
             if (getInvoice == null)
             {
@@ -157,6 +158,11 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+
+            // Creating object of getUSer class
+            var getUser = new GetUser(this._httpContextAccessor);
+
+            var userId = getUser.GetCurrentUserId();
             // Creating object of getUSer class
             var getUser = new GetUser(this._httpContextAccessor);
 
@@ -170,6 +176,19 @@ namespace Application.Services
                     if (transition.AllowedRole.Name == role)
                     {
                         getInvoice.setStatus(transition.NextStatusId);
+
+                        if (!String.IsNullOrEmpty(data.Remarks))
+                        {
+                            var addRemarks = new Remark()
+                            {
+                                DocId = getInvoice.Id,
+                                DocType = DocType.Invoice,
+                                Remarks = data.Remarks,
+                                UserId = userId
+                            };
+                            await _unitOfWork.Remarks.Add(addRemarks);
+                        }
+
 
                       
 
@@ -463,6 +482,48 @@ namespace Application.Services
 
             }
 
+        public async Task<Response<List<InvoiceDto>>> GetAgingReport()
+        {
+            var invoices = await _unitOfWork.Invoice.GetAll(new InvoiceSpecs(""));
+
+            if (invoices.Count() == 0)
+                return new PaginationResponse<List<InvoiceDto>>(_mapper.Map<List<InvoiceDto>>(invoices), "List is empty");
+
+            var response = new List<InvoiceDto>();
+            var invoiceDto = _mapper.Map<List<InvoiceDto>>(invoices);
+            foreach (var i in invoiceDto)
+            {
+                //Getting transaction with Payment Transaction Id
+                var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs((int)i.TransactionId, true)).FirstOrDefault();
+
+                // Checking if given amount is greater than unreconciled document amount
+                var transactionReconciles = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(getUnreconciledDocumentAmount.Id, false)).ToList();
+
+                //Getting Pending Invoice Amount
+                i.PendingAmount = i.TotalAmount - transactionReconciles.Sum(e => e.Amount);
+            }
+
+            return new Response<List<InvoiceDto>>(invoiceDto, "Returning Report");
+        }
+        private List<RemarksDto> ReturningRemarks(InvoiceDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Invoice))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
+        }
+    }
+}
             return files;
 
         }

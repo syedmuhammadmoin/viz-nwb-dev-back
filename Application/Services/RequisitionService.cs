@@ -55,13 +55,12 @@ namespace Application.Services
                 states.Add(filter.State);
             }
 
-            var specification = new RequisitionSpecs(docDate, states, filter);
-            var requisition = await _unitOfWork.Requisition.GetAll(specification);
+            var requisition = await _unitOfWork.Requisition.GetAll(new RequisitionSpecs(docDate, states, filter, false));
 
             if (requisition.Count() == 0)
                 return new PaginationResponse<List<RequisitionDto>>(_mapper.Map<List<RequisitionDto>>(requisition), "List is empty");
 
-            var totalRecords = await _unitOfWork.Requisition.TotalRecord(specification);
+            var totalRecords = await _unitOfWork.Requisition.TotalRecord(new RequisitionSpecs(docDate, states, filter, true));
 
             return new PaginationResponse<List<RequisitionDto>>(_mapper.Map<List<RequisitionDto>>(requisition),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
@@ -209,7 +208,7 @@ namespace Application.Services
                 return new Response<RequisitionDto>("Lines are required");
 
             //Checking duplicate Lines if any
-            var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
+            var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId})
              .Where(g => g.Count() > 1)
              .Select(y => y.Key)
              .ToList();
@@ -332,7 +331,7 @@ namespace Application.Services
             {
                 // Checking if given amount is greater than unreconciled document amount
                 line.IssuedQuantity = _unitOfWork.RequisitionToIssuanceLineReconcile
-                    .Find(new RequisitionToIssuanceLineReconcileSpecs(data.Id, line.Id, line.ItemId, line.WarehouseId))
+                    .Find(new RequisitionToIssuanceLineReconcileSpecs(data.Id, line.Id, line.ItemId))
                     .Sum(p => p.Quantity);
 
                 line.PendingQuantity = line.Quantity - line.IssuedQuantity;
