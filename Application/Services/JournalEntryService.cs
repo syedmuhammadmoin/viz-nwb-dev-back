@@ -301,9 +301,6 @@ namespace Application.Services
             var getUser = new GetUser(this._httpContextAccessor);
 
             var userId = getUser.GetCurrentUserId();
-            var getUser = new GetUser(this._httpContextAccessor);
-
-            var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
        
             _unitOfWork.CreateTransaction();

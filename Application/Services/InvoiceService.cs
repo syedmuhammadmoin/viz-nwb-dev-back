@@ -163,10 +163,6 @@ namespace Application.Services
             var getUser = new GetUser(this._httpContextAccessor);
 
             var userId = getUser.GetCurrentUserId();
-            // Creating object of getUSer class
-            var getUser = new GetUser(this._httpContextAccessor);
-
-            var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
             try
@@ -481,6 +477,9 @@ namespace Application.Services
                 data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
 
             }
+            return files;
+
+        }
 
         public async Task<Response<List<InvoiceDto>>> GetAgingReport()
         {
@@ -505,6 +504,7 @@ namespace Application.Services
 
             return new Response<List<InvoiceDto>>(invoiceDto, "Returning Report");
         }
+
         private List<RemarksDto> ReturningRemarks(InvoiceDto data, DocType docType)
         {
             var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Invoice))
@@ -521,11 +521,6 @@ namespace Application.Services
             }
 
             return remarks;
-        }
-    }
-}
-            return files;
-
         }
     }
 }
