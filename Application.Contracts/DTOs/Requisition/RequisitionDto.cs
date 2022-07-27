@@ -21,6 +21,7 @@ namespace Application.Contracts.DTOs
         public DocumentStatus State { get; set; }
         public DateTime RequisitionDate { get; set; }
         public IEnumerable<ReferncesDto> References { get; set; }
+        public IEnumerable<RemarksDto> RemarksList { get; set; }
         public virtual List<RequisitionLinesDto> RequisitionLines { get; set; }
         public bool IsAllowedRole { get; set; }
     }
