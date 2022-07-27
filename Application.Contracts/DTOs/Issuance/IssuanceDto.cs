@@ -23,6 +23,7 @@ namespace Application.Contracts.DTOs
         public string RequisitionDocNo { get; set; }
         public int? RequisitionId { get; set; }
         public IEnumerable<ReferncesDto> References { get; set; }
+        public IEnumerable<RemarksDto> RemarksList { get; set; }
         public virtual List<IssuanceLinesDto> IssuanceLines { get; set; }
         public bool IsAllowedRole { get; set; }
     }
