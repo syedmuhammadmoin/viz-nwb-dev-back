@@ -16,12 +16,10 @@ namespace Application.Services
     public class PNLReportService : IPNLReportService
     {
 
-        private readonly ApplicationDbContext _context;
         private readonly IUnitOfWork _unitOfWork;
 
-        public PNLReportService(ApplicationDbContext context, IUnitOfWork unitOfWork)
+        public PNLReportService(IUnitOfWork unitOfWork)
         {
-            _context = context;
             _unitOfWork = unitOfWork;
         }
         public Response<List<PNLDto>> GetProfitLoss(PNLFilters pnl)
@@ -64,25 +62,23 @@ namespace Application.Services
                 });
 
             var result = from glv in generalLedgerView
-                         join l4 in _context.Level4 on glv.AccountId equals l4.Id
                          where (glv.AccountName.Contains(pnl.AccountName) &&
                          (glv.BusinessPartnerName.Contains(pnl.BusinessPartner) &&
                          glv.WarehouseName.Contains(pnl.Warehouse) &&
                          glv.CampusName.Contains(pnl.Campus) &&
-                         (l4.Level1_id== new Guid("40000000-5566-7788-99AA-BBCCDDEEFF00") || l4.Level1_id == new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00")) &&
+                         (glv.Level1Id == new Guid("40000000-5566-7788-99AA-BBCCDDEEFF00") || glv.Level1Id == new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00")) &&
                          (glv.DocDate >= pnl.DocDate && glv.DocDate <= pnl.DocDate2)))
                          select new
                          {
                              glv,
-                             l4
 
                          } into t1
 
                          group t1 by new
                          {
-                             Level1Id = t1.l4.Level1_id,
+                             Level1Id = t1.glv.Level1Id,
                              Nature = t1.glv.Nature,
-                             Transactional = t1.l4.Name,
+                             Transactional = t1.glv.AccountName,
                          } into iGroup
                          orderby iGroup.Key.Transactional
                          select new PNLDto

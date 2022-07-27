@@ -115,11 +115,8 @@ namespace Application.Services
                     }
                     //Commiting the transaction 
                     _unitOfWork.Commit();
-
-                    //returning response
-                    return new Response<int>(1, "Created successfully");
                 }
-                return new Response<int>("Error Occured in uploading file");
+                return new Response<int>(1, "Created successfully");
             }
             catch (Exception ex)
             {
