@@ -23,6 +23,7 @@ namespace Application.Contracts.DTOs
         public DocumentStatus State { get; set; }
         public string IssuanceDocNo { get; set; }
         public virtual List<IssuanceReturnLinesDto> IssuanceReturnLines { get; set; }
+        public IEnumerable<RemarksDto> RemarksList { get; set; }
         public bool IsAllowedRole { get; set; }
     }
 }
