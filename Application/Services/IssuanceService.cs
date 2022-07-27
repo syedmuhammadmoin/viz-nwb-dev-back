@@ -73,6 +73,7 @@ namespace Application.Services
                 return new Response<IssuanceDto>("Not found");
 
             var issuanceDto = _mapper.Map<IssuanceDto>(issuance);
+            ReturningRemarks(issuanceDto, DocType.Issuance);
 
             if ((issuanceDto.State == DocumentStatus.Partial || issuanceDto.State == DocumentStatus.Paid))
             {
@@ -146,8 +147,9 @@ namespace Application.Services
                 {
                     return new Response<bool>("No transition found");
                 }
-                var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
-                _unitOfWork.CreateTransaction();
+                var getUser = new GetUser(this._httpContextAccessor);
+                var userId = getUser.GetCurrentUserId();
+                var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles(); _unitOfWork.CreateTransaction();
                 try
                 {
                     foreach (var role in currentUserRoles)
@@ -155,6 +157,18 @@ namespace Application.Services
                         if (transition.AllowedRole.Name == role)
                         {
                             getIssuance.setStatus(transition.NextStatusId);
+                            if (!String.IsNullOrEmpty(data.Remarks))
+                            {
+                                var addRemarks = new Remark()
+                                {
+                                    DocId = getIssuance.Id,
+                                    DocType = DocType.Issuance,
+                                    Remarks = data.Remarks,
+                                    UserId = userId
+                                };
+                                await _unitOfWork.Remarks.Add(addRemarks);
+                            }
+
                             if (transition.NextStatus.State == DocumentStatus.Unpaid)
                             {
                                 foreach (var line in getIssuance.IssuanceLines)
@@ -529,6 +543,22 @@ namespace Application.Services
 
             return data;
         }
+        private List<RemarksDto> ReturningRemarks(IssuanceDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Issuance))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
 
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
+        }
     }
 }
