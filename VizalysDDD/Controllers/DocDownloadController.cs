@@ -27,7 +27,7 @@ namespace Vizalys.Api.Controllers
                     if (result.IsSuccess)
                     {
                         var file = result.Result;
-                        var path = new DirectoryInfo(Environment.CurrentDirectory).Parent.FullName;
+                        var path = new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.FullName;
                         string basePath = Path.Combine(path + "\\File\\Error\\");
                         string filedir = _configuration["FilePath"];
                         switch (docType)
