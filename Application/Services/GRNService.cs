@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.FileUpload;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -167,6 +168,7 @@ namespace Application.Services
 
             var grnDto = _mapper.Map<GRNDto>(gRN);
             ReturningRemarks(grnDto,DocType.GRN);
+            ReturningFiles(grnDto, DocType.GRN);
             var mappingValue = new Response<GRNDto>(MapToValue(grnDto), "Returning value");
 
             grnDto.IsAllowedRole = false;
@@ -542,5 +544,28 @@ namespace Application.Services
 
             return remarks;
         }
+        private List<FileUploadDto> ReturningFiles(GRNDto data, DocType docType)
+        {
+
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.GRN))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = $"{data.DocNo} - {e.Id}",
+                        DocType = DocType.GRN,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+
+            }
+            return files;
+
+        }
+
     }
 }
