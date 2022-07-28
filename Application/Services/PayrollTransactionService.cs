@@ -91,8 +91,6 @@ namespace Application.Services
                 return new Response<PayrollTransactionDto>("Not found");
 
             var payrollTransactionDto = _mapper.Map<PayrollTransactionDto>(payrollTransaction);
-            
-           
 
             payrollTransactionDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
@@ -146,9 +144,9 @@ namespace Application.Services
                 return new Response<int>("Payroll transaction is already processed");
             }
 
-            var checkBasicPay = _unitOfWork.PayrollItem.Find(new PayrollItemSpecs(true)).FirstOrDefault();
+            //var checkBasicPay = _unitOfWork.PayrollItem.Find(new PayrollItemSpecs(true)).FirstOrDefault();
 
-            if (checkBasicPay == null)
+            if (empDetails.BasicPay == 0)
             {
                 return new Response<int>("Employee basic pay is required");
             }
@@ -253,6 +251,11 @@ namespace Application.Services
 
                 if (!empDetails.isActive)
                     return new Response<PayrollTransactionDto>("Selected employee is not Active");
+
+                if (empDetails.BasicPay == 0)
+                {
+                    return new Response<PayrollTransactionDto>("Employee basic pay is required");
+                }
 
                 //getting payrollItems by empId
                 var payrollTransactionLines = empDetails.PayrollItems
