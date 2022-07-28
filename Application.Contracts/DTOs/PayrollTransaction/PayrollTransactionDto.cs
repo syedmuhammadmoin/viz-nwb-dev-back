@@ -46,6 +46,7 @@ namespace Application.Contracts.DTOs
         public string CNIC { get; set; }
         public string Religion { get; set; }
         public DateTime TransDate { get; set; }
+        public IEnumerable<FileUploadDto> FileUploadList { get; set; }
         public virtual List<PayrollTransactionLinesDto> PayrollTransactionLines { get; set; }
 
     }

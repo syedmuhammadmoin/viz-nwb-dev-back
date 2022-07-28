@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.DTOs;
-using Application.Contracts.DTOs.FileUpload;
 using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;

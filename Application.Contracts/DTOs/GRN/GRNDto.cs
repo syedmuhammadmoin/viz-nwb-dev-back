@@ -1,5 +1,4 @@
-﻿using Application.Contracts.DTOs.FileUpload;
-using Domain.Constants;
+﻿using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
