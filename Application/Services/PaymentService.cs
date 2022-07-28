@@ -480,7 +480,7 @@ namespace Application.Services
                             var addRemarks = new Remark()
                             {
                                 DocId = getPayment.Id,
-                                DocType = DocType.Payment,
+                                DocType = getPayment.PaymentFormType,
                                 Remarks = data.Remarks,
                                 UserId = userId
                             };
