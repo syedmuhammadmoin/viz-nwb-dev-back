@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.FileUpload;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -164,6 +165,7 @@ namespace Application.Services
 
             var goodsReturnNoteDto = _mapper.Map<GoodsReturnNoteDto>(goodsReturnNote);
             ReturningRemarks(goodsReturnNoteDto, DocType.GoodsReturnNote);
+            ReturningFiles(goodsReturnNoteDto, DocType.GoodsReturnNote);
             goodsReturnNoteDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.GoodsReturnNote)).FirstOrDefault();
 
@@ -469,6 +471,29 @@ namespace Application.Services
             }
 
             return remarks;
+        }
+        private List<FileUploadDto> ReturningFiles(GoodsReturnNoteDto data, DocType docType)
+        {
+
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.GoodsReturnNote))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = $"{data.DocNo} - {e.Id}",
+                        DocType = DocType.GoodsReturnNote,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+
+            }
+            return files;
+
+
         }
     }
 }
