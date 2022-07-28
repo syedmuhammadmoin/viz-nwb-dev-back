@@ -92,9 +92,7 @@ namespace Application.Services
 
             var payrollTransactionDto = _mapper.Map<PayrollTransactionDto>(payrollTransaction);
             
-            ReturningRemarks(payrollTransactionDto, DocType.PayrollTransaction);
-
-            ReturningFiles(payrollTransactionDto, DocType.PayrollTransaction);
+           
 
             payrollTransactionDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
@@ -577,6 +575,10 @@ namespace Application.Services
 
             //mapping calculated value to employeedto
             var payrollTransactionDto = _mapper.Map<PayrollTransactionDto>(data);
+
+            ReturningRemarks(payrollTransactionDto, DocType.PayrollTransaction);
+
+            ReturningFiles(payrollTransactionDto, DocType.PayrollTransaction);
 
             payrollTransactionDto.TotalAllowances = totalAllowances;
             payrollTransactionDto.TotalDeductions = totalDeductions;
