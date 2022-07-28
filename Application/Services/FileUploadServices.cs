@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.DTOs;
-using Application.Contracts.DTOs.FileUpload;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
@@ -85,6 +84,9 @@ namespace Application.Services
                         break;
                     case DocType.PayrollPayment:
                         basePath = Path.Combine(path + filedir + "PayrollPayment\\");
+                        break;
+                    case DocType.PayrollTransaction:
+                        basePath = Path.Combine(path + filedir + "PayrollTransaction\\");
                         break;
                     case DocType.JournalEntry:
                         basePath = Path.Combine(path + filedir + "JournalEntry\\");

@@ -91,7 +91,11 @@ namespace Application.Services
                 return new Response<PayrollTransactionDto>("Not found");
 
             var payrollTransactionDto = _mapper.Map<PayrollTransactionDto>(payrollTransaction);
+            
             ReturningRemarks(payrollTransactionDto, DocType.PayrollTransaction);
+
+            ReturningFiles(payrollTransactionDto, DocType.PayrollTransaction);
+
             payrollTransactionDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
 
@@ -875,6 +879,27 @@ namespace Application.Services
             }
 
             return remarks;
+        }
+
+        private List<FileUploadDto> ReturningFiles(PayrollTransactionDto data, DocType docType)
+        {
+
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.PayrollTransaction))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = e.Name,
+                        DocType = DocType.PayrollTransaction,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+            }
+            return files;
         }
     }
 }
