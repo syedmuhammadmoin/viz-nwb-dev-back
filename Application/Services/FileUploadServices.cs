@@ -83,6 +83,9 @@ namespace Application.Services
                     case DocType.Receipt:
                         basePath = Path.Combine(path + filedir + "Receipt\\");
                         break;
+                    case DocType.PayrollPayment:
+                        basePath = Path.Combine(path + filedir + "PayrollPayment\\");
+                        break;
                     case DocType.JournalEntry:
                         basePath = Path.Combine(path + filedir + "JournalEntry\\");
                         break;
