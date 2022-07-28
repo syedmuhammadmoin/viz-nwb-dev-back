@@ -87,7 +87,7 @@ namespace Application.Services
 
                 bool basePathExists = System.IO.Directory.Exists(basePath);
                 if (!basePathExists) Directory.CreateDirectory(basePath);
-                var fileName = file.FileName;
+                var fileName = file.FileName + " " + DateTime.Now.ToString("yyyy-MM-dd");
                 var filePath = Path.Combine(basePath, fileName);
                 var extension = Path.GetExtension(file.FileName);
                 if (!System.IO.File.Exists(filePath))
