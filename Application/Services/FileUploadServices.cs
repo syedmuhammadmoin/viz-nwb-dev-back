@@ -83,11 +83,20 @@ namespace Application.Services
                     case DocType.JournalEntry:
                         basePath = Path.Combine(path + filedir + "JournalEntry\\");
                         break;
+                    case DocType.PurchaseOrder:
+                        basePath = Path.Combine(path + filedir + "PurchaseOrder\\");
+                        break;
+                    case DocType.GRN:
+                        basePath = Path.Combine(path + filedir + "GoodsReceivedNote\\");
+                        break;
+                    case DocType.GoodsReturnNote:
+                        basePath = Path.Combine(path + filedir + "GoodsReturnNote\\");
+                        break;
                 }
 
                 bool basePathExists = System.IO.Directory.Exists(basePath);
                 if (!basePathExists) Directory.CreateDirectory(basePath);
-                var fileName = file.FileName + " " + DateTime.Now.ToString("yyyy-MM-dd");
+                var fileName = file.FileName + "-" + DateTime.Now.ToString("yyyy-MM-dd");
                 var filePath = Path.Combine(basePath, fileName);
                 var extension = Path.GetExtension(file.FileName);
                 if (!System.IO.File.Exists(filePath))
