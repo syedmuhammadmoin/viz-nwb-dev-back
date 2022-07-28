@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.FileUpload;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -80,6 +81,7 @@ namespace Application.Services
 
             var poDto = _mapper.Map<PurchaseOrderDto>(po);
             ReturningRemarks(poDto, DocType.PurchaseOrder);
+            ReturningFiles(poDto, DocType.PurchaseOrder);
             if ((poDto.State == DocumentStatus.Partial || poDto.State == DocumentStatus.Paid))
             {
                 return new Response<PurchaseOrderDto>(MapToValue(poDto), "Returning value");
@@ -375,6 +377,27 @@ namespace Application.Services
 
             return remarks;
         }
+        private List<FileUploadDto> ReturningFiles(PurchaseOrderDto data, DocType docType)
+        {
 
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.PurchaseOrder))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = $"{data.DocNo} - {e.Id}",
+                        DocType = DocType.PurchaseOrder,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+
+            }
+            return files;
+
+        }
     }
 }
