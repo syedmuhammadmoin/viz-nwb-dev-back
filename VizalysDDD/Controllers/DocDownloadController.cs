@@ -47,8 +47,26 @@ namespace Vizalys.Api.Controllers
                             case DocType.Payment:
                                 basePath = Path.Combine(path + filedir + "Payment\\");
                                 break;
+                             case DocType.PayrollPayment:
+                                basePath = Path.Combine(path + filedir + "PayrollPayment\\");
+                                break;
+                             case DocType.PayrollTransaction:
+                                basePath = Path.Combine(path + filedir + "PayrollTransaction\\");
+                                break;
+                            case DocType.Receipt:
+                                basePath = Path.Combine(path + filedir + "Receipt\\");
+                                break;
                             case DocType.JournalEntry:
                                 basePath = Path.Combine(path + filedir + "JournalEntry\\");
+                                break;
+                            case DocType.PurchaseOrder:
+                                basePath = Path.Combine(path + filedir + "PurchaseOrder\\");
+                                break;
+                            case DocType.GRN:
+                                basePath = Path.Combine(path + filedir + "GoodsReceivedNote\\");
+                                break;
+                            case DocType.GoodsReturnNote:
+                                basePath = Path.Combine(path + filedir + "GoodsReturnNote\\");
                                 break;
                         }
                         var filePath = Path.Combine(basePath, file.Name);

@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.DTOs;
-using Application.Contracts.DTOs.FileUpload;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -84,9 +83,9 @@ namespace Application.Services
             var paymentDto = _mapper.Map<PaymentDto>(payment);
 
             //Returning
-            ReturningRemarks(paymentDto, DocType.Payment);
+            ReturningRemarks(paymentDto, docType);
 
-            ReturningFiles(paymentDto, DocType.Payment);
+            ReturningFiles(paymentDto, docType);
 
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(docType)).FirstOrDefault();
             if ((paymentDto.State == DocumentStatus.Unpaid || paymentDto.State == DocumentStatus.Partial || paymentDto.State == DocumentStatus.Paid) && paymentDto.TransactionId != null && paymentDto.LedgerId != null)
@@ -480,7 +479,7 @@ namespace Application.Services
                             var addRemarks = new Remark()
                             {
                                 DocId = getPayment.Id,
-                                DocType = DocType.Payment,
+                                DocType = getPayment.PaymentFormType,
                                 Remarks = data.Remarks,
                                 UserId = userId
                             };
@@ -835,7 +834,7 @@ namespace Application.Services
         }
         private List<RemarksDto> ReturningRemarks(PaymentDto data, DocType docType)
         {
-            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Payment))
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, docType))
                     .Select(e => new RemarksDto()
                     {
                         Remarks = e.Remarks,
@@ -853,12 +852,12 @@ namespace Application.Services
         private List<FileUploadDto> ReturningFiles(PaymentDto data, DocType docType)
         {
 
-            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.Payment))
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, docType))
                     .Select(e => new FileUploadDto()
                     {
                         Id = e.Id,
-                        Name = $"{data.DocNo} - {e.Id}",
-                        DocType = DocType.Payment,
+                        Name = e.Name,
+                        DocType = docType,
                         Extension = e.Extension,
                         UserName = e.User.UserName,
                         CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")

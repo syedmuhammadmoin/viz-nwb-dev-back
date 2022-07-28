@@ -17,9 +17,11 @@ namespace Vizalys.Api.Controllers
     public class PayrollPaymentController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
-        public PayrollPaymentController(IPaymentService paymentService)
+        private readonly IFileuploadServices _fileUploadService;
+        public PayrollPaymentController(IPaymentService paymentService, IFileuploadServices fileUploadService)
         {
             _paymentService = paymentService;
+            _fileUploadService = fileUploadService; 
         }
         [ClaimRequirement("Permission", new string[] { Permissions.PayrollPaymentClaims.Create, Permissions.PayrollPaymentClaims.View, Permissions.PayrollPaymentClaims.Delete, Permissions.PayrollPaymentClaims.Edit })]
         [HttpGet]
@@ -81,5 +83,28 @@ namespace Vizalys.Api.Controllers
                 return Ok(result); // Status Code : 200
             return BadRequest(result);
         }
+
+        [HttpPost("DocUpload/{id:int}")]
+        public async Task<ActionResult<Response<int>>> UploadFile(IFormFile file, int id)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = await _fileUploadService.UploadFile(file, id, DocType.PayrollPayment);
+                    if (result.IsSuccess)
+                        return Ok(result); // Status Code : 200
+                    return BadRequest(result);
+                }
+                return BadRequest("Some properties are not valid"); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
+
+
     }
 }

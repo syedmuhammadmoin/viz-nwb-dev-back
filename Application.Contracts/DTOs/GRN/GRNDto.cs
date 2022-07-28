@@ -28,6 +28,8 @@ namespace Application.Contracts.DTOs
         public string PODocNo { get; set; }
         public string IssuanceDocNo { get; set; }
         public IEnumerable<ReferncesDto> References { get; set; }
+        public IEnumerable<RemarksDto> RemarksList { get; set; }
+        public IEnumerable<FileUploadDto> FileUploadList { get; set; }
 
         public ReferncesDto BillReference { get; set; }
         public virtual List<GRNLinesDto> GRNLines { get; set; }

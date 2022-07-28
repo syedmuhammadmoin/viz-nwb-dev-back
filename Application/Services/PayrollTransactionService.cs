@@ -91,7 +91,7 @@ namespace Application.Services
                 return new Response<PayrollTransactionDto>("Not found");
 
             var payrollTransactionDto = _mapper.Map<PayrollTransactionDto>(payrollTransaction);
-            ReturningRemarks(payrollTransactionDto, DocType.PayrollTransaction);
+
             payrollTransactionDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
 
@@ -144,9 +144,9 @@ namespace Application.Services
                 return new Response<int>("Payroll transaction is already processed");
             }
 
-            var checkBasicPay = _unitOfWork.PayrollItem.Find(new PayrollItemSpecs(true)).FirstOrDefault();
+            //var checkBasicPay = _unitOfWork.PayrollItem.Find(new PayrollItemSpecs(true)).FirstOrDefault();
 
-            if (checkBasicPay == null)
+            if (empDetails.BasicPay == 0)
             {
                 return new Response<int>("Employee basic pay is required");
             }
@@ -251,6 +251,11 @@ namespace Application.Services
 
                 if (!empDetails.isActive)
                     return new Response<PayrollTransactionDto>("Selected employee is not Active");
+
+                if (empDetails.BasicPay == 0)
+                {
+                    return new Response<PayrollTransactionDto>("Employee basic pay is required");
+                }
 
                 //getting payrollItems by empId
                 var payrollTransactionLines = empDetails.PayrollItems
@@ -506,7 +511,7 @@ namespace Application.Services
                             var addRemarks = new Remark()
                             {
                                 DocId = getPayrollTransaction.Id,
-                                DocType = DocType.Invoice,
+                                DocType = DocType.PayrollTransaction,
                                 Remarks = data.Remarks,
                                 UserId = userId
                             };
@@ -573,6 +578,10 @@ namespace Application.Services
 
             //mapping calculated value to employeedto
             var payrollTransactionDto = _mapper.Map<PayrollTransactionDto>(data);
+
+            ReturningRemarks(payrollTransactionDto, DocType.PayrollTransaction);
+
+            ReturningFiles(payrollTransactionDto, DocType.PayrollTransaction);
 
             payrollTransactionDto.TotalAllowances = totalAllowances;
             payrollTransactionDto.TotalDeductions = totalDeductions;
@@ -875,6 +884,27 @@ namespace Application.Services
             }
 
             return remarks;
+        }
+
+        private List<FileUploadDto> ReturningFiles(PayrollTransactionDto data, DocType docType)
+        {
+
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.PayrollTransaction))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = e.Name,
+                        DocType = DocType.PayrollTransaction,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+            }
+            return files;
         }
     }
 }

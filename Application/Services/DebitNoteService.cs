@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.DTOs;
-using Application.Contracts.DTOs.FileUpload;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -475,7 +474,7 @@ namespace Application.Services
                     .Select(e => new FileUploadDto()
                     {
                         Id = e.Id,
-                        Name = $"{data.DocNo} - {e.Id}",
+                        Name = e.Name,
                         DocType = DocType.DebitNote,
                         Extension = e.Extension,
                         UserName = e.User.UserName,

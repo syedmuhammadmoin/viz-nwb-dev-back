@@ -79,7 +79,8 @@ namespace Application.Services
                 return new Response<PurchaseOrderDto>("Not found");
 
             var poDto = _mapper.Map<PurchaseOrderDto>(po);
-
+            ReturningRemarks(poDto, DocType.PurchaseOrder);
+            ReturningFiles(poDto, DocType.PurchaseOrder);
             if ((poDto.State == DocumentStatus.Partial || poDto.State == DocumentStatus.Paid))
             {
                 return new Response<PurchaseOrderDto>(MapToValue(poDto), "Returning value");
@@ -145,6 +146,8 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+            var getUser = new GetUser(this._httpContextAccessor);
+            var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
             try
@@ -154,6 +157,17 @@ namespace Application.Services
                     if (transition.AllowedRole.Name == role)
                     {
                         getPurchaseOrder.setStatus(transition.NextStatusId);
+                        if (!String.IsNullOrEmpty(data.Remarks))
+                        {
+                            var addRemarks = new Remark()
+                            {
+                                DocId = getPurchaseOrder.Id,
+                                DocType = DocType.PurchaseOrder,
+                                Remarks = data.Remarks,
+                                UserId = userId
+                            };
+                            await _unitOfWork.Remarks.Add(addRemarks);
+                        }
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
                             foreach (var line in getPurchaseOrder.PurchaseOrderLines)
@@ -286,7 +300,7 @@ namespace Application.Services
 
                 //Commiting the transaction
                 _unitOfWork.Commit();
-
+              
                 //returning response
                 return new Response<PurchaseOrderDto>(_mapper.Map<PurchaseOrderDto>(po), "Created successfully");
             }
@@ -345,6 +359,44 @@ namespace Application.Services
 
             return data;
         }
+        private List<RemarksDto> ReturningRemarks(PurchaseOrderDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.PurchaseOrder))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
 
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
+        }
+        private List<FileUploadDto> ReturningFiles(PurchaseOrderDto data, DocType docType)
+        {
+
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.PurchaseOrder))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = e.Name,
+                        DocType = DocType.PurchaseOrder,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+
+            }
+            return files;
+
+        }
     }
 }

@@ -30,7 +30,6 @@ namespace Application.Contracts.DTOs
         [Required]
         public bool IsActive { get; set; }
         [MaxLength(300)]
-        [Required]
         public string Remarks { get; set; }
         public int[] EmployeeIds { get; set; }
     }

@@ -1,4 +1,4 @@
-﻿using Application.Contracts.DTOs.FileUpload;
+﻿using Application.Contracts.DTOs;
 using Application.Contracts.Response;
 using Domain.Constants;
 using Microsoft.AspNetCore.Http;

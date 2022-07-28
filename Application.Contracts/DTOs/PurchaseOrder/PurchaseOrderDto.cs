@@ -26,6 +26,8 @@ namespace Application.Contracts.DTOs
         public decimal TotalAmount { get; set; }
         public IEnumerable<ReferncesDto> References { get; set; }
         public virtual List<PurchaseOrderLinesDto> PurchaseOrderLines { get; set; }
+        public IEnumerable <RemarksDto> RemarksList { get; set; }
+        public IEnumerable <FileUploadDto> FileUploadList { get; set; }
         public bool IsAllowedRole { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace Infrastructure.Specifications
                 && (states.Count() > 0 ? states.Contains(e.Status.State) : true)
         )
         {
-            if (isTotalRecord)
+            if (!isTotalRecord)
             {
                 var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);

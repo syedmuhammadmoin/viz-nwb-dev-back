@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.DTOs;
-using Application.Contracts.DTOs.FileUpload;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
@@ -80,14 +79,32 @@ namespace Application.Services
                     case DocType.Payment:
                         basePath = Path.Combine(path + filedir + "Payment\\");
                         break;
+                    case DocType.Receipt:
+                        basePath = Path.Combine(path + filedir + "Receipt\\");
+                        break;
+                    case DocType.PayrollPayment:
+                        basePath = Path.Combine(path + filedir + "PayrollPayment\\");
+                        break;
+                    case DocType.PayrollTransaction:
+                        basePath = Path.Combine(path + filedir + "PayrollTransaction\\");
+                        break;
                     case DocType.JournalEntry:
                         basePath = Path.Combine(path + filedir + "JournalEntry\\");
+                        break;
+                    case DocType.PurchaseOrder:
+                        basePath = Path.Combine(path + filedir + "PurchaseOrder\\");
+                        break;
+                    case DocType.GRN:
+                        basePath = Path.Combine(path + filedir + "GoodsReceivedNote\\");
+                        break;
+                    case DocType.GoodsReturnNote:
+                        basePath = Path.Combine(path + filedir + "GoodsReturnNote\\");
                         break;
                 }
 
                 bool basePathExists = System.IO.Directory.Exists(basePath);
                 if (!basePathExists) Directory.CreateDirectory(basePath);
-                var fileName = file.FileName;
+                var fileName = file.FileName + "-" + DateTime.Now.ToString("yyyy-MM-dd");
                 var filePath = Path.Combine(basePath, fileName);
                 var extension = Path.GetExtension(file.FileName);
                 if (!System.IO.File.Exists(filePath))
@@ -115,11 +132,8 @@ namespace Application.Services
                     }
                     //Commiting the transaction 
                     _unitOfWork.Commit();
-
-                    //returning response
-                    return new Response<int>(1, "Created successfully");
                 }
-                return new Response<int>("Error Occured in uploading file");
+                return new Response<int>(1, "Created successfully");
             }
             catch (Exception ex)
             {

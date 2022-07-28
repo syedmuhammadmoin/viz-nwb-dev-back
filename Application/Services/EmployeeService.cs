@@ -26,50 +26,57 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<Response<EmployeeDto>> CreateAsync(CreateEmployeeDto entity)
+        public async Task<Response<EmployeeDto>> CreateAsync(CreateEmployeeDto[] entity)
         {
-            
-            _unitOfWork.CreateTransaction(); 
+            List<Employee> employeetList = new List<Employee>();
+            _unitOfWork.CreateTransaction();
             try
             {
-                var checkCNIC = _unitOfWork.Employee.Find(new EmployeeSpecs(entity.CNIC)).FirstOrDefault();
-
-                if (checkCNIC == null)
+                foreach (var item in entity)
                 {
-                    // mapping businessPartner model
-                    var businessPartner = new BusinessPartner(
-                        entity.Name,
-                        BusinessPartnerType.Employee,
-                        entity.CNIC
-                        );
+                    var checkCNIC = _unitOfWork.Employee.Find(new EmployeeSpecs(item.CNIC)).FirstOrDefault();
 
-                    // Saving BP 
-                    var savingBP = await _unitOfWork.BusinessPartner.Add(businessPartner);
-                    await _unitOfWork.SaveAsync();
-
-                    // Check if bp is created
-                    if (savingBP == null)
+                    if (checkCNIC != null)
                     {
-                        _unitOfWork.Rollback();
-                        return new Response<EmployeeDto>("Error creating Employee");
+                        _mapper.Map<CreateEmployeeDto, Employee>(item, checkCNIC);
+                        await _unitOfWork.SaveAsync();
                     }
+                    else
+                    {
+                        // mapping businessPartner model
+                        var businessPartner = new BusinessPartner(
+                            item.Name,
+                            BusinessPartnerType.Employee,
+                            item.CNIC
+                            );
 
-                    var employee = _mapper.Map<Employee>(entity);
+                        // Saving BP 
+                        var savingBP = await _unitOfWork.BusinessPartner.Add(businessPartner);
+                        await _unitOfWork.SaveAsync();
 
-                    employee.setBusinessPartnerId(savingBP.Id);
+                        // Check if bp is created
+                        if (savingBP == null)
+                        {
+                            _unitOfWork.Rollback();
+                            return new Response<EmployeeDto>("Error creating Employee");
+                        }
 
-                    await _unitOfWork.Employee.Add(employee);
-                    await _unitOfWork.SaveAsync();
+                        var employee = _mapper.Map<Employee>(item);
 
-                    _unitOfWork.Commit();
-                    return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(employee), "Created successfully");
+                        employee.setBusinessPartnerId(savingBP.Id);
+
+                        employeetList.Add(employee);
+                    }
                 }
-                
-                _mapper.Map<CreateEmployeeDto, Employee>(entity, checkCNIC);
-                await _unitOfWork.SaveAsync();
-                _unitOfWork.Commit();
-                return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(checkCNIC), "updated successfully");
 
+                if (employeetList.Any())
+                {
+                    await _unitOfWork.Employee.AddRange(employeetList);
+                    await _unitOfWork.SaveAsync();
+                }
+
+                _unitOfWork.Commit();
+                return new Response<EmployeeDto>(null, "Records populated successfully");
             }
             catch (Exception ex)
             {
@@ -107,7 +114,7 @@ namespace Application.Services
             employee.PayrollItems = _mapper.Map<List<PayrollItemDto>>(payrollItemList);
 
             var result = MapToValue(employee);
-            
+
             result.PayrollItems = result.PayrollItems
                 .Where(i => i.PayrollType != PayrollType.BasicPay
                 && i.PayrollType != PayrollType.Increment).ToList();
@@ -128,7 +135,7 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public Task<Response<EmployeeDto>> UpdateAsync(CreateEmployeeDto entity)
+        public Task<Response<EmployeeDto>> UpdateAsync(CreateEmployeeDto[] entity)
         {
             throw new NotImplementedException();
         }
@@ -150,7 +157,7 @@ namespace Application.Services
                     totalIncrement = (incrementAmount * (int)(data.NoOfIncrements));
                 }
             }
-            
+
             var basicPayItem = data.PayrollItems
                                 .Where(p => p.PayrollType == PayrollType.BasicPay && p.IsActive == true)
                                 .FirstOrDefault();
@@ -194,7 +201,7 @@ namespace Application.Services
                 data.NetPay = netPay;
             }
 
-            
+
             return data;
         }
 
@@ -207,7 +214,6 @@ namespace Application.Services
 
             return new Response<List<EmployeeDropDownPaymentDto>>(_mapper.Map<List<EmployeeDropDownPaymentDto>>(employees), "Returning List");
         }
-
 
     }
 }

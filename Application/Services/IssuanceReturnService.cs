@@ -55,6 +55,8 @@ namespace Application.Services
             {
                 return new Response<bool>("No transition found");
             }
+            var getUser = new GetUser(this._httpContextAccessor);
+            var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
             try
@@ -64,6 +66,17 @@ namespace Application.Services
                     if (transition.AllowedRole.Name == role)
                     {
                         getIssuanceReturn.setStatus(transition.NextStatusId);
+                        if (!String.IsNullOrEmpty(data.Remarks))
+                        {
+                            var addRemarks = new Remark()
+                            {
+                                DocId = getIssuanceReturn.Id,
+                                DocType = DocType.IssuanceReturn,
+                                Remarks = data.Remarks,
+                                UserId = userId
+                            };
+                            await _unitOfWork.Remarks.Add(addRemarks);
+                        }
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
                             foreach (var line in getIssuanceReturn.IssuanceReturnLines)
@@ -159,7 +172,7 @@ namespace Application.Services
                 return new Response<IssuanceReturnDto>("Not found");
 
             var issuanceReturnDto = _mapper.Map<IssuanceReturnDto>(issuanceReturn);
-
+            ReturningRemarks(issuanceReturnDto, DocType.IssuanceReturn);
             issuanceReturnDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.IssuanceReturn)).FirstOrDefault();
 
@@ -444,6 +457,23 @@ namespace Application.Services
             await _unitOfWork.SaveAsync();
 
             return new Response<bool>(true, "No validation error found");
+        }
+        private List<RemarksDto> ReturningRemarks(IssuanceReturnDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.IssuanceReturn))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
         }
     }
 }
