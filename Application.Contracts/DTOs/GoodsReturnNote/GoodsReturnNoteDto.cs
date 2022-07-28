@@ -1,4 +1,5 @@
-﻿using Domain.Constants;
+﻿using Application.Contracts.DTOs.FileUpload;
+using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,7 @@ namespace Application.Contracts.DTOs
         public string GRNDocNo { get; set; }
         public virtual List<GoodsReturnNoteLinesDto> GoodsReturnNoteLines { get; set; }
         public IEnumerable <RemarksDto> RemarksList { get; set; }
+        public IEnumerable <FileUploadDto> FileUploadList { get; set; }
         public bool IsAllowedRole { get; set; }
     }
 }
