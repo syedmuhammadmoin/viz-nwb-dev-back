@@ -506,7 +506,7 @@ namespace Application.Services
                             var addRemarks = new Remark()
                             {
                                 DocId = getPayrollTransaction.Id,
-                                DocType = DocType.Invoice,
+                                DocType = DocType.PayrollTransaction,
                                 Remarks = data.Remarks,
                                 UserId = userId
                             };
