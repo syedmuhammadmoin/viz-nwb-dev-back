@@ -487,7 +487,7 @@ namespace Application.Services
                     .Select(e => new FileUploadDto()
                     {
                         Id = e.Id,
-                        Name = $"{data.DocNo} - {e.Id}",
+                        Name = e.Name,
                         DocType = DocType.DebitNote,
                         Extension = e.Extension,
                         UserName = e.User.UserName,
