@@ -10,6 +10,8 @@ namespace Application.Contracts.DTOs
     {
         public int BudgetId { get; set; }
         public string BudgetName { get; set; }
+        public int CampusId { get; set; }
+        public string CampusName { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }
         public Guid AccountId { get; set; }

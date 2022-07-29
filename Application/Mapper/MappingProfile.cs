@@ -252,7 +252,9 @@ namespace Application.Mapper
             .ForMember(core => core.Type, dto => dto.MapFrom(a => StatusType.Custom));
 
             // Budget Mapping
-            CreateMap<BudgetMaster, BudgetDto>();
+            CreateMap<BudgetMaster, BudgetDto>()
+              .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
+                ;
             CreateMap<BudgetLines, BudgetLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
 
