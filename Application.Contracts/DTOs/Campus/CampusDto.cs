@@ -12,9 +12,9 @@ namespace Application.Contracts.DTOs
         public int Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
-        public string Contact { get; set; }
+        public string Phone { get; set; }
         public string Fax { get; set; }
-        public string Email { get; set; }
+        public string Website { get; set; }
         public string SalesTaxId { get; set; }
         public string NTN { get; set; }
         public string SRB { get; set; }

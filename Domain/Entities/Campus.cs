@@ -16,11 +16,11 @@ namespace Domain.Entities
         [MaxLength(300)]
         public string Address { get; private set; }
         [MaxLength(20)]
-        public string Contact { get; private set; }
+        public string Phone { get; private set; }
         [MaxLength(20)]
         public string Fax { get; private set; }
         [MaxLength(50)]
-        public string Email { get; private set; }
+        public string Website { get; private set; }
         [MaxLength(50)]
         public string SalesTaxId { get; private set; }
         [MaxLength(50)]

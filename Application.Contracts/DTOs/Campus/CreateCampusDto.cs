@@ -17,11 +17,11 @@ namespace Application.Contracts.DTOs
         [Required]
         public string Address { get; set; }
         [MaxLength(20)]
-        public string Contact { get; set; }
+        public string Phone { get; set; }
         [MaxLength(20)]
         public string Fax { get; set; }
         [MaxLength(500)]
-        public string Email { get; set; }
+        public string Website { get; set; }
         [MaxLength(500)]
         public string SalesTaxId { get; set; }
         [MaxLength(50)]
