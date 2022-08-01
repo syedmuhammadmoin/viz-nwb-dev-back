@@ -5,6 +5,7 @@ using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,10 +25,17 @@ namespace Vizalys.Api.Controllers
             _fileUploadService = fileUploadService;
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.PayrollTransactionClaims.Create })]
+        [EnableCors("PayrollModule")]
+        [AllowAnonymous]
+        //[ClaimRequirement("Permission", new string[] { Permissions.PayrollTransactionClaims.Create })]
         [HttpPost]
-        public async Task<ActionResult<Response<PayrollTransactionDto>>> CreateAsync(CreatePayrollTransactionDto entity)
+        public async Task<ActionResult<Response<PayrollTransactionDto>>> CreateAsync([FromHeader(Name = "key")] string key, CreatePayrollTransactionDto entity)
         {
+            if (key != "b4!V47w^e3QhItW_XY:jHgWQp%$&93nMS|h)Bj~R0&Q#J1m%lI^;b4C,&]Gf2(H_fu]5&X@1Oy~")
+            {
+                return BadRequest("Invalid Key");
+            }
+            
             var result = await _payrollTransactionService.CreateAsync(entity);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
