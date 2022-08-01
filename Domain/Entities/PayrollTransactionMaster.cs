@@ -70,27 +70,30 @@ namespace Domain.Entities
         }
 
 
-        public void updatePayrollTransaction(int month, int year, int employeeId, Guid bpsAccountId, string bpsName, int designationId, int departmentId, Guid accountPayableId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId, List<PayrollTransactionLines> payrollTransactionLines)
+        //public void updatePayrollTransaction(int month, int year, int employeeId, Guid bpsAccountId, string bpsName, int designationId, int departmentId, Guid accountPayableId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId, List<PayrollTransactionLines> payrollTransactionLines)
+        //{
+        //    Month = month;
+        //    Year = year;
+        //    EmployeeId = employeeId;
+        //    BPSAccountId = bpsAccountId;
+        //    BPSName = bpsName;
+        //    DesignationId = designationId;
+        //    DepartmentId = departmentId;
+        //    AccountPayableId = accountPayableId;
+        //    WorkingDays = workingDays;
+        //    PresentDays = presentDays;
+        //    LeaveDays = leaveDays;
+        //    TransDate = transDate;
+        //    BasicSalary = basicSalary;
+        //    GrossSalary = grossSalary;
+        //    NetSalary = netSalary;
+        //    StatusId = statusId;
+        //    PayrollTransactionLines = payrollTransactionLines;
+        //}
+        public void updatePayrollTransaction(Guid accountPayableId)
         {
-            Month = month;
-            Year = year;
-            EmployeeId = employeeId;
-            BPSAccountId = bpsAccountId;
-            BPSName = bpsName;
-            DesignationId = designationId;
-            DepartmentId = departmentId;
             AccountPayableId = accountPayableId;
-            WorkingDays = workingDays;
-            PresentDays = presentDays;
-            LeaveDays = leaveDays;
-            TransDate = transDate;
-            BasicSalary = basicSalary;
-            GrossSalary = grossSalary;
-            NetSalary = netSalary;
-            StatusId = statusId;
-            PayrollTransactionLines = payrollTransactionLines;
         }
-
 
         protected PayrollTransactionMaster()
         {
