@@ -35,7 +35,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.CampusClaims.Create })]
         [HttpPost]
-        public async Task<ActionResult<Response<CampusDto>>> CreateAsync(CampusDto entity)
+        public async Task<ActionResult<Response<CampusDto>>> CreateAsync(CreateCampusDto entity)
         {
             var campus = await _campusService.CreateAsync(entity);
             if (campus.IsSuccess)
@@ -57,7 +57,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.CampusClaims.Edit })]
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Response<CampusDto>>> UpdateAsync(int id, CampusDto entity)
+        public async Task<ActionResult<Response<CampusDto>>> UpdateAsync(int id, CreateCampusDto entity)
         {
             if (id != entity.Id)
                 return BadRequest("ID mismatch");

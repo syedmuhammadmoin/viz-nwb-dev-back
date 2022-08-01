@@ -18,8 +18,9 @@ namespace Infrastructure.Specifications
                 var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
                 ApplyOrderByDescending(i => i.Id);
+                AddInclude(i => i.Campus);
             }
-         }
+        }
 
         public BudgetSpecs(bool forEdit)
         {
@@ -29,15 +30,17 @@ namespace Infrastructure.Specifications
             }
             else
             {
+                AddInclude(i => i.Campus);
                 AddInclude("BudgetLines.Account");
             }
         }
-        public BudgetSpecs(DateTime date) : base(a => date >= a.From && date <= a.To)
+        public BudgetSpecs(DateTime date, int campusId) : base(a => (date >= a.From && date <= a.To) && campusId == a.CampusId)
         {
         }
 
         public BudgetSpecs(string budgetName) : base(a => budgetName == a.BudgetName)
         {
+            AddInclude(i => i.Campus);
             AddInclude(i => i.BudgetLines);
             AddInclude("BudgetLines.Account");
 

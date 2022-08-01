@@ -15,6 +15,8 @@ namespace Application.Contracts.DTOs
         [MaxLength(100)]
         public string BudgetName { get; set; }
         [Required]
+        public int CampusId { get; set; }
+        [Required]
         public DateTime From { get; set; }
         [Required]
         public DateTime To { get; set; }

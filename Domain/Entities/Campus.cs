@@ -13,6 +13,20 @@ namespace Domain.Entities
     {
         [MaxLength(100)]
         public string Name { get; private set; }
+        [MaxLength(300)]
+        public string Address { get; private set; }
+        [MaxLength(20)]
+        public string Phone { get; private set; }
+        [MaxLength(20)]
+        public string Fax { get; private set; }
+        [MaxLength(50)]
+        public string Website { get; private set; }
+        [MaxLength(50)]
+        public string SalesTaxId { get; private set; }
+        [MaxLength(50)]
+        public string NTN { get; private set; }
+        [MaxLength(50)]
+        public string SRB { get; private set; }
         public int OrganizationId { get; private set; }
         [ForeignKey("OrganizationId")]
         public Organization Organization { get; private set; }

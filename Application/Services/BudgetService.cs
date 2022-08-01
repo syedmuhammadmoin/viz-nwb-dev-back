@@ -38,7 +38,7 @@ namespace Application.Services
 
             var budget = _mapper.Map<BudgetMaster>(entity);
 
-            var checkExistingBudget = _unitOfWork.Budget.Find(new BudgetSpecs(entity.From)).FirstOrDefault();
+            var checkExistingBudget = _unitOfWork.Budget.Find(new BudgetSpecs(entity.From, budget.CampusId)).FirstOrDefault();
             if (checkExistingBudget != null)
                 return new Response<BudgetDto>("Budget already consist in this span");
             
@@ -82,7 +82,7 @@ namespace Application.Services
             if (entity.From > entity.To)
                 return new Response<BudgetDto>("End date must be greater than Start Date");
 
-            var checkExistingBudget = _unitOfWork.Budget.Find(new BudgetSpecs(entity.From)).FirstOrDefault(i=> i.Id != entity.Id);
+            var checkExistingBudget = _unitOfWork.Budget.Find(new BudgetSpecs(entity.From, budget.CampusId)).FirstOrDefault(i=> i.Id != entity.Id);
             if (checkExistingBudget != null)
                 return new Response<BudgetDto>("Budget already consist in this span");
             
@@ -163,7 +163,8 @@ namespace Application.Services
                 //Getting data for the given data range
                 var glWithBudgetFilter = genLedger
                     .Where(e => (e.AccountId == budgetLine.AccountId) &&
-                    (e.DocDate >= getBudget.From && e.DocDate <= filters.To))
+                    ((e.DocDate >= getBudget.From && e.DocDate <= filters.To)
+                    && getBudget.CampusId == e.CampusId))
                     .OrderBy(x => x.DocDate)
                     .ThenBy(x => x.TransactionId)
                     .GroupBy(x => x.AccountId)
@@ -171,6 +172,8 @@ namespace Application.Services
                     {
                         BudgetId = getBudget.Id,
                         BudgetName = getBudget.BudgetName,
+                        CampusId = getBudget.CampusId,
+                        CampusName = getBudget.Campus.Name,
                         From = getBudget.From,
                         To = filters.To,
                         AccountId = budgetLine.AccountId,
@@ -188,6 +191,8 @@ namespace Application.Services
                     {
                         BudgetId = getBudget.Id,
                         BudgetName = getBudget.BudgetName,
+                        CampusId = getBudget.CampusId,
+                        CampusName = getBudget.Campus.Name,
                         From = getBudget.From,
                         To = filters.To,
                         AccountId = budgetLine.AccountId,

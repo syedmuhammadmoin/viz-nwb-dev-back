@@ -20,7 +20,7 @@ namespace Application.Mapper
 
             // Campus Mapping
             CreateMap<Campus, CampusDto>();
-            CreateMap<CampusDto, Campus>()
+            CreateMap<CreateCampusDto, Campus>()
                 .ForMember(core => core.OrganizationId, dto => dto.MapFrom(a => 1));
 
             // Department Mapping
@@ -252,7 +252,9 @@ namespace Application.Mapper
             .ForMember(core => core.Type, dto => dto.MapFrom(a => StatusType.Custom));
 
             // Budget Mapping
-            CreateMap<BudgetMaster, BudgetDto>();
+            CreateMap<BudgetMaster, BudgetDto>()
+              .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
+                ;
             CreateMap<BudgetLines, BudgetLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
 
