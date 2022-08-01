@@ -20,7 +20,7 @@ namespace Application.Mapper
 
             // Campus Mapping
             CreateMap<Campus, CampusDto>();
-            CreateMap<CampusDto, Campus>()
+            CreateMap<CreateCampusDto, Campus>()
                 .ForMember(core => core.OrganizationId, dto => dto.MapFrom(a => 1));
 
             // Department Mapping

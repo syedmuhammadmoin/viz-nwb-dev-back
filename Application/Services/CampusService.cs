@@ -25,7 +25,7 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<Response<CampusDto>> CreateAsync(CampusDto entity)
+        public async Task<Response<CampusDto>> CreateAsync(CreateCampusDto entity)
         {
             var campus = _mapper.Map<Campus>(entity);
             var result = await _unitOfWork.Campus.Add(campus);
@@ -61,7 +61,7 @@ namespace Application.Services
             return new Response<CampusDto>(_mapper.Map<CampusDto>(campus), "Returning value");
         }
 
-        public async Task<Response<CampusDto>> UpdateAsync(CampusDto entity)
+        public async Task<Response<CampusDto>> UpdateAsync(CreateCampusDto entity)
         {
             var campus = await _unitOfWork.Campus.GetById((int)entity.Id);
 
@@ -69,7 +69,7 @@ namespace Application.Services
                 return new Response<CampusDto>("Not found");
 
             //For updating data
-            _mapper.Map<CampusDto, Campus>(entity, campus);
+            _mapper.Map<CreateCampusDto, Campus>(entity, campus);
             await _unitOfWork.SaveAsync();
             return new Response<CampusDto>(_mapper.Map<CampusDto>(campus), "Updated successfully");
         }
