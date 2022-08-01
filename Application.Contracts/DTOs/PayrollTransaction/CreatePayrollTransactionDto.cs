@@ -24,8 +24,7 @@ namespace Application.Contracts.DTOs
         public int LeaveDays { get; set; }
         [Required]
         public DateTime TransDate { get; set; }
-        [Required]
-        public Guid AccountPayableId { get; set; }
+        public Guid? AccountPayableId { get; set; }
         [Required]
         public bool isSubmit { get; set; }
     }
