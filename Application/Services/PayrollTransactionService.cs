@@ -442,7 +442,7 @@ namespace Application.Services
 
                 // updating data in payroll transaction master table
 
-                getPayrollTransaction.updatePayrollTransaction(
+                getPayrollTransaction.updateAccountPayableId(
                     (Guid)entity.AccountPayableId,
                     status);
 
@@ -477,7 +477,6 @@ namespace Application.Services
             }
 
         }
-
 
         private async Task<Response<PayrollTransactionDto>> SubmitPayrollTransaction(CreatePayrollTransactionDto entity)
         {
@@ -936,14 +935,17 @@ namespace Application.Services
                     isSubmit = false,
                 };
 
-                var result = await this.CreateAsync(payroll);
-                //var result = await this.SavePayrollTransaction(payroll, 1);
 
-                if (result.IsSuccess == false && result.Message != "Payroll transaction is already processed")
-                {
-                    return new Response<List<PayrollTransactionDto>>($"Error creating transaction for {emp.Name}");
+                //***Previous code commited****
+
+                //var result = await this.CreateAsync(payroll);
+                ////var result = await this.SavePayrollTransaction(payroll, 1);
+
+                //if (result.IsSuccess == false && result.Message != "Payroll transaction is already processed")
+                //{
+                //    return new Response<List<PayrollTransactionDto>>($"Error creating transaction for {emp.Name}");
                     
-                }
+                //}
             }
 
             var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, true)).ToList();
