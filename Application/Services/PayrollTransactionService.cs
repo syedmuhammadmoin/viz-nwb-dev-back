@@ -105,7 +105,6 @@ namespace Application.Services
                     empDetails.BPS,
                     empDetails.DesignationId,
                     empDetails.DepartmentId,
-                    (Guid)entity.AccountPayableId,
                     entity.WorkingDays,
                     entity.PresentDays,
                     entity.LeaveDays,
@@ -444,7 +443,8 @@ namespace Application.Services
                 // updating data in payroll transaction master table
 
                 getPayrollTransaction.updatePayrollTransaction(
-                    (Guid)entity.AccountPayableId);
+                    (Guid)entity.AccountPayableId,
+                    status);
 
                 await _unitOfWork.SaveAsync();
 
@@ -602,7 +602,7 @@ namespace Application.Services
 
             var addPayableInLedger = new RecordLedger(
                 transaction.Id,
-                payrollTransaction.AccountPayableId,
+                (Guid)payrollTransaction.AccountPayableId,
                 payrollTransaction.Employee.BusinessPartnerId,
                 null,
                 payrollTransaction.DocNo,

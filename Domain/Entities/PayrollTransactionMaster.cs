@@ -26,7 +26,7 @@ namespace Domain.Entities
         public int DepartmentId { get;private set; }
         [ForeignKey("DepartmentId")]
         public Department Department { get;private set; }
-        public Guid AccountPayableId { get;private set; }
+        public Guid? AccountPayableId { get;private set; }
         [ForeignKey("AccountPayableId")]
         public Level4 AccountPayable { get;private set; }
         public int WorkingDays { get;private set; }
@@ -48,7 +48,7 @@ namespace Domain.Entities
         public int? LedgerId { get; private set; }
         public virtual List<PayrollTransactionLines> PayrollTransactionLines { get;private set; }
 
-        public PayrollTransactionMaster(int month, int year, int employeeId,Guid bpsAccountId, string bpsName, int designationId, int departmentId, Guid accountPayableId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId, List<PayrollTransactionLines> payrollTransactionLines)
+        public PayrollTransactionMaster(int month, int year, int employeeId,Guid bpsAccountId, string bpsName, int designationId, int departmentId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId, List<PayrollTransactionLines> payrollTransactionLines)
         {
             Month = month;
             Year = year;
@@ -57,7 +57,6 @@ namespace Domain.Entities
             BPSName = bpsName;
             DesignationId = designationId;
             DepartmentId = departmentId;
-            AccountPayableId = accountPayableId;
             WorkingDays = workingDays;
             PresentDays = presentDays;
             LeaveDays = leaveDays;
@@ -90,9 +89,10 @@ namespace Domain.Entities
         //    StatusId = statusId;
         //    PayrollTransactionLines = payrollTransactionLines;
         //}
-        public void updatePayrollTransaction(Guid accountPayableId)
+        public void updatePayrollTransaction(Guid accountPayableId,int statusId)
         {
             AccountPayableId = accountPayableId;
+            StatusId = statusId;
         }
 
         protected PayrollTransactionMaster()
