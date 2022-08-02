@@ -89,7 +89,7 @@ namespace Domain.Entities
         //    StatusId = statusId;
         //    PayrollTransactionLines = payrollTransactionLines;
         //}
-        public void updatePayrollTransaction(Guid accountPayableId,int statusId)
+        public void updateAccountPayableId(Guid accountPayableId,int statusId)
         {
             AccountPayableId = accountPayableId;
             StatusId = statusId;
