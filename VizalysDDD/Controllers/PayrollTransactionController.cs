@@ -67,7 +67,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.PayrollTransactionClaims.Edit })]
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Response<PayrollTransactionDto>>> UpdateAsync(int id, CreatePayrollTransactionDto entity)
+        public async Task<ActionResult<Response<PayrollTransactionDto>>> UpdateAsync(int id, UpdatePayrollTransactionDto entity)
         {
             if (id != entity.Id)
                 return BadRequest("ID mismatch");
