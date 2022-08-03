@@ -9,7 +9,6 @@ namespace Application.Contracts.DTOs
 {
     public class CreatePayrollTransactionDto
     {
-        public int? Id { get; set; }
         [Required]
         public int Month { get; set; }
         [Required]
@@ -24,8 +23,5 @@ namespace Application.Contracts.DTOs
         public int LeaveDays { get; set; }
         [Required]
         public DateTime TransDate { get; set; }
-        public Guid? AccountPayableId { get; set; }
-        [Required]
-        public bool isSubmit { get; set; }
     }
 }
