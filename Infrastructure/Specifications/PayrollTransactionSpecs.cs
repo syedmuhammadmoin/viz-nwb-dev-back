@@ -40,10 +40,8 @@ namespace Infrastructure.Specifications
         {
             if (forEdit)
             {
-                AddInclude(i => i.PayrollTransactionLines);
                 AddInclude(i => i.Status);
                 AddInclude(a => a.Employee);
-                AddInclude(i => i.Status);
                 AddInclude("PayrollTransactionLines.PayrollItem");
                 AddInclude("PayrollTransactionLines.Account");
             }
@@ -63,7 +61,9 @@ namespace Infrastructure.Specifications
 
         public PayrollTransactionSpecs(int month, int year, int empId) : base(x => x.EmployeeId == empId && x.Year == year && x.Month == month)
         {
-
+            AddInclude(a => a.Employee);
+            AddInclude("PayrollTransactionLines.PayrollItem");
+            AddInclude("PayrollTransactionLines.Account");
         }
 
         public PayrollTransactionSpecs(int month, int year, int?[] departmentIds) 

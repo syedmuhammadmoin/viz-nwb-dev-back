@@ -21,7 +21,7 @@ namespace Application.Contracts.DTOs
         public int DepartmentId { get; set; }
         public string Department { get; set; }
         public string BPSName { get; set; }
-        public Guid AccountPayableId { get; set; }
+        public Guid? AccountPayableId { get; set; }
         public string AccountPayable { get; set; }
         public int WorkingDays { get; set; }
         public int PresentDays { get; set; }

@@ -35,17 +35,112 @@ namespace Application.Services
 
         public async Task<Response<PayrollTransactionDto>> CreateAsync(CreatePayrollTransactionDto entity)
         {
-            if (entity.isSubmit)
-            {
-                return await this.SubmitPayrollTransaction(entity);
-            }
-            else
-            {
-                var result = await this.SavePayrollTransaction(entity, 1);
-                if (result.IsSuccess)
-                    return new Response<PayrollTransactionDto>(new PayrollTransactionDto { Id = result.Result }, result.Message);
+            if (entity.WorkingDays < entity.PresentDays
+                || entity.WorkingDays < entity.PresentDays + entity.LeaveDays)
+                return new Response<PayrollTransactionDto>("Present days and Leaves days sum can not be greater than working days");
 
-                return new Response<PayrollTransactionDto>(result.Message);
+            //Fetching Employees by id
+            var emp = await _employeeService.GetByIdAsync(entity.EmployeeId);
+
+            var empDetails = emp.Result;
+
+            if (empDetails == null)
+                return new Response<PayrollTransactionDto>("Selected employee record not found");
+
+            if (!empDetails.isActive)
+                return new Response<PayrollTransactionDto>("Selected employee is not Active");
+
+            if (empDetails.BasicPay == 0)
+            {
+                return new Response<PayrollTransactionDto>("Employee basic pay is required");
+            }
+
+            var checkingPayrollTrans = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(entity.Month, entity.Year, entity.EmployeeId)).FirstOrDefault();
+
+            if (checkingPayrollTrans != null)
+            {
+                if (checkingPayrollTrans.StatusId != 1)
+                    return new Response<PayrollTransactionDto>("Payroll transaction is already processed");
+
+                await UpdatePayroll(checkingPayrollTrans, 1);
+            }
+
+            //Creating Initial Transaction of a payroll
+
+            //getting payrollItems by empId
+            var payrollTransactionLines = empDetails.PayrollItems
+            .Where(x => ((x.IsActive == true) && (x.PayrollType != PayrollType.BasicPay && x.PayrollType != PayrollType.Increment)))
+            .Select(line => new PayrollTransactionLines(line.Id,
+                   line.PayrollType,
+                   CalculateAllowance(line, entity.WorkingDays, entity.PresentDays, entity.LeaveDays, empDetails.TotalBasicPay),
+                   line.AccountId)
+            ).ToList();
+
+
+            decimal totalAllowances = Math.Round(payrollTransactionLines
+                           .Where(p => p.PayrollType == PayrollType.Allowance || p.PayrollType == PayrollType.AssignmentAllowance)
+                           .Sum(e => e.Amount), 2);
+
+            decimal totalBasicPay = entity.LeaveDays > 0 ?
+                Math.Round((empDetails.TotalBasicPay / entity.WorkingDays) * (entity.PresentDays + entity.LeaveDays), 2) :
+                Math.Round((empDetails.TotalBasicPay / entity.WorkingDays) * entity.PresentDays, 2);
+
+            decimal grossPay = totalBasicPay + totalAllowances;
+
+            decimal totalDeductions = Math.Round(payrollTransactionLines
+                                .Where(p => p.PayrollType == PayrollType.Deduction || p.PayrollType == PayrollType.TaxDeduction)
+                                .Sum(e => e.Amount), 2);
+
+            decimal netPay = grossPay - totalDeductions;
+
+            _unitOfWork.CreateTransaction();
+            try
+            {
+                // mapping data in payroll transaction master table
+                var payrollTransaction = new PayrollTransactionMaster(
+                    entity.Month,
+                    entity.Year,
+                    entity.EmployeeId,
+                    empDetails.BPSAccountId,
+                    empDetails.BPS,
+                    empDetails.DesignationId,
+                    empDetails.DepartmentId,
+                    entity.WorkingDays,
+                    entity.PresentDays,
+                    entity.LeaveDays,
+                    entity.TransDate,
+                    totalBasicPay,
+                    grossPay,
+                    netPay,
+                    1,
+                    payrollTransactionLines);
+
+                await _unitOfWork.PayrollTransaction.Add(payrollTransaction);
+                await _unitOfWork.SaveAsync();
+
+                //For creating docNo
+                payrollTransaction.CreateDocNo();
+                await _unitOfWork.SaveAsync();
+
+                //Commiting the transaction 
+                _unitOfWork.Commit();
+                //returning response
+                return new Response<PayrollTransactionDto>(_mapper.Map<PayrollTransactionDto>(payrollTransaction), "Created successfully");
+            }
+            catch (DbUpdateException ex)
+            {
+                _unitOfWork.Rollback();
+                if (ex.InnerException.Data["HelpLink.EvtID"].ToString() == "2627")
+                {
+                    return new Response<PayrollTransactionDto>("Payroll transaction is already processed");
+                }
+
+                return new Response<PayrollTransactionDto>(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<PayrollTransactionDto>(ex.Message);
             }
         }
 
@@ -120,36 +215,11 @@ namespace Application.Services
             return new Response<PayrollTransactionDto>(result, "Returning value");
         }
 
-        private async Task<Response<int>> SavePayrollTransaction(CreatePayrollTransactionDto entity, int status)
+        private async Task<Response<PayrollTransactionDto>> UpdatePayroll(PayrollTransactionMaster entity, int status)
         {
-            if (entity.WorkingDays < entity.PresentDays
-                || entity.WorkingDays < entity.PresentDays + entity.LeaveDays)
-                return new Response<int>("Present days and Leaves days sum can not be greater than working days");
-
-            //Fetching Employees by id
             var emp = await _employeeService.GetByIdAsync(entity.EmployeeId);
 
             var empDetails = emp.Result;
-
-            if (empDetails == null)
-                return new Response<int>("Selected employee record not found");
-
-            if (!empDetails.isActive)
-                return new Response<int>("Selected employee is not Active");
-
-            var checkingPayrollTrans = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(entity.Month, entity.Year, entity.EmployeeId)).FirstOrDefault();
-
-            if (checkingPayrollTrans != null)
-            {
-                return new Response<int>("Payroll transaction is already processed");
-            }
-
-            //var checkBasicPay = _unitOfWork.PayrollItem.Find(new PayrollItemSpecs(true)).FirstOrDefault();
-
-            if (empDetails.BasicPay == 0)
-            {
-                return new Response<int>("Employee basic pay is required");
-            }
 
             //getting payrollItems by empId
             var payrollTransactionLines = empDetails.PayrollItems
@@ -159,7 +229,6 @@ namespace Application.Services
                    CalculateAllowance(line, entity.WorkingDays, entity.PresentDays, entity.LeaveDays, empDetails.TotalBasicPay),
                    line.AccountId)
             ).ToList();
-
 
             decimal totalAllowances = Math.Round(payrollTransactionLines
                            .Where(p => p.PayrollType == PayrollType.Allowance || p.PayrollType == PayrollType.AssignmentAllowance)
@@ -180,119 +249,16 @@ namespace Application.Services
             _unitOfWork.CreateTransaction();
             try
             {
-                // mapping data in payroll transaction master table
-                var payrollTransaction = new PayrollTransactionMaster(
-                    entity.Month,
-                    entity.Year,
-                    entity.EmployeeId,
-                    empDetails.BPSAccountId,
-                    empDetails.BPS,
-                    empDetails.DesignationId,
-                    empDetails.DepartmentId,
-                    entity.AccountPayableId,
-                    entity.WorkingDays,
-                    entity.PresentDays,
-                    entity.LeaveDays,
-                    entity.TransDate,
-                    totalBasicPay,
-                    grossPay,
-                    netPay,
-                    status,
-                    payrollTransactionLines);
-
-                await _unitOfWork.PayrollTransaction.Add(payrollTransaction);
-                await _unitOfWork.SaveAsync();
-
-                //For creating docNo
-                payrollTransaction.CreateDocNo();
-                await _unitOfWork.SaveAsync();
-
-                //Commiting the transaction 
-                _unitOfWork.Commit();
-                //returning response
-                return new Response<int>(payrollTransaction.Id, "Created successfully");
-            }
-            catch (DbUpdateException ex)
-            {
-                _unitOfWork.Rollback();
-                if (ex.InnerException.Data["HelpLink.EvtID"].ToString() == "2627")
-                {
-                    return new Response<int>("Payroll transaction is already processed");
-                }
-
-                return new Response<int>(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<int>(ex.Message);
-            }
-        }
-
-        private async Task<Response<PayrollTransactionDto>> UpdatePayrollTransaction(CreatePayrollTransactionDto entity, int status)
-        {
-            if (entity.WorkingDays < entity.PresentDays)
-                return new Response<PayrollTransactionDto>("Present Days can not be greater than working days");
-            _unitOfWork.CreateTransaction();
-            try
-            {
-                var specification = new PayrollTransactionSpecs(true);
-                var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById((int)entity.Id, specification);
+                // updating data in payroll transaction master table
+                var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById((int)entity.Id, new PayrollTransactionSpecs(true));
 
                 if (getPayrollTransaction == null)
                     return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
-
-                var emp = await _employeeService.GetByIdAsync(entity.EmployeeId);
-
-                var empDetails = emp.Result;
-
-                if (empDetails == null)
-                    return new Response<PayrollTransactionDto>("Selected employee record not found");
-
-                if (!empDetails.isActive)
-                    return new Response<PayrollTransactionDto>("Selected employee is not Active");
-
-                if (empDetails.BasicPay == 0)
-                {
-                    return new Response<PayrollTransactionDto>("Employee basic pay is required");
-                }
-
-                //getting payrollItems by empId
-                var payrollTransactionLines = empDetails.PayrollItems
-                .Where(x => ((x.IsActive == true) && (x.PayrollType != PayrollType.BasicPay && x.PayrollType != PayrollType.Increment)))
-                .Select(line => new PayrollTransactionLines(line.Id,
-                       line.PayrollType,
-                       CalculateAllowance(line, entity.WorkingDays, entity.PresentDays, entity.LeaveDays, empDetails.TotalBasicPay),
-                       line.AccountId)
-                ).ToList();
-
-                decimal totalAllowances = Math.Round(payrollTransactionLines
-                               .Where(p => p.PayrollType == PayrollType.Allowance || p.PayrollType == PayrollType.AssignmentAllowance)
-                               .Sum(e => e.Amount), 2);
-
-                decimal totalBasicPay = entity.LeaveDays > 0 ?
-                    Math.Round((empDetails.TotalBasicPay / entity.WorkingDays) * (entity.PresentDays + entity.LeaveDays), 2) :
-                    Math.Round((empDetails.TotalBasicPay / entity.WorkingDays) * entity.PresentDays, 2);
-
-                decimal grossPay = totalBasicPay + totalAllowances;
-
-                decimal totalDeductions = Math.Round(payrollTransactionLines
-                                    .Where(p => p.PayrollType == PayrollType.Deduction || p.PayrollType == PayrollType.TaxDeduction)
-                                    .Sum(e => e.Amount), 2);
-
-                decimal netPay = grossPay - totalDeductions;
-
-                // updating data in payroll transaction master table
-
                 getPayrollTransaction.updatePayrollTransaction(
-                    entity.Month,
-                    entity.Year,
-                    entity.EmployeeId,
                     empDetails.BPSAccountId,
                     empDetails.BPS,
                     empDetails.DesignationId,
                     empDetails.DepartmentId,
-                    entity.AccountPayableId,
                     entity.WorkingDays,
                     entity.PresentDays,
                     entity.LeaveDays,
@@ -300,62 +266,57 @@ namespace Application.Services
                     totalBasicPay,
                     grossPay,
                     netPay,
-                    status,
                     payrollTransactionLines);
 
                 await _unitOfWork.SaveAsync();
-
-                //Checking month year and emp id
-                var checkingPayrollTransSpan = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(getPayrollTransaction.Month, getPayrollTransaction.Year, getPayrollTransaction.EmployeeId))
-                    .ToList();
-
-                if (checkingPayrollTransSpan.Count > 1)
-                    return new Response<PayrollTransactionDto>("Payroll transaction is already processed");
-
                 //Commiting the transaction 
                 _unitOfWork.Commit();
                 //returning response
                 return new Response<PayrollTransactionDto>(_mapper.Map<PayrollTransactionDto>(getPayrollTransaction), "Updated successfully");
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 _unitOfWork.Rollback();
-                if (ex.InnerException.Data["HelpLink.EvtID"].ToString() == "2627")
-                {
-                    return new Response<PayrollTransactionDto>("Payroll transaction is already processed");
-                }
-
                 return new Response<PayrollTransactionDto>(ex.Message);
+            }
+        }
+
+        private async Task<Response<PayrollTransactionDto>> UpdatePayrollTransaction(UpdatePayrollTransactionDto entity, int status)
+        {
+            _unitOfWork.CreateTransaction();
+            try
+            {
+                var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById(entity.Id);
+
+                if (getPayrollTransaction == null)
+                    return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
+
+                // updating data in payroll transaction master table
+                getPayrollTransaction.updateAccountPayableId(entity.AccountPayableId, status);
+                await _unitOfWork.SaveAsync();
+
+                //Commiting the transaction 
+                _unitOfWork.Commit();
+
+                //returning response
+                return new Response<PayrollTransactionDto>(null, "Updated successfully");
             }
             catch (Exception ex)
             {
                 _unitOfWork.Rollback();
                 return new Response<PayrollTransactionDto>(ex.Message);
             }
-
         }
 
-        private async Task<Response<PayrollTransactionDto>> SubmitPayrollTransaction(CreatePayrollTransactionDto entity)
+        private async Task<Response<PayrollTransactionDto>> SubmitPayrollTransaction(UpdatePayrollTransactionDto entity)
         {
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
 
             if (checkingActiveWorkFlows == null)
-            {
                 return new Response<PayrollTransactionDto>("No workflow found for Payroll Transaction");
-            }
 
-            if (entity.Id == null)
-            {
-                var result = await this.SavePayrollTransaction(entity, 6);
-                if (result.IsSuccess)
-                    return new Response<PayrollTransactionDto>(new PayrollTransactionDto { Id = result.Result }, result.Message);
 
-                return new Response<PayrollTransactionDto>(result.Message);
-            }
-            else
-            {
-                return await this.UpdatePayrollTransaction(entity, 6);
-            }
+            return await this.UpdatePayrollTransaction(entity, 6);
         }
 
         private decimal CalculateAllowance(PayrollItemDto line, int workingDays, int presentDays, int leaveDays, decimal totalBasicPay)
@@ -450,7 +411,7 @@ namespace Application.Services
 
             var addPayableInLedger = new RecordLedger(
                 transaction.Id,
-                payrollTransaction.AccountPayableId,
+                (Guid)payrollTransaction.AccountPayableId,
                 payrollTransaction.Employee.BusinessPartnerId,
                 null,
                 payrollTransaction.DocNo,
@@ -547,16 +508,9 @@ namespace Application.Services
             }
         }
 
-        public async Task<Response<PayrollTransactionDto>> UpdateAsync(CreatePayrollTransactionDto entity)
+        public async Task<Response<PayrollTransactionDto>> UpdateAsync(UpdatePayrollTransactionDto entity)
         {
-            if (entity.isSubmit)
-            {
-                return await this.SubmitPayrollTransaction(entity);
-            }
-            else
-            {
-                return await this.UpdatePayrollTransaction(entity, 1);
-            }
+            return await this.SubmitPayrollTransaction(entity);
         }
 
         public PayrollTransactionDto MapToValue(PayrollTransactionMaster data)
@@ -684,7 +638,7 @@ namespace Application.Services
                 for (int i = 0; i < id.Length; i++)
                 {
                     var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById(id[i]);
-                    
+
                     if (getPayrollTransaction == null)
                     {
                         return new Response<bool>($"Payroll Transaction with the id = {id[i]} not found");
@@ -692,11 +646,11 @@ namespace Application.Services
 
                     getPayrollTransaction.setStatus(6);
 
-                   await _unitOfWork.SaveAsync();
+                    await _unitOfWork.SaveAsync();
                 }
                 _unitOfWork.Commit();
 
-            return new Response<bool>(true, "Payroll transaction submitted successfully");
+                return new Response<bool>(true, "Payroll transaction submitted successfully");
             }
             catch (Exception ex)
             {
@@ -730,79 +684,41 @@ namespace Application.Services
                 return new Response<List<PayrollTransactionDto>>("Account payable required");
             }
 
-            var createdpayrollTransactions = _unitOfWork.PayrollTransaction
+            var payrollTransactions = _unitOfWork.PayrollTransaction
                 .Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId))
                 .ToList();
 
-            if (createdpayrollTransactions.Count() > 0)
+            if (payrollTransactions.Count() > 0)
             {
-                foreach (var transaction in createdpayrollTransactions)
+                foreach (var payrollTransaction in payrollTransactions)
                 {
-                    var payroll = new CreatePayrollTransactionDto()
+                    var payroll = new UpdatePayrollTransactionDto()
                     {
-                        Id = transaction.Id,
-                        Month = data.Month,
-                        Year = data.Year,
-                        EmployeeId = transaction.EmployeeId,
-                        WorkingDays = transaction.WorkingDays,
-                        PresentDays = transaction.PresentDays,
-                        TransDate = transaction.TransDate,
-                        LeaveDays = transaction.LeaveDays,
+                        Id = payrollTransaction.Id,
                         AccountPayableId = data.AccountPayableId,
                         isSubmit = false,
                     };
 
-                    var result = await this.UpdatePayrollTransaction(payroll, 1);
+                    var result = await this.UpdatePayrollTransaction(payroll, payrollTransaction.StatusId);
 
                     if (result.IsSuccess == false && result.Message != "Payroll transaction is already processed")
                     {
-                        return new Response<List<PayrollTransactionDto>>($"Error creating transaction for {transaction.EmployeeId}");
+                        return new Response<List<PayrollTransactionDto>>($"Error creating transaction for {payrollTransaction.EmployeeId}");
                     }
                 }
             }
 
-            var employeeList = _unitOfWork.Employee
-                .Find(new EmployeeSpecs(true, data.DepartmentId)).ToList();
 
-            if (employeeList.Count == 0)
-            {
-                return new Response<List<PayrollTransactionDto>>("No employee found in this department");
-            }
+            var getpayrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, true)).ToList();
 
-
-            foreach (var emp in employeeList)
-            {
-                var payroll = new CreatePayrollTransactionDto()
-                {
-                    Month = data.Month,
-                    Year = data.Year,
-                    EmployeeId = emp.Id,
-                    WorkingDays = DateTime.DaysInMonth(data.Year, data.Month),
-                    PresentDays = DateTime.DaysInMonth(data.Year, data.Month),
-                    TransDate = new DateTime(data.Year, data.Month, DateTime.DaysInMonth(data.Year, data.Month)),
-                    AccountPayableId = data.AccountPayableId,
-                    isSubmit = false,
-                };
-
-                var result = await this.SavePayrollTransaction(payroll, 1);
-
-                if (result.IsSuccess == false && result.Message != "Payroll transaction is already processed")
-                {
-                    return new Response<List<PayrollTransactionDto>>($"Error creating transaction for {emp.Name}");
-                    
-                }
-            }
-
-            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, true)).ToList();
-           
-            if (payrollTransactions.Count == 0)
+            if (getpayrollTransactions.Count == 0)
             {
                 return new Response<List<PayrollTransactionDto>>("No employee found in this department");
             }
 
             var response = new List<PayrollTransactionDto>();
 
-            foreach (var i in payrollTransactions)
+            foreach (var i in getpayrollTransactions)
             {
                 response.Add(MapToValue(i));
             }
@@ -856,7 +772,7 @@ namespace Application.Services
 
             if (payrollTransactions.Count() == 0)
             {
-                return new Response<List<PayrollTransactionDto>>(null,"List is empty");
+                return new Response<List<PayrollTransactionDto>>(null, "List is empty");
             }
 
             var response = new List<PayrollTransactionDto>();
@@ -906,5 +822,6 @@ namespace Application.Services
             }
             return files;
         }
+
     }
 }
