@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Constants;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,9 +10,15 @@ namespace Application.Contracts.DTOs
     public class EmployeeDto
     {
         public int Id { get; set; }
-        public string Name { get;  set; }
-        public string FatherName { get;  set; }
-        public string CNIC { get;  set; }
+        public string Name { get; set; }
+        public string FatherName { get; set; }
+        public string CNIC { get; set; }
+        public string EmployeeType { get; set;}
+        public string BankName { get; set;}
+        public string BranchName { get; set;}
+        public string AccountTitle { get; set;}
+        public long AccountNumber { get; set;}
+        public string EmployeeCode { get; set;}
         public string Domicile { get;  set; }
         public string Contact { get;  set; }
         public string Religion { get;  set; }
