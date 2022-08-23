@@ -1,6 +1,6 @@
 ﻿using Domain.Base;
+using Domain.Constants;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -17,6 +17,17 @@ namespace Domain.Entities
         public string FatherName { get; private set; }
         [MaxLength(20)]
         public string CNIC { get; private set; }
+        [MaxLength(40)]
+        public string EmployeeType { get; private set; } 
+        [MaxLength(50)]
+        public string BankName { get; private set; }
+        [MaxLength(50)]
+        public string BranchName { get; private set; }
+        [MaxLength(50)]
+        public string AccountTitle { get; private set; }
+        public long AccountNumber { get; private set; }
+        [MaxLength(30)]
+        public string EmployeeCode { get; private set; }
         [MaxLength(100)]
         public string Domicile { get; private set; }
         [MaxLength(20)]
