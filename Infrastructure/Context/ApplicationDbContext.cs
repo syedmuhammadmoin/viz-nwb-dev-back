@@ -87,6 +87,8 @@ namespace Infrastructure.Context
         public DbSet<IssuanceReturnLines> IssuanceReturnLines { get; set; }
 
         public DbSet<Remark> Remarks { get; set; }
+        public DbSet<LogItem> LogItems { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
