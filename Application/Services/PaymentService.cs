@@ -232,6 +232,10 @@ namespace Application.Services
 
         private async Task<Response<bool>> AddToLedger(Payment payment, Guid incomeTaxAccountId, Guid salesTaxAccountId, Guid srbTaxAccountId)
         {
+            var sRBTax = (payment.GrossPayment * payment.SRBTax) / 100;
+            var incomeTax = (payment.GrossPayment * payment.IncomeTax) / 100;
+            var salesTax = (payment.GrossPayment * payment.SalesTax) / 100; ;
+
             var transaction = new Transactions(payment.Id, payment.DocNo, payment.PaymentFormType);
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
@@ -269,7 +273,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'D',
-                    payment.SRBTax,
+                    sRBTax,
                     payment.CampusId,
                     payment.PaymentDate
                         );
@@ -291,7 +295,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'D',
-                    payment.SalesTax,
+                    salesTax,
                     payment.CampusId,
                     payment.PaymentDate
                         );
@@ -312,7 +316,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'D',
-                    payment.IncomeTax,
+                    incomeTax,
                     payment.CampusId,
                     payment.PaymentDate);
                     await _unitOfWork.Ledger.Add(addIncomeTaxInRecordLedger);
@@ -324,7 +328,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'D',
-                    (payment.GrossPayment - payment.SalesTax - payment.IncomeTax - payment.SRBTax),
+                    (payment.GrossPayment - salesTax - incomeTax - sRBTax),
                     payment.CampusId,
                     payment.PaymentDate);
 
@@ -360,7 +364,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'C',
-                    payment.SRBTax,
+                    sRBTax,
                     payment.CampusId,
                     payment.PaymentDate
                         );
@@ -382,7 +386,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'C',
-                    payment.SalesTax,
+                    salesTax,
                     payment.CampusId,
                     payment.PaymentDate
                         );
@@ -403,7 +407,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'C',
-                    payment.IncomeTax,
+                    incomeTax,
                     payment.CampusId,
                     payment.PaymentDate);
                     await _unitOfWork.Ledger.Add(addIncomeTaxInRecordLedger);
@@ -415,7 +419,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'C',
-                    (payment.GrossPayment - payment.SalesTax - payment.IncomeTax - payment.SRBTax),
+                    (payment.GrossPayment - salesTax - incomeTax - sRBTax),
                     payment.CampusId,
                     payment.PaymentDate);
 
