@@ -28,6 +28,7 @@ namespace Application.Contracts.DTOs
         public decimal SalesTax { get; set; }
         public decimal IncomeTax { get; set; }
         public decimal SRBTax { get; set; }
+        public decimal Deduction { get; set; }
         public decimal NetPayment { get; set; }
         public decimal ReconciledAmount { get; set; }
         public IEnumerable<PaidDocListDto> PaidAmountList { get; set; }
@@ -36,6 +37,8 @@ namespace Application.Contracts.DTOs
         public IEnumerable<RemarksDto> RemarksList { get; set; }
         public int? TransactionId { get; set; }
         public int? LedgerId { get; set; }
+        public Guid? DeductionAccountId { get; set; }
+        public string DeductionAccountName { get; set; }
         public int StatusId { get; set; }
         public string Status { get; set; }
         public DocumentStatus State { get; set; }
