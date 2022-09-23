@@ -7,6 +7,7 @@ using Infrastructure.GlobalExceptionFilter;
 using Infrastructure.Repositories;
 using Infrastructure.Seeds;
 using Infrastructure.Uow;
+using System.Net.Mime;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,7 +71,15 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-builder.Services.AddControllers(options => options.Filters.Add<ErrorHandlingFilters>());
+builder.Services.AddControllers(options => options.Filters.Add<ErrorHandlingFilters>()).ConfigureApiBehaviorOptions(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var result = new ValidationFailedResult(context.HttpContext, context.ModelState);
+        result.ContentTypes.Add(MediaTypeNames.Application.Json);
+        return result;
+    };
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
