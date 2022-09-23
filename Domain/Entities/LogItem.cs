@@ -12,7 +12,7 @@ namespace Domain.Entities
     public class LogItem : BaseEntity<Guid>
     { 
         
-        public string Title { get; set; }
+        public string Message { get; set; }
         public int Status { get; set; }
         public string Detail { get; set; }
         public string TraceId { get; set; }
