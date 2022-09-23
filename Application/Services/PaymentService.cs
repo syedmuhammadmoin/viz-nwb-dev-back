@@ -236,7 +236,7 @@ namespace Application.Services
             }
         }
 
-        private async Task<Response<bool>> AddToLedger(Payment payment, Guid incomeTaxAccountId, Guid salesTaxAccountId, Guid srbTaxAccountId, Guid? deductionAccountId)
+        private async Task<Response<bool>> AddToLedger(Payment payment)
         {
             var sRBTax = (payment.GrossPayment * payment.SRBTax) / 100;
             var incomeTax = (payment.GrossPayment * payment.IncomeTax) / 100;
@@ -330,14 +330,13 @@ namespace Application.Services
 
                 if (payment.Deduction > 0)
                 {
-                    Guid? getDeductionAccount = _unitOfWork.Level4.Find(new Level4Specs((Guid)deductionAccountId)).Select(i => i.Id).FirstOrDefault();
-                    if (getDeductionAccount == null)
+                    if (payment.DeductionAccountId == null)
                         return new Response<bool>("Deduction Account not found");
 
                     var addDeductionRecordLedger = new RecordLedger(
 
                     transaction.Id,
-                    (Guid)getDeductionAccount,
+                    (Guid)payment.DeductionAccountId,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -442,14 +441,13 @@ namespace Application.Services
 
                 if (payment.Deduction > 0)
                 {
-                    var getDeductionAccount = _unitOfWork.Payment.Find(new PaymentSpecs(deductionAccountId)).Select(i => i.DeductionAccountId).FirstOrDefault();
-                    if (getDeductionAccount == null)
+                    if (payment.DeductionAccountId == null)
                         return new Response<bool>("Deduction Account not found");
 
                     var addDeductionRecordLedger = new RecordLedger(
 
                     transaction.Id,
-                    (Guid)getDeductionAccount,
+                    (Guid)payment.DeductionAccountId,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -540,14 +538,8 @@ namespace Application.Services
 
                         {
                             var totalAddedTax = (getPayment.IncomeTax + getPayment.SalesTax + getPayment.SRBTax);
-
-                            Guid incomeTaxAccount = new Guid("00000000-0000-0000-0000-000000000000");
-                            Guid salesTaxAccount = new Guid("00000000-0000-0000-0000-000000000000");
-                            Guid srbTaxAccount = new Guid("00000000-0000-0000-0000-000000000000");
-                            Guid deductinAccount = new Guid("00000000-0000-0000-0000-000000000000");
-
                             getPayment.setReconStatus(DocumentStatus.Unreconciled);
-                            var res = await AddToLedger(getPayment, incomeTaxAccount, salesTaxAccount, srbTaxAccount, deductinAccount);
+                            var res = await AddToLedger(getPayment);
                             if (!res.IsSuccess)
                             {
                                 _unitOfWork.Rollback();
