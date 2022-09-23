@@ -330,7 +330,7 @@ namespace Application.Services
 
                 if (payment.Deduction > 0)
                 {
-                    var getDeductionAccount = _unitOfWork.Payment.Find(new PaymentSpecs(deductionAccountId)).Select(i => i.DeductionAccountId).FirstOrDefault();
+                    Guid? getDeductionAccount = _unitOfWork.Level4.Find(new Level4Specs((Guid)deductionAccountId)).Select(i => i.Id).FirstOrDefault();
                     if (getDeductionAccount == null)
                         return new Response<bool>("Deduction Account not found");
 
@@ -884,6 +884,7 @@ namespace Application.Services
             // Returning BillDto with all values assigned
             return data;
         }
+
         private List<RemarksDto> ReturningRemarks(PaymentDto data, DocType docType)
         {
             var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, docType))
@@ -901,6 +902,7 @@ namespace Application.Services
 
             return remarks;
         }
+
         private List<FileUploadDto> ReturningFiles(PaymentDto data, DocType docType)
         {
 
