@@ -42,5 +42,10 @@ namespace Infrastructure.Specifications
         {
 
         }
+
+        public Level4Specs(Guid level4Id) : base(i => i.Id == level4Id )
+        {
+
+        }
     } 
 }
