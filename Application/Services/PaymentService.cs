@@ -332,7 +332,7 @@ namespace Application.Services
                 {
                     var getDeductionAccount = _unitOfWork.Payment.Find(new PaymentSpecs(deductionAccountId)).Select(i => i.DeductionAccountId).FirstOrDefault();
                     if (getDeductionAccount == null)
-                        return new Response<bool>("Sales Tax Account not found");
+                        return new Response<bool>("Deduction Account not found");
 
                     var addDeductionRecordLedger = new RecordLedger(
 
@@ -444,7 +444,7 @@ namespace Application.Services
                 {
                     var getDeductionAccount = _unitOfWork.Payment.Find(new PaymentSpecs(deductionAccountId)).Select(i => i.DeductionAccountId).FirstOrDefault();
                     if (getDeductionAccount == null)
-                        return new Response<bool>("Sales Tax Account not found");
+                        return new Response<bool>("Deduction Account not found");
 
                     var addDeductionRecordLedger = new RecordLedger(
 
