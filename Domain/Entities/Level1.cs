@@ -14,6 +14,8 @@ namespace Domain.Entities
         [MaxLength(200)]
         public string Name { get; set; }
         public IEnumerable<Level2> Level2 { get; set; }
+        [MaxLength(4)]
+        public string Code { get; set; }
         public Level1(Level1 level1)
         {
             Name = level1.Name;

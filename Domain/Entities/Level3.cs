@@ -13,6 +13,8 @@ namespace Domain.Entities
     {
         [MaxLength(200)]
         public string Name { get; set; }
+        [MaxLength(4)]
+        public string Code { get; set; }
         public Guid Level2_id { get; set; }
         [ForeignKey("Level2_id")]
         public Level2 Level2 { get; private set; }
