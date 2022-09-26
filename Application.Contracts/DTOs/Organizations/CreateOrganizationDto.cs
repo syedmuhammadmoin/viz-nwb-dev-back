@@ -25,17 +25,17 @@ namespace Application.Contracts.DTOs
         public string Fax { get; set; }
         [MaxLength(20)]
         public string Email { get; set; }
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string Website { get; set; }
         //Industry will link from chart of account in future...
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string Industry { get; set; }
         //this will link from tax in future
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string LegalStatus { get; set; }
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string IncomeTaxId { get; set; }
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string GSTRegistrationNo { get; set; }
         [Required]
         public DateTime StartDate { get; set; }

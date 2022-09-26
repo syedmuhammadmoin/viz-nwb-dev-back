@@ -21,11 +21,11 @@ namespace Application.Contracts.DTOs
         [Required]
         public int UnitOfMeasurementId { get; set; }
         [Required]
-        public decimal SalesPrice { get; set; }
+        public decimal? SalesPrice { get; set; }
         [Required]
-        public decimal PurchasePrice { get; set; }
+        public decimal? PurchasePrice { get; set; }
         [Required]
-        public decimal SalesTax { get; set; }
+        public decimal? SalesTax { get; set; }
         [MaxLength(100)]
         public string Barcode { get; set; }
     }

@@ -16,7 +16,7 @@ namespace Application.Contracts.DTOs
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be greater than 0")]
         public int Quantity { get; set; }
         [Required]
-        [StringLength(200)]
+        [MaxLength(100)]
         public string Description { get; set; }
         public int? WarehouseId { get; set; }
     }

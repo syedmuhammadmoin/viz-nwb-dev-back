@@ -17,11 +17,11 @@ namespace Application.Contracts.DTOs
         public int Quantity { get; set; }
         [Required]
         [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; }
         [Range(0.00, 100.00, ErrorMessage = "Please enter a positive value")]
         public decimal Tax { get; set; }
         [Required]
-        [StringLength(200)]
+        [MaxLength(500)]
         public string Description { get; set; }
         [Required]
         public Guid AccountId { get; set; }

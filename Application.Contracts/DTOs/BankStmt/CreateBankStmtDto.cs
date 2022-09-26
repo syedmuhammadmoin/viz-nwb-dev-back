@@ -15,10 +15,11 @@ namespace Application.Contracts.DTOs
         [Required]
         public int BankAccountId { get; set; }
         [Required]
-        [MaxLength(100)]
+        [MaxLength(500)]
         public string Description { get; set; }
         [Required]
-        public decimal OpeningBalance { get; set; }
+        [Range(0.00, float.MaxValue, ErrorMessage = "Please enter a positive value")]
+        public decimal? OpeningBalance { get; set; }
         public virtual List<CreateBankStmtLinesDto> BankStmtLines { get; set; }
     }
 }
