@@ -112,4 +112,9 @@ namespace Domain.Constants
         SRBTaxAsset,
         SRBTaxLiability
     }
+    public enum AccountType
+    {
+        SystemDefined,
+        UserDefined
+    }
 }

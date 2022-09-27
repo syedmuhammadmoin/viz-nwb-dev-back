@@ -10,6 +10,7 @@ namespace Application.Contracts.DTOs
     public class CreatePayrollTransactionDto
     {
         [Required]
+        [Range(1, 12, ErrorMessage = "Please enter months from 1 - 12")] 
         public int Month { get; set; }
         [Required]
         public int Year { get; set; }
