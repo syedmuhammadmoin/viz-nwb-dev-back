@@ -44,6 +44,7 @@ namespace Infrastructure.Repositories
                             {
                                 Id = a.Id,
                                 Name = a.Name,
+                                AccountType = a.AccountType,
                                 Code = a.Code
                             })
                         })
