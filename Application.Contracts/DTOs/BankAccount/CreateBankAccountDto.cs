@@ -16,6 +16,9 @@ namespace Application.Contracts.DTOs
         [MaxLength(50)]
         public string AccountTitle { get; set; }
         [Required]
+        [MaxLength(10)]
+        public string AccountCode { get; set; }
+        [Required]
         public BankAccountType BankAccountType { get; set; }
         [Required]
         [MaxLength(50)]

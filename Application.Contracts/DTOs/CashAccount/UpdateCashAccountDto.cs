@@ -14,6 +14,9 @@ namespace Application.Contracts.DTOs
         [Required]
         [StringLength(200)]
         public string CashAccountName { get; set; }
+        [Required]
+        [MaxLength(10)]
+        public string AccountCode { get; set; }
         [StringLength(200)]
         public string Handler { get; set; }
     }
