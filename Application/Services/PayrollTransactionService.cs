@@ -485,7 +485,7 @@ namespace Application.Services
                             var checkingPayrollTrans = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(getPayrollTransaction.Month, getPayrollTransaction.Year, getPayrollTransaction.EmployeeId)).FirstOrDefault();
                             if (checkingPayrollTrans != null)
                             {
-                                return new Response<bool>(true, "Payroll transaction is already processed");
+                                return new Response<bool>("Payroll transaction is already processed");
                             }
 
                             await AddToLedger(getPayrollTransaction);
