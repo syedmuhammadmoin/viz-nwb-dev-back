@@ -11,7 +11,7 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         public DateTime Date { get; set; }
-        [MaxLength(200)]
+        [MaxLength(500)]
         public string Description { get; set; }
         [Required]
         public int CampusId { get; set; }

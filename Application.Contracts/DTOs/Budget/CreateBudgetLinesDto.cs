@@ -17,6 +17,7 @@ namespace Application.Contracts.DTOs
         public Guid AccountId { get; set; }
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Amount { get; set; }
+        [Range(0.00, float.MaxValue, ErrorMessage = "Please enter a positive value")]
+        public decimal? Amount { get; set; }
     }
 }

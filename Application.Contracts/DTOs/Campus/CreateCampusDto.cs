@@ -20,9 +20,9 @@ namespace Application.Contracts.DTOs
         public string Phone { get; set; }
         [MaxLength(20)]
         public string Fax { get; set; }
-        [MaxLength(500)]
+        [MaxLength(50)]
         public string Website { get; set; }
-        [MaxLength(500)]
+        [MaxLength(50)]
         public string SalesTaxId { get; set; }
         [MaxLength(50)]
         public string NTN { get; set; }

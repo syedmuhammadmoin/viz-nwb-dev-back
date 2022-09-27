@@ -17,7 +17,7 @@ namespace Application.Contracts.DTOs
         public string Handler { get; set; }
         [Required]
         [Range(0.00, double.MaxValue, ErrorMessage = "Please enter a positive value")]
-        public decimal OpeningBalance { get; set; }
+        public decimal? OpeningBalance { get; set; }
         [Required]
         public DateTime OpeningBalanceDate { get; set; }
         [Required]
