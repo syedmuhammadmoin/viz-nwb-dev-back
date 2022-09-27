@@ -15,8 +15,8 @@ namespace Domain.Entities
         [MaxLength(200)]
         public string Name { get; set; }
         //[MaxLength(10)]
-        //public string Code { get; set; }
-        public AccountType AccountType { get; set; }
+        ////public string Code { get; set; }
+        //public AccountType AccountType { get; set; }
         public Guid Level3_id { get; set; }
         [ForeignKey("Level3_id")]
         public Level3 Level3 { get; private set; }
