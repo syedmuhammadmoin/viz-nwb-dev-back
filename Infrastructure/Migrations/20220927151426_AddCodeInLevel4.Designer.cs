@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220927142712_AddCodeInLevel4")]
+    [Migration("20220927151426_AddCodeInLevel4")]
     partial class AddCodeInLevel4
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2415,7 +2415,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F03",
+                            Code = "F02",
                             IsDelete = false,
                             Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
                             Name = "Current Assets"

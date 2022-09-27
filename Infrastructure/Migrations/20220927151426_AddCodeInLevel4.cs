@@ -361,7 +361,7 @@ namespace Infrastructure.Migrations
                 keyColumn: "Id",
                 keyValue: new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
                 column: "Code",
-                value: "F03");
+                value: "F02");
 
             migrationBuilder.UpdateData(
                 table: "Level2",
