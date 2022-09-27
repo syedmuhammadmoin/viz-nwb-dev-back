@@ -62,7 +62,7 @@ namespace Application.Services
                 if (checkingPayrollTrans.StatusId != 1)
                     return new Response<PayrollTransactionDto>("Payroll transaction is already processed");
 
-                await UpdatePayroll(checkingPayrollTrans, 1);
+                return await UpdatePayroll(checkingPayrollTrans.Id, entity, 1);
             }
 
             //Creating Initial Transaction of a payroll
@@ -215,7 +215,7 @@ namespace Application.Services
             return new Response<PayrollTransactionDto>(result, "Returning value");
         }
 
-        private async Task<Response<PayrollTransactionDto>> UpdatePayroll(PayrollTransactionMaster entity, int status)
+        private async Task<Response<PayrollTransactionDto>> UpdatePayroll(int id, CreatePayrollTransactionDto entity, int status)
         {
             var emp = await _employeeService.GetByIdAsync(entity.EmployeeId);
 
@@ -250,7 +250,7 @@ namespace Application.Services
             try
             {
                 // updating data in payroll transaction master table
-                var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById((int)entity.Id, new PayrollTransactionSpecs(true));
+                var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById(id, new PayrollTransactionSpecs(true));
 
                 if (getPayrollTransaction == null)
                     return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
