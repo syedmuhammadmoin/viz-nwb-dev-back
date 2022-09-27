@@ -51,19 +51,24 @@ namespace Application.Mapper
 
             // Level4 Mapping
             CreateMap<Level4, Level4Dto>()
-                .ForMember(dto => dto.Level3Name, core => core.MapFrom(a => a.Level3.Name));
-            CreateMap<CreateLevel4Dto, Level4>();
+                .ForMember(dto => dto.Level3Name, core => core.MapFrom(a => a.Level3.Name))
+                .ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
+            CreateMap<CreateLevel4Dto, Level4>()
+                .ForMember(core => core.Code, dto => dto.MapFrom(a => AccountType.UserDefined));
 
             // Level3 Mapping
             CreateMap<Level3, Level3DropDownDto>();
 
             // Level1 Mapping
             CreateMap<Level1, Level1Dto>()
-                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level2));
+                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level2))
+                .ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
             CreateMap<Level2, Level2Dto>()
-                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level3));
+                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level3))
+                .ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
             CreateMap<Level3, Level3Dto>()
-                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level4));
+                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level4))
+                .ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
 
             // Category Mapping
             CreateMap<Category, CategoryDto>()
