@@ -33,14 +33,16 @@ namespace Application.Services
             {
                 var ChAccount = new Level4(
                     entity.AccountTitle,
-                    new Guid("12100000-5566-7788-99AA-BBCCDDEEFF00"),
+                    entity.AccountCode,
+                    new Guid("12500000-5566-7788-99AA-BBCCDDEEFF00"),
                     new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"));
 
                 await _unitOfWork.Level4.Add(ChAccount);
 
                 var ClAccount = new Level4(
                     $"{entity.AccountTitle} Clearing Account",
-                    new Guid("12100000-5566-7788-99AA-BBCCDDEEFF00"),
+                    $"{entity.AccountCode}C",
+                    new Guid("12500000-5566-7788-99AA-BBCCDDEEFF00"),
                     new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"));
 
                 await _unitOfWork.Level4.Add(ClAccount);
@@ -121,7 +123,7 @@ namespace Application.Services
                     return new Response<BankAccountDto>("Account not found in Chart Of Account");
 
                 //Updating account name in chart of account
-                account.setAccountName(entity.AccountTitle);
+                account.setAccountName(entity.AccountTitle, entity.AccountCode);
 
                 // Getting clearing account detail in COA
                 var clearingAccount = await _unitOfWork.Level4.GetById(bankAccount.ClearingAccountId);
@@ -129,7 +131,7 @@ namespace Application.Services
                     return new Response<BankAccountDto>("Clearing account not found in Chart Of Account");
 
                 //Updating clearing account name in chart of account
-                clearingAccount.setAccountName($"{entity.AccountTitle} Clearing Account");
+                clearingAccount.setAccountName($"{entity.AccountTitle} Clearing Account", $"{entity.AccountCode}C");
 
                 await _unitOfWork.SaveAsync();
                 _unitOfWork.Commit();
@@ -166,7 +168,7 @@ namespace Application.Services
 
             var addBalanceInOpeningBalanceEquity = new RecordLedger(
                bankAccount.TransactionId,
-               new Guid("31260000-5566-7788-99AA-BBCCDDEEFF00"),
+               new Guid("32110000-5566-7788-99AA-BBCCDDEEFF00"),
                null,
                null,
                "Opening Balance",

@@ -32,7 +32,6 @@ namespace Application.Services
                 return new Response<Level4Dto>("Invalid Level3 Account");
             }
             var level4 = _mapper.Map<Level4>(entity);
-
             level4.setLevel1Id(level3.Level2.Level1_id);
             var result = await _unitOfWork.Level4.Add(level4);
             await _unitOfWork.SaveAsync();
@@ -71,6 +70,9 @@ namespace Application.Services
             if (level4 == null)
                 return new Response<Level4Dto>("Not found");
 
+            if(level4.AccountType == Domain.Constants.AccountType.SystemDefined)
+                return new Response<Level4Dto>("System defined accounts cannot be edited");
+            
             //For updating data
             _mapper.Map<CreateLevel4Dto, Level4>(entity, level4);
             await _unitOfWork.SaveAsync();
