@@ -303,7 +303,7 @@ namespace Infrastructure.Context
                 Id = new Guid("12000000-5566-7788-99AA-BBCCDDEEFF00"),
                 Name = "Current Assets",
                 Level1_id = new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "F03"
+                Code = "F02"
             },
             new Level2
             {
