@@ -25,7 +25,8 @@ namespace Application.Contracts.DTOs
         [Required]
         public decimal? PurchasePrice { get; set; }
         [Required]
-        public decimal? SalesTax { get; set; }
+        [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 1 and 100")] 
+        public decimal SalesTax { get; set; }
         [MaxLength(100)]
         public string Barcode { get; set; }
     }

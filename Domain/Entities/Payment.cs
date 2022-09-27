@@ -41,6 +41,11 @@ namespace Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal IncomeTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
+        public decimal Deduction { get; private set; }
+        public Guid? DeductionAccountId { get; private set; }
+        [ForeignKey("OtherDeductionAccountId")]
+        public Level4 DeductionAccount { get; private set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal NetPayment { get; private set; }
         public int? TransactionId { get; private set; }
         [ForeignKey("TransactionId")]
@@ -80,7 +85,6 @@ namespace Domain.Entities
         {
             if (PaymentType == PaymentType.Inflow)
             {
-
                 //Creating doc no..
                 DocNo = "PR-" + String.Format("{0:000}", Id);
             }

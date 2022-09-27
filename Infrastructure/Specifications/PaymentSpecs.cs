@@ -16,6 +16,7 @@ namespace Infrastructure.Specifications
         && (docDate.Count() > 0 ? docDate.Contains(e.PaymentDate) : true)
                 && e.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
                 && e.BusinessPartner.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
+                && e.DeductionAccount.Name.Contains(filter.Name != null ? filter.Name : "")
                 && (states.Count() > 0 ? states.Contains(e.Status.State) : true)
         )
         {
@@ -28,6 +29,7 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Account);
                 AddInclude(i => i.Campus);
                 AddInclude(i => i.Status);
+                AddInclude(i => i.DeductionAccount);
                 AddInclude(i => i.PaymentRegister);
             }
         }
@@ -44,6 +46,7 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Account);
                 AddInclude(i => i.Campus);
                 AddInclude(i => i.Status);
+                AddInclude(i => i.DeductionAccount);
                 AddInclude(i => i.PaymentRegister);
             }
         }
@@ -87,6 +90,7 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Account);
             AddInclude(i => i.Campus);
             AddInclude(i => i.Status);
+            AddInclude(i => i.DeductionAccount);
             AddInclude(i => i.PaymentRegister);
         }
         public PaymentSpecs(DocType docType) : base(e => ((e.PaymentFormType == docType)))
@@ -96,15 +100,20 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Account);
                 AddInclude(i => i.Campus);
                 AddInclude(i => i.Status);
+                AddInclude(i => i.DeductionAccount);
                 AddInclude(i => i.PaymentRegister);
             }
         }
-
         public PaymentSpecs(int ledgerId, bool isLedgerId) 
             : base(x => 
             isLedgerId ? x.DocumentLedgerId == ledgerId : false)
         {
 
+        }
+        public PaymentSpecs(Guid? deductionAccountId) : base(x => 
+            (Guid)deductionAccountId == x.DeductionAccountId)
+        {
+            AddInclude(i => i.DeductionAccount);
         }
     }
 }
