@@ -33,7 +33,8 @@ namespace Application.Services
             {
                 var ChAccount = new Level4(
                     entity.CashAccountName,
-                    new Guid("12100000-5566-7788-99AA-BBCCDDEEFF00"),
+                    entity.AccountCode,
+                    new Guid("12500000-5566-7788-99AA-BBCCDDEEFF00"),
                     new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"));
 
                 await _unitOfWork.Level4.Add(ChAccount);
@@ -119,7 +120,7 @@ namespace Application.Services
                     return new Response<CashAccountDto>("Account not found in Chart Of Account");
 
                 //Updating account name in chart of account
-                account.setAccountName(entity.CashAccountName);
+                account.setAccountName(entity.CashAccountName, entity.AccountCode);
 
 
                 await _unitOfWork.SaveAsync();
@@ -151,7 +152,7 @@ namespace Application.Services
 
             var addBalanceInOpeningBalanceEquity = new RecordLedger(
                cashAccount.TransactionId,
-               new Guid("31260000-5566-7788-99AA-BBCCDDEEFF00"),
+               new Guid("32110000-5566-7788-99AA-BBCCDDEEFF00"),
                null,
                null,
                "Opening Balance",
