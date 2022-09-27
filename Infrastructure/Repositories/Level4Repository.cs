@@ -29,18 +29,22 @@ namespace Infrastructure.Repositories
                 {
                     Id = x.Id,
                     Name = x.Name,
+                    Code = x.Code,
                     Level2 = x.Level2.Select(y => new Level2
                     {
                         Id = y.Id,
                         Name = y.Name,
+                        Code = y.Code,
                         Level3 = y.Level3.Select(z => new Level3
                         {
                             Id = z.Id,
                             Name = z.Name,
+                            Code = z.Code,
                             Level4 = z.Level4.Select(a => new Level4
                             {
                                 Id = a.Id,
-                                Name = a.Name
+                                Name = a.Name,
+                                Code = a.Code
                             })
                         })
                     })
