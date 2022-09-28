@@ -11,6 +11,7 @@ namespace Application.Contracts.DTOs
     {
         public int Id { get; set; }
         public string DocNo { get; set; }
+        public string AccountCode { get; set; }
         public long AccountNumber { get; set; }
         public string AccountTitle { get; set; }
         public BankAccountType BankAccountType { get; set; }
