@@ -12,7 +12,7 @@ namespace Infrastructure.Seeds
 {
     public static class DefaultUsers
     {
-        public static async Task SeedSuperAdminAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public static async Task SeedSuperAdminAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, string password)
         {
             var defaultUser = new User
             {
@@ -25,7 +25,7 @@ namespace Infrastructure.Seeds
                 var user = await userManager.FindByEmailAsync(defaultUser.Email);
                 if (user == null)
                 {
-                    await userManager.CreateAsync(defaultUser, "Admin123!@#");
+                    await userManager.CreateAsync(defaultUser, password);
                     await userManager.AddToRoleAsync(defaultUser, Roles.Admin.ToString());
                     await userManager.AddToRoleAsync(defaultUser, Roles.SuperAdmin.ToString());
                 }
