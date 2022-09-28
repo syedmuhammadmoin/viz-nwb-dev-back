@@ -198,6 +198,11 @@ namespace Infrastructure.Context
             modelBuilder.Entity<PayrollTransactionMaster>()
             .HasAlternateKey(p => new { p.Month, p.Year, p.EmployeeId });
 
+            //Unique Code for all Level 4accounts
+            modelBuilder.Entity<Level4>().
+                HasIndex(b => b.Code)
+                .IsUnique();
+
             //Changing Identity users and roles tables name
             modelBuilder.Entity<User>(entity =>
             {
