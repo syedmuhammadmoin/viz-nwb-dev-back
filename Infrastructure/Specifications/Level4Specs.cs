@@ -31,16 +31,38 @@ namespace Infrastructure.Specifications
         public Level4Specs(int id, bool isReceivable)
             : base(
                   isReceivable ?
-                  (x => x.Level3_id == new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00"))
-                  : (x => x.Level3_id == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00")))
+                  (x => x.Level3_id == new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00")
+                  || x.Level3_id == new Guid("12100000-5566-7788-99AA-BBCCDDEEFF00")
+                  || x.Level3_id == new Guid("12300000-5566-7788-99AA-BBCCDDEEFF00")
+                  || x.Level3_id == new Guid("12900000-5566-7788-99AA-BBCCDDEEFF00")
+                  || x.Level3_id == new Guid("12110000-5566-7788-99AA-BBCCDDEEFF00")
+                  || x.Level3_id == new Guid("12120000-5566-7788-99AA-BBCCDDEEFF00"))
+                  : (x => x.Level3_id == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00")
+                  || x.Level3_id == new Guid("22300000-5566-7788-99AA-BBCCDDEEFF00")
+                  ))
         {
         }
 
-        public Level4Specs(string getAll)
+        public Level4Specs(int getAll)
             : base(x => x.Level3_id != new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00")
-            && x.Level3_id != new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00"))
+                  && x.Level3_id != new Guid("12100000-5566-7788-99AA-BBCCDDEEFF00")
+                  && x.Level3_id != new Guid("12300000-5566-7788-99AA-BBCCDDEEFF00")
+                  && x.Level3_id != new Guid("12900000-5566-7788-99AA-BBCCDDEEFF00")
+                  && x.Level3_id != new Guid("12110000-5566-7788-99AA-BBCCDDEEFF00")
+                  && x.Level3_id != new Guid("12120000-5566-7788-99AA-BBCCDDEEFF00")
+                  && x.Level3_id != new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00")
+                  && x.Level3_id != new Guid("22300000-5566-7788-99AA-BBCCDDEEFF00"))
         {
-
         }
-    } 
+
+        public Level4Specs(string code) : base (i => i.Code == code)
+        {
+            ApplyAsNoTracking();    
+        }
+
+        public Level4Specs(string code, Guid id) : base(i => i.Code == code && i.Id != id)
+        {
+            ApplyAsNoTracking();
+        }
+    }
 }
