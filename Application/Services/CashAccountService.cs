@@ -28,6 +28,10 @@ namespace Application.Services
 
         public async Task<Response<CashAccountDto>> CreateAsync(CreateCashAccountDto entity)
         {
+            var checkingCode = _unitOfWork.Level4.Find(new Level4Specs(entity.AccountCode)).FirstOrDefault();
+            if (checkingCode != null)
+                return new Response<CashAccountDto>("Duplicate code");
+
             _unitOfWork.CreateTransaction();
             try
             {
@@ -102,6 +106,10 @@ namespace Application.Services
 
         public async Task<Response<CashAccountDto>> UpdateAsync(UpdateCashAccountDto entity)
         {
+            var checkingCode = _unitOfWork.Level4.Find(new Level4Specs(entity.AccountCode)).FirstOrDefault();
+            if (checkingCode != null)
+                return new Response<CashAccountDto>("Duplicate code");
+
             _unitOfWork.CreateTransaction();
             try
             {
