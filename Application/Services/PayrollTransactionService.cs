@@ -482,12 +482,6 @@ namespace Application.Services
                         getPayrollTransaction.setStatus(transition.NextStatusId);
                         if (transition.NextStatus.State == DocumentStatus.Unpaid)
                         {
-                            var checkingPayrollTrans = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(getPayrollTransaction.Month, getPayrollTransaction.Year, getPayrollTransaction.EmployeeId)).FirstOrDefault();
-                            if (checkingPayrollTrans != null)
-                            {
-                                return new Response<bool>("Payroll transaction is already processed");
-                            }
-
                             await AddToLedger(getPayrollTransaction);
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "PayrollTransaction Approved");

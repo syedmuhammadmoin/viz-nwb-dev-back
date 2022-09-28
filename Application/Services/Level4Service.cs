@@ -26,11 +26,16 @@ namespace Application.Services
         }
         public async Task<Response<Level4Dto>> CreateAsync(CreateLevel4Dto entity)
         {
+            var checkingCode = _unitOfWork.Level4.Find(new Level4Specs(entity.Code)).FirstOrDefault();
+            if (checkingCode != null)
+                return new Response<Level4Dto>("Duplicate code");
+
             var level3 = _unitOfWork.Level3.Find(new Level3Specs(entity.Level3_id)).FirstOrDefault();
             if (level3 == null)
             {
                 return new Response<Level4Dto>("Invalid Level3 Account");
             }
+
             var level4 = _mapper.Map<Level4>(entity);
             level4.setLevel1Id(level3.Level2.Level1_id);
             var result = await _unitOfWork.Level4.Add(level4);
@@ -66,10 +71,14 @@ namespace Application.Services
         public async Task<Response<Level4Dto>> UpdateAsync(CreateLevel4Dto entity)
         {
             var level4 = await _unitOfWork.Level4.GetById((Guid)entity.Id);
-
             if (level4 == null)
                 return new Response<Level4Dto>("Not found");
 
+            var checkingCode = _unitOfWork.Level4.Find(new Level4Specs(entity.Code, (Guid)entity.Id)).FirstOrDefault();
+            if (checkingCode != null)
+                return new Response<Level4Dto>("Duplicate code");
+
+            
             if(level4.AccountType == Domain.Constants.AccountType.SystemDefined)
                 return new Response<Level4Dto>("System defined accounts cannot be edited");
             
@@ -78,6 +87,7 @@ namespace Application.Services
             await _unitOfWork.SaveAsync();
             return new Response<Level4Dto>(_mapper.Map<Level4Dto>(level4), "Updated successfully");
         }
+        
         public Task<Response<Guid>> DeleteAsync(Guid id)
         {
             throw new NotImplementedException();
@@ -95,7 +105,7 @@ namespace Application.Services
 
         public async Task<Response<List<Level4Dto>>> GetAllOtherAccounts()
         {
-            var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs(""));
+            var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs(0));
             if (!level4.Any())
                 return new Response<List<Level4Dto>>("List is empty");
 
