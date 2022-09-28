@@ -188,7 +188,7 @@ namespace Application.Services
                                 }
 
                                 //updating reserved quantity in stock
-                                var updateStockOnApproveOrReject = UpdateStockOnApproveOrReject(_mapper.Map<IssuanceDto>(getIssuance), getIssuance.StatusId);
+                                var updateStockOnApproveOrReject = await UpdateStockOnApproveOrReject(getIssuance);
                                 if (!updateStockOnApproveOrReject.IsSuccess)
                                     return new Response<bool>(updateStockOnApproveOrReject.Message);
 
@@ -200,7 +200,7 @@ namespace Application.Services
                             if (transition.NextStatus.State == DocumentStatus.Rejected)
                             {
                                 //updating reserved quantity in stock
-                                var updateStockOnApproveOrReject = UpdateStockOnApproveOrReject(_mapper.Map<IssuanceDto>(getIssuance), getIssuance.StatusId);
+                                var updateStockOnApproveOrReject = await UpdateStockOnApproveOrReject(getIssuance);
                                 if (!updateStockOnApproveOrReject.IsSuccess)
                                     return new Response<bool>(updateStockOnApproveOrReject.Message);
 
@@ -397,8 +397,13 @@ namespace Application.Services
             return new Response<bool>(true, "");
         }
 
-        private Response<bool> UpdateStockOnApproveOrReject(IssuanceDto issuance, int statusId)
+        private async Task<Response<bool>> UpdateStockOnApproveOrReject(IssuanceMaster issuance)
         {
+            var getState = await _unitOfWork.WorkFlowStatus.GetById(issuance.StatusId);
+            
+            if (getState == null) 
+                return new Response<bool>("Invalid Status");
+            
             foreach (var line in issuance.IssuanceLines)
             {
                 var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs(line.ItemId, line.WarehouseId)).FirstOrDefault();
@@ -407,13 +412,13 @@ namespace Application.Services
                     return new Response<bool>("Item not found in stock");
                 
                 // updating reserved quantity for APPROVED Issuance
-                if(issuance.StatusId == 8)
+                if(getState.State == DocumentStatus.Unpaid)
                 {
                     getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity - line.Quantity);
                 }
 
                 // updating reserved quantity for REJECTED Issuance
-                if (issuance.StatusId == 2)
+                if (getState.State == DocumentStatus.Rejected)
                 {
                     getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity - line.Quantity);
                     getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
