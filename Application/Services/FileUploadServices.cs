@@ -59,7 +59,7 @@ namespace Application.Services
                     return new Response<int>("File format not supported");
 
                 Guid obj = Guid.NewGuid();
-                var path = new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.FullName;
+                var path = new DirectoryInfo(Environment.CurrentDirectory).Parent.FullName;
                 string basePath = Path.Combine(path + "\\File\\Error\\");
                 string filedir = _Configuration["FilePath"];
                 switch (docType)

@@ -29,14 +29,16 @@ namespace Application.Contracts.DTOs
         public int? CampusId { get; set; }
         [Required]
         [Range(1, double.MaxValue, ErrorMessage = "Gross amount must be greater than 0")]
-        public decimal GrossPayment { get; set; }
-        [Range(0.00, double.MaxValue, ErrorMessage = "Please enter a positive value")]
-        public decimal SalesTax { get; set; }
-        [Range(0.00, double.MaxValue, ErrorMessage = "Please enter a positive value")]
-        public decimal IncomeTax { get; set; }
-        [Range(0.00, double.MaxValue, ErrorMessage = "Please enter a positive value")]
-        public decimal SRBTax { get;  set; }
+        public decimal? GrossPayment { get; set; }
+        [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 1 and 100")]
+        public decimal? SalesTax { get; set; }
+        [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 1 and 100")]
+        public decimal? IncomeTax { get; set; }
+        [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 1 and 100")]
+        public decimal? SRBTax { get;  set; }
+        public decimal? Deduction { get; set; }
         public int? DocumentLedgerId { get; set; }
+        public Guid? DeductionAccountId { get; set; }
         [Required]
         public bool isSubmit { get; set; }
     }

@@ -89,7 +89,7 @@ namespace Application.Services
         public async Task<Response<bool>> ReconciliationProcess(CreateTransactionReconcileDto entity)
         {
             //Adding in Reconcilation table
-            var recons = new TransactionReconcile(entity.PaymentLedgerId, entity.DocumentLedgerId, entity.Amount);
+            var recons = new TransactionReconcile(entity.PaymentLedgerId, entity.DocumentLedgerId, (decimal)entity.Amount);
             await _unitOfWork.TransactionReconcile.Reconcile(recons);
             await _unitOfWork.SaveAsync();
 

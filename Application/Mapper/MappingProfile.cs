@@ -51,19 +51,25 @@ namespace Application.Mapper
 
             // Level4 Mapping
             CreateMap<Level4, Level4Dto>()
-                .ForMember(dto => dto.Level3Name, core => core.MapFrom(a => a.Level3.Name));
-            CreateMap<CreateLevel4Dto, Level4>();
+                .ForMember(dto => dto.Level3Name, core => core.MapFrom(a => a.Level3.Name))
+                .ForMember(dto => dto.EditableName, core => core.MapFrom(a => a.Name))
+                .ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
+            CreateMap<CreateLevel4Dto, Level4>()
+                .ForMember(core => core.AccountType, dto => dto.MapFrom(a => AccountType.UserDefined));
 
             // Level3 Mapping
             CreateMap<Level3, Level3DropDownDto>();
 
             // Level1 Mapping
             CreateMap<Level1, Level1Dto>()
-                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level2));
+                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level2))
+                .ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
             CreateMap<Level2, Level2Dto>()
-                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level3));
+                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level3))
+                .ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
             CreateMap<Level3, Level3Dto>()
-                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level4));
+                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level4))
+                .ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
 
             // Category Mapping
             CreateMap<Category, CategoryDto>()
@@ -194,6 +200,7 @@ namespace Application.Mapper
             CreateMap<Payment, PaymentDto>()
                 .ForMember(dto => dto.BusinessPartnerName, core => core.MapFrom(a => a.BusinessPartner.Name))
                 .ForMember(dto => dto.PaymentRegisterName, core => core.MapFrom(a => a.PaymentRegister.Name))
+                .ForMember(dto => dto.DeductionAccountName, core => core.MapFrom(a => a.DeductionAccount.Name))
                 .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
                 .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                 .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
@@ -203,7 +210,7 @@ namespace Application.Mapper
                     a.BankReconStatus == DocumentStatus.Reconciled ? "Reconciled" : a.Status.Status));
 
             CreateMap<CreatePaymentDto, Payment>()
-                .ForMember(core => core.NetPayment, dto => dto.MapFrom(a => (a.GrossPayment - a.IncomeTax - a.SalesTax - a.SRBTax)));
+                .ForMember(core => core.NetPayment, dto => dto.MapFrom(a => (a.GrossPayment - ((a.GrossPayment * a.IncomeTax)/100) - ((a.GrossPayment * a.SalesTax) / 100) - ((a.GrossPayment * a.SRBTax) / 100) - a.Deduction)));
 
             // CashAccount Mapping
             CreateMap<CashAccount, CashAccountDto>()

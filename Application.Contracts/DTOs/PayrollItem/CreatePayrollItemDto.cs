@@ -24,7 +24,7 @@ namespace Application.Contracts.DTOs
         public CalculationType PayrollItemType { get; set; }
         [Range(0, double.MaxValue, ErrorMessage = "Please enter a positive value")]
         [Required]
-        public decimal Value { get; set; }
+        public decimal? Value { get; set; }
         [Required]
         public Guid AccountId { get; set; }
         [Required]

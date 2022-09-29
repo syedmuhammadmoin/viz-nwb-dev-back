@@ -21,9 +21,9 @@ namespace Application.Contracts.DTOs
         public string Label { get; set; }
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Debit { get; set; }
+        public decimal? Debit { get; set; }
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Credit { get; set; }
+        public decimal? Credit { get; set; }
     }
 }

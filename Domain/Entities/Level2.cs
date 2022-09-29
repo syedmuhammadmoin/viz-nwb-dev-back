@@ -13,15 +13,12 @@ namespace Domain.Entities
     {
         [MaxLength(200)]
         public string Name { get; set; }
+        [MaxLength(10)]
+        public string Code { get; set; }
         public IEnumerable<Level3> Level3 { get; set; }
         public Guid Level1_id { get; set; }
         [ForeignKey("Level1_id")]
         public Level1 Level1 { get; private set; }
-        public Level2(Level2 level2)
-        {
-            Name = level2.Name;
-            Level1_id = level2.Level1_id;
-        }
         public Level2()
         {
         }

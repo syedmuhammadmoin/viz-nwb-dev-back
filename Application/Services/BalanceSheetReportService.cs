@@ -85,22 +85,22 @@ namespace Application.Services
                                   Transactional = iGroup.Key.Nature,
                                   Debit = iGroup.Sum(e => e.glv.Debit),
                                   Credit = iGroup.Sum(e => e.glv.Credit),
-                                  Balance = iGroup.Key.Nature == "REVENUE" ? (iGroup.Sum(e => e.glv.Credit) - iGroup.Sum(e => e.glv.Debit)) : (iGroup.Sum(e => e.glv.Debit) - iGroup.Sum(e => e.glv.Credit))
+                                  Balance = iGroup.Key.Nature == "Revenue" ? (iGroup.Sum(e => e.glv.Credit) - iGroup.Sum(e => e.glv.Debit)) : (iGroup.Sum(e => e.glv.Debit) - iGroup.Sum(e => e.glv.Credit))
                               };
 
             var revenue = profitNLoss
-                .Where(e => e.Nature == "REVENUE")
+                .Where(e => e.Nature == "Revenue")
                 .Select(e => e.Balance)
                 .FirstOrDefault();
 
             var expense = profitNLoss
-                .Where(e => e.Nature != "REVENUE")
+                .Where(e => e.Nature != "Revenue")
                 .Select(e => e.Balance)
                 .FirstOrDefault();
 
             var pNl = new BalanceSheetDto()
             {
-                Nature = "DEFICIT/SURPLUS",
+                Nature = "Deficit/Surplus",
                 Transactional = "N/A",
                 Debit = 0,
                 Credit = 0,
@@ -130,7 +130,7 @@ namespace Application.Services
                               Transactional = iGroup.Key.Transactional,
                               Debit = iGroup.Sum(e => e.glv.Debit),
                               Credit = iGroup.Sum(e => e.glv.Credit),
-                              Balance = iGroup.Key.Nature == "ASSETS" ? (iGroup.Sum(e => e.glv.Debit) - iGroup.Sum(e => e.glv.Credit)) :
+                              Balance = iGroup.Key.Nature == "Assets" ? (iGroup.Sum(e => e.glv.Debit) - iGroup.Sum(e => e.glv.Credit)) :
                               (iGroup.Sum(e => e.glv.Credit) - iGroup.Sum(e => e.glv.Debit))
                           }).ToList();
 

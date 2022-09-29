@@ -13,18 +13,21 @@ namespace Application.Contracts.DTOs
         [Required]
         public long AccountNumber { get; set; }
         [Required]
-        [MaxLength(100)]
+        [MaxLength(50)]
         public string AccountTitle { get; set; }
+        [Required]
+        [MaxLength(10)]
+        public string AccountCode { get; set; }
         [Required]
         public BankAccountType BankAccountType { get; set; }
         [Required]
-        [MaxLength(100)]
+        [MaxLength(50)]
         public string BankName { get; set; }
         [MaxLength(50)]
         public string Branch { get; set; }
         [Required]
         [Range(0.00, float.MaxValue, ErrorMessage = "Please enter a positive value")]
-        public decimal OpeningBalance { get; set; }
+        public decimal? OpeningBalance { get; set; }
         [Required]
         public DateTime OpeningBalanceDate { get; set; }
         [MaxLength(200)]

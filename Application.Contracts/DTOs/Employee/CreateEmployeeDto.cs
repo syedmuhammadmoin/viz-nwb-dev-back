@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Constants;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -18,6 +19,23 @@ namespace Application.Contracts.DTOs
         [Required]
         [MaxLength(20)]
         public string CNIC { get; set; }
+        [Required]
+        [MaxLength(40)]
+        public string EmployeeType { get; set; }
+        [Required]
+        [MaxLength(50)]
+        public string BankName { get; set; }
+        [Required]
+        [MaxLength(50)]
+        public string BranchName { get; set; }
+        [Required]
+        [MaxLength(50)]
+        public string AccountTitle { get; set; }
+        [Required]
+        public long AccountNumber { get; set; }
+        [Required]
+        [MaxLength(30)]
+        public string EmployeeCode { get; set; }
         [MaxLength(100)]
         public string Domicile { get; set; }
         [MaxLength(20)]

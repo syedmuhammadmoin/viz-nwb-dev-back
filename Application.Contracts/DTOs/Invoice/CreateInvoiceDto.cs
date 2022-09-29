@@ -16,6 +16,7 @@ namespace Application.Contracts.DTOs
         public DateTime InvoiceDate { get; set; }
         [Required]
         public DateTime DueDate { get; set; }
+        [MaxLength(20)]
         public string Contact { get; set; }
         [Required]
         public int CampusId { get; set; }

@@ -14,7 +14,7 @@ namespace Application.Contracts.DTOs
         public int EmployeeId { get; set; }
         [Required]
         public DateTime IssuanceReturnDate { get; set; }
-        [StringLength(20)]
+        [MaxLength(20)]
         public string Contact { get; set; }
         [Required]
         public int CampusId { get; set; }

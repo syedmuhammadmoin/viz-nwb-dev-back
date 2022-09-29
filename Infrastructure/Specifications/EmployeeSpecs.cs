@@ -14,6 +14,7 @@ namespace Infrastructure.Specifications
         public EmployeeSpecs(TransactionFormFilter filter, bool isTotalRecord)
             : base(c => c.Name.Contains(filter.Name != null ? filter.Name : "")
                 && c.CNIC.Contains(filter.DocNo != null ? filter.DocNo : "")
+                && c.BankName.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
                 && c.Department.Name.Contains(filter.Department != null ? filter.Department : "")
                 && c.Designation.Name.Contains(filter.Designation != null ? filter.Designation : "")
                 && (filter.IsActive != null ? c.isActive == filter.IsActive : true))

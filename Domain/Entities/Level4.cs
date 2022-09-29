@@ -1,4 +1,5 @@
 ﻿using Domain.Base;
+using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,6 +14,9 @@ namespace Domain.Entities
     {
         [MaxLength(200)]
         public string Name { get; set; }
+        [MaxLength(10)]
+        public string Code { get; set; }
+        public AccountType AccountType { get; set; }
         public Guid Level3_id { get; set; }
         [ForeignKey("Level3_id")]
         public Level3 Level3 { get; private set; }
@@ -23,16 +27,19 @@ namespace Domain.Entities
         public Level4()
         {
         }
-        public Level4(string name, Guid level3_id, Guid level1_id)
+        public Level4(string name, string accountCode, Guid level3_id, Guid level1_id)
         {
             Name = name;
+            Code = accountCode;
             Level3_id = level3_id;
             Level1_id = level1_id;
+            AccountType = AccountType.SystemDefined;
         }
 
-        public void setAccountName(string name)
+        public void setAccountName(string name, string accountCode)
         {
             Name = name;
+            Code = accountCode;
         }
 
         public void setLevel1Id(Guid level1Id) 

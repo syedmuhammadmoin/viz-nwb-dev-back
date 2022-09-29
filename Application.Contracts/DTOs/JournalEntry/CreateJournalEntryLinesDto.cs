@@ -14,14 +14,14 @@ namespace Application.Contracts.DTOs
         public Guid AccountId { get; set; }
         public int? BusinessPartnerId { get; set; }
         [Required]
-        [MaxLength(200)]
+        [MaxLength(500)]
         public string Description { get; set; }
         [Required]
         [Range(0, double.MaxValue, ErrorMessage = "Please enter a positive value")]
-        public decimal Debit { get; set; }
+        public decimal? Debit { get; set; }
         [Required]
         [Range(0, double.MaxValue, ErrorMessage = "Please enter a positive value")]
-        public decimal Credit { get; set; }
+        public decimal? Credit { get; set; }
         public int? WarehouseId { get; set; }
     }
 }

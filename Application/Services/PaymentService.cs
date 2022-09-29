@@ -165,6 +165,12 @@ namespace Application.Services
         {
             var payment = _mapper.Map<Payment>(entity);
 
+            if (entity.Deduction > 0)
+            {
+                if (entity.DeductionAccountId == null)
+                    return new Response<PaymentDto>("Deduction account is required");
+            }
+
             //Setting status
             payment.setStatus(status);
 
@@ -230,8 +236,12 @@ namespace Application.Services
             }
         }
 
-        private async Task<Response<bool>> AddToLedger(Payment payment, Guid incomeTaxAccountId, Guid salesTaxAccountId, Guid srbTaxAccountId)
+        private async Task<Response<bool>> AddToLedger(Payment payment)
         {
+            var sRBTax = (payment.GrossPayment * payment.SRBTax) / 100;
+            var incomeTax = (payment.GrossPayment * payment.IncomeTax) / 100;
+            var salesTax = (payment.GrossPayment * payment.SalesTax) / 100;
+
             var transaction = new Transactions(payment.Id, payment.DocNo, payment.PaymentFormType);
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
@@ -269,7 +279,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'D',
-                    payment.SRBTax,
+                    sRBTax,
                     payment.CampusId,
                     payment.PaymentDate
                         );
@@ -291,7 +301,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'D',
-                    payment.SalesTax,
+                    salesTax,
                     payment.CampusId,
                     payment.PaymentDate
                         );
@@ -312,11 +322,31 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'D',
-                    payment.IncomeTax,
+                    incomeTax,
                     payment.CampusId,
                     payment.PaymentDate);
                     await _unitOfWork.Ledger.Add(addIncomeTaxInRecordLedger);
                 }
+
+                if (payment.Deduction > 0)
+                {
+                    if (payment.DeductionAccountId == null)
+                        return new Response<bool>("Deduction Account not found");
+
+                    var addDeductionRecordLedger = new RecordLedger(
+
+                    transaction.Id,
+                    (Guid)payment.DeductionAccountId,
+                    payment.BusinessPartnerId,
+                    null,
+                    payment.Description,
+                    'D',
+                    payment.Deduction,
+                    payment.CampusId,
+                    payment.PaymentDate);
+                    await _unitOfWork.Ledger.Add(addDeductionRecordLedger);
+                }
+
                 var addNetPaymentInRecordLedger = new RecordLedger(
                     transaction.Id,
                     payment.PaymentRegisterId,
@@ -324,7 +354,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'D',
-                    (payment.GrossPayment - payment.SalesTax - payment.IncomeTax - payment.SRBTax),
+                    (payment.GrossPayment - salesTax - incomeTax - sRBTax - payment.Deduction),
                     payment.CampusId,
                     payment.PaymentDate);
 
@@ -360,7 +390,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'C',
-                    payment.SRBTax,
+                    sRBTax,
                     payment.CampusId,
                     payment.PaymentDate
                         );
@@ -382,7 +412,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'C',
-                    payment.SalesTax,
+                    salesTax,
                     payment.CampusId,
                     payment.PaymentDate
                         );
@@ -403,10 +433,29 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'C',
-                    payment.IncomeTax,
+                    incomeTax,
                     payment.CampusId,
                     payment.PaymentDate);
                     await _unitOfWork.Ledger.Add(addIncomeTaxInRecordLedger);
+                }
+
+                if (payment.Deduction > 0)
+                {
+                    if (payment.DeductionAccountId == null)
+                        return new Response<bool>("Deduction Account not found");
+
+                    var addDeductionRecordLedger = new RecordLedger(
+
+                    transaction.Id,
+                    (Guid)payment.DeductionAccountId,
+                    payment.BusinessPartnerId,
+                    null,
+                    payment.Description,
+                    'C',
+                    payment.Deduction,
+                    payment.CampusId,
+                    payment.PaymentDate);
+                    await _unitOfWork.Ledger.Add(addDeductionRecordLedger);
                 }
                 var addNetPaymentInRecordLedger = new RecordLedger(
                     transaction.Id,
@@ -415,7 +464,7 @@ namespace Application.Services
                     null,
                     payment.Description,
                     'C',
-                    (payment.GrossPayment - payment.SalesTax - payment.IncomeTax - payment.SRBTax),
+                    (payment.GrossPayment - salesTax - incomeTax - sRBTax - payment.Deduction),
                     payment.CampusId,
                     payment.PaymentDate);
 
@@ -489,13 +538,8 @@ namespace Application.Services
 
                         {
                             var totalAddedTax = (getPayment.IncomeTax + getPayment.SalesTax + getPayment.SRBTax);
-
-                            Guid incomeTaxAccount = new Guid("00000000-0000-0000-0000-000000000000");
-                            Guid salesTaxAccount = new Guid("00000000-0000-0000-0000-000000000000");
-                            Guid srbTaxAccount = new Guid("00000000-0000-0000-0000-000000000000");
-
                             getPayment.setReconStatus(DocumentStatus.Unreconciled);
-                            var res = await AddToLedger(getPayment, incomeTaxAccount, salesTaxAccount, srbTaxAccount);
+                            var res = await AddToLedger(getPayment);
                             if (!res.IsSuccess)
                             {
                                 _unitOfWork.Rollback();
@@ -832,6 +876,7 @@ namespace Application.Services
             // Returning BillDto with all values assigned
             return data;
         }
+
         private List<RemarksDto> ReturningRemarks(PaymentDto data, DocType docType)
         {
             var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, docType))
@@ -849,6 +894,7 @@ namespace Application.Services
 
             return remarks;
         }
+
         private List<FileUploadDto> ReturningFiles(PaymentDto data, DocType docType)
         {
 

@@ -20,7 +20,7 @@ namespace Application.Contracts.DTOs
         public int Quantity { get; set; }
         [Required]
         [Range(1, float.MaxValue, ErrorMessage = "Price must be greater than 0")]
-        public decimal Cost { get; set; }
+        public decimal? Cost { get; set; }
         [Range(0.00, 100.00, ErrorMessage = "Please enter a positive value")]
         public decimal Tax { get; set; }
         public decimal AnyOtherTax { get; set; }
