@@ -378,14 +378,14 @@ namespace Infrastructure.Context
                 Name = "Transfers",
                 Level1_id = new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00"),
                 Code = "A06"
-            },
-            new Level2
-            {
-                Id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Repair And Maintenance",
-                Level1_id = new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A13"
             }
+            //new Level2
+            //{
+            //    Id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Repair And Maintenance",
+            //    Level1_id = new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A13"
+            //}
             );
 
             //Adding in Level 3
@@ -759,62 +759,68 @@ namespace Infrastructure.Context
                 Name = "Other Transfer Payments",
                 Level2_id = new Guid("55000000-5566-7788-99AA-BBCCDDEEFF00"),
                 Code = "A064"
+            }, new Level3
+            {
+                Id = new Guid("53110000-5566-7788-99AA-BBCCDDEEFF00"),
+                Name = "Repair And Maintenance",
+                Level2_id = new Guid("53000000-5566-7788-99AA-BBCCDDEEFF00"),
+                Code = "A040"
             }
-            , new Level3
-            {
-                Id = new Guid("56100000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Transport",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A130"
-            }, new Level3
-            {
-                Id = new Guid("56200000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Machinary & Equipment",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A131"
-            }, new Level3
-            {
-                Id = new Guid("56300000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Furniture & Fixture",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A132"
-            }, new Level3
-            {
-                Id = new Guid("56400000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Building & Structure",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A133"
-            }, new Level3
-            {
-                Id = new Guid("56500000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Computer Equipments",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A137"
-            }, new Level3
-            {
-                Id = new Guid("56600000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Generals",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A138"
-            }, new Level3
-            {
-                Id = new Guid("56700000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Depreciation, Amortization & Impairment",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A180"
-            }, new Level3
-            {
-                Id = new Guid("56800000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Bad Debts",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A181"
-            }, new Level3
-            {
-                Id = new Guid("56900000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Unrealized Losses",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A182"
-            }
+            //, new Level3
+            //{
+            //    Id = new Guid("56100000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Transport",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A130"
+            //}, new Level3
+            //{
+            //    Id = new Guid("56200000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Machinary & Equipment",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A131"
+            //}, new Level3
+            //{
+            //    Id = new Guid("56300000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Furniture & Fixture",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A132"
+            //}, new Level3
+            //{
+            //    Id = new Guid("56400000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Building & Structure",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A133"
+            //}, new Level3
+            //{
+            //    Id = new Guid("56500000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Computer Equipments",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A137"
+            //}, new Level3
+            //{
+            //    Id = new Guid("56600000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Generals",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A138"
+            //}, new Level3
+            //{
+            //    Id = new Guid("56700000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Depreciation, Amortization & Impairment",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A180"
+            //}, new Level3
+            //{
+            //    Id = new Guid("56800000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Bad Debts",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A181"
+            //}, new Level3
+            //{
+            //    Id = new Guid("56900000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Unrealized Losses",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A182"
+            //}
             );
 
             //Adding in Level 4
