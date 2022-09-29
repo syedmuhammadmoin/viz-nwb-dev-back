@@ -17,10 +17,12 @@ namespace Vizalys.Api
     public class DesignationController : ControllerBase
     {
         private readonly IDesignationService _departmentService;
+        private readonly IConfiguration _configuration;
 
-        public DesignationController(IDesignationService departmentService)
+        public DesignationController(IDesignationService departmentService, IConfiguration configuration)
         {
             _departmentService = departmentService;
+            _configuration = configuration;
         }
 
         [EnableCors("PayrollModule")]
@@ -28,7 +30,7 @@ namespace Vizalys.Api
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<DesignationDto>>>> GetAllAsync([FromHeader(Name = "key")] string key, [FromQuery] TransactionFormFilter filter)
         {
-            if (key != "b4!V47w^e3QhItW_XY:jHgWQp%$&93nMS|h)Bj~R0&Q#J1m%lI^;b4C,&]Gf2(H_fu]5&X@1Oy~")
+            if (key != _configuration["ApiKey:Key"])
             {
                 return BadRequest("Invalid Key");
             }
@@ -44,7 +46,7 @@ namespace Vizalys.Api
         [HttpPost]
         public async Task<ActionResult<Response<DesignationDto>>> CreateAsync([FromHeader(Name = "key")] string key, DesignationDto[] entity)
         {
-            if (key != "b4!V47w^e3QhItW_XY:jHgWQp%$&93nMS|h)Bj~R0&Q#J1m%lI^;b4C,&]Gf2(H_fu]5&X@1Oy~")
+            if (key != _configuration["ApiKey:Key"])
             {
                 return BadRequest("Invalid Key");
             }

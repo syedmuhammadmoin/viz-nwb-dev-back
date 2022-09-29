@@ -18,10 +18,12 @@ namespace Vizalys.Api.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
+        private readonly IConfiguration _configuration;
 
-        public EmployeeController(IEmployeeService employeeService)
+        public EmployeeController(IEmployeeService employeeService, IConfiguration configuration)
         {
             _employeeService = employeeService;
+            _configuration = configuration;
         }
 
         [EnableCors("PayrollModule")]
@@ -29,7 +31,7 @@ namespace Vizalys.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<EmployeeDto>>>> GetAllAsync([FromHeader(Name = "key")] string key, [FromQuery] TransactionFormFilter filter)
         {
-            if (key != "b4!V47w^e3QhItW_XY:jHgWQp%$&93nMS|h)Bj~R0&Q#J1m%lI^;b4C,&]Gf2(H_fu]5&X@1Oy~")
+            if (key != _configuration["ApiKey:Key"])
             {
                 return BadRequest("Invalid Key");
             }
@@ -45,7 +47,7 @@ namespace Vizalys.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Response<EmployeeDto>>> CreateAsync([FromHeader(Name = "key")] string key, CreateEmployeeDto[] entity)
         {
-            if (key != "b4!V47w^e3QhItW_XY:jHgWQp%$&93nMS|h)Bj~R0&Q#J1m%lI^;b4C,&]Gf2(H_fu]5&X@1Oy~")
+            if (key != _configuration["ApiKey:Key"])
             {
                 return BadRequest("Invalid Key");
             }
