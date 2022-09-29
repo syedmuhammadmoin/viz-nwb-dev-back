@@ -11,12 +11,11 @@ namespace Application.Contracts.Response
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Field { get; }
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public int Code { get; set; }
+
         public string error { get; }
 
 
-        public ValidationError(string field, int code, string message)
+        public ValidationError(string field,  string message)
         {
             Field = field != string.Empty ? field : null;
             error = message;

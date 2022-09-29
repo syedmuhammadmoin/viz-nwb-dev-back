@@ -17,7 +17,7 @@ namespace Infrastructure.GlobalExceptionFilter
     {
         public ValidationFailedResult(HttpContext context, ModelStateDictionary modelState)
             : base(new Response<bool>( "Validation Failed" , 400 , context.TraceIdentifier, modelState.Keys
-                     .SelectMany(key => modelState[key].Errors.Select(x => new ValidationError(key, 0, x.ErrorMessage)))
+                     .SelectMany(key => modelState[key].Errors.Select(x => new ValidationError(key,  x.ErrorMessage)))
                      .ToList()))
         { 
             StatusCode = StatusCodes.Status400BadRequest; //change the http status code to 422.
