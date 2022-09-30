@@ -11,5 +11,6 @@ namespace Application.Contracts.Interfaces
     public interface ICOAService
     {
         Task<Response<List<Level1Dto>>> GetCOA();
+        Task<MemoryStream> Export();
     }
 }
