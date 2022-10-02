@@ -64,5 +64,12 @@ namespace Infrastructure.Specifications
         {
             ApplyAsNoTracking();
         }
+        public Level4Specs(bool isCOA, int id)
+        {
+            AddInclude(i => i.Level3);
+            AddInclude("Level3.Level2");
+            AddInclude(i => i.Level1);
+            ApplyAsNoTracking();
+        }
     }
 }

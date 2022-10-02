@@ -27,6 +27,23 @@ namespace Vizalys.Api.Controllers
         {
             return Ok(await _coaService.GetCOA()); // Status Code : 200
         }
+        [AllowAnonymous]
+        [HttpGet("download")]
+        public async Task<ActionResult> DownloadCOA()
+        {
+            try
+            {
+                var stream = await _coaService.Export();
+                string excelName = $"ChartOfAccount-{DateTime.Now:yyyyMMddHHmmssfff}.xlsx";
+                return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
+
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                     e.Message);
+            }
+        }
 
     }
 }
