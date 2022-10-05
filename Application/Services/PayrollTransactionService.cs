@@ -105,6 +105,7 @@ namespace Application.Services
                     empDetails.BPS,
                     empDetails.DesignationId,
                     empDetails.DepartmentId,
+                    empDetails.CampusId,
                     entity.WorkingDays,
                     entity.PresentDays,
                     entity.LeaveDays,
@@ -685,7 +686,7 @@ namespace Application.Services
             }
 
             var payrollTransactions = _unitOfWork.PayrollTransaction
-                .Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId))
+                .Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, data.CampusId))
                 .ToList();
 
             if (payrollTransactions.Count() > 0)
@@ -708,12 +709,11 @@ namespace Application.Services
                 }
             }
 
-
-            var getpayrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, true)).ToList();
+            var getpayrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, data.CampusId, true)).ToList();
 
             if (getpayrollTransactions.Count == 0)
             {
-                return new Response<List<PayrollTransactionDto>>("No employee found in this department");
+                return new Response<List<PayrollTransactionDto>>("No employees found");
             }
 
             var response = new List<PayrollTransactionDto>();
@@ -728,7 +728,7 @@ namespace Application.Services
 
         public Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data)
         {
-            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, false)).ToList();
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, data.CampusId, false)).ToList();
 
             if (payrollTransactions.Count == 0)
                 return new Response<List<PayrollTransactionDto>>("list is empty");
