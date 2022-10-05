@@ -55,6 +55,8 @@ namespace Application.Contracts.DTOs
         [Required]
         public int DepartmentId { get; set; }
         [Required]
+        public int CampusId { get; set; }
+        [Required]
         [MaxLength(150)]
         public string Address { get; set; }
         [Required]

@@ -26,13 +26,21 @@ namespace Infrastructure.Specifications
                 ApplyOrderByDescending(i => i.Id);
                 AddInclude(i => i.Department);
                 AddInclude(i => i.Designation);
+                AddInclude(i => i.Campus);
             }
         }
 
-        public EmployeeSpecs()
+        public EmployeeSpecs(bool forEdit)
         {
-            AddInclude(i => i.Department);
-            AddInclude(i => i.Designation);
+            if (forEdit)
+            {
+            }
+            else
+            {
+                AddInclude(i => i.Department);
+                AddInclude(i => i.Designation);
+                AddInclude(i => i.Campus);
+            }
         }
 
         public EmployeeSpecs(string getCNIC) : base(e => e.CNIC == getCNIC)
@@ -47,7 +55,7 @@ namespace Infrastructure.Specifications
 
         }
 
-        public EmployeeSpecs(bool isEmployeeBP) : base(x => isEmployeeBP == true && x.BusinessPartner.BusinessPartnerType == BusinessPartnerType.Employee)
+        public EmployeeSpecs() : base(x => x.BusinessPartner.BusinessPartnerType == BusinessPartnerType.Employee)
         {
         }
     }

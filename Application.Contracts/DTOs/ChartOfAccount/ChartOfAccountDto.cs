@@ -11,10 +11,11 @@ namespace Application.Contracts.DTOs
     {
         [DisplayName("Nature")]
         public string Nature { get; set; }
-        [DisplayName("SummaryHead")]
-        public string SummaryHead { get; set; }
         [DisplayName("Head")]
         public string Head { get; set; }
+        [DisplayName("SummaryHead")]
+        public string SummaryHead { get; set; }
+        
         [DisplayName("TransactionalAccount")]
         public string TransactionalAccount { get; set; }
     }

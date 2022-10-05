@@ -243,6 +243,9 @@ namespace Infrastructure.Context
            .Property(et => et.Id)
            .ValueGeneratedNever();
 
+            modelBuilder.Entity<Campus>()
+                .Property(et => et.Id)
+                .ValueGeneratedNever();
 
             //Adding seeds in organization table
             modelBuilder.Entity<Organization>()
@@ -828,7 +831,7 @@ namespace Infrastructure.Context
             {
                 Id = new Guid("32110000-5566-7788-99AA-BBCCDDEEFF00"),
                 Name = "Opening Balance equity",
-                Code = "P111",
+                Code = "P01101",
                 AccountType = AccountType.SystemDefined,
                 Level3_id = new Guid("32100000-5566-7788-99AA-BBCCDDEEFF00"),
                 Level1_id = new Guid("30000000-5566-7788-99AA-BBCCDDEEFF00")

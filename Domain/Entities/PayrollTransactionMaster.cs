@@ -20,6 +20,9 @@ namespace Domain.Entities
         public Employee Employee { get;private set; }
         public Guid BPSAccountId { get; private set; }
         public string BPSName { get; private set; }
+        public int CampusId { get;private set; }
+        [ForeignKey("CampusId")]
+        public Campus Campus { get;private set; }
         public int DesignationId { get;private set; }
         [ForeignKey("DesignationId")]
         public Designation Designation { get;private set; }
@@ -48,7 +51,7 @@ namespace Domain.Entities
         public int? LedgerId { get; private set; }
         public virtual List<PayrollTransactionLines> PayrollTransactionLines { get;private set; }
 
-        public PayrollTransactionMaster(int month, int year, int employeeId,Guid bpsAccountId, string bpsName, int designationId, int departmentId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId, List<PayrollTransactionLines> payrollTransactionLines)
+        public PayrollTransactionMaster(int month, int year, int employeeId, Guid bpsAccountId, string bpsName, int designationId, int departmentId, int campusId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId, List<PayrollTransactionLines> payrollTransactionLines)
         {
             Month = month;
             Year = year;
@@ -57,6 +60,7 @@ namespace Domain.Entities
             BPSName = bpsName;
             DesignationId = designationId;
             DepartmentId = departmentId;
+            CampusId = campusId;
             WorkingDays = workingDays;
             PresentDays = presentDays;
             LeaveDays = leaveDays;
