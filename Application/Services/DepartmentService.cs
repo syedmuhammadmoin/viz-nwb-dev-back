@@ -25,20 +25,33 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<Response<DepartmentDto>> CreateAsync(DepartmentDto[] entity)
+        public async Task<Response<DepartmentDto>> CreateAsync(CreateDepartmentDto[] entity)
         {
             List<Department> departmentList = new List<Department>();
+            List<string> errors = new List<string>();
+
             foreach (var item in entity)
             {
                 var getDepartment = await _unitOfWork.Department.GetById((int)item.Id);
 
-                if (getDepartment != null)
+                //for Checking if campus is Active
+                var getCampus = await _unitOfWork.Campus.GetById(item.CampusId);
+
+                if (getCampus.IsActive == true)
                 {
-                    _mapper.Map<DepartmentDto, Department>(item, getDepartment);
+                    if (getDepartment != null)
+                    {
+                        _mapper.Map<CreateDepartmentDto, Department>(item, getDepartment);
+                    }
+                    else
+                    {
+                        departmentList.Add(_mapper.Map<Department>(item));
+                    }
                 }
                 else
                 {
-                    departmentList.Add(_mapper.Map<Department>(item));
+                   //returning departments with inactive Campuses
+                    errors.Add($"Campus for {item.Name} is not Active");
                 }
             }
 
@@ -50,7 +63,13 @@ namespace Application.Services
                 await _unitOfWork.SaveAsync();
             }
 
-            return new Response<DepartmentDto>(null, "Records populated successfully");
+            var message = "Records populated successfully";
+
+            if (errors.Count > 0)
+            {
+                message = "Records populated successfully with errors";
+            }
+            return new Response<DepartmentDto>(null, message, errors.ToArray());
         }
 
         public async Task<PaginationResponse<List<DepartmentDto>>> GetAllAsync(TransactionFormFilter filter)
@@ -67,7 +86,7 @@ namespace Application.Services
 
         public async Task<Response<DepartmentDto>> GetByIdAsync(int id)
         {
-            var department = await _unitOfWork.Department.GetById(id);
+            var department = await _unitOfWork.Department.GetById(id, new DepartmentSpecs());
             if (department == null)
                 return new Response<DepartmentDto>("Not found");
 
@@ -83,14 +102,23 @@ namespace Application.Services
             return new Response<List<DepartmentDto>>(_mapper.Map<List<DepartmentDto>>(departments), "Returning List");
         }
 
-        public Task<Response<DepartmentDto>> UpdateAsync(DepartmentDto[] entity)
+        public Task<Response<DepartmentDto>> UpdateAsync(CreateDepartmentDto[] entity)
         {
             throw new NotImplementedException();
         }
+
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
 
+        public async Task<Response<List<DepartmentDto>>> GetDepartmentByCampusDropDown(int campusId)
+        {
+            var warehouses = await _unitOfWork.Department.GetAll(new DepartmentSpecs(campusId)) ;
+            if (!warehouses.Any())
+                return new Response<List<DepartmentDto>>("List is empty");
+
+            return new Response<List<DepartmentDto>>(_mapper.Map<List<DepartmentDto>>(warehouses), "Returning List");
+        }
     }
 }
