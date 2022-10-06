@@ -10,156 +10,8 @@ namespace Infrastructure.Seeds
     {
         public static void seeds(ModelBuilder modelBuilder)
         {
-           // //BankStmt  
-           // modelBuilder.Entity<BankStmtLines>()
-           // .HasOne(tc => tc.BankStmtMaster)
-           // .WithMany(c => c.BankStmtLines)
-           // .OnDelete(DeleteBehavior.Cascade);
-
-           // //JournalEntry
-           // modelBuilder.Entity<JournalEntryLines>()
-           // .HasOne(tc => tc.JournalEntryMaster)
-           // .WithMany(c => c.JournalEntryLines)
-           // .OnDelete(DeleteBehavior.Cascade);
-
-           // //Invoice
-           // modelBuilder.Entity<InvoiceLines>()
-           // .HasOne(tc => tc.InvoiceMaster)
-           // .WithMany(c => c.InvoiceLines)
-           // .OnDelete(DeleteBehavior.Cascade);
-
-           // //Bill
-           // modelBuilder.Entity<BillLines>()
-           // .HasOne(tc => tc.BillMaster)
-           // .WithMany(c => c.BillLines)
-           // .OnDelete(DeleteBehavior.Cascade);
-
-           // //CreditNote
-           // modelBuilder.Entity<CreditNoteLines>()
-           // .HasOne(tc => tc.CreditNoteMaster)
-           // .WithMany(c => c.CreditNoteLines)
-           // .OnDelete(DeleteBehavior.Cascade);
-
-           // //DebitNote
-           // modelBuilder.Entity<DebitNoteLines>()
-           // .HasOne(tc => tc.DebitNoteMaster)
-           // .WithMany(c => c.DebitNoteLines)
-           // .OnDelete(DeleteBehavior.Cascade);
-
-           // //Workflow
-           // modelBuilder.Entity<WorkFlowTransition>()
-           // .HasOne(tc => tc.WorkflowMaster)
-           // .WithMany(c => c.WorkflowTransitions)
-           // .OnDelete(DeleteBehavior.Cascade);
-
-           // //Budget
-           // modelBuilder.Entity<BudgetLines>()
-           // .HasOne(tc => tc.BudgetMaster)
-           // .WithMany(c => c.BudgetLines)
-           // .OnDelete(DeleteBehavior.Cascade);
-
-           // //EstimatedBudget
-           // modelBuilder.Entity<EstimatedBudgetLines>()
-           // .HasOne(tc => tc.EstimatedBudgetMaster)
-           // .WithMany(c => c.EstimatedBudgetLines)
-           // .OnDelete(DeleteBehavior.Cascade);
-
-           // //Purchase Order
-           // modelBuilder.Entity<PurchaseOrderLines>()
-           // .HasOne(tc => tc.PurchaseOrderMaster)
-           // .WithMany(c => c.PurchaseOrderLines)
-           // .OnDelete(DeleteBehavior.Cascade);
-
-           // //Requisition
-           // modelBuilder.Entity<RequisitionLines>()
-           // .HasOne(tc => tc.RequisitionMaster)
-           // .WithMany(c => c.RequisitionLines)
-           // .OnDelete(DeleteBehavior.Cascade);
-
-           // //GRN
-           // modelBuilder.Entity<GRNLines>()
-           // .HasOne(tc => tc.GRNMaster)
-           // .WithMany(c => c.GRNLines)
-           // .OnDelete(DeleteBehavior.Cascade);
-
-           // //PayrollTransaction
-           // modelBuilder.Entity<PayrollTransactionLines>()
-           // .HasOne(tc => tc.PayrollTransactionMaster)
-           // .WithMany(c => c.PayrollTransactionLines)
-           // .OnDelete(DeleteBehavior.Cascade);
-
-           // //Issuance
-           // modelBuilder.Entity<IssuanceLines>()
-           // .HasOne(tc => tc.IssuanceMaster)
-           // .WithMany(c => c.IssuanceLines)
-           // .OnDelete(DeleteBehavior.Cascade);
-
-           // //GoodsReturnNote
-           // modelBuilder.Entity<GoodsReturnNoteLines>()
-           // .HasOne(tc => tc.GoodsReturnNoteMaster)
-           // .WithMany(c => c.GoodsReturnNoteLines)
-           // .OnDelete(DeleteBehavior.Cascade);
-
-           // //IssuanceReturn
-           // modelBuilder.Entity<IssuanceReturnLines>()
-           // .HasOne(tc => tc.IssuanceReturnMaster)
-           // .WithMany(c => c.IssuanceReturnLines)
-           // .OnDelete(DeleteBehavior.Cascade);
-
-           // //Composite key for Same payroll
-           // modelBuilder.Entity<PayrollTransactionMaster>()
-           // .HasAlternateKey(p => new { p.Month, p.Year, p.EmployeeId });
-
-           // //Unique Code for all Level 4accounts
-           // modelBuilder.Entity<Level4>().
-           //     HasIndex(b => b.Code)
-           //     .IsUnique();
-
-           // //Changing Identity users and roles tables name
-           // modelBuilder.Entity<User>(entity =>
-           // {
-           //     entity.ToTable(name: "Users");
-           // });
-           // modelBuilder.Entity<IdentityRole>(entity =>
-           // {
-           //     entity.ToTable(name: "Roles");
-           // });
-           // modelBuilder.Entity<IdentityUserRole<string>>(entity =>
-           // {
-           //     entity.ToTable("UserRoles");
-           // });
-           // modelBuilder.Entity<IdentityUserClaim<string>>(entity =>
-           // {
-           //     entity.ToTable("UserClaims");
-           // });
-           // modelBuilder.Entity<IdentityUserLogin<string>>(entity =>
-           // {
-           //     entity.ToTable("UserLogins");
-           // });
-           // modelBuilder.Entity<IdentityRoleClaim<string>>(entity =>
-           // {
-           //     entity.ToTable("RoleClaims");
-           // });
-           // modelBuilder.Entity<IdentityUserToken<string>>(entity =>
-           // {
-           //     entity.ToTable("UserTokens");
-           // });
-
-           // // Removing IdentityId for assistance in integeration
-
-           // modelBuilder.Entity<Department>()
-           // .Property(et => et.Id)
-           // .ValueGeneratedNever();
-
-           // modelBuilder.Entity<Designation>()
-           //.Property(et => et.Id)
-           //.ValueGeneratedNever();
-
-        
-
-
-        //Adding seeds in organization table
-        modelBuilder.Entity<Organization>()
+            //Adding seeds in organization table
+            modelBuilder.Entity<Organization>()
                 .HasData(
                     new Organization(1, "SBBU")
                 );
@@ -176,36 +28,38 @@ namespace Infrastructure.Seeds
                     new WorkFlowStatus(7, "Cancelled", DocumentStatus.Cancelled, StatusType.PreDefined)
                 );
 
+            //Adding seeds of Chart of Account 
+            //Adding in Level 1
             modelBuilder.Entity<Level1>().HasData(new Level1
             {
                 Id = new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"),
                 Name = "Assets",
                 Code = "F"
             },
-          new Level1
-          {
-              Id = new Guid("20000000-5566-7788-99AA-BBCCDDEEFF00"),
-              Name = "Liability",
-              Code = "G"
-          },
-          new Level1
-          {
-              Id = new Guid("30000000-5566-7788-99AA-BBCCDDEEFF00"),
-              Name = "Accumulated Fund",
-              Code = "P"
-          },
-          new Level1
-          {
-              Id = new Guid("40000000-5566-7788-99AA-BBCCDDEEFF00"),
-              Name = "Revenue",
-              Code = "C"
-          },
-          new Level1
-          {
-              Id = new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00"),
-              Name = "Expenses",
-              Code = "A"
-          });
+             new Level1
+             {
+                 Id = new Guid("20000000-5566-7788-99AA-BBCCDDEEFF00"),
+                 Name = "Liability",
+                 Code = "G"
+             },
+             new Level1
+             {
+                 Id = new Guid("30000000-5566-7788-99AA-BBCCDDEEFF00"),
+                 Name = "Accumulated Fund",
+                 Code = "P"
+             },
+             new Level1
+             {
+                 Id = new Guid("40000000-5566-7788-99AA-BBCCDDEEFF00"),
+                 Name = "Revenue",
+                 Code = "C"
+             },
+             new Level1
+             {
+                 Id = new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00"),
+                 Name = "Expenses",
+                 Code = "A"
+             });
 
             //Adding in Level 2
             modelBuilder.Entity<Level2>().HasData(new Level2
@@ -290,14 +144,14 @@ namespace Infrastructure.Seeds
                 Name = "Transfers",
                 Level1_id = new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00"),
                 Code = "A06"
-            },
-            new Level2
-            {
-                Id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Repair And Maintenance",
-                Level1_id = new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A13"
             }
+            //new Level2
+            //{
+            //    Id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Repair And Maintenance",
+            //    Level1_id = new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A13"
+            //}
             );
 
             //Adding in Level 3
@@ -671,68 +525,76 @@ namespace Infrastructure.Seeds
                 Name = "Other Transfer Payments",
                 Level2_id = new Guid("55000000-5566-7788-99AA-BBCCDDEEFF00"),
                 Code = "A064"
+            }, new Level3
+            {
+                Id = new Guid("53110000-5566-7788-99AA-BBCCDDEEFF00"),
+                Name = "Repair And Maintenance",
+                Level2_id = new Guid("53000000-5566-7788-99AA-BBCCDDEEFF00"),
+                Code = "A040"
             }
-            , new Level3
-            {
-                Id = new Guid("56100000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Transport",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A130"
-            }, new Level3
-            {
-                Id = new Guid("56200000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Machinary & Equipment",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A131"
-            }, new Level3
-            {
-                Id = new Guid("56300000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Furniture & Fixture",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A132"
-            }, new Level3
-            {
-                Id = new Guid("56400000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Building & Structure",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A133"
-            }, new Level3
-            {
-                Id = new Guid("56500000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Computer Equipments",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A137"
-            }, new Level3
-            {
-                Id = new Guid("56600000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Generals",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A138"
-            }, new Level3
-            {
-                Id = new Guid("56700000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Depreciation, Amortization & Impairment",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A180"
-            }, new Level3
-            {
-                Id = new Guid("56800000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Bad Debts",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A181"
-            }, new Level3
-            {
-                Id = new Guid("56900000-5566-7788-99AA-BBCCDDEEFF00"),
-                Name = "Unrealized Losses",
-                Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
-                Code = "A182"
-            }
+            //, new Level3
+            //{
+            //    Id = new Guid("56100000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Transport",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A130"
+            //}, new Level3
+            //{
+            //    Id = new Guid("56200000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Machinary & Equipment",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A131"
+            //}, new Level3
+            //{
+            //    Id = new Guid("56300000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Furniture & Fixture",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A132"
+            //}, new Level3
+            //{
+            //    Id = new Guid("56400000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Building & Structure",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A133"
+            //}, new Level3
+            //{
+            //    Id = new Guid("56500000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Computer Equipments",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A137"
+            //}, new Level3
+            //{
+            //    Id = new Guid("56600000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Generals",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A138"
+            //}, new Level3
+            //{
+            //    Id = new Guid("56700000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Depreciation, Amortization & Impairment",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A180"
+            //}, new Level3
+            //{
+            //    Id = new Guid("56800000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Bad Debts",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A181"
+            //}, new Level3
+            //{
+            //    Id = new Guid("56900000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Name = "Unrealized Losses",
+            //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
+            //    Code = "A182"
+            //}
             );
+
+            //Adding in Level 4
             modelBuilder.Entity<Level4>().HasData(new Level4
             {
                 Id = new Guid("32110000-5566-7788-99AA-BBCCDDEEFF00"),
                 Name = "Opening Balance equity",
-                Code = "P111",
+                Code = "P01101",
                 AccountType = AccountType.SystemDefined,
                 Level3_id = new Guid("32100000-5566-7788-99AA-BBCCDDEEFF00"),
                 Level1_id = new Guid("30000000-5566-7788-99AA-BBCCDDEEFF00")
@@ -749,8 +611,5 @@ namespace Infrastructure.Seeds
                     new Taxes(6, "SRB Tax Liability", TaxType.SRBTaxLiability)
                     );
         }
-
-
-
     }
 }
