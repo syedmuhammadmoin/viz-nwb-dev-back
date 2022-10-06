@@ -712,7 +712,7 @@ namespace Application.Services
 
         public Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data)
         {
-            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, "")).ToList();
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, data.CampusId, "")).ToList();
 
             if (payrollTransactions.Count == 0)
                 return new Response<List<PayrollTransactionDto>>(null, "list is empty");
@@ -730,7 +730,7 @@ namespace Application.Services
 
         public Response<List<PaymentDto>> GetPaymentByDept(DeptFilter data)
         {
-            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, "")).ToList();
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, data.CampusId, "")).ToList();
 
             if (payrollTransactions.Count == 0)
                 return new Response<List<PaymentDto>>(null, "list is empty");
@@ -791,7 +791,7 @@ namespace Application.Services
 
         public Response<List<PaymentDto>> GetPaymentForApproval(DeptFilter data)
         {
-            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, "")).ToList();
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, data.CampusId, "")).ToList();
 
             if (payrollTransactions.Count == 0)
                 return new Response<List<PaymentDto>>(null, "list is empty");
