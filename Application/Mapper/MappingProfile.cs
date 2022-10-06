@@ -24,8 +24,9 @@ namespace Application.Mapper
                 .ForMember(core => core.OrganizationId, dto => dto.MapFrom(a => 1));
 
             // Department Mapping
-            CreateMap<Department, DepartmentDto>();
-            CreateMap<DepartmentDto, Department>();
+            CreateMap<Department, DepartmentDto>()
+                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name));
+            CreateMap<CreateDepartmentDto, Department>();
 
 
             // Designation Mapping
