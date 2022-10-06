@@ -89,7 +89,7 @@ namespace Application.Services
 
         public async Task<Response<List<CampusDto>>> GetCampusDropDown()
         {
-            var campuses = await _unitOfWork.Campus.GetAll();
+            var campuses = await _unitOfWork.Campus.GetAll(new CampusSpecs());
             if (!campuses.Any())
                 return new Response<List<CampusDto>>("List is empty");
 
