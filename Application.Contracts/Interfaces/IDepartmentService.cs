@@ -9,8 +9,9 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IDepartmentService : ICrudService<DepartmentDto[], DepartmentDto, int, TransactionFormFilter>
+    public interface IDepartmentService : ICrudService<CreateDepartmentDto[], DepartmentDto, int, TransactionFormFilter>
     {
         Task<Response<List<DepartmentDto>>> GetDepartmentDropDown();
+        Task<Response<List<DepartmentDto>>> GetDepartmentByCampusDropDown(int campusId);
     }
 }
