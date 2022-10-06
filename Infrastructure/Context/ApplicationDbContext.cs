@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Domain.Base;
 using Domain.Entities;
+using Infrastructure.Seeds;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -91,8 +92,8 @@ namespace Infrastructure.Context
                 foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
             }
 
-            Seeding seed = new();
-            seed.seed(modelBuilder);
+            Helper.DataConfiguration(modelBuilder);
+            Seeding.seeds(modelBuilder);
         }
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
@@ -114,7 +115,7 @@ namespace Infrastructure.Context
                 if (entry.Entity is BaseEntity trackable)
                 {
                     var now = DateTime.UtcNow;
-                    var user = GetCurrentUser();
+                    var user = Helper.GetCurrentUser(_httpContextAccessor);
                     switch (entry.State)
                     {
                         case EntityState.Modified:
@@ -133,21 +134,5 @@ namespace Infrastructure.Context
             }
         }
 
-        private string GetCurrentUser()
-        {
-            //return "UserName"; // TODO implement your own logic
-            // If you are using ASP.NET Core, you should look at this answer on StackOverflow
-            // https://stackoverflow.com/a/48554738/2996339
-            var httpContext = _httpContextAccessor.HttpContext;
-            if (httpContext != null)
-            {
-                var authenticatedUserName = httpContext.User.Identity.Name;
-                return authenticatedUserName;
-                // If it returns null, even when the user was authenticated, you may try to get the value of a specific claim 
-                //var authenticatedUserId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                // var authenticatedUserId = _httpContextAccessor.HttpContext.User.FindFirst("sub").Value
-            }
-            return "UserName";
-        }
     }
 }
