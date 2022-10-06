@@ -70,6 +70,5 @@ namespace Application.Contracts.DTOs
         public string Faculty { get; set; }
         [MaxLength(80)]
         public string DutyShift { get; set; }
-        public int? NoOfIncrements { get; set; }
     }
 }
