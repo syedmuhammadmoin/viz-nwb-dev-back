@@ -671,7 +671,7 @@ namespace Application.Services
                         PaymentFormType = DocType.PayrollPayment,
                         BusinessPartnerId = line.BusinessPartnerId,
                         AccountId = line.AccountPayableId,
-                        CampusId = data.CampusId,
+                        CampusId = line.CampusId,
                         GrossPayment = line.NetSalary,
                         PaymentDate = data.PaymentDate,
                         PaymentRegisterType = data.PaymentRegisterType,
