@@ -45,7 +45,7 @@ namespace Vizalys.Api.Controllers
         [EnableCors("PayrollModule")]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult<Response<DepartmentDto>>> CreateAsync([FromHeader(Name = "key")] string key, DepartmentDto[] entity)
+        public async Task<ActionResult<Response<DepartmentDto>>> CreateAsync([FromHeader(Name = "key")] string key, CreateDepartmentDto[] entity)
         {
             if (key != _configuration["ApiKey:Key"])
             {
@@ -73,6 +73,12 @@ namespace Vizalys.Api.Controllers
         public async Task<ActionResult<Response<List<DepartmentDto>>>> GetDepartmentDropDown()
         {
             return Ok(await _departmentService.GetDepartmentDropDown()); // Status Code : 200
+        }
+
+        [HttpGet("GetDepartmentByCampus/{id:int}")]
+        public async Task<ActionResult<Response<List<WarehouseDto>>>> GetDepartmentByCampusDropDown(int id)
+        {
+            return Ok(await _departmentService.GetDepartmentByCampusDropDown(id)); // Status Code : 200
         }
     }
 }
