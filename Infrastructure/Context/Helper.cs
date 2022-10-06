@@ -7,7 +7,7 @@ namespace Infrastructure.Context
 {
     public class Helper
     {
-      
+
         public static void DataConfiguration(ModelBuilder modelBuilder)
         {
             //BankStmt  
@@ -148,18 +148,22 @@ namespace Infrastructure.Context
             // Removing IdentityId for assistance in integeration
 
             modelBuilder.Entity<Department>()
-            .Property(et => et.Id)
-            .ValueGeneratedNever();
+                .Property(et => et.Id)
+                .ValueGeneratedNever();
 
             modelBuilder.Entity<Designation>()
-           .Property(et => et.Id)
-           .ValueGeneratedNever();
+                .Property(et => et.Id)
+                .ValueGeneratedNever();
+
+            modelBuilder.Entity<Campus>()
+                .Property(et => et.Id)
+                .ValueGeneratedNever();
 
         }
 
         public static string GetCurrentUser(IHttpContextAccessor httpContextAccessor)
         {
-      
+
             var httpContext = httpContextAccessor.HttpContext;
             if (httpContext != null)
             {
