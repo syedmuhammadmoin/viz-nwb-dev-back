@@ -99,7 +99,7 @@ namespace Application.Services
 
         public async Task<Response<EmployeeDto>> GetByIdAsync(int id)
         {
-            var getEmployee = await _unitOfWork.Employee.GetById(id, new EmployeeSpecs());
+            var getEmployee = await _unitOfWork.Employee.GetById(id, new EmployeeSpecs(false));
             if (getEmployee == null)
                 return new Response<EmployeeDto>("Not found");
 
@@ -131,11 +131,6 @@ namespace Application.Services
         }
 
         public Task<Response<int>> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Response<EmployeeDto>> UpdateAsync(CreateEmployeeDto[] entity)
         {
             throw new NotImplementedException();
         }
@@ -207,7 +202,7 @@ namespace Application.Services
 
         public async Task<Response<List<EmployeeDropDownPaymentDto>>> GetEmployeeDropDownPayment()
         {
-            var specification = new EmployeeSpecs(true);
+            var specification = new EmployeeSpecs();
             var employees = await _unitOfWork.Employee.GetAll(specification);
             if (!employees.Any())
                 return new Response<List<EmployeeDropDownPaymentDto>>("List is empty");
@@ -215,5 +210,17 @@ namespace Application.Services
             return new Response<List<EmployeeDropDownPaymentDto>>(_mapper.Map<List<EmployeeDropDownPaymentDto>>(employees), "Returning List");
         }
 
+        public async Task<Response<EmployeeDto>> UpdateAsync(UpdateEmployeeDto entity)
+        {
+            var getEmployee = await _unitOfWork.Employee.GetById(entity.Id, new EmployeeSpecs(true));
+          
+            if (getEmployee == null)
+                return new Response<EmployeeDto>("Not found");
+
+            //For updating data
+            _mapper.Map<UpdateEmployeeDto, Employee>(entity, getEmployee);
+            await _unitOfWork.SaveAsync();
+            return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(getEmployee), "Updated successfully");
+        }
     }
 }

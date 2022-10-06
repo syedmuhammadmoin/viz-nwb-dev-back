@@ -33,6 +33,8 @@ namespace Application.Contracts.DTOs
         public string DesignationName { get; set; }
         public int DepartmentId { get;  set; }
         public string DepartmentName { get;  set; }
+        public int CampusId { get;  set; }
+        public string CampusName { get;  set; }
         public string Address { get;  set; }
         public DateTime DateofJoining { get;  set; }
         public DateTime DateofRetirment { get;  set; }

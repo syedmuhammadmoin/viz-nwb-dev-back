@@ -114,7 +114,7 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
-UserSeeding.Initialize(app.Services);
+UserSeeding.Initialize(app.Services, builder.Configuration["UserCredentials:Password"]);
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{

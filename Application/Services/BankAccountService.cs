@@ -28,6 +28,14 @@ namespace Application.Services
 
         public async Task<Response<BankAccountDto>> CreateAsync(CreateBankAccountDto entity)
         {
+            var checkingCode = _unitOfWork.Level4.Find(new Level4Specs(entity.AccountCode)).FirstOrDefault();
+            if (checkingCode != null)
+                return new Response<BankAccountDto>("Duplicate code");
+
+            var checkingCodeForClearingAccount = _unitOfWork.Level4.Find(new Level4Specs($"{entity.AccountCode}C")).FirstOrDefault();
+            if (checkingCodeForClearingAccount != null)
+                return new Response<BankAccountDto>("Duplicate code");
+
             _unitOfWork.CreateTransaction();
             try
             {
@@ -106,14 +114,22 @@ namespace Application.Services
 
         public async Task<Response<BankAccountDto>> UpdateAsync(UpdateBankAccountDto entity)
         {
+            var bankAccount = await _unitOfWork.BankAccount.GetById((int)entity.Id);
+            if (bankAccount == null)
+                return new Response<BankAccountDto>("Not found");
+
+            var checkingCode = _unitOfWork.Level4.Find(new Level4Specs(entity.AccountCode, bankAccount.ChAccountId)).FirstOrDefault();
+            if (checkingCode != null)
+                return new Response<BankAccountDto>("Duplicate code");
+
+            var checkingCodeForClearingAccount = _unitOfWork.Level4
+                .Find(new Level4Specs($"{entity.AccountCode}C", bankAccount.ClearingAccountId)).FirstOrDefault();
+            if (checkingCodeForClearingAccount != null)
+                return new Response<BankAccountDto>("Duplicate code");
+
             _unitOfWork.CreateTransaction();
             try
             {
-                var bankAccount = await _unitOfWork.BankAccount.GetById((int)entity.Id);
-
-                if (bankAccount == null)
-                    return new Response<BankAccountDto>("Not found");
-
                 //For updating data
                 _mapper.Map<UpdateBankAccountDto, BankAccount>(entity, bankAccount);
 

@@ -582,10 +582,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Campus", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Address")
                         .HasMaxLength(300)
@@ -601,6 +598,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Fax")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
@@ -1140,6 +1140,9 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<int>("CampusId")
+                        .HasColumnType("int");
+
                     b.Property<int>("CasualLeaves")
                         .HasColumnType("int");
 
@@ -1242,6 +1245,8 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BusinessPartnerId");
+
+                    b.HasIndex("CampusId");
 
                     b.HasIndex("DepartmentId");
 
@@ -2497,14 +2502,6 @@ namespace Infrastructure.Migrations
                             IsDelete = false,
                             Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
                             Name = "Transfers"
-                        },
-                        new
-                        {
-                            Id = new Guid("56000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A13",
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Repair And Maintenance"
                         });
                 });
 
@@ -3023,75 +3020,11 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("56100000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A130",
+                            Id = new Guid("53110000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A040",
                             IsDelete = false,
-                            Level2_id = new Guid("56000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Transport"
-                        },
-                        new
-                        {
-                            Id = new Guid("56200000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A131",
-                            IsDelete = false,
-                            Level2_id = new Guid("56000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Machinary & Equipment"
-                        },
-                        new
-                        {
-                            Id = new Guid("56300000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A132",
-                            IsDelete = false,
-                            Level2_id = new Guid("56000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Furniture & Fixture"
-                        },
-                        new
-                        {
-                            Id = new Guid("56400000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A133",
-                            IsDelete = false,
-                            Level2_id = new Guid("56000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Building & Structure"
-                        },
-                        new
-                        {
-                            Id = new Guid("56500000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A137",
-                            IsDelete = false,
-                            Level2_id = new Guid("56000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Computer Equipments"
-                        },
-                        new
-                        {
-                            Id = new Guid("56600000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A138",
-                            IsDelete = false,
-                            Level2_id = new Guid("56000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Generals"
-                        },
-                        new
-                        {
-                            Id = new Guid("56700000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A180",
-                            IsDelete = false,
-                            Level2_id = new Guid("56000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Depreciation, Amortization & Impairment"
-                        },
-                        new
-                        {
-                            Id = new Guid("56800000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A181",
-                            IsDelete = false,
-                            Level2_id = new Guid("56000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Bad Debts"
-                        },
-                        new
-                        {
-                            Id = new Guid("56900000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A182",
-                            IsDelete = false,
-                            Level2_id = new Guid("56000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Unrealized Losses"
+                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Repair And Maintenance"
                         });
                 });
 
@@ -3137,6 +3070,10 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasFilter("[Code] IS NOT NULL");
+
                     b.HasIndex("Level1_id");
 
                     b.HasIndex("Level3_id");
@@ -3148,7 +3085,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = new Guid("32110000-5566-7788-99aa-bbccddeeff00"),
                             AccountType = 0,
-                            Code = "P111",
+                            Code = "P01101",
                             IsDelete = false,
                             Level1_id = new Guid("30000000-5566-7788-99aa-bbccddeeff00"),
                             Level3_id = new Guid("32100000-5566-7788-99aa-bbccddeeff00"),
@@ -3540,6 +3477,9 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("BasicSalary")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("CampusId")
+                        .HasColumnType("int");
+
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -3608,6 +3548,8 @@ namespace Infrastructure.Migrations
                     b.HasAlternateKey("Month", "Year", "EmployeeId");
 
                     b.HasIndex("AccountPayableId");
+
+                    b.HasIndex("CampusId");
 
                     b.HasIndex("DepartmentId");
 
@@ -5285,6 +5227,12 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.Campus", "Campus")
+                        .WithMany()
+                        .HasForeignKey("CampusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.Department", "Department")
                         .WithMany()
                         .HasForeignKey("DepartmentId")
@@ -5298,6 +5246,8 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("BusinessPartner");
+
+                    b.Navigation("Campus");
 
                     b.Navigation("Department");
 
@@ -5988,6 +5938,12 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("AccountPayableId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Domain.Entities.Campus", "Campus")
+                        .WithMany()
+                        .HasForeignKey("CampusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.Department", "Department")
                         .WithMany()
                         .HasForeignKey("DepartmentId")
@@ -6018,6 +5974,8 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("AccountPayable");
+
+                    b.Navigation("Campus");
 
                     b.Navigation("Department");
 

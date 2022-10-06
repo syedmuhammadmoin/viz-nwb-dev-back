@@ -12,7 +12,7 @@ namespace Infrastructure.Seeds
 {
     public class UserSeeding
     {
-        public static async void Initialize(IServiceProvider services)
+        public static async void Initialize(IServiceProvider services, string password)
         {
             using (var scope = services.CreateScope())
             {
@@ -20,7 +20,7 @@ namespace Infrastructure.Seeds
                 var userManager = ser.GetRequiredService<UserManager<User>>();
                 var roleManager = ser.GetRequiredService<RoleManager<IdentityRole>>();
                 await DefaultRoles.SeedAsync(userManager, roleManager);
-                await DefaultUsers.SeedSuperAdminAsync(userManager, roleManager);
+                await DefaultUsers.SeedSuperAdminAsync(userManager, roleManager, password);
             }
         }
     }

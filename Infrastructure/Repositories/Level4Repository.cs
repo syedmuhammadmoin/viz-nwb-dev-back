@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 
 namespace Infrastructure.Repositories
 {
@@ -30,7 +31,8 @@ namespace Infrastructure.Repositories
                     Id = x.Id,
                     Name = x.Name,
                     Code = x.Code,
-                    Level2 = x.Level2.Select(y => new Level2
+                    Level2 = x.Level2
+                    .Select(y => new Level2
                     {
                         Id = y.Id,
                         Name = y.Name,
@@ -46,8 +48,8 @@ namespace Infrastructure.Repositories
                                 Name = a.Name,
                                 AccountType = a.AccountType,
                                 Code = a.Code
-                            })
-                        })
+                            }).OrderBy(x => x.Code)
+                        }).OrderBy(x => x.Code)
                     })
                 })
                 .ToListAsync();
