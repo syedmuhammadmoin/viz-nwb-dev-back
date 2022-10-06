@@ -17,8 +17,17 @@ namespace Infrastructure.Specifications
             {
                 var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                AddInclude(i => i.Campus);
                 ApplyOrderByDescending(i => i.Id);
             }
+        }
+        public DepartmentSpecs()
+        {
+            AddInclude(i => i.Campus);
+        }
+        public DepartmentSpecs(int campusId) : base(x => x.CampusId == campusId && x.Campus.IsActive == true)
+        {
+
         }
     }
 }

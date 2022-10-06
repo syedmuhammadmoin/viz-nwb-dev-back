@@ -69,25 +69,27 @@ namespace Infrastructure.Specifications
             AddInclude("PayrollTransactionLines.Account");
         }
 
-        public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, int?[] campusId) 
+        public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, int campusId) 
             : base(x => x.Month == month && x.Year == year
                 && (departmentIds.Count() > 0 ? departmentIds.Contains(x.DepartmentId) : true)
-                && (campusId.Count() > 0 ? campusId.Contains(x.CampusId) : true)
+                && (x.CampusId == campusId && x.Campus.IsActive == true)
                 && (x.Status.State == DocumentStatus.Draft || x.Status.State == DocumentStatus.Rejected))
         {
 
         }
 
-        public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, string getPayrollPayment) 
+        public PayrollTransactionSpecs(int month, int year, int?[] departmentIds,int campusId, string getPayrollPayment) 
             : base(x => x.Month == month && x.Year == year
                 && (departmentIds.Count() > 0 ? departmentIds.Contains(x.DepartmentId) : true)
                 && (x.Status.State == DocumentStatus.Unpaid)
+                && (x.CampusId == campusId && x.Campus.IsActive == true)
                 && (x.TransactionId != null || x.TransactionId != 0)
             )
         {
             AddInclude(a => a.AccountPayable);
             AddInclude(a => a.Department);
             AddInclude(a => a.Designation);
+            AddInclude(a => a.Campus);
             AddInclude(a => a.Employee);
             AddInclude(i => i.PayrollTransactionLines);
             AddInclude(i => i.Status);
@@ -96,16 +98,17 @@ namespace Infrastructure.Specifications
             ApplyAsNoTracking();
         }
 
-        public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, int?[] campusIds, bool isPayrollTransactoin)
+        public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, int campusId, bool isPayrollTransactoin)
             : base(x => x.Month == month && x.Year == year
                 && (departmentIds.Count() > 0 ? departmentIds.Contains(x.DepartmentId) : true)
-                && (campusIds.Count() > 0 ? campusIds.Contains(x.CampusId) : true)
+                && (x.CampusId == campusId && x.Campus.IsActive == true)
                 && (isPayrollTransactoin ? (x.Status.State == DocumentStatus.Draft || x.Status.State == DocumentStatus.Rejected) : true)
             )
         {
             AddInclude(a => a.AccountPayable);
             AddInclude(a => a.Department);
             AddInclude(a => a.Designation);
+            AddInclude(a => a.Campus);
             AddInclude(a => a.Employee);
             AddInclude(i => i.PayrollTransactionLines);
             AddInclude(i => i.Status);
@@ -114,7 +117,7 @@ namespace Infrastructure.Specifications
         }
 
         public PayrollTransactionSpecs(List<int?> months, List<int?> years, List<int?> employees,
-            DateTime fromDate, DateTime toDate, string designation, string department, string bps)
+            DateTime fromDate, DateTime toDate, string designation, string department, string campus, string bps)
             : base(x =>
                 ((((DateTime)x.ModifiedDate).Date >= fromDate && ((DateTime)x.ModifiedDate).Date <= toDate))
                 && (months.Count() > 0 ? months.Contains(x.Month) : true)
@@ -122,6 +125,7 @@ namespace Infrastructure.Specifications
                 && (employees.Count() > 0 ? employees.Contains(x.EmployeeId) : true)
                 && x.Designation.Name.Contains(designation != null ? designation : "")
                 && x.Department.Name.Contains(department != null ? department : "")
+                && x.Campus.Name.Contains(campus != null ? campus : "")
                 && x.BPSName.Contains(bps != null ? bps : "")
                 && (x.Status.State != DocumentStatus.Draft && x.Status.State != DocumentStatus.Cancelled && x.Status.State != DocumentStatus.Rejected)
                 )
@@ -129,6 +133,7 @@ namespace Infrastructure.Specifications
             AddInclude(a => a.AccountPayable);
             AddInclude(a => a.Department);
             AddInclude(a => a.Designation);
+            AddInclude(a => a.Campus);
             AddInclude(a => a.Employee);
             AddInclude(i => i.Status);
             AddInclude("PayrollTransactionLines.PayrollItem");
