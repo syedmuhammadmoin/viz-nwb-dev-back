@@ -373,6 +373,7 @@ namespace Application.Mapper
               .ForMember(dto => dto.BPSName, core => core.MapFrom(a => a.BPSName))
               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State == DocumentStatus.Unpaid ? "Unpaid" : a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
+              .ForMember(dto => dto.AbsentDays, core => core.MapFrom(a => a.WorkingDays - a.PresentDays - a.LeaveDays))
               .ForMember(dto => dto.NetSalary, core => core.MapFrom(a => a.NetSalary));
 
             CreateMap<PayrollTransactionLines, PayrollTransactionLinesDto>()
