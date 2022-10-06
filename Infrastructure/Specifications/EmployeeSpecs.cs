@@ -26,7 +26,7 @@ namespace Infrastructure.Specifications
                 ApplyOrderByDescending(i => i.Id);
                 AddInclude(i => i.Department);
                 AddInclude(i => i.Designation);
-                AddInclude(i => i.Campus);
+                AddInclude("Department.Campus");
             }
         }
 
@@ -39,7 +39,7 @@ namespace Infrastructure.Specifications
             {
                 AddInclude(i => i.Department);
                 AddInclude(i => i.Designation);
-                AddInclude(i => i.Campus);
+                AddInclude("Department.Campus");
             }
         }
 
