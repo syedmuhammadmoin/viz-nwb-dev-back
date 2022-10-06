@@ -18,11 +18,13 @@ namespace Vizalys.Api.Controllers
     {
         private readonly IPayrollTransactionService _payrollTransactionService;
         private readonly IFileuploadServices _fileUploadService;
+        private readonly IConfiguration _configuration;
 
-        public PayrollTransactionController(IPayrollTransactionService invoiceService, IFileuploadServices fileUploadService)
+        public PayrollTransactionController(IPayrollTransactionService invoiceService, IFileuploadServices fileUploadService, IConfiguration configuration)
         {
             _payrollTransactionService = invoiceService;
             _fileUploadService = fileUploadService;
+            _configuration = configuration;
         }
 
         [EnableCors("PayrollModule")]
@@ -31,11 +33,11 @@ namespace Vizalys.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Response<PayrollTransactionDto>>> CreateAsync([FromHeader(Name = "key")] string key, CreatePayrollTransactionDto entity)
         {
-            if (key != "b4!V47w^e3QhItW_XY:jHgWQp%$&93nMS|h)Bj~R0&Q#J1m%lI^;b4C,&]Gf2(H_fu]5&X@1Oy~")
+            if (key != _configuration["ApiKey:Key"])
             {
                 return BadRequest("Invalid Key");
             }
-            
+
             var result = await _payrollTransactionService.CreateAsync(entity);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200

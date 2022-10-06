@@ -18,6 +18,8 @@ namespace Application.Contracts.DTOs
         public string Employee { get; set; }
         public int DesignationId { get; set; }
         public string Designation { get; set; }
+        public int CampusId { get; set; }
+        public string Campus { get; set; }
         public int DepartmentId { get; set; }
         public string Department { get; set; }
         public string BPSName { get; set; }

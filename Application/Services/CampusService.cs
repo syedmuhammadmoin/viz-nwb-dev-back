@@ -25,23 +25,36 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<Response<CampusDto>> CreateAsync(CreateCampusDto entity)
+        public async Task<Response<CampusDto>> CreateAsync(CreateCampusDto[] entity)
         {
-            var campus = _mapper.Map<Campus>(entity);
-            var result = await _unitOfWork.Campus.Add(campus);
+            List<Campus> campusList = new List<Campus>();
+            foreach (var item in entity)
+            {
+                var getCampus = await _unitOfWork.Campus.GetById((int)item.Id);
+
+                if (getCampus != null)
+                {
+                    _mapper.Map<CreateCampusDto, Campus>(item, getCampus);
+                }
+                else
+                {
+                    campusList.Add(_mapper.Map<Campus>(item));
+                }
+            }
+
             await _unitOfWork.SaveAsync();
 
-            return new Response<CampusDto>(_mapper.Map<CampusDto>(result), "Created successfully");
-        }
+            if (campusList.Any())
+            {
+                await _unitOfWork.Campus.AddRange(campusList);
+                await _unitOfWork.SaveAsync();
+            }
 
-        public Task<Response<int>> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
+            return new Response<CampusDto>(null, "Records populated successfully");
         }
 
         public async Task<PaginationResponse<List<CampusDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            
             var campus = await _unitOfWork.Campus.GetAll(new CampusSpecs(filter, false));
 
             if (campus.Count() == 0)
@@ -61,18 +74,18 @@ namespace Application.Services
             return new Response<CampusDto>(_mapper.Map<CampusDto>(campus), "Returning value");
         }
 
-        public async Task<Response<CampusDto>> UpdateAsync(CreateCampusDto entity)
-        {
-            var campus = await _unitOfWork.Campus.GetById((int)entity.Id);
+        //public async Task<Response<CampusDto>> UpdateAsync(CreateCampusDto[] entity)
+        //{
+        //    var campus = await _unitOfWork.Campus.GetById((int)entity.Id);
 
-            if (campus == null)
-                return new Response<CampusDto>("Not found");
+        //    if (campus == null)
+        //        return new Response<CampusDto>("Not found");
 
-            //For updating data
-            _mapper.Map<CreateCampusDto, Campus>(entity, campus);
-            await _unitOfWork.SaveAsync();
-            return new Response<CampusDto>(_mapper.Map<CampusDto>(campus), "Updated successfully");
-        }
+        //    //For updating data
+        //    _mapper.Map<CreateCampusDto, Campus>(entity, campus);
+        //    await _unitOfWork.SaveAsync();
+        //    return new Response<CampusDto>(_mapper.Map<CampusDto>(campus), "Updated successfully");
+        //}
 
         public async Task<Response<List<CampusDto>>> GetCampusDropDown()
         {
@@ -81,6 +94,16 @@ namespace Application.Services
                 return new Response<List<CampusDto>>("List is empty");
 
             return new Response<List<CampusDto>>(_mapper.Map<List<CampusDto>>(campuses), "Returning List");
+        }
+
+        public Task<Response<CampusDto>> UpdateAsync(CreateCampusDto[] entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Response<int>> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

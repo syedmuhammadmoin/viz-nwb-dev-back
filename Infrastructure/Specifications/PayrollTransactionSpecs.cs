@@ -28,6 +28,7 @@ namespace Infrastructure.Specifications
                 AddInclude(a => a.AccountPayable);
                 AddInclude(a => a.Department);
                 AddInclude(a => a.Designation);
+                AddInclude(a => a.Campus);
                 AddInclude(a => a.PayrollTransactionLines);
                 AddInclude(a => a.Status);
                 AddInclude(a => a.Employee);
@@ -50,11 +51,13 @@ namespace Infrastructure.Specifications
                 AddInclude(a => a.AccountPayable);
                 AddInclude(a => a.Department);
                 AddInclude(a => a.Designation);
+                AddInclude(a => a.Campus);
                 AddInclude(a => a.Employee);
                 AddInclude(i => i.PayrollTransactionLines);
                 AddInclude(i => i.Status);
                 AddInclude("PayrollTransactionLines.PayrollItem");
                 AddInclude("PayrollTransactionLines.Account");
+                ApplyAsNoTracking();
             }
 
         }
@@ -66,9 +69,10 @@ namespace Infrastructure.Specifications
             AddInclude("PayrollTransactionLines.Account");
         }
 
-        public PayrollTransactionSpecs(int month, int year, int?[] departmentIds) 
+        public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, int?[] campusId) 
             : base(x => x.Month == month && x.Year == year
                 && (departmentIds.Count() > 0 ? departmentIds.Contains(x.DepartmentId) : true)
+                && (campusId.Count() > 0 ? campusId.Contains(x.CampusId) : true)
                 && (x.Status.State == DocumentStatus.Draft || x.Status.State == DocumentStatus.Rejected))
         {
 
@@ -92,9 +96,10 @@ namespace Infrastructure.Specifications
             ApplyAsNoTracking();
         }
 
-        public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, bool isPayrollTransactoin)
+        public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, int?[] campusIds, bool isPayrollTransactoin)
             : base(x => x.Month == month && x.Year == year
                 && (departmentIds.Count() > 0 ? departmentIds.Contains(x.DepartmentId) : true)
+                && (campusIds.Count() > 0 ? campusIds.Contains(x.CampusId) : true)
                 && (isPayrollTransactoin ? (x.Status.State == DocumentStatus.Draft || x.Status.State == DocumentStatus.Rejected) : true)
             )
         {

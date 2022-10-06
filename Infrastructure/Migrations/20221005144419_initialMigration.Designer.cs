@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220801074457_AddCampusInBudget")]
-    partial class AddCampusInBudget
+    [Migration("20221005144419_initialMigration")]
+    partial class initialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -584,10 +584,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Campus", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Address")
                         .HasMaxLength(300)
@@ -603,6 +600,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Fax")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
@@ -1116,9 +1116,24 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<long>("AccountNumber")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("AccountTitle")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("Address")
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("BankName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("BranchName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("BusinessPartnerId")
                         .HasColumnType("int");
@@ -1126,6 +1141,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("CNIC")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("CampusId")
+                        .HasColumnType("int");
 
                     b.Property<int>("CasualLeaves")
                         .HasColumnType("int");
@@ -1169,6 +1187,14 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployeeCode")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("EmployeeType")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
 
                     b.Property<string>("Faculty")
                         .HasMaxLength(80)
@@ -1221,6 +1247,8 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BusinessPartnerId");
+
+                    b.HasIndex("CampusId");
 
                     b.HasIndex("DepartmentId");
 
@@ -2273,6 +2301,10 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Code")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -2302,30 +2334,35 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F",
                             IsDelete = false,
                             Name = "Assets"
                         },
                         new
                         {
                             Id = new Guid("20000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "G",
                             IsDelete = false,
                             Name = "Liability"
                         },
                         new
                         {
                             Id = new Guid("30000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "P",
                             IsDelete = false,
-                            Name = "Equity"
+                            Name = "Accumulated Fund"
                         },
                         new
                         {
                             Id = new Guid("40000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "C",
                             IsDelete = false,
-                            Name = "Income"
+                            Name = "Revenue"
                         },
                         new
                         {
                             Id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A",
                             IsDelete = false,
                             Name = "Expenses"
                         });
@@ -2336,6 +2373,10 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -2371,6 +2412,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F03",
                             IsDelete = false,
                             Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
                             Name = "Non - Current Assets"
@@ -2378,6 +2420,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F02",
                             IsDelete = false,
                             Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
                             Name = "Current Assets"
@@ -2385,6 +2428,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("21000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "G02",
                             IsDelete = false,
                             Level1_id = new Guid("20000000-5566-7788-99aa-bbccddeeff00"),
                             Name = "Non - Current Liabilities"
@@ -2392,6 +2436,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("22000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "G01",
                             IsDelete = false,
                             Level1_id = new Guid("20000000-5566-7788-99aa-bbccddeeff00"),
                             Name = "Current Liabilities"
@@ -2399,30 +2444,66 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("31000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "P02",
                             IsDelete = false,
                             Level1_id = new Guid("30000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Owner's Equity"
+                            Name = "Grants"
+                        },
+                        new
+                        {
+                            Id = new Guid("32000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "P01",
+                            IsDelete = false,
+                            Level1_id = new Guid("30000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Surplus/(Deficit)"
                         },
                         new
                         {
                             Id = new Guid("41000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "C02",
                             IsDelete = false,
                             Level1_id = new Guid("40000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Income"
+                            Name = "Onsite And Offsite Revenue"
                         },
                         new
                         {
                             Id = new Guid("51000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A01",
                             IsDelete = false,
                             Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Cost of Revenue (COGS)"
+                            Name = "Employee Related Expenses"
                         },
                         new
                         {
                             Id = new Guid("52000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A02",
                             IsDelete = false,
                             Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "General & Administrative Expenses"
+                            Name = "Project Pre-Investment Analysis"
+                        },
+                        new
+                        {
+                            Id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A03",
+                            IsDelete = false,
+                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Operating Expenses"
+                        },
+                        new
+                        {
+                            Id = new Guid("54000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A04",
+                            IsDelete = false,
+                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Employees Retirement Benefits"
+                        },
+                        new
+                        {
+                            Id = new Guid("55000000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A06",
+                            IsDelete = false,
+                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Transfers"
                         });
                 });
 
@@ -2431,6 +2512,10 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -2466,69 +2551,207 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("11100000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F031",
                             IsDelete = false,
                             Level2_id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Fixed Assets"
+                            Name = "Property Plant And Equipment"
                         },
                         new
                         {
                             Id = new Guid("11200000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F032",
+                            IsDelete = false,
+                            Level2_id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Capital Work-In-Progress"
+                        },
+                        new
+                        {
+                            Id = new Guid("11300000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F033",
                             IsDelete = false,
                             Level2_id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
                             Name = "Intangible Assets"
                         },
                         new
                         {
-                            Id = new Guid("11300000-5566-7788-99aa-bbccddeeff00"),
+                            Id = new Guid("11400000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F034",
                             IsDelete = false,
                             Level2_id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Financial Assets"
+                            Name = "Intangible Asset Under Development"
                         },
                         new
                         {
-                            Id = new Guid("11400000-5566-7788-99aa-bbccddeeff00"),
+                            Id = new Guid("11500000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F035",
                             IsDelete = false,
                             Level2_id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Leased Assets"
+                            Name = "Long Term Loan"
+                        },
+                        new
+                        {
+                            Id = new Guid("11600000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F036",
+                            IsDelete = false,
+                            Level2_id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Investment Property"
+                        },
+                        new
+                        {
+                            Id = new Guid("11700000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F037",
+                            IsDelete = false,
+                            Level2_id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Long Term Investment"
+                        },
+                        new
+                        {
+                            Id = new Guid("11800000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F038",
+                            IsDelete = false,
+                            Level2_id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Advance To Employees"
                         },
                         new
                         {
                             Id = new Guid("12100000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F021",
                             IsDelete = false,
                             Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Cash & Cash Equivalents"
+                            Name = "Other Receivables"
                         },
                         new
                         {
                             Id = new Guid("12200000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F022",
                             IsDelete = false,
                             Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Accounts Receivable"
+                            Name = "Receivable From Government Authorities"
                         },
                         new
                         {
                             Id = new Guid("12300000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F023",
                             IsDelete = false,
                             Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Prepayments, Advances, deposits"
+                            Name = "Affiliated Colleges Fee Receivable"
                         },
                         new
                         {
                             Id = new Guid("12400000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F024",
                             IsDelete = false,
                             Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Inventory / Merchandise"
+                            Name = "Inventory"
+                        },
+                        new
+                        {
+                            Id = new Guid("12500000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F025",
+                            IsDelete = false,
+                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Cash balances with Banks "
+                        },
+                        new
+                        {
+                            Id = new Guid("12600000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F026",
+                            IsDelete = false,
+                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Petty Cash"
+                        },
+                        new
+                        {
+                            Id = new Guid("12700000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F027",
+                            IsDelete = false,
+                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Advances, Prepayments & Deposits"
+                        },
+                        new
+                        {
+                            Id = new Guid("12800000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F028",
+                            IsDelete = false,
+                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Short Term Investments"
+                        },
+                        new
+                        {
+                            Id = new Guid("12900000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F029",
+                            IsDelete = false,
+                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Receivable From Students"
+                        },
+                        new
+                        {
+                            Id = new Guid("12110000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F0210",
+                            IsDelete = false,
+                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Rent Receivable"
+                        },
+                        new
+                        {
+                            Id = new Guid("12120000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "F0211",
+                            IsDelete = false,
+                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Interest Receivable"
                         },
                         new
                         {
                             Id = new Guid("21100000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "G021",
                             IsDelete = false,
                             Level2_id = new Guid("21000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Long - term Borrowings"
+                            Name = "Long Term Borrowings"
+                        },
+                        new
+                        {
+                            Id = new Guid("21200000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "G022",
+                            IsDelete = false,
+                            Level2_id = new Guid("21000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Post Retirement Benefit Plan"
+                        },
+                        new
+                        {
+                            Id = new Guid("21300000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "G023",
+                            IsDelete = false,
+                            Level2_id = new Guid("21000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Long Term Compensated Absences"
+                        },
+                        new
+                        {
+                            Id = new Guid("21400000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "G024",
+                            IsDelete = false,
+                            Level2_id = new Guid("21000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Security Deposit-Non Current"
+                        },
+                        new
+                        {
+                            Id = new Guid("21500000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "G025",
+                            IsDelete = false,
+                            Level2_id = new Guid("21000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Deferred Capital Grant"
+                        },
+                        new
+                        {
+                            Id = new Guid("21600000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "G026",
+                            IsDelete = false,
+                            Level2_id = new Guid("21000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Others"
                         },
                         new
                         {
                             Id = new Guid("22100000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "G01",
                             IsDelete = false,
                             Level2_id = new Guid("22000000-5566-7788-99aa-bbccddeeff00"),
                             Name = "Accounts Payable"
@@ -2536,65 +2759,274 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("22200000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "G02",
                             IsDelete = false,
                             Level2_id = new Guid("22000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Other Liability"
+                            Name = "Short Term Borrowings"
+                        },
+                        new
+                        {
+                            Id = new Guid("22300000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "G03",
+                            IsDelete = false,
+                            Level2_id = new Guid("22000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Other Liabilities"
+                        },
+                        new
+                        {
+                            Id = new Guid("22400000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "G04",
+                            IsDelete = false,
+                            Level2_id = new Guid("22000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Security Deposit-Short Term"
+                        },
+                        new
+                        {
+                            Id = new Guid("22500000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "G05",
+                            IsDelete = false,
+                            Level2_id = new Guid("22000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Financial Assistance/ Scholarships"
                         },
                         new
                         {
                             Id = new Guid("31100000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "P021",
                             IsDelete = false,
                             Level2_id = new Guid("31000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Share Capital"
+                            Name = "Federal Govt Grant"
                         },
                         new
                         {
                             Id = new Guid("31200000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "P022",
                             IsDelete = false,
                             Level2_id = new Guid("31000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Reserves"
+                            Name = "Sindh Govt Grant"
+                        },
+                        new
+                        {
+                            Id = new Guid("32100000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "P011",
+                            IsDelete = false,
+                            Level2_id = new Guid("32000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Surplus/(Deficit) Of Comprehensive Income"
+                        },
+                        new
+                        {
+                            Id = new Guid("32200000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "P012",
+                            IsDelete = false,
+                            Level2_id = new Guid("32000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Retained Earning"
                         },
                         new
                         {
                             Id = new Guid("41100000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "CO21",
                             IsDelete = false,
                             Level2_id = new Guid("41000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Operating Income"
+                            Name = "Education General Fees "
                         },
                         new
                         {
                             Id = new Guid("41200000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "CO22",
                             IsDelete = false,
                             Level2_id = new Guid("41000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Non - Operating Income"
+                            Name = "Hostel Fees / User Charges "
                         },
                         new
                         {
                             Id = new Guid("41300000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "CO23",
                             IsDelete = false,
                             Level2_id = new Guid("41000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Discount"
+                            Name = "Income From Endowments"
+                        },
+                        new
+                        {
+                            Id = new Guid("41400000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "CO24",
+                            IsDelete = false,
+                            Level2_id = new Guid("41000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Income From Services Rendered "
+                        },
+                        new
+                        {
+                            Id = new Guid("41500000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "CO25",
+                            IsDelete = false,
+                            Level2_id = new Guid("41000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Income From Intellectual Property "
+                        },
+                        new
+                        {
+                            Id = new Guid("41600000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "CO26",
+                            IsDelete = false,
+                            Level2_id = new Guid("41000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Others"
+                        },
+                        new
+                        {
+                            Id = new Guid("41700000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "CO27",
+                            IsDelete = false,
+                            Level2_id = new Guid("41000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Grant Revenue"
                         },
                         new
                         {
                             Id = new Guid("51100000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A011",
                             IsDelete = false,
                             Level2_id = new Guid("51000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Direct Cost"
+                            Name = "Pay"
+                        },
+                        new
+                        {
+                            Id = new Guid("51200000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A012",
+                            IsDelete = false,
+                            Level2_id = new Guid("51000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Allowances"
                         },
                         new
                         {
                             Id = new Guid("52100000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A021",
                             IsDelete = false,
                             Level2_id = new Guid("52000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Administrative Expenses"
+                            Name = "Feasibility Studies"
                         },
                         new
                         {
                             Id = new Guid("52200000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A022",
                             IsDelete = false,
                             Level2_id = new Guid("52000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Selling, Promotions & Advertising"
+                            Name = "Research Survey & Exploratory Operations"
+                        },
+                        new
+                        {
+                            Id = new Guid("53100000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A031",
+                            IsDelete = false,
+                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Fees"
+                        },
+                        new
+                        {
+                            Id = new Guid("53200000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A032",
+                            IsDelete = false,
+                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Communication Expense"
+                        },
+                        new
+                        {
+                            Id = new Guid("53300000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A033",
+                            IsDelete = false,
+                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Utilities Expense"
+                        },
+                        new
+                        {
+                            Id = new Guid("53400000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A034",
+                            IsDelete = false,
+                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Occupancy Cost"
+                        },
+                        new
+                        {
+                            Id = new Guid("53500000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A035",
+                            IsDelete = false,
+                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Operating Leases"
+                        },
+                        new
+                        {
+                            Id = new Guid("53600000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A036",
+                            IsDelete = false,
+                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Motor Vehicles"
+                        },
+                        new
+                        {
+                            Id = new Guid("53700000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A037",
+                            IsDelete = false,
+                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Consultancy & Contractual Work"
+                        },
+                        new
+                        {
+                            Id = new Guid("53800000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A038",
+                            IsDelete = false,
+                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Travel & Transportation"
+                        },
+                        new
+                        {
+                            Id = new Guid("53900000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A039",
+                            IsDelete = false,
+                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "General "
+                        },
+                        new
+                        {
+                            Id = new Guid("54100000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A041",
+                            IsDelete = false,
+                            Level2_id = new Guid("54000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Pension"
+                        },
+                        new
+                        {
+                            Id = new Guid("55100000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A061",
+                            IsDelete = false,
+                            Level2_id = new Guid("55000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Scholarships"
+                        },
+                        new
+                        {
+                            Id = new Guid("55200000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A062",
+                            IsDelete = false,
+                            Level2_id = new Guid("55000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Technical Assistance"
+                        },
+                        new
+                        {
+                            Id = new Guid("55300000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A063",
+                            IsDelete = false,
+                            Level2_id = new Guid("55000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Entertainment & Gifts"
+                        },
+                        new
+                        {
+                            Id = new Guid("55400000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A064",
+                            IsDelete = false,
+                            Level2_id = new Guid("55000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Other Transfer Payments"
+                        },
+                        new
+                        {
+                            Id = new Guid("53110000-5566-7788-99aa-bbccddeeff00"),
+                            Code = "A040",
+                            IsDelete = false,
+                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
+                            Name = "Repair And Maintenance"
                         });
                 });
 
@@ -2603,6 +3035,13 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AccountType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -2633,6 +3072,10 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasFilter("[Code] IS NOT NULL");
+
                     b.HasIndex("Level1_id");
 
                     b.HasIndex("Level3_id");
@@ -2642,435 +3085,13 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("11110000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("11100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Land"
-                        },
-                        new
-                        {
-                            Id = new Guid("11120000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("11100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Buildings"
-                        },
-                        new
-                        {
-                            Id = new Guid("11130000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("11100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Equipment"
-                        },
-                        new
-                        {
-                            Id = new Guid("11140000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("11100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Accumulated Depreciation - Buildings (Contra Asset)"
-                        },
-                        new
-                        {
-                            Id = new Guid("11410000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("11400000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Leased Building"
-                        },
-                        new
-                        {
-                            Id = new Guid("11420000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("11400000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Leased Equipment"
-                        },
-                        new
-                        {
-                            Id = new Guid("11430000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("11400000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Accumulated Depreciation - Leased Building (Contra Asset)"
-                        },
-                        new
-                        {
-                            Id = new Guid("11440000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("11400000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Accumulated Depreciation - Leased Equipment (Contra Asset)"
-                        },
-                        new
-                        {
-                            Id = new Guid("12110000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("12100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Bank"
-                        },
-                        new
-                        {
-                            Id = new Guid("12120000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("12100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Cash"
-                        },
-                        new
-                        {
-                            Id = new Guid("12210000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("12200000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Trade Receivable"
-                        },
-                        new
-                        {
-                            Id = new Guid("12220000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("12200000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Other Receivable"
-                        },
-                        new
-                        {
-                            Id = new Guid("12310000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("12300000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Sales Tax Asset"
-                        },
-                        new
-                        {
-                            Id = new Guid("12320000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("12300000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Income Tax Asset"
-                        },
-                        new
-                        {
-                            Id = new Guid("12410000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("12400000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Raw Material"
-                        },
-                        new
-                        {
-                            Id = new Guid("12420000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("12400000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Work in Progress"
-                        },
-                        new
-                        {
-                            Id = new Guid("12430000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("12400000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Finished Goods"
-                        },
-                        new
-                        {
-                            Id = new Guid("12440000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("12400000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Goods in Transition"
-                        },
-                        new
-                        {
-                            Id = new Guid("21110000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("20000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("21100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Long - Term Loans"
-                        },
-                        new
-                        {
-                            Id = new Guid("21120000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("20000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("21100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Lease Liability"
-                        },
-                        new
-                        {
-                            Id = new Guid("22110000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("20000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("22100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Bank Over draft"
-                        },
-                        new
-                        {
-                            Id = new Guid("22120000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("20000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("22100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Trade Accounts Payable"
-                        },
-                        new
-                        {
-                            Id = new Guid("22130000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("20000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("22100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Accrued Expenses, Loan & Other Payable"
-                        },
-                        new
-                        {
-                            Id = new Guid("22140000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("20000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("22100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Short Term Lease Payable"
-                        },
-                        new
-                        {
-                            Id = new Guid("22150000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("20000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("22100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Sales Tax Liability"
-                        },
-                        new
-                        {
-                            Id = new Guid("22160000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("20000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("22100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Income Tax Liability"
-                        },
-                        new
-                        {
-                            Id = new Guid("22210000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("20000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("22200000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Unearned Revenue"
-                        },
-                        new
-                        {
-                            Id = new Guid("31110000-5566-7788-99aa-bbccddeeff00"),
+                            Id = new Guid("32110000-5566-7788-99aa-bbccddeeff00"),
+                            AccountType = 0,
+                            Code = "P01101",
                             IsDelete = false,
                             Level1_id = new Guid("30000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("31100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Paid up Share Capital"
-                        },
-                        new
-                        {
-                            Id = new Guid("31210000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("30000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("31200000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Share Premium"
-                        },
-                        new
-                        {
-                            Id = new Guid("31220000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("30000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("31200000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Suplus /Defecit/ Retained Earnings"
-                        },
-                        new
-                        {
-                            Id = new Guid("31230000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("30000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("31200000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Revaluation Reserve"
-                        },
-                        new
-                        {
-                            Id = new Guid("31240000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("30000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("31200000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Exchange Differences"
-                        },
-                        new
-                        {
-                            Id = new Guid("31250000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("30000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("31200000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Drawings"
-                        },
-                        new
-                        {
-                            Id = new Guid("31260000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("30000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("31200000-5566-7788-99aa-bbccddeeff00"),
+                            Level3_id = new Guid("32100000-5566-7788-99aa-bbccddeeff00"),
                             Name = "Opening Balance equity"
-                        },
-                        new
-                        {
-                            Id = new Guid("41110000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("40000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("41100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Revenue"
-                        },
-                        new
-                        {
-                            Id = new Guid("41210000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("40000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("41200000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Interest Income"
-                        },
-                        new
-                        {
-                            Id = new Guid("41220000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("40000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("41200000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Gain/Loss on Sale of Assets"
-                        },
-                        new
-                        {
-                            Id = new Guid("41310000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("40000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("41300000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Discount"
-                        },
-                        new
-                        {
-                            Id = new Guid("51110000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("51100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Direct Labor / Salaries"
-                        },
-                        new
-                        {
-                            Id = new Guid("51120000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("51100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Direct Material"
-                        },
-                        new
-                        {
-                            Id = new Guid("51130000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("51100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Depreciation Expense"
-                        },
-                        new
-                        {
-                            Id = new Guid("51140000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("51100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Cost Of Goods Sold"
-                        },
-                        new
-                        {
-                            Id = new Guid("52110000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("52100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Salaries Expense"
-                        },
-                        new
-                        {
-                            Id = new Guid("52120000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("52100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Wages Expense"
-                        },
-                        new
-                        {
-                            Id = new Guid("52130000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("52100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Utilities Expense"
-                        },
-                        new
-                        {
-                            Id = new Guid("52140000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("52100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Entertainment / Meals Expense"
-                        },
-                        new
-                        {
-                            Id = new Guid("52150000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("52100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Printing & Stationary Expense"
-                        },
-                        new
-                        {
-                            Id = new Guid("52160000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("52100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Rent Expense"
-                        },
-                        new
-                        {
-                            Id = new Guid("52170000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("52100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Office Expense"
-                        },
-                        new
-                        {
-                            Id = new Guid("52180000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("52100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Repair & Maintenance Expense"
-                        },
-                        new
-                        {
-                            Id = new Guid("52190000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("52100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Transportation & Conveyance Expense"
-                        },
-                        new
-                        {
-                            Id = new Guid("52101000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("52100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Interest Expense"
-                        },
-                        new
-                        {
-                            Id = new Guid("52101100-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("52100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Tax Expense"
-                        },
-                        new
-                        {
-                            Id = new Guid("52210000-5566-7788-99aa-bbccddeeff00"),
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("52200000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Advertising / Marketing Expense"
                         });
                 });
 
@@ -3197,6 +3218,12 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal>("Deduction")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid?>("DeductionAccountId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
@@ -3229,6 +3256,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<decimal>("NetPayment")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid?>("OtherDeductionAccountId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2");
@@ -3264,6 +3294,8 @@ namespace Infrastructure.Migrations
                     b.HasIndex("BusinessPartnerId");
 
                     b.HasIndex("CampusId");
+
+                    b.HasIndex("OtherDeductionAccountId");
 
                     b.HasIndex("PaymentRegisterId");
 
@@ -3435,7 +3467,7 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("AccountPayableId")
+                    b.Property<Guid?>("AccountPayableId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BPSAccountId")
@@ -3446,6 +3478,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<decimal>("BasicSalary")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CampusId")
+                        .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -3512,7 +3547,11 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasAlternateKey("Month", "Year", "EmployeeId");
+
                     b.HasIndex("AccountPayableId");
+
+                    b.HasIndex("CampusId");
 
                     b.HasIndex("DepartmentId");
 
@@ -5190,6 +5229,12 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.Campus", "Campus")
+                        .WithMany()
+                        .HasForeignKey("CampusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.Department", "Department")
                         .WithMany()
                         .HasForeignKey("DepartmentId")
@@ -5203,6 +5248,8 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("BusinessPartner");
+
+                    b.Navigation("Campus");
 
                     b.Navigation("Department");
 
@@ -5792,6 +5839,11 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("CampusId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Domain.Entities.Level4", "DeductionAccount")
+                        .WithMany()
+                        .HasForeignKey("OtherDeductionAccountId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.Level4", "PaymentRegister")
                         .WithMany()
                         .HasForeignKey("PaymentRegisterId")
@@ -5814,6 +5866,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("BusinessPartner");
 
                     b.Navigation("Campus");
+
+                    b.Navigation("DeductionAccount");
 
                     b.Navigation("PaymentRegister");
 
@@ -5884,6 +5938,11 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "AccountPayable")
                         .WithMany()
                         .HasForeignKey("AccountPayableId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.Entities.Campus", "Campus")
+                        .WithMany()
+                        .HasForeignKey("CampusId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -5917,6 +5976,8 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("AccountPayable");
+
+                    b.Navigation("Campus");
 
                     b.Navigation("Department");
 
