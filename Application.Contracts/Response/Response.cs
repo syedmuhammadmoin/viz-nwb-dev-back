@@ -27,6 +27,13 @@ namespace Application.Contracts.Response
             Errors = null;
             Result = data;
         }
+        public Response(T data, string message, string[] errors)
+        {
+            IsSuccess = true;
+            Message = message;
+            Errors = errors;
+            Result = data;
+        }
 
         public Response(string message)
         {
