@@ -767,7 +767,7 @@ namespace Application.Services
 
             var payrollTransactions = _unitOfWork.PayrollTransaction
                 .Find(new PayrollTransactionSpecs(months, years, employees, filter.FromDate, filter.ToDate,
-                filter.Designation, filter.Department, filter.BPS))
+                filter.Designation, filter.Department, filter.Campus, filter.BPS))
                 .ToList();
 
             if (payrollTransactions.Count() == 0)
