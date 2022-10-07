@@ -26,12 +26,14 @@ namespace Application.Contracts.Response
         {
             IsSuccess = true;
             Message = message;
+            StatusCode = 200;
             Result = data;
         }
         public Response(T data, string message, string[] errors)
         {
             IsSuccess = true;
             Message = message;
+            StatusCode = 200;
             Errors = errors;
             Result = data;
         }
