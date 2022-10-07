@@ -24,6 +24,6 @@ namespace Application.Contracts.DTOs
         [Required]
         public DateTime OpeningBalanceDate { get; set; }
         [Required]
-        public int CampusId { get; set; }
+        public int? CampusId { get; set; }
     }
 }

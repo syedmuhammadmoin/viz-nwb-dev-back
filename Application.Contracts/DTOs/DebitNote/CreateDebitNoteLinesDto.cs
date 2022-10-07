@@ -23,7 +23,7 @@ namespace Application.Contracts.DTOs
         [MaxLength(500)]
         public string Description { get; set; }
         [Required]
-        public Guid AccountId { get; set; }
+        public Guid? AccountId { get; set; }
         public int? WarehouseId { get; set; }
     }
 }

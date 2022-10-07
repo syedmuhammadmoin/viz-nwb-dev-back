@@ -11,7 +11,7 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public int CustomerId { get; set; }
+        public int? CustomerId { get; set; }
         [Required]
         public DateTime InvoiceDate { get; set; }
         [Required]

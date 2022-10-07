@@ -66,7 +66,7 @@ namespace Application.Interfaces
         public DbSet<IssuanceLines> IssuanceLines { get; set; }
 
         public DbSet<FileUpload> FileUpload { get; set; }
-
+        public DbSet<LogItem> LogItems { get; set; }
         public DbSet<Stock> Stock { get; set; }
         public DbSet<POToGRNLineReconcile> POToGRNLineReconcile { get; set; }
         public DbSet<RequisitionToIssuanceLineReconcile> RequisitionToIssuanceLineReconcile { get; set; }

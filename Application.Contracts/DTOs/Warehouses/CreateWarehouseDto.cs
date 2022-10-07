@@ -12,6 +12,6 @@ namespace Application.Contracts.DTOs
         [MaxLength(100)]
         public string StoreManager { get; set; }
         [Required]
-        public int CampusId { get; set; }
+        public int? CampusId { get; set; }
     }
 }

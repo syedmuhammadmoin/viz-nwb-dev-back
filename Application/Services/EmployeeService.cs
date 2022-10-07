@@ -212,7 +212,7 @@ namespace Application.Services
 
         public async Task<Response<EmployeeDto>> UpdateAsync(UpdateEmployeeDto entity)
         {
-            var getEmployee = await _unitOfWork.Employee.GetById(entity.Id, new EmployeeSpecs(true));
+            var getEmployee = await _unitOfWork.Employee.GetById((int)entity.Id, new EmployeeSpecs(true));
           
             if (getEmployee == null)
                 return new Response<EmployeeDto>("Not found");

@@ -28,7 +28,7 @@ namespace Application.Services
         {
             if (entity.IsActive)
             {
-                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(entity.DocType)).FirstOrDefault();
+                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs((DocType)entity.DocType)).FirstOrDefault();
                 if (checkingActiveWorkFlows != null)
                 {
                     return new Response<WorkFlowDto>("Workflow already activated for this document");
@@ -74,7 +74,7 @@ namespace Application.Services
 
             if (entity.IsActive)
             {
-                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(entity.DocType, (int)entity.Id)).FirstOrDefault();
+                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs((DocType)entity.DocType, (int)entity.Id)).FirstOrDefault();
                 if (checkingActiveWorkFlows != null)
                 {
                     return new Response<WorkFlowDto>("Workflow already activated for this document");

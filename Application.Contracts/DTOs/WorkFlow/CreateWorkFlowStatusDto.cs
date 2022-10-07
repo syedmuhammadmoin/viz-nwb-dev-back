@@ -14,6 +14,6 @@ namespace Application.Contracts.DTOs
         [Required]
         public string Status { get; set; }
         [Required]
-        public DocumentStatus State { get; set; }
+        public DocumentStatus? State { get; set; }
     }
 }

@@ -240,12 +240,12 @@ namespace Application.Services
             {
                 //Getting Unreconciled IssuanceReturn lines
                 var getIssuanceLine = _unitOfWork.Issuance
-                    .FindLines(new IssuanceLinesSpecs(issuanceReturnLine.ItemId, issuanceReturnLine.WarehouseId, entity.IssuanceId))
+                    .FindLines(new IssuanceLinesSpecs((int)issuanceReturnLine.ItemId, (int)issuanceReturnLine.WarehouseId, (int)entity.IssuanceId))
                     .FirstOrDefault();
                 if (getIssuanceLine == null)
                     return new Response<IssuanceReturnDto>("No IssuanceReturn line found for reconciliaiton");
 
-                var checkValidation = CheckValidation(entity.IssuanceId, getIssuanceLine, _mapper.Map<IssuanceReturnLines>(issuanceReturnLine));
+                var checkValidation = CheckValidation((int)entity.IssuanceId, getIssuanceLine, _mapper.Map<IssuanceReturnLines>(issuanceReturnLine));
                 if (!checkValidation.IsSuccess)
                     return new Response<IssuanceReturnDto>(checkValidation.Message);
             }
@@ -291,7 +291,7 @@ namespace Application.Services
         private async Task<Response<IssuanceReturnDto>> UpdateIssuanceReturn(CreateIssuanceReturnDto entity, int status)
         {
             //setting IssuanceReturnId
-            var getIssuance = await _unitOfWork.Issuance.GetById(entity.IssuanceId, new IssuanceSpecs(false));
+            var getIssuance = await _unitOfWork.Issuance.GetById((int)entity.IssuanceId, new IssuanceSpecs(false));
 
             if (getIssuance == null)
                 return new Response<IssuanceReturnDto>("Issuance not found");
@@ -303,12 +303,12 @@ namespace Application.Services
             {
                 //Getting Unreconciled IssuanceReturn lines
                 var getIssuanceLine = _unitOfWork.Issuance
-                    .FindLines(new IssuanceLinesSpecs(issuanceReturnLine.ItemId, issuanceReturnLine.WarehouseId, entity.IssuanceId))
+                    .FindLines(new IssuanceLinesSpecs((int)issuanceReturnLine.ItemId, (int)issuanceReturnLine.WarehouseId, (int)entity.IssuanceId))
                     .FirstOrDefault();
                 if (getIssuanceLine == null)
                     return new Response<IssuanceReturnDto>("No IssuanceReturn line found for reconciliaiton");
 
-                var checkValidation = CheckValidation(entity.IssuanceId, getIssuanceLine, _mapper.Map<IssuanceReturnLines>(issuanceReturnLine));
+                var checkValidation = CheckValidation((int)entity.IssuanceId, getIssuanceLine, _mapper.Map<IssuanceReturnLines>(issuanceReturnLine));
                 if (!checkValidation.IsSuccess)
                     return new Response<IssuanceReturnDto>(checkValidation.Message);
             }

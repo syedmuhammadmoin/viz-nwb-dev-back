@@ -12,11 +12,11 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public int CurrentStatusId { get; set; }
+        public int? CurrentStatusId { get; set; }
         [Required]
-        public ActionButton Action { get; set; }
+        public ActionButton? Action { get; set; }
         [Required]
-        public int NextStatusId { get; set; }
+        public int? NextStatusId { get; set; }
         [Required]
         public string AllowedRoleId { get; set; }
     }
