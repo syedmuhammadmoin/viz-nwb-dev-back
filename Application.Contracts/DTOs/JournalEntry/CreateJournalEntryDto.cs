@@ -14,7 +14,7 @@ namespace Application.Contracts.DTOs
         [MaxLength(500)]
         public string Description { get; set; }
         [Required]
-        public int CampusId { get; set; }
+        public int? CampusId { get; set; }
         [Required]
         public bool isSubmit { get; set; }
         [Required]

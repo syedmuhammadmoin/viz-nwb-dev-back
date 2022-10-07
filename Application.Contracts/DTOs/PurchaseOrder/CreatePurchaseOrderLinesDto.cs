@@ -11,7 +11,7 @@ namespace Application.Contracts.DTOs
     {
         public int Id { get; set; }
         [Required]
-        public Guid AccountId { get; set; }
+        public Guid? AccountId { get; set; }
         [Required]
         public int ItemId { get; set; }
         [MaxLength(500)]
@@ -25,6 +25,6 @@ namespace Application.Contracts.DTOs
         [Range(0.00, 100.00, ErrorMessage = "Please enter a positive value")]
         public decimal? Tax { get; set; }
         [Required]
-        public int WarehouseId { get; set; }
+        public int? WarehouseId { get; set; }
     }
 }

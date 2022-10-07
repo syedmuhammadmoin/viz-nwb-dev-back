@@ -9,15 +9,15 @@ namespace Application.Contracts.DTOs
 {
     public class CreateCategoryDto
     {
-        public int? Id { get; set; }
+        public int?     Id { get; set; }
         [MaxLength(100)]
         [Required]
         public string Name { get; set; }
         [Required]
-        public Guid InventoryAccountId { get; set; }
+        public Guid? InventoryAccountId { get; set; }
         [Required]
-        public Guid RevenueAccountId { get; set; }
+        public Guid? RevenueAccountId { get; set; }
         [Required]
-        public Guid CostAccountId { get; set; }
+        public Guid? CostAccountId { get; set; }
     }
 }

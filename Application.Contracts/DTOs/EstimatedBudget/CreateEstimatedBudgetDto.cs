@@ -14,7 +14,7 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public int BudgetId { get; set; }
+        public int? BudgetId { get; set; }
         [Required]
         [MaxLength(100)]
         public string EstimatedBudgetName { get; set; }

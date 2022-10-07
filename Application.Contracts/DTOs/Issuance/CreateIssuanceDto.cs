@@ -16,7 +16,7 @@ namespace Application.Contracts.DTOs
         public DateTime IssuanceDate { get; set; }
         [Required]
         public int CampusId { get; set; }
-        public int? RequisitionId { get; set; }
+        public int RequisitionId { get; set; }
         [Required]
         public bool isSubmit { get; set; }
         public virtual List<CreateIssuanceLinesDto> IssuanceLines { get; set; }

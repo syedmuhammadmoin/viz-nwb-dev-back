@@ -17,9 +17,9 @@ namespace Application.Contracts.DTOs
         [Required]
         public ProductType ProductType { get; set; }
         [Required]
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
         [Required]
-        public int UnitOfMeasurementId { get; set; }
+        public int? UnitOfMeasurementId { get; set; }
         [Required]
         public decimal? SalesPrice { get; set; }
         [Required]

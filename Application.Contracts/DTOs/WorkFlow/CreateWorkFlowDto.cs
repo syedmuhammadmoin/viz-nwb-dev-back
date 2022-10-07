@@ -15,7 +15,7 @@ namespace Application.Contracts.DTOs
         [MaxLength(100)]
         public string Name { get; set; }
         [Required]
-        public DocType DocType { get; set; }
+        public DocType? DocType { get; set; }
         [Required]
         public bool IsActive { get; set; }
         [Required]

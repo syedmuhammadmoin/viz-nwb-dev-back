@@ -51,11 +51,11 @@ namespace Application.Contracts.DTOs
         [MaxLength(50)]
         public string PlaceofBirth { get; set; }
         [Required]
-        public int DesignationId { get; set; }
+        public int? DesignationId { get; set; }
         [Required]
-        public int DepartmentId { get; set; }
+        public int? DepartmentId { get; set; }
         [Required]
-        public int CampusId { get; set; }
+        public int? CampusId { get; set; }
         [Required]
         [MaxLength(150)]
         public string Address { get; set; }

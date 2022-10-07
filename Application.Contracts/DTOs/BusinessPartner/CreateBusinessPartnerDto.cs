@@ -12,7 +12,7 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public BusinessPartnerType BusinessPartnerType { get; set; }
+        public BusinessPartnerType? BusinessPartnerType { get; set; }
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }
@@ -33,8 +33,8 @@ namespace Application.Contracts.DTOs
         [MaxLength(30)]
         public string BankAccountNumber { get; set; }
         [Required]
-        public Guid AccountReceivableId { get; set; }
+        public Guid? AccountReceivableId { get; set; }
         [Required]
-        public Guid AccountPayableId { get; set; }
+        public Guid? AccountPayableId { get; set; }
     }
 }
