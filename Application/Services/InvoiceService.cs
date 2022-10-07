@@ -255,7 +255,7 @@ namespace Application.Services
             var inv = _mapper.Map<InvoiceMaster>(entity);
 
             //setting BusinessPartnerReceivable
-            var businessPartner = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
+            var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.CustomerId);
             inv.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
 
             //Setting status
@@ -310,7 +310,7 @@ namespace Application.Services
                 _mapper.Map<CreateInvoiceDto, InvoiceMaster>(entity, inv);
 
                 //setting BusinessPartnerReceivable
-                var businessPartner = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
+                var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.CustomerId);
                 inv.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
                 await _unitOfWork.SaveAsync();
 

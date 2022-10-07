@@ -390,8 +390,8 @@ namespace Application.Services
                 if (line.Quantity > getStockRecord.AvailableQuantity)
                     return new Response<bool>("Selected item quantity is exceeding available quantity");
 
-                getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity  +  line.Quantity);
-                getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - line.Quantity);
+                getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity  + (int)line.Quantity);
+                getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - (int)line.Quantity);
 
             }
             return new Response<bool>(true, "");

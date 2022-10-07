@@ -60,24 +60,24 @@ namespace Application.Services
                 return new Response<bool>("Both Ledger id cannot be same");
 
             //Getting transaction with Payment Transaction Id
-            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(entity.DocumentLedgerId)).FirstOrDefault();
+            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs((int)entity.DocumentLedgerId)).FirstOrDefault();
             if (getUnreconciledDocumentAmount == null)
                 return new Response<bool>("No Transaction found for the given document transaction id");
 
             // Checking if given amount is greater than unreconciled document amount
-            var reconciledDocumentAmount = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(entity.DocumentLedgerId, false)).Sum(p => p.Amount);
+            var reconciledDocumentAmount = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs((int)entity.DocumentLedgerId, false)).Sum(p => p.Amount);
             var unreconciledDocumentAmount = getUnreconciledDocumentAmount.Amount - reconciledDocumentAmount;
             if (entity.Amount > unreconciledDocumentAmount)
                 return new Response<bool>("Enter amount is greater than pending document amount");
 
             //Getting transaction with Document Transaction Id
-            var getUnreconciledPaymentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(entity.PaymentLedgerId,
+            var getUnreconciledPaymentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs((int)entity.PaymentLedgerId,
                 getUnreconciledDocumentAmount.Level4_id, getUnreconciledDocumentAmount.BusinessPartnerId, getUnreconciledDocumentAmount.Sign)).FirstOrDefault();
             if (getUnreconciledDocumentAmount == null)
                 return new Response<bool>("No Transaction found for the given payment transaction id");
 
             // Checking if given amount is greater than unreconciled payment amount
-            var reconciledPaymentAmount = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs(entity.PaymentLedgerId, true)).Sum(p => p.Amount);
+            var reconciledPaymentAmount = _unitOfWork.TransactionReconcile.Find(new TransactionReconSpecs((int)entity.PaymentLedgerId, true)).Sum(p => p.Amount);
             var unreconciledPaymentAmount = getUnreconciledPaymentAmount.Amount - reconciledPaymentAmount;
             if (entity.Amount > unreconciledPaymentAmount)
                 return new Response<bool>("Enter amount is greater than pending payment amount");
@@ -89,26 +89,26 @@ namespace Application.Services
         public async Task<Response<bool>> ReconciliationProcess(CreateTransactionReconcileDto entity)
         {
             //Adding in Reconcilation table
-            var recons = new TransactionReconcile(entity.PaymentLedgerId, entity.DocumentLedgerId, (decimal)entity.Amount);
+            var recons = new TransactionReconcile((int)entity.PaymentLedgerId, (int)entity.DocumentLedgerId, (decimal)entity.Amount);
             await _unitOfWork.TransactionReconcile.Reconcile(recons);
             await _unitOfWork.SaveAsync();
 
             //Get Paymet Total Reconciled Amount
             var reconciledTotalPayment = _unitOfWork.TransactionReconcile
-                .Find(new TransactionReconSpecs(entity.PaymentLedgerId, true))
+                .Find(new TransactionReconSpecs((int)entity.PaymentLedgerId, true))
                 .Sum(i => i.Amount);
 
             //FOR UPDATE STATUS
-            await UpdateStatus(entity.PaymentLedgerId, reconciledTotalPayment);
+            await UpdateStatus((int)entity.PaymentLedgerId, reconciledTotalPayment);
             await _unitOfWork.SaveAsync();
 
             //Get Document Total Reconciled Amount
             var reconciledTotalDocAmount = _unitOfWork.TransactionReconcile
-                .Find(new TransactionReconSpecs(entity.DocumentLedgerId, false))
+                .Find(new TransactionReconSpecs((int)entity.DocumentLedgerId, false))
                 .Sum(i => i.Amount);
 
             //FOR UPDATE STATUS
-            await UpdateStatus(entity.DocumentLedgerId, reconciledTotalDocAmount);
+            await UpdateStatus((int)entity.DocumentLedgerId, reconciledTotalDocAmount);
 
             await _unitOfWork.SaveAsync();
 
