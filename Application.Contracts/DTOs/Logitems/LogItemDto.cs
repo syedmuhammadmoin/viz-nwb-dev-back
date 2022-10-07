@@ -12,7 +12,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public string Title { get; set; }
         [Required]
-        public int Status { get; set; }
+        public int? Status { get; set; }
         [Required]
         public string Detail { get; set; }
         [Required]

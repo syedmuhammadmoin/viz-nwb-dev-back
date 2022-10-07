@@ -10,7 +10,7 @@ namespace Application.Contracts.DTOs
     public class CreateDepartmentDto
     {
         [Required]
-        public int Id { get; set; }
+        public int? Id { get; set; }
         [MaxLength(50)]
         [Required]
         public string Name { get; set; }

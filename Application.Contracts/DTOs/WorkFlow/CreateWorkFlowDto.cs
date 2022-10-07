@@ -17,7 +17,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public DocType? DocType { get; set; }
         [Required]
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
         [Required]
         public virtual List<CreateWorkFlowTransitionDto> WorkflowTransitions { get; set; }
     }

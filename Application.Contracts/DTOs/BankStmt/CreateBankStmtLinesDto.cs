@@ -13,7 +13,7 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public int Reference { get; set; }
+        public int? Reference { get; set; }
         [Required]
         public DateTime StmtDate { get; set; }
         [Required]

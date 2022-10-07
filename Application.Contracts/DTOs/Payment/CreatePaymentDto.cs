@@ -13,7 +13,7 @@ namespace Application.Contracts.DTOs
         public int? Id { get; set; }
         public PaymentType PaymentType { get; set; }
         [Required]
-        public int BusinessPartnerId { get; set; }
+        public int? BusinessPartnerId { get; set; }
         public DocType PaymentFormType { get; set; }
         [Required]
         public Guid? AccountId { get; set; }
@@ -40,6 +40,6 @@ namespace Application.Contracts.DTOs
         public int? DocumentLedgerId { get; set; }
         public Guid? DeductionAccountId { get; set; }
         [Required]
-        public bool isSubmit { get; set; }
+        public bool? isSubmit { get; set; }
     }
 }

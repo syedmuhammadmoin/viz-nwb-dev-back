@@ -10,13 +10,13 @@ namespace Application.Contracts.DTOs
     public class CreateProcessLinesDto
     {
         [Required]
-        public int WorkingDays { get; set; }
+        public int? WorkingDays { get; set; }
         [Required]
-        public int PresentDays { get; set; }
+        public int? PresentDays { get; set; }
         [Required]
-        public int EmployeeId { get; set; }
+        public int? EmployeeId { get; set; }
         [Required]
         [Range(0.00, double.MaxValue, ErrorMessage = "Please enter a positive value")]
-        public decimal Tax { get; set; }
+        public decimal? Tax { get; set; }
     }
 }

@@ -13,7 +13,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? EmployeeId { get; set; }
         [Required]
-        public DateTime IssuanceReturnDate { get; set; }
+        public DateTime? IssuanceReturnDate { get; set; }
         [MaxLength(20)]
         public string Contact { get; set; }
         [Required]
@@ -21,7 +21,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? IssuanceId { get; set; }
         [Required]
-        public bool isSubmit { get; set; }
+        public bool? isSubmit { get; set; }
         public virtual List<CreateIssuanceReturnLinesDto> IssuanceReturnLines { get; set; }
     }
 }

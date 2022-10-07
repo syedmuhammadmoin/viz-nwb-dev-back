@@ -13,7 +13,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? VendorId { get; set; }
         [Required]
-        public DateTime ReturnDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
         [MaxLength(20)]
         public string Contact { get; set; }
         [Required]
@@ -21,7 +21,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? GRNId { get; set; }
         [Required]
-        public bool isSubmit { get; set; }
+        public bool? isSubmit { get; set; }
         public virtual List<CreateGoodsReturnNoteLinesDto> GoodsReturnNoteLines { get; set; }
     }
 }

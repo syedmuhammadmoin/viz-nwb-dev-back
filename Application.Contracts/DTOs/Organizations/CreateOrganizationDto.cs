@@ -38,8 +38,8 @@ namespace Application.Contracts.DTOs
         [MaxLength(100)]
         public string GSTRegistrationNo { get; set; }
         [Required]
-        public DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
         [Required]
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
     }
 }

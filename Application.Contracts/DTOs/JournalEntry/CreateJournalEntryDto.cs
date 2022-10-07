@@ -16,7 +16,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? CampusId { get; set; }
         [Required]
-        public bool isSubmit { get; set; }
+        public bool? isSubmit { get; set; }
         [Required]
         public virtual List<CreateJournalEntryLinesDto> JournalEntryLines { get; set; }
     }

@@ -18,6 +18,6 @@ namespace Application.Contracts.DTOs
         [MaxLength(500)]
         public string Description { get; set; }
         [Required]
-        public int WarehouseId { get; set; }
+        public int? WarehouseId { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace Application.Contracts.DTOs
         [MaxLength(100)]
         public string ProductName { get; set; }
         [Required]
-        public ProductType ProductType { get; set; }
+        public ProductType? ProductType { get; set; }
         [Required]
         public int? CategoryId { get; set; }
         [Required]

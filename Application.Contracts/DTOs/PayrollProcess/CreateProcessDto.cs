@@ -10,15 +10,15 @@ namespace Application.Contracts.DTOs
     public class CreateProcessDto
     {
         [Required]
-        public int Month { get; set; }
+        public int? Month { get; set; }
         [Required]
-        public int Year { get; set; }
+        public int? Year { get; set; }
         [Required]
-        public DateTime TransDate { get; set; }
+        public DateTime? TransDate { get; set; }
         [Required]
         public Guid? AccountPayableId { get; set; }
         [Required]
-        public bool isSubmit { get; set; }
+        public bool? isSubmit { get; set; }
         [Required]
         public List<CreateProcessLinesDto> ProcessLines { get; set; }
     }

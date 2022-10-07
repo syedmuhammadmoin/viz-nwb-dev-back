@@ -14,11 +14,11 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? EmployeeId { get; set; }
         [Required]
-        public DateTime RequisitionDate { get; set; }
+        public DateTime? RequisitionDate { get; set; }
         [Required]
         public int? CampusId { get; set; }
         [Required]
-        public bool isSubmit { get; set; }
+        public bool? isSubmit { get; set; }
         public virtual List<CreateRequisitionLinesDto> RequisitionLines { get; set; }
     }
 }

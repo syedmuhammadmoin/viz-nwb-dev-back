@@ -13,15 +13,15 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? VendorId { get; set; }
         [Required]
-        public DateTime PODate { get; set; }
+        public DateTime? PODate { get; set; }
         [Required]
-        public DateTime DueDate { get; set; }
+        public DateTime? DueDate { get; set; }
         [StringLength(20)]
         public string Contact { get; set; }
         [Required]
         public int? CampusId { get; set; }
         [Required]
-        public bool isSubmit { get; set; }
+        public bool? isSubmit { get; set; }
         public virtual List<CreatePurchaseOrderLinesDto> PurchaseOrderLines { get; set; }
     }
 }

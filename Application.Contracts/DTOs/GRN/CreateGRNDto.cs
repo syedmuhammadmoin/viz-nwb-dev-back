@@ -13,7 +13,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? VendorId { get; set; }
         [Required]
-        public DateTime GrnDate { get; set; }
+        public DateTime? GrnDate { get; set; }
         [StringLength(20)]
         public string Contact { get; set; }
         [Required]
@@ -21,7 +21,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? PurchaseOrderId { get; set; }
         [Required]
-        public bool isSubmit { get; set; }
+        public bool? isSubmit { get; set; }
         public virtual List<CreateGRNLinesDto> GRNLines { get; set; }
     }
 }

@@ -12,6 +12,6 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public Guid AccountId { get; set; }
+        public Guid? AccountId { get; set; }
     }
 }

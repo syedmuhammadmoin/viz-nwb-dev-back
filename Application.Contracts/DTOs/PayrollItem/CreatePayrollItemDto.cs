@@ -21,14 +21,14 @@ namespace Application.Contracts.DTOs
         [Required]
         public PayrollType PayrollType { get; set; }
         [Required]
-        public CalculationType PayrollItemType { get; set; }
+        public CalculationType? PayrollItemType { get; set; }
         [Range(0, double.MaxValue, ErrorMessage = "Please enter a positive value")]
         [Required]
         public decimal? Value { get; set; }
         [Required]
         public Guid? AccountId { get; set; }
         [Required]
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
         [MaxLength(300)]
         public string Remarks { get; set; }
         public int[] EmployeeIds { get; set; }
