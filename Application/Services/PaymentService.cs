@@ -35,7 +35,7 @@ namespace Application.Services
 
         public async Task<Response<PaymentDto>> CreateAsync(CreatePaymentDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitPay(entity);
             }
@@ -131,7 +131,7 @@ namespace Application.Services
 
         public async Task<Response<PaymentDto>> UpdateAsync(CreatePaymentDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitPay(entity);
             }
@@ -653,7 +653,7 @@ namespace Application.Services
             //checking whether any payment is created
             foreach (var line in data.CreatePayrollTransLines)
             {
-                var bp = await _unitOfWork.BusinessPartner.GetById(line.BusinessPartnerId);
+                var bp = await _unitOfWork.BusinessPartner.GetById((int)line.BusinessPartnerId);
                 if (bp != null)
                 {
                     if (bp.BusinessPartnerType != BusinessPartnerType.Employee)
@@ -683,7 +683,7 @@ namespace Application.Services
                         isSubmit = false
                     };
 
-                    if (payment.isSubmit)
+                    if ((bool)payment.isSubmit)
                     {
                         var result = await this.SubmitPay(payment);
                         if (!result.IsSuccess)

@@ -33,7 +33,7 @@ namespace Application.Services
 
         public async Task<Response<BillDto>> CreateAsync(CreateBillDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitBILL(entity);
             }
@@ -117,7 +117,7 @@ namespace Application.Services
 
         public async Task<Response<BillDto>> UpdateAsync(CreateBillDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitBILL(entity);
             }
@@ -239,7 +239,7 @@ namespace Application.Services
             var bill = _mapper.Map<BillMaster>(entity);
 
             //setting BusinessPartnerPayable
-            var businessPartner = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
+            var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.VendorId);
             bill.setPayableAccountId((Guid)businessPartner.AccountPayableId);
 
             //Setting status
@@ -292,7 +292,7 @@ namespace Application.Services
                 _mapper.Map<CreateBillDto, BillMaster>(entity, bill);
 
                 //setting BusinessPartnerPayable
-                var businessPartner = await _unitOfWork.BusinessPartner.GetById(entity.VendorId);
+                var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.VendorId);
                 bill.setPayableAccountId((Guid)businessPartner.AccountPayableId);
 
                 await _unitOfWork.SaveAsync();

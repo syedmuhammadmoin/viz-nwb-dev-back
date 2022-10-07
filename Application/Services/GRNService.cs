@@ -124,7 +124,7 @@ namespace Application.Services
 
         public async Task<Response<GRNDto>> CreateAsync(CreateGRNDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitGRN(entity);
             }
@@ -197,7 +197,7 @@ namespace Application.Services
 
         public async Task<Response<GRNDto>> UpdateAsync(CreateGRNDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitGRN(entity);
             }

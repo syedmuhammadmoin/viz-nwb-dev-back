@@ -30,7 +30,7 @@ namespace Application.Services
             if (checkingCode != null)
                 return new Response<Level4Dto>("Duplicate code");
 
-            var level3 = _unitOfWork.Level3.Find(new Level3Specs(entity.Level3_id)).FirstOrDefault();
+            var level3 = _unitOfWork.Level3.Find(new Level3Specs((Guid)entity.Level3_id)).FirstOrDefault();
             if (level3 == null)
             {
                 return new Response<Level4Dto>("Invalid Level3 Account");

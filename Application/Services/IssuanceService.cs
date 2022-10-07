@@ -32,7 +32,7 @@ namespace Application.Services
 
         public async Task<Response<IssuanceDto>> CreateAsync(CreateIssuanceDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitIssuance(entity);
             }
@@ -111,7 +111,7 @@ namespace Application.Services
 
         public async Task<Response<IssuanceDto>> UpdateAsync(CreateIssuanceDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitIssuance(entity);
             }
@@ -382,7 +382,7 @@ namespace Application.Services
         {
             foreach (var line in issuance.IssuanceLines)
             {
-                var getStockRecord =  _unitOfWork.Stock.Find(new StockSpecs(line.ItemId, line.WarehouseId)).FirstOrDefault();
+                var getStockRecord =  _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
 
                 if (getStockRecord == null)
                     return new Response<bool>("Item not found in stock");

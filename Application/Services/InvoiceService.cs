@@ -35,7 +35,7 @@ namespace Application.Services
 
         public async Task<Response<InvoiceDto>> CreateAsync(CreateInvoiceDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitINV(entity);
             }
@@ -117,7 +117,7 @@ namespace Application.Services
 
         public async Task<Response<InvoiceDto>> UpdateAsync(CreateInvoiceDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitINV(entity);
             }

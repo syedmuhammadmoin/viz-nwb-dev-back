@@ -32,7 +32,7 @@ namespace Application.Services
 
         public async Task<Response<DebitNoteDto>> CreateAsync(CreateDebitNoteDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitDBN(entity);
             }
@@ -130,7 +130,7 @@ namespace Application.Services
 
         public async Task<Response<DebitNoteDto>> UpdateAsync(CreateDebitNoteDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitDBN(entity);
             }

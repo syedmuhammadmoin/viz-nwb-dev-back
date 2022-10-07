@@ -32,7 +32,7 @@ namespace Application.Services
 
         public async Task<Response<PurchaseOrderDto>> CreateAsync(CreatePurchaseOrderDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitPO(entity);
             }
@@ -111,7 +111,7 @@ namespace Application.Services
 
         public async Task<Response<PurchaseOrderDto>> UpdateAsync(CreatePurchaseOrderDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitPO(entity);
             }

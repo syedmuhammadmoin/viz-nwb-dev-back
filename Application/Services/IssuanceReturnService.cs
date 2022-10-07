@@ -124,7 +124,7 @@ namespace Application.Services
 
         public async Task<Response<IssuanceReturnDto>> CreateAsync(CreateIssuanceReturnDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitIssuanceReturn(entity);
             }
@@ -200,7 +200,7 @@ namespace Application.Services
 
         public async Task<Response<IssuanceReturnDto>> UpdateAsync(CreateIssuanceReturnDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitIssuanceReturn(entity);
             }

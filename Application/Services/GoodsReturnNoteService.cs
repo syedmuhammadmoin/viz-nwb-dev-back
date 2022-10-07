@@ -122,7 +122,7 @@ namespace Application.Services
 
         public async Task<Response<GoodsReturnNoteDto>> CreateAsync(CreateGoodsReturnNoteDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitGoodsReturnNote(entity);
             }
@@ -192,7 +192,7 @@ namespace Application.Services
 
         public async Task<Response<GoodsReturnNoteDto>> UpdateAsync(CreateGoodsReturnNoteDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitGoodsReturnNote(entity);
             }

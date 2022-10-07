@@ -31,7 +31,7 @@ namespace Application.Services
         }
         public async Task<Response<CreditNoteDto>> CreateAsync(CreateCreditNoteDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitCRN(entity);
             }
@@ -124,7 +124,7 @@ namespace Application.Services
 
         public async Task<Response<CreditNoteDto>> UpdateAsync(CreateCreditNoteDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitCRN(entity);
             }
@@ -167,7 +167,7 @@ namespace Application.Services
             var crn = _mapper.Map<CreditNoteMaster>(entity);
 
             //setting BusinessPartnerReceivable
-            var businessPartner = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
+            var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.CustomerId);
             crn.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
 
             //Setting status
@@ -212,7 +212,7 @@ namespace Application.Services
                 return new Response<CreditNoteDto>("Only draft document can be edited");
 
             //setting BusinessPartnerReceivable
-            var businessPartner = await _unitOfWork.BusinessPartner.GetById(entity.CustomerId);
+            var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.CustomerId);
             crn.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
 
             crn.setStatus(status);

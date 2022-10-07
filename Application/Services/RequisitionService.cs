@@ -32,7 +32,7 @@ namespace Application.Services
 
         public async Task<Response<RequisitionDto>> CreateAsync(CreateRequisitionDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitRequisition(entity);
             }
@@ -107,7 +107,7 @@ namespace Application.Services
 
         public async Task<Response<RequisitionDto>> UpdateAsync(CreateRequisitionDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitRequisition(entity);
             }
