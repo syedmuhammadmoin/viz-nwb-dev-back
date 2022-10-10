@@ -12,6 +12,7 @@ namespace Application.Contracts.Filters
         //public string EmployeeName { get; set; }
         public string Designation { get; set; }
         public string Department { get; set; }
+        public string Campus { get; set; }
         public string BPS { get; set; }
         public int? Month { get; set; }
         public int? Year { get; set; }

@@ -13,16 +13,16 @@ namespace Application.Contracts.DTOs
         public int? Id { get; set; }
         public PaymentType PaymentType { get; set; }
         [Required]
-        public int BusinessPartnerId { get; set; }
+        public int? BusinessPartnerId { get; set; }
         public DocType PaymentFormType { get; set; }
         [Required]
-        public Guid AccountId { get; set; }
+        public Guid? AccountId { get; set; }
         [Required]
-        public DateTime PaymentDate { get; set; }
+        public DateTime? PaymentDate { get; set; }
         [Required]
-        public PaymentRegisterType PaymentRegisterType { get; set; }
+        public PaymentRegisterType? PaymentRegisterType { get; set; }
         [Required]
-        public Guid PaymentRegisterId { get; set; }
+        public Guid? PaymentRegisterId { get; set; }
         [Required]
         [MaxLength(500)]
         public string Description { get; set; }
@@ -40,6 +40,6 @@ namespace Application.Contracts.DTOs
         public int? DocumentLedgerId { get; set; }
         public Guid? DeductionAccountId { get; set; }
         [Required]
-        public bool isSubmit { get; set; }
+        public bool? isSubmit { get; set; }
     }
 }

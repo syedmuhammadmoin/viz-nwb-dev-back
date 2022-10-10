@@ -11,13 +11,13 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public int VendorId { get; set; }
+        public int? VendorId { get; set; }
         [Required]
-        public DateTime NoteDate { get; set; }
+        public DateTime? NoteDate { get; set; }
         [Required]
-        public int CampusId { get; set; }
+        public int? CampusId { get; set; }
         [Required]
-        public bool isSubmit { get; set; }
+        public bool? isSubmit { get; set; }
         public int? DocumentLedgerId { get; set; }
         public virtual List<CreateDebitNoteLinesDto> DebitNoteLines { get; set; }
     }

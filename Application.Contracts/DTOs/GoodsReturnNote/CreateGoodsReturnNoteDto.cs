@@ -11,17 +11,17 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public int VendorId { get; set; }
+        public int? VendorId { get; set; }
         [Required]
-        public DateTime ReturnDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
         [MaxLength(20)]
         public string Contact { get; set; }
         [Required]
-        public int CampusId { get; set; }
+        public int? CampusId { get; set; }
         [Required]
-        public int GRNId { get; set; }
+        public int? GRNId { get; set; }
         [Required]
-        public bool isSubmit { get; set; }
+        public bool? isSubmit { get; set; }
         public virtual List<CreateGoodsReturnNoteLinesDto> GoodsReturnNoteLines { get; set; }
     }
 }

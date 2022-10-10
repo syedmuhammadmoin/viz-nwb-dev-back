@@ -13,7 +13,7 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public int BankAccountId { get; set; }
+        public int? BankAccountId { get; set; }
         [Required]
         [MaxLength(500)]
         public string Description { get; set; }

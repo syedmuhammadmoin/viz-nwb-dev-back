@@ -10,10 +10,10 @@ namespace Application.Contracts.DTOs
     public class UpdatePayrollTransactionDto
     {
         [Required]
-        public int Id { get; set; }
+        public int? Id { get; set; }
         [Required]
-        public Guid AccountPayableId { get; set; }
+        public Guid? AccountPayableId { get; set; }
         [Required]
-        public bool isSubmit { get; set; }
+        public bool? isSubmit { get; set; }
     }
 }

@@ -11,17 +11,17 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public int CustomerId { get; set; }
+        public int? CustomerId { get; set; }
         [Required]
-        public DateTime InvoiceDate { get; set; }
+        public DateTime? InvoiceDate { get; set; }
         [Required]
-        public DateTime DueDate { get; set; }
+        public DateTime? DueDate { get; set; }
         [MaxLength(20)]
         public string Contact { get; set; }
         [Required]
-        public int CampusId { get; set; }
+        public int? CampusId { get; set; }
         [Required]
-        public bool isSubmit { get; set; }
+        public bool? isSubmit { get; set; }
         [Required]
         public virtual List<CreateInvoiceLinesDto> InvoiceLines { get; set; }
     }

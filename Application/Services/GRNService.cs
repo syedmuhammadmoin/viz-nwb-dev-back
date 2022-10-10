@@ -124,7 +124,7 @@ namespace Application.Services
 
         public async Task<Response<GRNDto>> CreateAsync(CreateGRNDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitGRN(entity);
             }
@@ -197,7 +197,7 @@ namespace Application.Services
 
         public async Task<Response<GRNDto>> UpdateAsync(CreateGRNDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitGRN(entity);
             }
@@ -237,7 +237,7 @@ namespace Application.Services
             {
                     //Getting Unreconciled Purchase Order lines
                     var getpurchaseOrderLine = _unitOfWork.PurchaseOrder
-                    .FindLines(new PurchaseOrderLinesSpecs(grnLine.ItemId, grnLine.WarehouseId, (int)entity.PurchaseOrderId))
+                    .FindLines(new PurchaseOrderLinesSpecs((int)grnLine.ItemId, (int)grnLine.WarehouseId, (int)entity.PurchaseOrderId))
                     .FirstOrDefault();
                     if (getpurchaseOrderLine == null)
                         return new Response<GRNDto>("No Purchase order line found for reconciliaiton");
@@ -301,7 +301,7 @@ namespace Application.Services
             {
              
                     var getpurchaseOrderLine = _unitOfWork.PurchaseOrder
-                        .FindLines(new PurchaseOrderLinesSpecs(grnLine.ItemId, grnLine.WarehouseId, (int)entity.PurchaseOrderId))
+                        .FindLines(new PurchaseOrderLinesSpecs((int)grnLine.ItemId, (int)grnLine.WarehouseId, (int)entity.PurchaseOrderId))
                         .FirstOrDefault();
                     if (getpurchaseOrderLine == null)
                         return new Response<GRNDto>("No Purchase order line found for reconciliaiton");

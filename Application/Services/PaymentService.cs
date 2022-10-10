@@ -35,7 +35,7 @@ namespace Application.Services
 
         public async Task<Response<PaymentDto>> CreateAsync(CreatePaymentDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitPay(entity);
             }
@@ -131,7 +131,7 @@ namespace Application.Services
 
         public async Task<Response<PaymentDto>> UpdateAsync(CreatePaymentDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitPay(entity);
             }
@@ -653,7 +653,7 @@ namespace Application.Services
             //checking whether any payment is created
             foreach (var line in data.CreatePayrollTransLines)
             {
-                var bp = await _unitOfWork.BusinessPartner.GetById(line.BusinessPartnerId);
+                var bp = await _unitOfWork.BusinessPartner.GetById((int)line.BusinessPartnerId);
                 if (bp != null)
                 {
                     if (bp.BusinessPartnerType != BusinessPartnerType.Employee)
@@ -671,7 +671,7 @@ namespace Application.Services
                         PaymentFormType = DocType.PayrollPayment,
                         BusinessPartnerId = line.BusinessPartnerId,
                         AccountId = line.AccountPayableId,
-                        CampusId = data.CampusId,
+                        CampusId = line.CampusId,
                         GrossPayment = line.NetSalary,
                         PaymentDate = data.PaymentDate,
                         PaymentRegisterType = data.PaymentRegisterType,
@@ -683,7 +683,7 @@ namespace Application.Services
                         isSubmit = false
                     };
 
-                    if (payment.isSubmit)
+                    if ((bool)payment.isSubmit)
                     {
                         var result = await this.SubmitPay(payment);
                         if (!result.IsSuccess)
@@ -712,14 +712,30 @@ namespace Application.Services
 
         public Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data)
         {
-            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, "")).ToList();
+            //Fetching approved payrolltransactions
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, data.CampusId, "")).ToList();
 
-            if (payrollTransactions.Count == 0)
+
+            //Filtering payrolltransaction which doesn't have payrollpayments.
+            var filteredPayrollTransactions = new List<PayrollTransactionMaster>();
+
+            foreach (var i in payrollTransactions)
+            {
+                //fetching payrollpayments which have current payrolltransaction ledgerId
+                var getPayrollPayments = _unitOfWork.Payment.Find(new PaymentSpecs(DocType.PayrollPayment, (int)i.LedgerId)).FirstOrDefault();
+
+                if (getPayrollPayments == null)
+                {
+                    filteredPayrollTransactions.Add(i);
+                }
+            }
+
+            if (filteredPayrollTransactions.Count == 0)
                 return new Response<List<PayrollTransactionDto>>(null, "list is empty");
 
             var response = new List<PayrollTransactionDto>();
 
-            foreach (var i in payrollTransactions)
+            foreach (var i in filteredPayrollTransactions)
             {
                 response.Add(new PayrollTransactionService(_unitOfWork, _mapper, _employeeService, _httpContextAccessor).MapToValue(i));
             }
@@ -730,7 +746,7 @@ namespace Application.Services
 
         public Response<List<PaymentDto>> GetPaymentByDept(DeptFilter data)
         {
-            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, "")).ToList();
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, data.CampusId, "")).ToList();
 
             if (payrollTransactions.Count == 0)
                 return new Response<List<PaymentDto>>(null, "list is empty");
@@ -791,7 +807,7 @@ namespace Application.Services
 
         public Response<List<PaymentDto>> GetPaymentForApproval(DeptFilter data)
         {
-            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, "")).ToList();
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, data.CampusId, "")).ToList();
 
             if (payrollTransactions.Count == 0)
                 return new Response<List<PaymentDto>>(null, "list is empty");

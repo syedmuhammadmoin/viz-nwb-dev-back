@@ -1049,6 +1049,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
+                    b.Property<int>("CampusId")
+                        .HasColumnType("int");
+
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -1071,6 +1074,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CampusId");
 
                     b.ToTable("Departments");
                 });
@@ -1139,9 +1144,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("CNIC")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<int>("CampusId")
-                        .HasColumnType("int");
 
                     b.Property<int>("CasualLeaves")
                         .HasColumnType("int");
@@ -1245,8 +1247,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BusinessPartnerId");
-
-                    b.HasIndex("CampusId");
 
                     b.HasIndex("DepartmentId");
 
@@ -3091,6 +3091,46 @@ namespace Infrastructure.Migrations
                             Level3_id = new Guid("32100000-5566-7788-99aa-bbccddeeff00"),
                             Name = "Opening Balance equity"
                         });
+                });
+
+            modelBuilder.Entity("Domain.Entities.LogItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Detail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TraceId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LogItems");
                 });
 
             modelBuilder.Entity("Domain.Entities.Organization", b =>
@@ -5219,17 +5259,22 @@ namespace Infrastructure.Migrations
                     b.Navigation("Vendor");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Department", b =>
+                {
+                    b.HasOne("Domain.Entities.Campus", "Campus")
+                        .WithMany()
+                        .HasForeignKey("CampusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Campus");
+                });
+
             modelBuilder.Entity("Domain.Entities.Employee", b =>
                 {
                     b.HasOne("Domain.Entities.BusinessPartner", "BusinessPartner")
                         .WithMany()
                         .HasForeignKey("BusinessPartnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Campus", "Campus")
-                        .WithMany()
-                        .HasForeignKey("CampusId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -5246,8 +5291,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("BusinessPartner");
-
-                    b.Navigation("Campus");
 
                     b.Navigation("Department");
 

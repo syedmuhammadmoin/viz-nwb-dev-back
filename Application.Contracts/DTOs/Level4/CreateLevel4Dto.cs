@@ -17,6 +17,6 @@ namespace Application.Contracts.DTOs
         [MaxLength(10)] 
         public string Code { get; set; }
         [Required]
-        public Guid Level3_id { get; set; }
+        public Guid? Level3_id { get; set; }
     }
 }

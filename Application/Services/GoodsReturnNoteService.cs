@@ -122,7 +122,7 @@ namespace Application.Services
 
         public async Task<Response<GoodsReturnNoteDto>> CreateAsync(CreateGoodsReturnNoteDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitGoodsReturnNote(entity);
             }
@@ -192,7 +192,7 @@ namespace Application.Services
 
         public async Task<Response<GoodsReturnNoteDto>> UpdateAsync(CreateGoodsReturnNoteDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitGoodsReturnNote(entity);
             }
@@ -232,12 +232,12 @@ namespace Application.Services
             {
                 //Getting Unreconciled GoodsReturnNote lines
                 var getGRNLine = _unitOfWork.GRN
-                    .FindLines(new GRNLinesSpecs(goodsReturnNoteLine.ItemId, goodsReturnNoteLine.WarehouseId, entity.GRNId))
+                    .FindLines(new GRNLinesSpecs((int)goodsReturnNoteLine.ItemId, (int)goodsReturnNoteLine.WarehouseId, (int)entity.GRNId))
                     .FirstOrDefault();
                 if (getGRNLine == null)
                     return new Response<GoodsReturnNoteDto>("No GoodsReturnNote line found for reconciliaiton");
 
-                var checkValidation = CheckValidation(entity.GRNId, getGRNLine, _mapper.Map<GoodsReturnNoteLines>(goodsReturnNoteLine));
+                var checkValidation = CheckValidation((int)entity.GRNId, getGRNLine, _mapper.Map<GoodsReturnNoteLines>(goodsReturnNoteLine));
                 if (!checkValidation.IsSuccess)
                     return new Response<GoodsReturnNoteDto>(checkValidation.Message);
             }
@@ -283,7 +283,7 @@ namespace Application.Services
         private async Task<Response<GoodsReturnNoteDto>> UpdateGoodsReturnNote(CreateGoodsReturnNoteDto entity, int status)
         {
             //setting GoodsReturnNoteId
-            var getGRN = await _unitOfWork.GRN.GetById(entity.GRNId, new GRNSpecs(false));
+            var getGRN = await _unitOfWork.GRN.GetById((int)entity.GRNId, new GRNSpecs(false));
 
             if (getGRN == null)
                 return new Response<GoodsReturnNoteDto>("GRN not found");
@@ -295,12 +295,12 @@ namespace Application.Services
             {
                 //Getting Unreconciled GoodsReturnNote lines
                 var getGRNLine = _unitOfWork.GRN
-                    .FindLines(new GRNLinesSpecs(goodsReturnNoteLine.ItemId, goodsReturnNoteLine.WarehouseId, entity.GRNId))
+                    .FindLines(new GRNLinesSpecs((int)goodsReturnNoteLine.ItemId, (int)goodsReturnNoteLine.WarehouseId, (int)entity.GRNId))
                     .FirstOrDefault();
                 if (getGRNLine == null)
                     return new Response<GoodsReturnNoteDto>("No GoodsReturnNote line found for reconciliaiton");
 
-                var checkValidation = CheckValidation(entity.GRNId, getGRNLine, _mapper.Map<GoodsReturnNoteLines>(goodsReturnNoteLine));
+                var checkValidation = CheckValidation((int)entity.GRNId, getGRNLine, _mapper.Map<GoodsReturnNoteLines>(goodsReturnNoteLine));
                 if (!checkValidation.IsSuccess)
                     return new Response<GoodsReturnNoteDto>(checkValidation.Message);
             }

@@ -33,7 +33,7 @@ namespace Application.Services
 
         public async Task<Response<JournalEntryDto>> CreateAsync(CreateJournalEntryDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitJV(entity);
             }
@@ -45,7 +45,7 @@ namespace Application.Services
 
         public async Task<Response<JournalEntryDto>> UpdateAsync(CreateJournalEntryDto entity)
         {
-            if (entity.isSubmit)
+            if ((bool)entity.isSubmit)
             {
                 return await this.SubmitJV(entity);
             }

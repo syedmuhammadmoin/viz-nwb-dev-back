@@ -12,13 +12,13 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public int EmployeeId { get; set; }
+        public int? EmployeeId { get; set; }
         [Required]
-        public DateTime RequisitionDate { get; set; }
+        public DateTime? RequisitionDate { get; set; }
         [Required]
-        public int CampusId { get; set; }
+        public int? CampusId { get; set; }
         [Required]
-        public bool isSubmit { get; set; }
+        public bool? isSubmit { get; set; }
         public virtual List<CreateRequisitionLinesDto> RequisitionLines { get; set; }
     }
 }

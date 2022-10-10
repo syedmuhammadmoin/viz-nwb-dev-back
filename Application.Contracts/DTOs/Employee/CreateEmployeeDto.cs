@@ -51,25 +51,23 @@ namespace Application.Contracts.DTOs
         [MaxLength(50)]
         public string PlaceofBirth { get; set; }
         [Required]
-        public int DesignationId { get; set; }
+        public int? DesignationId { get; set; }
         [Required]
-        public int DepartmentId { get; set; }
-        [Required]
-        public int CampusId { get; set; }
+        public int? DepartmentId { get; set; }
         [Required]
         [MaxLength(150)]
         public string Address { get; set; }
         [Required]
-        public DateTime DateofJoining { get; set; }
+        public DateTime? DateofJoining { get; set; }
         public DateTime? DateofRetirment { get; set; }
         public DateTime? DateofBirth { get; set; }
         public int? EarnedLeaves { get; set; }
         public int? CasualLeaves { get; set; }
-        public bool isActive { get; set; }
+        [Required]
+        public bool? isActive { get; set; }
         [MaxLength(80)]
         public string Faculty { get; set; }
         [MaxLength(80)]
         public string DutyShift { get; set; }
-        public int? NoOfIncrements { get; set; }
     }
 }

@@ -14,7 +14,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public string Name { get; set; }
         [Required]
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
         //[MaxLength(300)]
         //[Required]
         //public string Address { get; set; }

@@ -22,8 +22,8 @@ namespace Application.Contracts.DTOs
         [Range(0.00, double.MaxValue, ErrorMessage = "Please enter a positive value")]
         public decimal? OpeningBalance { get; set; }
         [Required]
-        public DateTime OpeningBalanceDate { get; set; }
+        public DateTime? OpeningBalanceDate { get; set; }
         [Required]
-        public int CampusId { get; set; }
+        public int? CampusId { get; set; }
     }
 }

@@ -10,9 +10,9 @@ namespace Application.Contracts.DTOs
     public class CreateBankReconDto
     {
         [Required]
-        public int BankStmtId { get; set; }
+        public int? BankStmtId { get; set; }
         [Required]
-        public int PaymentId { get; set; }
+        public int? PaymentId { get; set; }
         [Required]
         [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public decimal Amount { get; set; }

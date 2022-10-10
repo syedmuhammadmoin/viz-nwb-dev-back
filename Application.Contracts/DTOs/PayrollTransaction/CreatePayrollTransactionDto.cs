@@ -11,18 +11,18 @@ namespace Application.Contracts.DTOs
     {
         [Required]
         [Range(1, 12, ErrorMessage = "Please enter months from 1 - 12")] 
-        public int Month { get; set; }
+        public int? Month { get; set; }
         [Required]
-        public int Year { get; set; }
+        public int? Year { get; set; }
         [Required]
-        public int EmployeeId { get; set; }
+        public int? EmployeeId { get; set; }
         [Required]
-        public int WorkingDays { get; set; }
+        public int? WorkingDays { get; set; }
         [Required]
-        public int PresentDays { get; set; }
+        public int? PresentDays { get; set; }
         [Required]
-        public int LeaveDays { get; set; }
+        public int? LeaveDays { get; set; }
         [Required]
-        public DateTime TransDate { get; set; }
+        public DateTime? TransDate { get; set; }
     }
 }

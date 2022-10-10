@@ -10,7 +10,7 @@ namespace Application.Contracts.DTOs
     public class UpdateBankAccountDto
     {
         [Required]
-        public int Id { get; set; }
+        public int? Id { get; set; }
         [Required]
         public long AccountNumber { get; set; }
         [MaxLength(100)]

@@ -15,13 +15,13 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public Guid AccountId { get; set; }
+        public Guid? AccountId { get; set; }
         [Required]
         [Column(TypeName = "decimal(18,2)")]
         [Range(0.00, float.MaxValue, ErrorMessage = "Please enter a positive value")]
         public decimal? Amount { get; set; }
         [Required]
-        public CalculationType CalculationType { get; set; }
+        public CalculationType? CalculationType { get; set; }
         [Required]
         [Column(TypeName = "decimal(18,2)")]
         [Range(0.00, float.MaxValue, ErrorMessage = "Please enter a positive value")]

@@ -10,11 +10,10 @@ namespace Application.Contracts.DTOs
 {
     public class CreatePayrollPaymentDto
     {
-        public int CampusId { get; set; }
         public DateTime PaymentDate { get; set; }
         public PaymentRegisterType PaymentRegisterType { get; set; } // 1 = cashAccount, 2 = BankAccount
         [Required]
-        public Guid PaymentRegisterId { get; set; }
+        public Guid? PaymentRegisterId { get; set; }
         [Required]
         public string Description { get; set; }
         public List<CreatePayrollPaymentLinesDto> CreatePayrollTransLines { get; set; }

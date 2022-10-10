@@ -26,9 +26,9 @@ namespace Application.Services
         }
         public async Task<Response<WorkFlowDto>> CreateAsync(CreateWorkFlowDto entity)
         {
-            if (entity.IsActive)
+            if ((bool)entity.IsActive)
             {
-                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(entity.DocType)).FirstOrDefault();
+                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs((DocType)entity.DocType)).FirstOrDefault();
                 if (checkingActiveWorkFlows != null)
                 {
                     return new Response<WorkFlowDto>("Workflow already activated for this document");
@@ -72,9 +72,9 @@ namespace Application.Services
             if (workFlow == null)
                 return new Response<WorkFlowDto>("Not found");
 
-            if (entity.IsActive)
+            if ((bool)entity.IsActive)
             {
-                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(entity.DocType, (int)entity.Id)).FirstOrDefault();
+                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs((DocType)entity.DocType, (int)entity.Id)).FirstOrDefault();
                 if (checkingActiveWorkFlows != null)
                 {
                     return new Response<WorkFlowDto>("Workflow already activated for this document");

@@ -51,9 +51,6 @@ namespace Domain.Entities
         public int DepartmentId { get; private set; }
         [ForeignKey("DepartmentId")]
         public Department Department { get; private set; }
-        public int CampusId { get; private set; }
-        [ForeignKey("CampusId")]
-        public Campus Campus { get; private set; }
         [MaxLength(300)]
         public string Address { get; private set; }
         public DateTime DateofJoining { get; private set; }

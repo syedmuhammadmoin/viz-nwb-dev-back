@@ -10,7 +10,7 @@ namespace Application.Contracts.DTOs
     public class UpdateEmployeeDto
     {
         [Required]
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public int? NoOfIncrements { get; set; }
     }
 }

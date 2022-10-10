@@ -9,9 +9,9 @@ namespace Application.Contracts.DTOs
 {
     public class DepartmentDto
     {
-        public int? Id { get; set; }
-        [MaxLength(100)]
-        [Required]
+        public int Id { get; set; }
         public string Name { get; set; }
+        public int CampusId { get; set; }
+        public string CampusName { get; set; }
     }
 }

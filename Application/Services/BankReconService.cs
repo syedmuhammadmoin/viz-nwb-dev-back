@@ -43,20 +43,20 @@ namespace Application.Services
 
 
             // FOR BANK STATEMENT
-            var bankStmtLine = await _unitOfWork.BankStmtLines.GetById(entity.BankStmtId, new BankStmtLinesSpecs());
+            var bankStmtLine = await _unitOfWork.BankStmtLines.GetById((int)entity.BankStmtId, new BankStmtLinesSpecs());
             decimal stmtAmount = bankStmtLine != null ? (bankStmtLine.Credit - bankStmtLine.Debit) < 0 ? (bankStmtLine.Credit - bankStmtLine.Debit) * -1
                 : bankStmtLine.Credit - bankStmtLine.Debit : 0;
 
-            var reconciledStmtAmount = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(entity.BankStmtId, false)).Sum(i => i.Amount);
+            var reconciledStmtAmount = _unitOfWork.BankReconciliation.Find(new BankReconSpecs((int)entity.BankStmtId, false)).Sum(i => i.Amount);
             var unreconciledStmtAmount = stmtAmount - reconciledStmtAmount;
 
             if (entity.Amount > unreconciledStmtAmount)
                 return new Response<int>("Amount is greater than Unreconciled Statment Amount");
 
             // FOR PAYMENT
-            var payment = await _unitOfWork.Payment.GetById(entity.PaymentId, new PaymentSpecs(true));
+            var payment = await _unitOfWork.Payment.GetById((int)entity.PaymentId, new PaymentSpecs(true));
             decimal paymentTotalAmount = payment.GrossPayment - payment.IncomeTax - payment.SalesTax - payment.SRBTax;
-            var reconciledPaymentAmount = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(entity.PaymentId, true)).Sum(i => i.Amount);
+            var reconciledPaymentAmount = _unitOfWork.BankReconciliation.Find(new BankReconSpecs((int)entity.PaymentId, true)).Sum(i => i.Amount);
             decimal unreconciledPaymentAmount = paymentTotalAmount - reconciledPaymentAmount;
 
             if (entity.Amount > unreconciledPaymentAmount)
@@ -70,8 +70,8 @@ namespace Application.Services
                 await _unitOfWork.SaveAsync();
 
                 //FOR BANK STATEMENT STATUS
-                decimal reconciledTotalStmtAmount = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(entity.BankStmtId, false)).Sum(i => i.Amount);
-                var bankStmtLineforUpdate = await _unitOfWork.BankStmtLines.GetById(entity.BankStmtId);
+                decimal reconciledTotalStmtAmount = _unitOfWork.BankReconciliation.Find(new BankReconSpecs((int)entity.BankStmtId, false)).Sum(i => i.Amount);
+                var bankStmtLineforUpdate = await _unitOfWork.BankStmtLines.GetById((int)entity.BankStmtId);
 
                 if (bankStmtLineforUpdate != null)
                 {
@@ -86,7 +86,7 @@ namespace Application.Services
                 }
 
                 //FOR PAYMENT STATUS
-                decimal reconciledTotalPayment = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(entity.PaymentId, true)).Sum(i => i.Amount);
+                decimal reconciledTotalPayment = _unitOfWork.BankReconciliation.Find(new BankReconSpecs((int)entity.PaymentId, true)).Sum(i => i.Amount);
 
                 if (paymentTotalAmount == reconciledTotalPayment)
                 {

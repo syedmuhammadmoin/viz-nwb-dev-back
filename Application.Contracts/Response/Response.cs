@@ -10,12 +10,14 @@ namespace Application.Contracts.Response
 {
     public class Response<T>
     {
-        private FileStreamResult filess;
-
         public T Result { get; protected set; }
         public bool IsSuccess { get; protected set; }
-        public string[] Errors { get; protected set; }
         public string Message { get; protected set; }
+        public int StatusCode { get; protected set; }
+        public string TraceId { get; protected set; }
+        public Object Errors { get;  set; }
+
+
         protected Response()
         {
         }
@@ -24,7 +26,15 @@ namespace Application.Contracts.Response
         {
             IsSuccess = true;
             Message = message;
-            Errors = null;
+            StatusCode = 200;
+            Result = data;
+        }
+        public Response(T data, string message, string[] errors)
+        {
+            IsSuccess = true;
+            Message = message;
+            StatusCode = 200;
+            Errors = errors;
             Result = data;
         }
 
@@ -33,10 +43,21 @@ namespace Application.Contracts.Response
             IsSuccess = false;
             Message = message;
         }
-
-        public Response(FileStreamResult filess)
+        public Response(string message, int statusCode, string traceId) : this(message)
         {
-            this.filess = filess;
+            IsSuccess = false;
+            Message = message;
+            StatusCode = statusCode;
+            TraceId = traceId;
+      
+        }
+        public Response(string message, int statusCode , string traceId ,Object Error) : this(message)
+        {   
+            IsSuccess = false;
+            Message = message;
+            StatusCode = statusCode;
+            TraceId = traceId;
+            Errors = Error;
         }
     }
 }

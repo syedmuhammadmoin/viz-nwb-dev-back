@@ -20,5 +20,9 @@ namespace Infrastructure.Specifications
                 ApplyOrderByDescending(i => i.Id);
             } 
         }
+        public CampusSpecs() : base(x=> x.IsActive == true)
+        {
+
+        }
     }
 }
