@@ -115,5 +115,9 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.DeductionAccount);
         }
+        public PaymentSpecs(DocType docType, int ledgerId) : base(x => x.PaymentFormType == docType && x.DocumentLedgerId == ledgerId)
+        {
+
+        }
     }
 }
