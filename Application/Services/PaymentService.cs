@@ -712,14 +712,30 @@ namespace Application.Services
 
         public Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data)
         {
+            //Fetching approved payrolltransactions
             var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, data.CampusId, "")).ToList();
 
-            if (payrollTransactions.Count == 0)
+
+            //Filtering payrolltransaction which doesn't have payrollpayments.
+            var filteredPayrollTransactions = new List<PayrollTransactionMaster>();
+
+            foreach (var i in payrollTransactions)
+            {
+                //fetching payrollpayments which have current payrolltransaction ledgerId
+                var getPayrollPayments = _unitOfWork.Payment.Find(new PaymentSpecs(DocType.PayrollPayment, (int)i.LedgerId)).FirstOrDefault();
+
+                if (getPayrollPayments == null)
+                {
+                    filteredPayrollTransactions.Add(i);
+                }
+            }
+
+            if (filteredPayrollTransactions.Count == 0)
                 return new Response<List<PayrollTransactionDto>>(null, "list is empty");
 
             var response = new List<PayrollTransactionDto>();
 
-            foreach (var i in payrollTransactions)
+            foreach (var i in filteredPayrollTransactions)
             {
                 response.Add(new PayrollTransactionService(_unitOfWork, _mapper, _employeeService, _httpContextAccessor).MapToValue(i));
             }
