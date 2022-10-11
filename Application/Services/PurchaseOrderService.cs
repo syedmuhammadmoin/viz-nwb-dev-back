@@ -150,8 +150,7 @@ namespace Application.Services
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-            try
-            {
+            
                 foreach (var role in currentUserRoles)
                 {
                     if (transition.AllowedRole.Name == role)
@@ -193,12 +192,6 @@ namespace Application.Services
 
                 return new Response<bool>("User does not have allowed role");
 
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
         }
 
         //Privte Methods for PurchaseOrder
@@ -242,8 +235,7 @@ namespace Application.Services
             po.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+
                 //Saving in table
                 var result = await _unitOfWork.PurchaseOrder.Add(po);
                 await _unitOfWork.SaveAsync();
@@ -257,12 +249,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<PurchaseOrderDto>(_mapper.Map<PurchaseOrderDto>(result), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<PurchaseOrderDto>(ex.Message);
-            }
+         
         }
 
         private async Task<Response<PurchaseOrderDto>> UpdatePO(CreatePurchaseOrderDto entity, int status)
@@ -291,8 +278,7 @@ namespace Application.Services
             po.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+          
                 //For updating data
                 _mapper.Map<CreatePurchaseOrderDto, PurchaseOrderMaster>(entity, po);
 
@@ -303,12 +289,7 @@ namespace Application.Services
               
                 //returning response
                 return new Response<PurchaseOrderDto>(_mapper.Map<PurchaseOrderDto>(po), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<PurchaseOrderDto>(ex.Message);
-            }
+           
         }
 
         public Task<Response<int>> DeleteAsync(int id)

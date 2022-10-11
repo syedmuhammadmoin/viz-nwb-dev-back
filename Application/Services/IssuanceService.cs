@@ -150,8 +150,7 @@ namespace Application.Services
                 var getUser = new GetUser(this._httpContextAccessor);
                 var userId = getUser.GetCurrentUserId();
                 var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles(); _unitOfWork.CreateTransaction();
-                try
-                {
+              
                     foreach (var role in currentUserRoles)
                     {
                         if (transition.AllowedRole.Name == role)
@@ -214,12 +213,7 @@ namespace Application.Services
                         }
                     }
                     return new Response<bool>("User does not have allowed role");
-                }
-                catch (Exception ex)
-                {
-                    _unitOfWork.Rollback();
-                    return new Response<bool>(ex.Message);
-                }
+                
             }
         }
 
@@ -267,8 +261,7 @@ namespace Application.Services
             issuance.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+           
                 //Saving in table
                 var result = await _unitOfWork.Issuance.Add(issuance);
                 await _unitOfWork.SaveAsync();
@@ -282,12 +275,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<IssuanceDto>(_mapper.Map<IssuanceDto>(result), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<IssuanceDto>(ex.Message);
-            }
+          
         }
 
         private async Task<Response<IssuanceDto>> SubmitIssuance(CreateIssuanceDto entity)
@@ -358,8 +346,7 @@ namespace Application.Services
             issuance.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+     
                 //For updating data
                 _mapper.Map<CreateIssuanceDto, IssuanceMaster>(entity, issuance);
 
@@ -370,12 +357,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<IssuanceDto>(_mapper.Map<IssuanceDto>(issuance), "Updated successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<IssuanceDto>(ex.Message);
-            }
+           
         }
 
         private Response<bool> CheckOrUpdateQty(CreateIssuanceDto issuance)

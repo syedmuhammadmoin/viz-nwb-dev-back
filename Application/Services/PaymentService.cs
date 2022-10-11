@@ -175,8 +175,7 @@ namespace Application.Services
             payment.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+          
                 //Saving in table
                 var result = await _unitOfWork.Payment.Add(payment);
                 await _unitOfWork.SaveAsync();
@@ -190,12 +189,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<PaymentDto>(_mapper.Map<PaymentDto>(result), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<PaymentDto>(ex.Message);
-            }
+      
         }
 
         private async Task<Response<PaymentDto>> UpdatePay(CreatePaymentDto entity, int status)
@@ -215,8 +209,7 @@ namespace Application.Services
                 entity.DocumentLedgerId = payment.DocumentLedgerId;
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+            
                 //For updating data
                 _mapper.Map<CreatePaymentDto, Payment>(entity, payment);
 
@@ -228,12 +221,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<PaymentDto>(_mapper.Map<PaymentDto>(payment), "Updated successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<PaymentDto>(ex.Message);
-            }
+        
         }
 
         private async Task<Response<bool>> AddToLedger(Payment payment)
@@ -516,8 +504,7 @@ namespace Application.Services
 
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-            try
-            {
+          
                 foreach (var role in currentUserRoles)
                 {
                     if (transition.AllowedRole.Name == role)
@@ -594,12 +581,7 @@ namespace Application.Services
                 }
                 return new Response<bool>("User does not have allowed role");
 
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
+         
         }
 
         //Overrided method
@@ -772,8 +754,7 @@ namespace Application.Services
         public async Task<Response<bool>> ProcessForEditPayrollPayment(int[] id)
         {
             _unitOfWork.CreateTransaction();
-            try
-            {
+            
                 var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollPayment)).FirstOrDefault();
 
                 if (checkingActiveWorkFlows == null)
@@ -797,12 +778,7 @@ namespace Application.Services
                 _unitOfWork.Commit();
 
                 return new Response<bool>(true, "Payment submitted successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
+        
         }
 
         public Response<List<PaymentDto>> GetPaymentForApproval(DeptFilter data)

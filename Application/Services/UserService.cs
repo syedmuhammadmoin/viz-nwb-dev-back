@@ -109,9 +109,7 @@ namespace Application.Services
         {
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
-            try
-            {
-                if (model == null)
+           if (model == null)
                 {
                     return new Response<bool>("Model is empty");
                 }
@@ -161,13 +159,7 @@ namespace Application.Services
 
                 _unitOfWork.Commit();
                 return new Response<bool>(true, "User created successfully");
-            }
-
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
+           
         }
 
         public async Task<Response<IEnumerable<User>>> GetUsersAsync()
@@ -231,8 +223,7 @@ namespace Application.Services
         {
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
-            try
-            {
+           
                 //Finding user by id
                 var user = await _userManager.FindByIdAsync(id);
                 if (user == null)
@@ -264,21 +255,14 @@ namespace Application.Services
 
                 _unitOfWork.Commit();
                 return new Response<bool>(true, "User updated successfully");
-            }
-
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
+        
         }
 
         public async Task<Response<bool>> ResetUserPassword(string id, ResetPasswordDto model)
         {
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
-            try
-            {
+          
                 //Getting current user
                 var currentUserId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var current = await _userManager.FindByIdAsync(currentUserId);
@@ -309,13 +293,7 @@ namespace Application.Services
 
                 _unitOfWork.Commit();
                 return new Response<bool>(true, "Password reset successfully");
-            }
-
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
+        
         }
 
         public async Task<Response<bool>> ChangePassword(string id, ChangePasswordDto model)
@@ -338,8 +316,7 @@ namespace Application.Services
 
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
-            try
-            {
+          
                 //if (id != currentUserId)
                 //{
                 //    return new Response<bool>("User id does not match with the current user id");
@@ -369,12 +346,7 @@ namespace Application.Services
 
                 _unitOfWork.Commit();
                 return new Response<bool>(true, "Password changed successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
+          
         }
 
         //For Roles
@@ -387,8 +359,7 @@ namespace Application.Services
 
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
-            try
-            {
+           
                 //Add role in identity Role table
                 var identityRole = new IdentityRole
                 {
@@ -415,12 +386,7 @@ namespace Application.Services
 
                 _unitOfWork.Commit();
                 return new Response<string>(identityRole.ToString(),"Role created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<string>(ex.Message);
-            }
+          
         }
 
         public async Task<Response<IEnumerable<IdentityRole>>> GetRolesAsync()
@@ -522,8 +488,7 @@ namespace Application.Services
 
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
-            try
-            {
+           
                 //updating role values
                 role.Name = model.RoleName;
                 var updateRole = await _roleManager.UpdateAsync(role);
@@ -548,12 +513,8 @@ namespace Application.Services
 
                 _unitOfWork.Commit();
                 return new Response<RegisterRoleDto>(model, "Role updated successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<RegisterRoleDto>(ex.Message);
-            }
+           
+            
         }
 
         public async Task<Response<IEnumerable<IdentityRole>>> GetRolesDropDown()

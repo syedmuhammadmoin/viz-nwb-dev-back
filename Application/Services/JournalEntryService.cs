@@ -162,8 +162,7 @@ namespace Application.Services
             _unitOfWork.CreateTransaction();
 
 
-            try
-            {
+            
                 //Saving in table
                 var result = await _unitOfWork.JournalEntry.Add(jv);
                 await _unitOfWork.SaveAsync();
@@ -192,12 +191,7 @@ namespace Application.Services
                 //returning response
                 return new Response<JournalEntryDto>(_mapper.Map<JournalEntryDto>(result), "Created successfully");
 
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<JournalEntryDto>(ex.Message);
-            }
+            
 
         }
 
@@ -224,9 +218,7 @@ namespace Application.Services
             jv.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
-                //For updating data
+             //For updating data
                 _mapper.Map<CreateJournalEntryDto, JournalEntryMaster>(entity, jv);
 
                 await _unitOfWork.SaveAsync();
@@ -236,12 +228,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<JournalEntryDto>(_mapper.Map<JournalEntryDto>(jv), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<JournalEntryDto>(ex.Message);
-            }
+           
         }
 
         private async Task AddToLedger(JournalEntryMaster jv)
@@ -303,8 +290,7 @@ namespace Application.Services
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
        
             _unitOfWork.CreateTransaction();
-            try
-            {
+           
                 foreach (var role in currentUserRoles)
                 {
                     if (transition.AllowedRole.Name == role)
@@ -346,12 +332,7 @@ namespace Application.Services
 
                 return new Response<bool>("User does not have allowed role");
 
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
+           
         }
 
         private List<RemarksDto> ReturningRemarks(JournalEntryDto data, DocType docType)

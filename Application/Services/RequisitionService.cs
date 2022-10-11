@@ -146,8 +146,7 @@ namespace Application.Services
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-            try
-            {
+          
                 foreach (var role in currentUserRoles)
                 {
                     if (transition.AllowedRole.Name == role)
@@ -189,12 +188,7 @@ namespace Application.Services
 
                 return new Response<bool>("User does not have allowed role");
 
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
+           
         }
 
         private async Task<Response<RequisitionDto>> SubmitRequisition(CreateRequisitionDto entity)
@@ -236,8 +230,7 @@ namespace Application.Services
             requisition.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+           
                 //Saving in table
                 var result = await _unitOfWork.Requisition.Add(requisition);
                 await _unitOfWork.SaveAsync();
@@ -251,12 +244,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<RequisitionDto>(_mapper.Map<RequisitionDto>(result), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<RequisitionDto>(ex.Message);
-            }
+         
         }
 
         private async Task<Response<RequisitionDto>> UpdateRequisition(CreateRequisitionDto entity, int status)
@@ -285,8 +273,7 @@ namespace Application.Services
             requisition.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+          
                 //For updating data
                 _mapper.Map<CreateRequisitionDto, RequisitionMaster>(entity, requisition);
 
@@ -297,12 +284,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<RequisitionDto>(_mapper.Map<RequisitionDto>(requisition), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<RequisitionDto>(ex.Message);
-            }
+            
         }
 
         public Task<Response<int>> DeleteAsync(int id)

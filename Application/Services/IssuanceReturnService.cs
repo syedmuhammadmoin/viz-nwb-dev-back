@@ -59,8 +59,7 @@ namespace Application.Services
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-            try
-            {
+        
                 foreach (var role in currentUserRoles)
                 {
                     if (transition.AllowedRole.Name == role)
@@ -114,12 +113,7 @@ namespace Application.Services
 
                 return new Response<bool>("User does not have allowed role");
 
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
+          
         }
 
         public async Task<Response<IssuanceReturnDto>> CreateAsync(CreateIssuanceReturnDto entity)
@@ -265,8 +259,7 @@ namespace Application.Services
             issuanceReturn.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+          
                 //Saving in table
                 var result = await _unitOfWork.IssuanceReturn.Add(issuanceReturn);
                 await _unitOfWork.SaveAsync();
@@ -280,12 +273,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<IssuanceReturnDto>(_mapper.Map<IssuanceReturnDto>(result), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<IssuanceReturnDto>(ex.Message);
-            }
+           
         }
 
         private async Task<Response<IssuanceReturnDto>> UpdateIssuanceReturn(CreateIssuanceReturnDto entity, int status)
@@ -337,8 +325,7 @@ namespace Application.Services
             gRN.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+         
                 //For updating data
                 _mapper.Map<CreateIssuanceReturnDto, IssuanceReturnMaster>(entity, gRN);
 
@@ -349,12 +336,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<IssuanceReturnDto>(_mapper.Map<IssuanceReturnDto>(gRN), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<IssuanceReturnDto>(ex.Message);
-            }
+          
         }
 
         public Response<bool> CheckValidation(int issuanceId, IssuanceLines issuanceLine, IssuanceReturnLines issuanceReturnLine)

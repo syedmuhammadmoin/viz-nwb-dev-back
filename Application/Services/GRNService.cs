@@ -59,8 +59,7 @@ namespace Application.Services
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-            try
-            {
+            
                 foreach (var role in currentUserRoles)
                 {
                     if (transition.AllowedRole.Name == role)
@@ -114,12 +113,7 @@ namespace Application.Services
 
                 return new Response<bool>("User does not have allowed role");
 
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
+          
         }
 
         public async Task<Response<GRNDto>> CreateAsync(CreateGRNDto entity)
@@ -263,8 +257,7 @@ namespace Application.Services
             grn.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+      
                 //Saving in table
                 var result = await _unitOfWork.GRN.Add(grn);
                 await _unitOfWork.SaveAsync();
@@ -278,12 +271,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<GRNDto>(_mapper.Map<GRNDto>(result), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<GRNDto>(ex.Message);
-            }
+          
         }
 
         private async Task<Response<GRNDto>> UpdateGRN(CreateGRNDto entity, int status)
@@ -336,9 +324,7 @@ namespace Application.Services
             gRN.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
-                //For updating data
+              //For updating data
                 _mapper.Map<CreateGRNDto, GRNMaster>(entity, gRN);
 
                 await _unitOfWork.SaveAsync();
@@ -348,12 +334,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<GRNDto>(_mapper.Map<GRNDto>(gRN), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<GRNDto>(ex.Message);
-            }
+           
         }
 
         public Task<Response<int>> DeleteAsync(int id)
