@@ -164,8 +164,7 @@ namespace Application.Services
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-            try
-            {
+           
                 foreach (var role in currentUserRoles)
                 {
                     if (transition.AllowedRole.Name == role)
@@ -220,12 +219,8 @@ namespace Application.Services
 
                 return new Response<bool>("User does not have allowed role");
 
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
+           
+          
         }
 
         //Private Methods for Invoice
@@ -262,8 +257,7 @@ namespace Application.Services
             inv.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+            
                 //Saving in table
                 var result = await _unitOfWork.Invoice.Add(inv);
                 await _unitOfWork.SaveAsync();
@@ -277,12 +271,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<InvoiceDto>(_mapper.Map<InvoiceDto>(result), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<InvoiceDto>(ex.Message);
-            }
+           
         }
 
         private async Task<Response<InvoiceDto>> UpdateINV(CreateInvoiceDto entity, int status)
@@ -304,8 +293,7 @@ namespace Application.Services
             inv.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+           
                 //For updating data
                 _mapper.Map<CreateInvoiceDto, InvoiceMaster>(entity, inv);
 
@@ -318,13 +306,8 @@ namespace Application.Services
                 _unitOfWork.Commit();
 
                 //returning response
-                return new Response<InvoiceDto>(_mapper.Map<InvoiceDto>(inv), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<InvoiceDto>(ex.Message);
-            }
+                return new Response<InvoiceDto>(_mapper.Map<InvoiceDto>(inv), "Updated successfully");
+            
         }
 
         private async Task AddToLedger(InvoiceMaster inv, Guid taxAccountId)

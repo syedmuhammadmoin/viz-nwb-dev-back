@@ -163,8 +163,7 @@ namespace Application.Services
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-            try
-            {
+          
                 foreach (var role in currentUserRoles)
                 {
                     if (transition.AllowedRole.Name == role)
@@ -203,12 +202,6 @@ namespace Application.Services
 
                 return new Response<bool>("User does not have allowed role");
 
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
         }
 
         //Private Methods for Bills
@@ -246,8 +239,7 @@ namespace Application.Services
             bill.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+         
                 //Saving in table
                 var result = await _unitOfWork.Bill.Add(bill);
                 await _unitOfWork.SaveAsync();
@@ -261,12 +253,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<BillDto>(_mapper.Map<BillDto>(result), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<BillDto>(ex.Message);
-            }
+         
         }
 
         private async Task<Response<BillDto>> UpdateBILL(CreateBillDto entity, int status)
@@ -286,8 +273,7 @@ namespace Application.Services
             bill.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+         
                 //For updating data
                 _mapper.Map<CreateBillDto, BillMaster>(entity, bill);
 
@@ -302,12 +288,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<BillDto>(_mapper.Map<BillDto>(bill), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<BillDto>(ex.Message);
-            }
+            
         }
 
         private async Task AddToLedger(BillMaster bill)

@@ -10,7 +10,8 @@ namespace Application.Contracts.DTOs
     public class CreateJournalEntryDto
     {
         public int? Id { get; set; }
-        public DateTime Date { get; set; }
+        [Required]
+        public DateTime? Date { get; set; }
         [MaxLength(500)]
         public string Description { get; set; }
         [Required]

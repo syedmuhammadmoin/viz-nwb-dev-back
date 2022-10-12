@@ -30,8 +30,7 @@ namespace Application.Services
         {
             List<Employee> employeetList = new List<Employee>();
             _unitOfWork.CreateTransaction();
-            try
-            {
+           
                 foreach (var item in entity)
                 {
                     var checkCNIC = _unitOfWork.Employee.Find(new EmployeeSpecs(item.CNIC)).FirstOrDefault();
@@ -77,12 +76,7 @@ namespace Application.Services
 
                 _unitOfWork.Commit();
                 return new Response<EmployeeDto>(null, "Records populated successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<EmployeeDto>(ex.Message);
-            }
+         
         }
 
         public async Task<PaginationResponse<List<EmployeeDto>>> GetAllAsync(TransactionFormFilter filter)

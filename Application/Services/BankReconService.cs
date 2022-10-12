@@ -63,8 +63,7 @@ namespace Application.Services
                 return new Response<int>("Amount is greater than Unreconciled Payment Amount");
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+            
                 var bankRecon = _mapper.Map<BankReconciliation>(entity);
                 await _unitOfWork.BankReconciliation.Add(bankRecon);
                 await _unitOfWork.SaveAsync();
@@ -166,12 +165,7 @@ namespace Application.Services
                 await _unitOfWork.SaveAsync();
                 _unitOfWork.Commit();
                 return new Response<int>(1, "Reconciled successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<int>(ex.Message);
-            }
+      
         }
     }
 }

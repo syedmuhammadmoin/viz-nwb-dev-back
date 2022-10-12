@@ -174,8 +174,7 @@ namespace Application.Services
             crn.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+          
                 //Saving in table
                 var result = await _unitOfWork.CreditNote.Add(crn);
                 await _unitOfWork.SaveAsync();
@@ -189,12 +188,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<CreditNoteDto>(_mapper.Map<CreditNoteDto>(result), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<CreditNoteDto>(ex.Message);
-            }
+          
         }
 
         private async Task<Response<CreditNoteDto>> UpdateCRN(CreateCreditNoteDto entity, int status)
@@ -218,8 +212,7 @@ namespace Application.Services
             crn.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+            
                 //For updating data
                 _mapper.Map<CreateCreditNoteDto, CreditNoteMaster>(entity, crn);
 
@@ -230,12 +223,8 @@ namespace Application.Services
 
                 //returning response
                 return new Response<CreditNoteDto>(_mapper.Map<CreditNoteDto>(crn), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<CreditNoteDto>(ex.Message);
-            }
+            
+         
         }
 
         private async Task AddToLedger(CreditNoteMaster crn)
@@ -340,8 +329,7 @@ namespace Application.Services
 
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-            try
-            {
+            
                 foreach (var role in currentUserRoles)
                 {
                     if (transition.AllowedRole.Name == role)
@@ -415,12 +403,7 @@ namespace Application.Services
 
                 return new Response<bool>("User does not have allowed role");
 
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
+          
         }
 
         private CreditNoteDto MapToValue(CreditNoteDto data)

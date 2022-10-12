@@ -139,7 +139,7 @@ namespace Infrastructure.Uow
 
         public void Rollback()
         {
-            _transaction.Rollback();
+            _transaction?.Rollback();
         }
 
         public void Dispose()

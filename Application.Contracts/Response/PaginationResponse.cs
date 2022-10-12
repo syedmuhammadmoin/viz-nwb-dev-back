@@ -11,6 +11,7 @@ namespace Application.Contracts.Response
         public int PageStart { get; private set; }
         public int PageEnd { get; private set; }
         public int TotalRecords { get; private set; }
+        public int StatusCode { get; private set; }
 
         public PaginationResponse(T data, int pageStart, int pageEnd, int totalRecords, string message)
         {
@@ -20,12 +21,14 @@ namespace Application.Contracts.Response
             this.Result = data;
             this.Message = message;
             this.IsSuccess = true;
+            StatusCode = 200;
         }
         public PaginationResponse(T data, string message)
         {
             this.Result = data;
             this.Message = message;
             this.IsSuccess = true;
+            StatusCode = 200;
         }
 
         public PaginationResponse(string message)

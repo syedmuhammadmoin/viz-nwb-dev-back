@@ -55,8 +55,7 @@ namespace Application.Services
 
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
-            try
-            {
+          
                 var payrollItem = await _unitOfWork.PayrollItem.Add(_mapper.Map<PayrollItem>(entity));
                 await _unitOfWork.SaveAsync();
 
@@ -88,12 +87,7 @@ namespace Application.Services
                 _unitOfWork.Commit();
 
                 return new Response<PayrollItemDto>(_mapper.Map<PayrollItemDto>(payrollItem), "Payroll created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<PayrollItemDto>(ex.Message);
-            }
+           
         }
 
         public async Task<PaginationResponse<List<PayrollItemDto>>> GetAllAsync(PayrollItemFilter filter)
@@ -167,8 +161,7 @@ namespace Application.Services
 
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
-            try
-            {
+            
                 //For updating data
                 var payrollItem = await _unitOfWork.PayrollItem.GetById((int)entity.Id);
                 _mapper.Map<CreatePayrollItemDto, PayrollItem>(entity, payrollItem);
@@ -209,12 +202,7 @@ namespace Application.Services
                 _unitOfWork.Commit();
 
                 return new Response<PayrollItemDto>(_mapper.Map<PayrollItemDto>(payrollItem), "Updated successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<PayrollItemDto>(ex.Message);
-            }
+           
         }
 
         public Task<Response<int>> DeleteAsync(int id)

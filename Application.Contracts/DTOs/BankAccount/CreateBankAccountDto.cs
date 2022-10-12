@@ -11,7 +11,7 @@ namespace Application.Contracts.DTOs
     public class CreateBankAccountDto
     {
         [Required]
-        public long AccountNumber { get; set; }
+        public long? AccountNumber { get; set; }
         [Required]
         [MaxLength(50)]
         public string AccountTitle { get; set; }
@@ -29,7 +29,7 @@ namespace Application.Contracts.DTOs
         [Range(0.00, float.MaxValue, ErrorMessage = "Please enter a positive value")]
         public decimal? OpeningBalance { get; set; }
         [Required]
-        public DateTime OpeningBalanceDate { get; set; }
+        public DateTime? OpeningBalanceDate { get; set; }
         [MaxLength(200)]
         public string Purpose { get; set; }
         [Required]

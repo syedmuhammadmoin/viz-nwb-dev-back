@@ -59,8 +59,7 @@ namespace Application.Services
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-            try
-            {
+          
                 foreach (var role in currentUserRoles)
                 {
                     if (transition.AllowedRole.Name == role)
@@ -112,12 +111,7 @@ namespace Application.Services
 
                 return new Response<bool>("User does not have allowed role");
 
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
+          
         }
 
         public async Task<Response<GoodsReturnNoteDto>> CreateAsync(CreateGoodsReturnNoteDto entity)
@@ -257,8 +251,7 @@ namespace Application.Services
             goodsReturnNote.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+           
                 //Saving in table
                 var result = await _unitOfWork.GoodsReturnNote.Add(goodsReturnNote);
                 await _unitOfWork.SaveAsync();
@@ -272,12 +265,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<GoodsReturnNoteDto>(_mapper.Map<GoodsReturnNoteDto>(result), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<GoodsReturnNoteDto>(ex.Message);
-            }
+        
         }
 
         private async Task<Response<GoodsReturnNoteDto>> UpdateGoodsReturnNote(CreateGoodsReturnNoteDto entity, int status)
@@ -329,8 +317,7 @@ namespace Application.Services
             gRN.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+           
                 //For updating data
                 _mapper.Map<CreateGoodsReturnNoteDto, GoodsReturnNoteMaster>(entity, gRN);
 
@@ -340,13 +327,8 @@ namespace Application.Services
                 _unitOfWork.Commit();
 
                 //returning response
-                return new Response<GoodsReturnNoteDto>(_mapper.Map<GoodsReturnNoteDto>(gRN), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<GoodsReturnNoteDto>(ex.Message);
-            }
+                return new Response<GoodsReturnNoteDto>(_mapper.Map<GoodsReturnNoteDto>(gRN), "Updated successfully");
+       
         }
 
         public Response<bool> CheckValidation(int grnId, GRNLines grnLine, GoodsReturnNoteLines goodsReturnNoteLine)
