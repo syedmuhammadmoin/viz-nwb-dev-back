@@ -43,6 +43,7 @@ namespace Application.Contracts.DTOs
     }
     public class ResetPasswordDto
     {
+        [Required]
         public string UserId { get; set; }
         [Required]
         [StringLength(50, MinimumLength = 5)]
