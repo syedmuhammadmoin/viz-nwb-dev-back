@@ -24,8 +24,8 @@ namespace Application.Services
 
         public Response<List<TrialBalanceDto>> GetTrialBalance(TrialBalanceFilters filters)
         {
-            filters.DocDate = filters.DocDate.Date;
-            filters.DocDate2 = filters.DocDate2.Date;
+            filters.DocDate = filters.DocDate?.Date;
+            filters.DocDate2 = filters.DocDate2?.Date;
             if (filters.DocDate > filters.DocDate2)
             {
                 return new Response<List<TrialBalanceDto>>("Start date is greater than end date");
