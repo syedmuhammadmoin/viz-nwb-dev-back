@@ -335,7 +335,7 @@ namespace Application.Services
                 _unitOfWork.Commit();
 
                 //returning response
-                return new Response<IssuanceReturnDto>(_mapper.Map<IssuanceReturnDto>(gRN), "Created successfully");
+                return new Response<IssuanceReturnDto>(_mapper.Map<IssuanceReturnDto>(gRN), "   z successfully");
           
         }
 

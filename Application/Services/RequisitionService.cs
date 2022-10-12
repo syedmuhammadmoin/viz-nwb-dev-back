@@ -283,7 +283,7 @@ namespace Application.Services
                 _unitOfWork.Commit();
 
                 //returning response
-                return new Response<RequisitionDto>(_mapper.Map<RequisitionDto>(requisition), "Created successfully");
+                return new Response<RequisitionDto>(_mapper.Map<RequisitionDto>(requisition), "Updated successfully");
             
         }
 

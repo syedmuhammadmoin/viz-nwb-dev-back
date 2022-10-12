@@ -227,7 +227,7 @@ namespace Application.Services
                 _unitOfWork.Commit();
 
                 //returning response
-                return new Response<JournalEntryDto>(_mapper.Map<JournalEntryDto>(jv), "Created successfully");
+                return new Response<JournalEntryDto>(_mapper.Map<JournalEntryDto>(jv), "Updated successfully");
            
         }
 

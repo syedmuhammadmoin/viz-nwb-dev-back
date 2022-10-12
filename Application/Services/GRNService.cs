@@ -333,7 +333,7 @@ namespace Application.Services
                 _unitOfWork.Commit();
 
                 //returning response
-                return new Response<GRNDto>(_mapper.Map<GRNDto>(gRN), "Created successfully");
+                return new Response<GRNDto>(_mapper.Map<GRNDto>(gRN), "Updated successfully");
            
         }
 

@@ -327,7 +327,7 @@ namespace Application.Services
                 _unitOfWork.Commit();
 
                 //returning response
-                return new Response<GoodsReturnNoteDto>(_mapper.Map<GoodsReturnNoteDto>(gRN), "Created successfully");
+                return new Response<GoodsReturnNoteDto>(_mapper.Map<GoodsReturnNoteDto>(gRN), "Updated successfully");
        
         }
 

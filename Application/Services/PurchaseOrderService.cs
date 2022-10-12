@@ -288,7 +288,7 @@ namespace Application.Services
                 _unitOfWork.Commit();
               
                 //returning response
-                return new Response<PurchaseOrderDto>(_mapper.Map<PurchaseOrderDto>(po), "Created successfully");
+                return new Response<PurchaseOrderDto>(_mapper.Map<PurchaseOrderDto>(po), "Updated successfully");
            
         }
 

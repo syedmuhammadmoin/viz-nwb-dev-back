@@ -306,7 +306,7 @@ namespace Application.Services
                 _unitOfWork.Commit();
 
                 //returning response
-                return new Response<InvoiceDto>(_mapper.Map<InvoiceDto>(inv), "Created successfully");
+                return new Response<InvoiceDto>(_mapper.Map<InvoiceDto>(inv), "Updated successfully");
             
         }
 
