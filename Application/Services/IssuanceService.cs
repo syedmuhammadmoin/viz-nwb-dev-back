@@ -233,8 +233,8 @@ namespace Application.Services
                         .FirstOrDefault();
 
                     if (getrequisitionLine == null)
-                        return new Response<IssuanceDto>("No Requisition line found for reconciliaiton");
-
+                        return new Response<IssuanceDto>("Selected item is not in requisition");
+                    
                     var checkValidation = CheckValidation((int)entity.RequisitionId, getrequisitionLine, _mapper.Map<IssuanceLines>(issuanceLine));
                     if (!checkValidation.IsSuccess)
                         return new Response<IssuanceDto>(checkValidation.Message);
@@ -312,7 +312,7 @@ namespace Application.Services
                         .FirstOrDefault();
 
                     if (getrequisitionLine == null)
-                        return new Response<IssuanceDto>("No Requisition line found for reconciliaiton");
+                        return new Response<IssuanceDto>("Selected item is not in requisition");
 
                     var checkValidation = CheckValidation((int)entity.RequisitionId, getrequisitionLine, _mapper.Map<IssuanceLines>(issuanceLine));
                     if (!checkValidation.IsSuccess)
@@ -368,6 +368,10 @@ namespace Application.Services
 
                 if (getStockRecord == null)
                     return new Response<bool>("Item not found in stock");
+
+                if (getStockRecord.AvailableQuantity == 0)
+                    return new Response<bool>("Selected item is out of stock");
+
 
                 if (line.Quantity > getStockRecord.AvailableQuantity)
                     return new Response<bool>("Selected item quantity is exceeding available quantity");
