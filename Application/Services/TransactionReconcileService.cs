@@ -33,8 +33,7 @@ namespace Application.Services
 
             //Begin Transaction
             _unitOfWork.CreateTransaction();
-            try
-            {
+          
                 var reconcile = await ReconciliationProcess(entity);
                 if (!reconcile.IsSuccess)
                 {
@@ -44,12 +43,7 @@ namespace Application.Services
                 _unitOfWork.Commit();
 
                 return new Response<bool>(true, "Reconciled Successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
+           
         }
 
 

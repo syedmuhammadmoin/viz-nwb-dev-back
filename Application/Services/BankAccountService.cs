@@ -37,8 +37,7 @@ namespace Application.Services
                 return new Response<BankAccountDto>("Duplicate code");
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+          
                 var ChAccount = new Level4(
                     entity.AccountTitle,
                     entity.AccountCode,
@@ -81,12 +80,7 @@ namespace Application.Services
                 //returning response
                 return new Response<BankAccountDto>(_mapper.Map<BankAccountDto>(bankAccount), "Created successfully");
 
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<BankAccountDto>(ex.Message);
-            }
+       
         }
 
         public async Task<PaginationResponse<List<BankAccountDto>>> GetAllAsync(TransactionFormFilter filter)
@@ -128,8 +122,7 @@ namespace Application.Services
                 return new Response<BankAccountDto>("Duplicate code");
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+           
                 //For updating data
                 _mapper.Map<UpdateBankAccountDto, BankAccount>(entity, bankAccount);
 
@@ -152,12 +145,7 @@ namespace Application.Services
                 await _unitOfWork.SaveAsync();
                 _unitOfWork.Commit();
                 return new Response<BankAccountDto>(_mapper.Map<BankAccountDto>(bankAccount), "Updated successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<BankAccountDto>(ex.Message);
-            }
+            
         }
 
         public Task<Response<int>> DeleteAsync(int id)

@@ -248,8 +248,7 @@ namespace Application.Services
             decimal netPay = grossPay - totalDeductions;
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+          
                 // updating data in payroll transaction master table
                 var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById(id, new PayrollTransactionSpecs(true));
 
@@ -274,19 +273,13 @@ namespace Application.Services
                 _unitOfWork.Commit();
                 //returning response
                 return new Response<PayrollTransactionDto>(_mapper.Map<PayrollTransactionDto>(getPayrollTransaction), "Updated successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<PayrollTransactionDto>(ex.Message);
-            }
+            
         }
 
         private async Task<Response<PayrollTransactionDto>> UpdatePayrollTransaction(UpdatePayrollTransactionDto entity, int status)
         {
             _unitOfWork.CreateTransaction();
-            try
-            {
+          
                 var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById((int)entity.Id);
 
                 if (getPayrollTransaction == null)
@@ -301,12 +294,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<PayrollTransactionDto>(null, "Updated successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<PayrollTransactionDto>(ex.Message);
-            }
+           
         }
 
         private async Task<Response<PayrollTransactionDto>> SubmitPayrollTransaction(UpdatePayrollTransactionDto entity)
@@ -462,8 +450,7 @@ namespace Application.Services
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-            try
-            {
+         
                 foreach (var role in currentUserRoles)
                 {
                     if (transition.AllowedRole.Name == role)
@@ -501,12 +488,7 @@ namespace Application.Services
 
                 return new Response<bool>("User does not have allowed role");
 
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
+          
         }
 
         public async Task<Response<PayrollTransactionDto>> UpdateAsync(UpdatePayrollTransactionDto entity)
@@ -628,8 +610,7 @@ namespace Application.Services
         public async Task<Response<bool>> ProcessForEdit(int[] id)
         {
             _unitOfWork.CreateTransaction();
-            try
-            {
+        
                 var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
 
                 if (checkingActiveWorkFlows == null)
@@ -652,12 +633,9 @@ namespace Application.Services
                 _unitOfWork.Commit();
 
                 return new Response<bool>(true, "Payroll transaction submitted successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<bool>(ex.Message);
-            }
+            
+         
+
         }
 
         public async Task<Response<bool>> ProcessForApproval(CreateApprovalProcessDto data)

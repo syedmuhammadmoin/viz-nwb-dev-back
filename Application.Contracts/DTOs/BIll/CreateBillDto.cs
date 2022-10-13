@@ -13,9 +13,9 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? VendorId { get; set; }
         [Required]
-        public DateTime BillDate { get; set; }
+        public DateTime? BillDate { get; set; }
         [Required]
-        public DateTime DueDate { get; set; }
+        public DateTime? DueDate { get; set; }
         public string Contact { get; set; }
         [Required]
         public int? CampusId { get; set; }

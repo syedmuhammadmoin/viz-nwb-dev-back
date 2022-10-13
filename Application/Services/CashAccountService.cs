@@ -33,8 +33,7 @@ namespace Application.Services
                 return new Response<CashAccountDto>("Duplicate code");
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+           
                 var ChAccount = new Level4(
                     entity.CashAccountName,
                     entity.AccountCode,
@@ -68,12 +67,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<CashAccountDto>(_mapper.Map<CashAccountDto>(cashAccount), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<CashAccountDto>(ex.Message);
-            }
+        
         }
 
         public async Task<PaginationResponse<List<CashAccountDto>>> GetAllAsync(TransactionFormFilter filter)
@@ -111,9 +105,7 @@ namespace Application.Services
                 return new Response<CashAccountDto>("Duplicate code");
 
             _unitOfWork.CreateTransaction();
-            try
-            {
-
+         
                 var cashAccount = await _unitOfWork.CashAccount.GetById((int)entity.Id);
 
                 if (cashAccount == null)
@@ -134,12 +126,7 @@ namespace Application.Services
                 await _unitOfWork.SaveAsync();
                 _unitOfWork.Commit();
                 return new Response<CashAccountDto>(_mapper.Map<CashAccountDto>(cashAccount), "Updated successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<CashAccountDto>(ex.Message);
-            }
+       
         }
 
         private async Task AddToLedger(CashAccount cashAccount)

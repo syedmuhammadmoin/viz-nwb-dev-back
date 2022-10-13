@@ -22,7 +22,7 @@ namespace Application.Services
         }
         public Response<List<BalanceSheetDto>> GetBalanceSheet(BalanceSheetFilters balanceSheet)
         {
-            balanceSheet.DocDate = balanceSheet.DocDate.Date;
+            balanceSheet.DocDate = balanceSheet.DocDate?.Date;
 
             if (balanceSheet.CampusName == null)
             {

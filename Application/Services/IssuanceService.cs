@@ -150,8 +150,7 @@ namespace Application.Services
                 var getUser = new GetUser(this._httpContextAccessor);
                 var userId = getUser.GetCurrentUserId();
                 var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles(); _unitOfWork.CreateTransaction();
-                try
-                {
+              
                     foreach (var role in currentUserRoles)
                     {
                         if (transition.AllowedRole.Name == role)
@@ -214,12 +213,7 @@ namespace Application.Services
                         }
                     }
                     return new Response<bool>("User does not have allowed role");
-                }
-                catch (Exception ex)
-                {
-                    _unitOfWork.Rollback();
-                    return new Response<bool>(ex.Message);
-                }
+                
             }
         }
 
@@ -239,8 +233,8 @@ namespace Application.Services
                         .FirstOrDefault();
 
                     if (getrequisitionLine == null)
-                        return new Response<IssuanceDto>("No Requisition line found for reconciliaiton");
-
+                        return new Response<IssuanceDto>("Selected item is not in requisition");
+                    
                     var checkValidation = CheckValidation((int)entity.RequisitionId, getrequisitionLine, _mapper.Map<IssuanceLines>(issuanceLine));
                     if (!checkValidation.IsSuccess)
                         return new Response<IssuanceDto>(checkValidation.Message);
@@ -267,8 +261,7 @@ namespace Application.Services
             issuance.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+           
                 //Saving in table
                 var result = await _unitOfWork.Issuance.Add(issuance);
                 await _unitOfWork.SaveAsync();
@@ -282,12 +275,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<IssuanceDto>(_mapper.Map<IssuanceDto>(result), "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<IssuanceDto>(ex.Message);
-            }
+          
         }
 
         private async Task<Response<IssuanceDto>> SubmitIssuance(CreateIssuanceDto entity)
@@ -324,7 +312,7 @@ namespace Application.Services
                         .FirstOrDefault();
 
                     if (getrequisitionLine == null)
-                        return new Response<IssuanceDto>("No Requisition line found for reconciliaiton");
+                        return new Response<IssuanceDto>("Selected item is not in requisition");
 
                     var checkValidation = CheckValidation((int)entity.RequisitionId, getrequisitionLine, _mapper.Map<IssuanceLines>(issuanceLine));
                     if (!checkValidation.IsSuccess)
@@ -358,8 +346,7 @@ namespace Application.Services
             issuance.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            try
-            {
+     
                 //For updating data
                 _mapper.Map<CreateIssuanceDto, IssuanceMaster>(entity, issuance);
 
@@ -370,12 +357,7 @@ namespace Application.Services
 
                 //returning response
                 return new Response<IssuanceDto>(_mapper.Map<IssuanceDto>(issuance), "Updated successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<IssuanceDto>(ex.Message);
-            }
+           
         }
 
         private Response<bool> CheckOrUpdateQty(CreateIssuanceDto issuance)
@@ -386,6 +368,10 @@ namespace Application.Services
 
                 if (getStockRecord == null)
                     return new Response<bool>("Item not found in stock");
+
+                if (getStockRecord.AvailableQuantity == 0)
+                    return new Response<bool>("Selected item is out of stock");
+
 
                 if (line.Quantity > getStockRecord.AvailableQuantity)
                     return new Response<bool>("Selected item quantity is exceeding available quantity");

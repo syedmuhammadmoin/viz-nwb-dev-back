@@ -62,10 +62,10 @@ namespace Application.Services
                 });
 
             var result = from glv in generalLedgerView
-                         where (glv.AccountName.Contains(pnl.AccountName) &&
-                         (glv.BusinessPartnerName.Contains(pnl.BusinessPartner) &&
-                         glv.WarehouseName.Contains(pnl.Warehouse) &&
-                         glv.CampusName.Contains(pnl.Campus) &&
+                         where (glv.AccountName.Contains(pnl.AccountName != null ? pnl.AccountName : "") &&
+                         (glv.BusinessPartnerName.Contains(pnl.BusinessPartner != null ? pnl.BusinessPartner : "") &&
+                         glv.WarehouseName.Contains(pnl.Warehouse != null ? pnl.Warehouse : "") &&
+                         glv.CampusName.Contains(pnl.Campus != null ? pnl.Warehouse : "") &&
                          (glv.Level1Id == new Guid("40000000-5566-7788-99AA-BBCCDDEEFF00") || glv.Level1Id == new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00")) &&
                          (glv.DocDate >= pnl.DocDate && glv.DocDate <= pnl.DocDate2)))
                          select new

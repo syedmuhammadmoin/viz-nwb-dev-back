@@ -11,9 +11,9 @@ namespace Application.Contracts.Filters
     {
         public string AccountName { get; set; }
         [Required]
-        public DateTime DocDate { get; set; }
+        public DateTime? DocDate { get; set; }
         [Required]
-        public DateTime DocDate2 { get; set; }
+        public DateTime? DocDate2 { get; set; }
         public string BusinessPartner { get; set; }
         public string Warehouse { get; set; }
         public string Campus { get; set; }

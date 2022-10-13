@@ -26,22 +26,22 @@ namespace Vizalys.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<WorkFlowStatusDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
-            var campuses = await _workFlowStatusService.GetAllAsync(filter);
-            if (campuses.IsSuccess)
-                return Ok(campuses); // Status Code : 200
+            var workflowStatuses = await _workFlowStatusService.GetAllAsync(filter);
+            if (workflowStatuses.IsSuccess)
+                return Ok(workflowStatuses); // Status Code : 200
 
-            return BadRequest(campuses); // Status code : 400
+            return BadRequest(workflowStatuses); // Status code : 400
         }
 
         [ClaimRequirement("Permission", new string[] { Permissions.WorkflowStatusClaims.Create })]
         [HttpPost]
         public async Task<ActionResult<Response<WorkFlowStatusDto>>> CreateAsync(CreateWorkFlowStatusDto entity)
         {
-            var campus = await _workFlowStatusService.CreateAsync(entity);
-            if (campus.IsSuccess)
-                return Ok(campus); // Status Code : 200
+            var workflowStatus = await _workFlowStatusService.CreateAsync(entity);
+            if (workflowStatus.IsSuccess)
+                return Ok(workflowStatus); // Status Code : 200
 
-            return BadRequest(campus); // Status code : 400
+            return BadRequest(workflowStatus); // Status code : 400
         }
 
         [ClaimRequirement("Permission", new string[] { Permissions.WorkflowStatusClaims.Create, Permissions.WorkflowStatusClaims.View, Permissions.WorkflowStatusClaims.Delete, Permissions.WorkflowStatusClaims.Edit })]

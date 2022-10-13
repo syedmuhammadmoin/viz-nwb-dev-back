@@ -50,8 +50,7 @@ namespace Application.Services
             if (file.Length > 5242880)
                 return new Response<int>("File size must be less than 5mb");
             _unitOfWork.CreateTransaction();
-            try
-            {
+           
                 string[] supportedTypes = { "txt", "doc", "docx", "pdf", "xls", "xlsx", "png", "jpeg", "jpg" };
                 var fileExt = System.IO.Path.GetExtension(file.FileName).Substring(1);
 
@@ -135,12 +134,7 @@ namespace Application.Services
                     _unitOfWork.Commit();
                 }
                 return new Response<int>(1, "Created successfully");
-            }
-            catch (Exception ex)
-            {
-                _unitOfWork.Rollback();
-                return new Response<int>(ex.Message);
-            }
+          
         }
     }
 }

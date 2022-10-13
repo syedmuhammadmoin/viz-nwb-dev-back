@@ -77,10 +77,10 @@ namespace Application.Services
 
             //Getting Data for Opening Balance
             var forOpeningBalance = generalLedgerView
-            .Where(e => (e.AccountName.Contains(filters.AccountName)) &&
-            (e.BusinessPartnerName.Contains(filters.BusinessPartnerName)) &&
-            (e.CampusName.Contains(filters.CampusName)) &&
-            (e.WarehouseName.Contains(filters.WarehouseName)) &&
+            .Where(e => (e.AccountName.Contains(filters.AccountName != null ? filters.AccountName : "")) &&
+            (e.BusinessPartnerName.Contains(filters.BusinessPartnerName != null ? filters.BusinessPartnerName : "")) &&
+            (e.CampusName.Contains(filters.CampusName != null ? filters.CampusName : "")) &&
+            (e.WarehouseName.Contains(filters.WarehouseName != null ? filters.WarehouseName : "")) &&
             (e.DocDate < filters.DocDate))
             .OrderBy(x => x.DocDate)
             .ThenBy(x => x.TransactionId)
@@ -111,10 +111,10 @@ namespace Application.Services
 
             //Getting data for the given data range
             var glWithOutOpeningBalance = generalLedgerView
-                .Where(e => (e.AccountName.Contains(filters.AccountName)) &&
-                (e.BusinessPartnerName.Contains(filters.BusinessPartnerName)) &&
-                (e.CampusName.Contains(filters.CampusName)) &&
-                (e.WarehouseName.Contains(filters.WarehouseName)))
+                .Where(e => (e.AccountName.Contains(filters.AccountName != null ? filters.AccountName : "")) &&
+                (e.BusinessPartnerName.Contains(filters.BusinessPartnerName != null ? filters.BusinessPartnerName : ""))&&
+                (e.CampusName.Contains(filters.CampusName != null ? filters.CampusName : "")) &&
+                (e.WarehouseName.Contains(filters.WarehouseName != null ? filters.WarehouseName : "")))
                 .OrderBy(x => x.DocDate)
                 .ThenBy(x => x.TransactionId)
                 .GroupBy(x => x.AccountId)
@@ -144,10 +144,10 @@ namespace Application.Services
                         ));
 
             var glWithOutOpeningBalance2 = glWithOutOpeningBalance
-                .Where(e => (e.AccountName.Contains(filters.AccountName)) &&
-                (e.BusinessPartnerName.Contains(filters.BusinessPartnerName)) &&
-                (e.CampusName.Contains(filters.CampusName)) &&
-                (e.WarehouseName.Contains(filters.WarehouseName)) &&
+                .Where(e => (e.AccountName.Contains(filters.AccountName != null ? filters.AccountName : "")) &&
+                (e.BusinessPartnerName.Contains(filters.BusinessPartnerName != null ? filters.BusinessPartnerName : ""))&&
+                (e.CampusName.Contains(filters.CampusName != null ? filters.CampusName : "")) &&
+                (e.WarehouseName.Contains(filters.WarehouseName != null ? filters.WarehouseName : "")) &&
                 (e.DocDate >= filters.DocDate && e.DocDate <= filters.DocDate2));
 
 
