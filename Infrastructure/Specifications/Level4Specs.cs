@@ -38,7 +38,6 @@ namespace Infrastructure.Specifications
                   || x.Level3_id == new Guid("12110000-5566-7788-99AA-BBCCDDEEFF00")
                   || x.Level3_id == new Guid("12120000-5566-7788-99AA-BBCCDDEEFF00"))
                   : (x => x.Level3_id == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00")
-                  || x.Level3_id == new Guid("22300000-5566-7788-99AA-BBCCDDEEFF00")
                   ))
         {
         }
@@ -50,8 +49,7 @@ namespace Infrastructure.Specifications
                   && x.Level3_id != new Guid("12900000-5566-7788-99AA-BBCCDDEEFF00")
                   && x.Level3_id != new Guid("12110000-5566-7788-99AA-BBCCDDEEFF00")
                   && x.Level3_id != new Guid("12120000-5566-7788-99AA-BBCCDDEEFF00")
-                  && x.Level3_id != new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00")
-                  && x.Level3_id != new Guid("22300000-5566-7788-99AA-BBCCDDEEFF00"))
+                  && x.Level3_id != new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00"))
         {
         }
 
