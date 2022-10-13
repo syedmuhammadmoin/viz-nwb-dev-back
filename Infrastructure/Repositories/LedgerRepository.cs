@@ -35,8 +35,7 @@ namespace Infrastructure.Repositories
                 || getLevel3 == new Guid("12900000-5566-7788-99AA-BBCCDDEEFF00")
                 || getLevel3 == new Guid("12110000-5566-7788-99AA-BBCCDDEEFF00")
                 || getLevel3 == new Guid("12120000-5566-7788-99AA-BBCCDDEEFF00")
-                || getLevel3 == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00")
-                || getLevel3 == new Guid("22300000-5566-7788-99AA-BBCCDDEEFF00"))
+                || getLevel3 == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00"))
             {
                 entity.setIsReconcilable(true);
             }
@@ -66,8 +65,7 @@ namespace Infrastructure.Repositories
                 || getLevel3 == new Guid("12900000-5566-7788-99AA-BBCCDDEEFF00")
                 || getLevel3 == new Guid("12110000-5566-7788-99AA-BBCCDDEEFF00")
                 || getLevel3 == new Guid("12120000-5566-7788-99AA-BBCCDDEEFF00")
-                || getLevel3 == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00")
-                || getLevel3 == new Guid("22300000-5566-7788-99AA-BBCCDDEEFF00"))
+                || getLevel3 == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00"))
                 {
                     item.setIsReconcilable(true);
                 }

@@ -109,57 +109,61 @@ namespace Application.Services
         {
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
-           if (model == null)
-                {
-                    return new Response<bool>("Model is empty");
-                }
+            if (model == null)
+            {
+                return new Response<bool>("Model is empty");
+            }
 
-                var getEmployee = await _unitOfWork.Employee.GetById(model.EmployeeId);
+            var getEmployee = await _unitOfWork.Employee.GetById(model.EmployeeId);
 
-                if (model.EmployeeId != getEmployee.Id)
-                {
-                    return new Response<bool>("Only Employees can be a user");
-                }
+            if (model.EmployeeId != getEmployee.Id)
+            {
+                return new Response<bool>("Only Employees can be a user");
+            }
 
-                //Checking password
-                if (model.Password != model.ConfirmPassword)
-                    return new Response<bool>("Confirm password doesn't match with the password");
+            //Checking password
+            if (model.Password != model.ConfirmPassword)
+                return new Response<bool>("Confirm password doesn't match with the password");
 
-               //setting Employee Email from user
-                getEmployee.setEmployeeEmail(model.Email);
-                await _unitOfWork.SaveAsync();
+            //setting Employee Email from user
+            getEmployee.setEmployeeEmail(model.Email);
+            await _unitOfWork.SaveAsync();
 
-                //Registering user
-                var user = new User
-                {
-                    EmployeeId = getEmployee.Id,
-                    Email = model.Email,
-                    UserName = model.Email,
-                };
+            //Registering user
+            var user = new User
+            {
+                EmployeeId = getEmployee.Id,
+                Email = model.Email,
+                UserName = model.Email,
+            };
 
-                var userCreated = await _userManager.CreateAsync(user, model.Password);
+            var userCreated = await _userManager.CreateAsync(user, model.Password);
 
-                if (!userCreated.Succeeded)
-                {
-                    _unitOfWork.Rollback();
-                    return new Response<bool>(userCreated.Errors.Select(e => e.Description).FirstOrDefault());
-                }
-                //Adding roles for user
-                var roles = await _userManager.GetRolesAsync(user);
+            if (!userCreated.Succeeded)
+            {
+                _unitOfWork.Rollback();
+                return new Response<bool>(userCreated.Errors.Select(e => e.Description).FirstOrDefault());
+            }
+            //Adding roles for user
+            var roles = await _userManager.GetRolesAsync(user);
 
-                var rolesAdded = await _userManager.RemoveFromRolesAsync(user, roles);
+            var rolesAdded = await _userManager.RemoveFromRolesAsync(user, roles);
 
-                rolesAdded = await _userManager.AddToRolesAsync(user, model.UserRoles.Where(x => x.Selected).Select(y => y.RoleName));
+            //Checking if user has selected any role
+            if (model.UserRoles.Where(x => x.Selected).Count() < 1)
+                return new Response<bool>("At least 1 role is required for creating User");
 
-                if (!rolesAdded.Succeeded)
-                {
-                    _unitOfWork.Rollback();
-                    return new Response<bool>(rolesAdded.Errors.Select(e => e.Description).FirstOrDefault());
-                }
+            rolesAdded = await _userManager.AddToRolesAsync(user, model.UserRoles.Where(x => x.Selected).Select(y => y.RoleName));
 
-                _unitOfWork.Commit();
-                return new Response<bool>(true, "User created successfully");
-           
+            if (!rolesAdded.Succeeded)
+            {
+                _unitOfWork.Rollback();
+                return new Response<bool>(rolesAdded.Errors.Select(e => e.Description).FirstOrDefault());
+            }
+
+            _unitOfWork.Commit();
+            return new Response<bool>(true, "User created successfully");
+
         }
 
         public async Task<Response<IEnumerable<User>>> GetUsersAsync()
@@ -223,77 +227,82 @@ namespace Application.Services
         {
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
-           
-                //Finding user by id
-                var user = await _userManager.FindByIdAsync(id);
-                if (user == null)
-                {
-                    return new Response<bool>("User not found");
-                }
-                //Updating user details
-                user.Email = model.Email;
-                user.UserName = model.UserName;
 
-                var updateUser = await _userManager.UpdateAsync(user);
-                if (!updateUser.Succeeded)
-                {
-                    _unitOfWork.Rollback();
-                    return new Response<bool>(updateUser.Errors.Select(e => e.Description).FirstOrDefault());
-                }
-                //Getting roles of user
-                var roles = await _userManager.GetRolesAsync(user);
-                // Removing all roles from user
-                var updateRole = await _userManager.RemoveFromRolesAsync(user, roles);
-                //Updating roles for user
-                updateRole = await _userManager.AddToRolesAsync(user, model.UserRoles.Where(x => x.Selected).Select(y => y.RoleName));
+            //Finding user by id
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return new Response<bool>("User not found");
+            }
+            //Updating user details
+            user.Email = model.Email;
+            user.UserName = model.UserName;
 
-                if (!updateRole.Succeeded)
-                {
-                    _unitOfWork.Rollback();
-                    return new Response<bool>(updateRole.Errors.Select(e => e.Description).FirstOrDefault());
-                }
+            var updateUser = await _userManager.UpdateAsync(user);
+            if (!updateUser.Succeeded)
+            {
+                _unitOfWork.Rollback();
+                return new Response<bool>(updateUser.Errors.Select(e => e.Description).FirstOrDefault());
+            }
+            //Getting roles of user
+            var roles = await _userManager.GetRolesAsync(user);
+            // Removing all roles from user
+            var updateRole = await _userManager.RemoveFromRolesAsync(user, roles);
 
-                _unitOfWork.Commit();
-                return new Response<bool>(true, "User updated successfully");
-        
+            //Checking if user has selected any role
+            if (model.UserRoles.Where(x => x.Selected).Count() < 1)
+                return new Response<bool>("At least 1 role is required for creating User");
+
+            //Updating roles for user
+            updateRole = await _userManager.AddToRolesAsync(user, model.UserRoles.Where(x => x.Selected).Select(y => y.RoleName));
+
+            if (!updateRole.Succeeded)
+            {
+                _unitOfWork.Rollback();
+                return new Response<bool>(updateRole.Errors.Select(e => e.Description).FirstOrDefault());
+            }
+
+            _unitOfWork.Commit();
+            return new Response<bool>(true, "User updated successfully");
+
         }
 
         public async Task<Response<bool>> ResetUserPassword(string id, ResetPasswordDto model)
         {
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
-          
-                //Getting current user
-                var currentUserId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var current = await _userManager.FindByIdAsync(currentUserId);
 
-                //Checking user password
-                var checkCurrentUserPassword = await _userManager.CheckPasswordAsync(current, model.AdminPassword);
-                if (!checkCurrentUserPassword)
-                    return new Response<bool>("Invalid Password");
+            //Getting current user
+            var currentUserId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var current = await _userManager.FindByIdAsync(currentUserId);
 
-                //Checking input password
-                if (model.Password != model.ConfirmPassword)
-                    return new Response<bool>("Confirm password doesn't match the password");
+            //Checking user password
+            var checkCurrentUserPassword = await _userManager.CheckPasswordAsync(current, model.AdminPassword);
+            if (!checkCurrentUserPassword)
+                return new Response<bool>("Invalid Password");
 
-                //Finding user by id
-                var user = await _userManager.FindByIdAsync(id);
-                if (user == null)
-                {
-                    return new Response<bool>("User not found");
-                }
+            //Checking input password
+            if (model.Password != model.ConfirmPassword)
+                return new Response<bool>("Confirm password doesn't match the password");
 
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var result = await _userManager.ResetPasswordAsync(user, token, model.Password);
+            //Finding user by id
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return new Response<bool>("User not found");
+            }
 
-                if (!result.Succeeded)
-                {
-                    return new Response<bool>("Something went wrong, contact your administrator");
-                }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, model.Password);
 
-                _unitOfWork.Commit();
-                return new Response<bool>(true, "Password reset successfully");
-        
+            if (!result.Succeeded)
+            {
+                return new Response<bool>("Something went wrong, contact your administrator");
+            }
+
+            _unitOfWork.Commit();
+            return new Response<bool>(true, "Password reset successfully");
+
         }
 
         public async Task<Response<bool>> ChangePassword(string id, ChangePasswordDto model)
@@ -316,37 +325,37 @@ namespace Application.Services
 
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
-          
-                //if (id != currentUserId)
-                //{
-                //    return new Response<bool>("User id does not match with the current user id");
-                //}
-                //Getting user by id
-                var user = await _userManager.FindByIdAsync(id);
-                if (user == null)
-                {
-                    return new Response<bool>("User id does not match with the current user id");
-                }
 
-                //Checking current password
-                var checkCurrentPassword = await _userManager.CheckPasswordAsync(user, model.CurrentPassword);
-                if (!checkCurrentPassword)
-                    return new Response<bool>("Current password not corrected");
+            //if (id != currentUserId)
+            //{
+            //    return new Response<bool>("User id does not match with the current user id");
+            //}
+            //Getting user by id
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return new Response<bool>("User id does not match with the current user id");
+            }
 
-                //Checking input password
-                if (model.Password != model.ConfirmPassword)
-                    return new Response<bool>("Confirm password doesn't match the password");
+            //Checking current password
+            var checkCurrentPassword = await _userManager.CheckPasswordAsync(user, model.CurrentPassword);
+            if (!checkCurrentPassword)
+                return new Response<bool>("Current password not corrected");
 
-                var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.Password);
+            //Checking input password
+            if (model.Password != model.ConfirmPassword)
+                return new Response<bool>("Confirm password doesn't match the password");
 
-                if (!result.Succeeded)
-                {
-                    return new Response<bool>("Something went wrong, contact your administrator");
-                }
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.Password);
 
-                _unitOfWork.Commit();
-                return new Response<bool>(true, "Password changed successfully");
-          
+            if (!result.Succeeded)
+            {
+                return new Response<bool>("Something went wrong, contact your administrator");
+            }
+
+            _unitOfWork.Commit();
+            return new Response<bool>(true, "Password changed successfully");
+
         }
 
         //For Roles
@@ -359,34 +368,34 @@ namespace Application.Services
 
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
-           
-                //Add role in identity Role table
-                var identityRole = new IdentityRole
-                {
-                    Name = model.RoleName
-                };
-                var createRole = await _roleManager.CreateAsync(identityRole); ;
 
-                //If role not created successfully
-                if (!createRole.Succeeded)
-                    return new Response<string>("Role did not create");
+            //Add role in identity Role table
+            var identityRole = new IdentityRole
+            {
+                Name = model.RoleName
+            };
+            var createRole = await _roleManager.CreateAsync(identityRole); ;
 
-                //Getting and removing all claims for this role
-                var claims = await _roleManager.GetClaimsAsync(identityRole);
-                foreach (var claim in claims)
-                {
-                    await _roleManager.RemoveClaimAsync(identityRole, claim);
-                }
-                //Add selected claims in role
-                var selectedClaims = model.RoleClaims.Where(a => a.Selected).ToList();
-                foreach (var claim in selectedClaims)
-                {
-                    await _roleManager.AddPermissionClaim(identityRole, claim.Value);
-                }
+            //If role not created successfully
+            if (!createRole.Succeeded)
+                return new Response<string>("Role did not create");
 
-                _unitOfWork.Commit();
-                return new Response<string>(identityRole.ToString(),"Role created successfully");
-          
+            //Getting and removing all claims for this role
+            var claims = await _roleManager.GetClaimsAsync(identityRole);
+            foreach (var claim in claims)
+            {
+                await _roleManager.RemoveClaimAsync(identityRole, claim);
+            }
+            //Add selected claims in role
+            var selectedClaims = model.RoleClaims.Where(a => a.Selected).ToList();
+            foreach (var claim in selectedClaims)
+            {
+                await _roleManager.AddPermissionClaim(identityRole, claim.Value);
+            }
+
+            _unitOfWork.Commit();
+            return new Response<string>(identityRole.ToString(), "Role created successfully");
+
         }
 
         public async Task<Response<IEnumerable<IdentityRole>>> GetRolesAsync()
@@ -488,33 +497,33 @@ namespace Application.Services
 
             // with rollback Transaction
             _unitOfWork.CreateTransaction();
-           
-                //updating role values
-                role.Name = model.RoleName;
-                var updateRole = await _roleManager.UpdateAsync(role);
 
-                if (!updateRole.Succeeded)
-                {
-                    _unitOfWork.Rollback();
-                    return new Response<RegisterRoleDto>(updateRole.Errors.Select(e => e.Description).FirstOrDefault());
-                }
-                //getting and removing all claims for this role
-                var claims = await _roleManager.GetClaimsAsync(role);
-                foreach (var claim in claims)
-                {
-                    await _roleManager.RemoveClaimAsync(role, claim);
-                }
-                //adding selecting claims in this role
-                var selectedClaims = model.RoleClaims.Where(a => a.Selected).ToList();
-                foreach (var claim in selectedClaims)
-                {
-                    await _roleManager.AddPermissionClaim(role, claim.Value);
-                }
+            //updating role values
+            role.Name = model.RoleName;
+            var updateRole = await _roleManager.UpdateAsync(role);
 
-                _unitOfWork.Commit();
-                return new Response<RegisterRoleDto>(model, "Role updated successfully");
-           
-            
+            if (!updateRole.Succeeded)
+            {
+                _unitOfWork.Rollback();
+                return new Response<RegisterRoleDto>(updateRole.Errors.Select(e => e.Description).FirstOrDefault());
+            }
+            //getting and removing all claims for this role
+            var claims = await _roleManager.GetClaimsAsync(role);
+            foreach (var claim in claims)
+            {
+                await _roleManager.RemoveClaimAsync(role, claim);
+            }
+            //adding selecting claims in this role
+            var selectedClaims = model.RoleClaims.Where(a => a.Selected).ToList();
+            foreach (var claim in selectedClaims)
+            {
+                await _roleManager.AddPermissionClaim(role, claim.Value);
+            }
+
+            _unitOfWork.Commit();
+            return new Response<RegisterRoleDto>(model, "Role updated successfully");
+
+
         }
 
         public async Task<Response<IEnumerable<IdentityRole>>> GetRolesDropDown()
@@ -578,7 +587,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.IssuanceReturnClaims), "12");
 
             var allClaimValues = allPermissions.Select(a => a.Value).ToList();
-            return new Response<List<string>>(allClaimValues,"Returning all claims");
+            return new Response<List<string>>(allClaimValues, "Returning all claims");
 
         }
     }
