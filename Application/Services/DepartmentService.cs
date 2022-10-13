@@ -35,7 +35,7 @@ namespace Application.Services
                 var getDepartment = await _unitOfWork.Department.GetById((int)item.Id);
 
                 //for Checking if campus is Active
-                var getCampus = await _unitOfWork.Campus.GetById(item.CampusId);
+                var getCampus = await _unitOfWork.Campus.GetById((int)item.CampusId);
 
                 if (getCampus.IsActive == true)
                 {
