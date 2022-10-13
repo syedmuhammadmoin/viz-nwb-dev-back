@@ -114,7 +114,7 @@ namespace Application.Services
                 return new Response<bool>("Model is empty");
             }
 
-            var getEmployee = await _unitOfWork.Employee.GetById(model.EmployeeId);
+            var getEmployee = await _unitOfWork.Employee.GetById((int)model.EmployeeId);
 
             if (model.EmployeeId != getEmployee.Id)
             {
