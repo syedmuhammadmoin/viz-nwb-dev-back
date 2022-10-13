@@ -11,7 +11,7 @@ namespace Application.Contracts.DTOs
     {
         [Required]
         public int? Id { get; set; }
-        [MaxLength(50)]
+        [MaxLength(100)]
         [Required]
         public string Name { get; set; }
         [Required]
