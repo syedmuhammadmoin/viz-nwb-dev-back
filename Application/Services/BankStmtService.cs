@@ -38,7 +38,7 @@ namespace Application.Services
                 if (file != null)
                 {
                     entity.BankStmtLines = await ImportStmtLines(file);
-                    
+
                     if (entity.BankStmtLines.Count() == 0)
                     {
                         return new Response<BankStmtDto>("Lines are required");
@@ -52,7 +52,7 @@ namespace Application.Services
                         return new Response<BankStmtDto>("Amount can't be saved with zero value");
                     }
 
-                    if (line.Credit == line.Debit)
+                    if (line.Credit == line.Debit || line.Debit > 0 && line.Credit > 0)
                     {
                         return new Response<BankStmtDto>("Only one entry should be entered at a time");
                     }
@@ -80,7 +80,7 @@ namespace Application.Services
                 _unitOfWork.Rollback();
                 return new Response<BankStmtDto>(ex.Message);
             }
-           
+
         }
 
         public async Task<PaginationResponse<List<BankStmtDto>>> GetAllAsync(TransactionFormFilter filter)
@@ -152,7 +152,7 @@ namespace Application.Services
                     for (int row = 2; row <= rowCount; row++)
                     {
                         var checkDate = ((DateTime)worksheet.Cells[row, 2].Value);
-                        
+
                         list.Add(new CreateBankStmtLinesDto()
                         {
                             Reference = (int)Convert.ToSingle(worksheet.Cells[row, 1].Value),
@@ -189,12 +189,12 @@ namespace Application.Services
                 .ToList();
 
             if (bankStmts.Count() == 0)
-                 return new Response<List<UnReconStmtDto>>(unreconciledBankStmtStatus, "Unreconciled bank statements not found");
+                return new Response<List<UnReconStmtDto>>(unreconciledBankStmtStatus, "Unreconciled bank statements not found");
 
             foreach (var e in bankStmts)
             {
                 var reconciledPayment = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(e.Id, false)).Sum(a => a.Amount);
-                    
+
                 var mapingValueInDTO = new UnReconStmtDto
                 {
                     Id = e.Id,
