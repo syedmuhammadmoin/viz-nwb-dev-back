@@ -13,5 +13,6 @@ namespace Application.Contracts.Interfaces
     {
         Task<Response<List<EmployeeDto>>> GetEmployeeDropDown();
         Task<Response<List<EmployeeDropDownPaymentDto>>> GetEmployeeDropDownPayment();
+        Response<EmployeeDto> GetEmpByCNIC(string cnic);
     }
 }
