@@ -19,7 +19,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public string Name { get; set; }
         [Required]
-        public PayrollType PayrollType { get; set; }
+        public PayrollType? PayrollType { get; set; }
         [Required]
         public CalculationType? PayrollItemType { get; set; }
         [Range(0, double.MaxValue, ErrorMessage = "Please enter a positive value")]
