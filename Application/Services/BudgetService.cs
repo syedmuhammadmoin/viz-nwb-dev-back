@@ -38,7 +38,7 @@ namespace Application.Services
 
             var budget = _mapper.Map<BudgetMaster>(entity);
 
-            var checkExistingBudget = _unitOfWork.Budget.Find(new BudgetSpecs(entity.From, budget.CampusId)).FirstOrDefault();
+            var checkExistingBudget = _unitOfWork.Budget.Find(new BudgetSpecs((DateTime)entity.From, budget.CampusId)).FirstOrDefault();
             if (checkExistingBudget != null)
                 return new Response<BudgetDto>("Budget already consist in this span");
             
@@ -82,7 +82,7 @@ namespace Application.Services
             if (entity.From > entity.To)
                 return new Response<BudgetDto>("End date must be greater than Start Date");
 
-            var checkExistingBudget = _unitOfWork.Budget.Find(new BudgetSpecs(entity.From, budget.CampusId)).FirstOrDefault(i=> i.Id != entity.Id);
+            var checkExistingBudget = _unitOfWork.Budget.Find(new BudgetSpecs((DateTime)entity.From, budget.CampusId)).FirstOrDefault(i=> i.Id != entity.Id);
             if (checkExistingBudget != null)
                 return new Response<BudgetDto>("Budget already consist in this span");
             
