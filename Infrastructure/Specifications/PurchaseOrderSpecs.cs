@@ -29,6 +29,8 @@ namespace Infrastructure.Specifications
                 AddInclude("PurchaseOrderLines.Account");
                 AddInclude("PurchaseOrderLines.Item");
                 AddInclude("PurchaseOrderLines.Warehouse");
+                ApplyAsNoTracking();
+
             }
         }
 
@@ -47,12 +49,14 @@ namespace Infrastructure.Specifications
                 AddInclude("PurchaseOrderLines.Account");
                 AddInclude("PurchaseOrderLines.Item");
                 AddInclude("PurchaseOrderLines.Warehouse");
+                ApplyAsNoTracking();
             }
         }
         public PurchaseOrderSpecs()
             : base(x => x.Status.State != DocumentStatus.Paid)
         {
             AddInclude(i => i.PurchaseOrderLines);
+            ApplyAsNoTracking();    
         }
         public PurchaseOrderSpecs(int id) : base(x => x.Id == id)
         {

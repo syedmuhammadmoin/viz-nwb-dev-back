@@ -31,6 +31,7 @@ namespace Infrastructure.Specifications
         public PayrollItemSpecs()
         {
             AddInclude(i => i.Account);
+            ApplyAsNoTracking();
         }
 
         public PayrollItemSpecs(bool isBasicPay) : base(x => isBasicPay ? x.PayrollType == PayrollType.BasicPay : false)

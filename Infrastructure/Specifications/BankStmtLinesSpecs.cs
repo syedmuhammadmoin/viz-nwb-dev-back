@@ -12,6 +12,7 @@ namespace Infrastructure.Specifications
     {
         public BankStmtLinesSpecs() : base(l => (l.BankReconStatus != DocumentStatus.Reconciled))
         {
+            ApplyAsNoTracking();
         }
         
         public BankStmtLinesSpecs(int bankAcctId) 
@@ -21,6 +22,7 @@ namespace Infrastructure.Specifications
             )
         {
             AddInclude(i => i.BankStmtMaster);
+            ApplyAsNoTracking();
         }
     }
 }

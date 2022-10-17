@@ -20,12 +20,16 @@ namespace Infrastructure.Specifications
                 ApplyOrderByDescending(i => i.Id);
                 AddInclude(i => i.BankAccount);
                 AddInclude(i => i.BankStmtLines);
+                ApplyAsNoTracking();
+
             }
         }
         public BankStmtSpecs()
         {
             AddInclude(i => i.BankAccount);
             AddInclude(i => i.BankStmtLines);
+            ApplyAsNoTracking();
+
         }
     }
 }

@@ -12,6 +12,7 @@ namespace Infrastructure.Specifications
         public Level3Specs(Guid id) : base(i => i.Id == id)
         {
             AddInclude(i => i.Level2);
+            ApplyAsNoTracking();
         }
     }
 }

@@ -29,6 +29,7 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.GRN);
                 AddInclude("GoodsReturnNoteLines.Item");
                 AddInclude("GoodsReturnNoteLines.Warehouse");
+                ApplyAsNoTracking();
             }
         }
             public GoodsReturnNoteSpecs(bool forEdit)
@@ -46,7 +47,8 @@ namespace Infrastructure.Specifications
                     AddInclude(i => i.GRN);
                     AddInclude("GoodsReturnNoteLines.Item");
                     AddInclude("GoodsReturnNoteLines.Warehouse");
-                }
+                    ApplyAsNoTracking();
+            }
             }
             public GoodsReturnNoteSpecs() : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
         {

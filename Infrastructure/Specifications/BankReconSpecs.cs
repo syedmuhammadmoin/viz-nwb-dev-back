@@ -12,6 +12,8 @@ namespace Infrastructure.Specifications
         public BankReconSpecs(int id, bool isPaymentId)
             : base(isPaymentId ? p => p.PaymentId == id
             : p => p.BankStmtId == id)
-        { }
+        { 
+        ApplyAsNoTracking();
+        }
     }
 }
