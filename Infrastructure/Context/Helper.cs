@@ -115,6 +115,11 @@ namespace Infrastructure.Context
                 HasIndex(b => b.Code)
                 .IsUnique();
 
+            //Unique CNIC for Employee
+            modelBuilder.Entity<Employee>().
+                HasIndex(b => b.CNIC)
+                .IsUnique();
+
             //Changing Identity users and roles tables name
             modelBuilder.Entity<User>(entity =>
             {

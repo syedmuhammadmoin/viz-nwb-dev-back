@@ -17,9 +17,9 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? CampusId { get; set; }
         [Required]
-        public DateTime From { get; set; }
+        public DateTime? From { get; set; }
         [Required]
-        public DateTime To { get; set; }
+        public DateTime? To { get; set; }
         public virtual List<CreateBudgetLinesDto> BudgetLines { get; set; }
     }
 }

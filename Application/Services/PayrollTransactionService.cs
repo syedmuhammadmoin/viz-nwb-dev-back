@@ -40,7 +40,7 @@ namespace Application.Services
                 return new Response<PayrollTransactionDto>("Present days and Leaves days sum can not be greater than working days");
 
             //Fetching Employees by id
-            var emp = await _employeeService.GetByIdAsync((int)entity.EmployeeId);
+            var emp = _employeeService.GetEmpByCNIC(entity.EmployeeCNIC);
 
             var empDetails = emp.Result;
 
@@ -55,7 +55,7 @@ namespace Application.Services
                 return new Response<PayrollTransactionDto>("Employee basic pay is required");
             }
 
-            var checkingPayrollTrans = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)entity.Month, (int)entity.Year, (int)entity.EmployeeId)).FirstOrDefault();
+            var checkingPayrollTrans = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)entity.Month, (int)entity.Year, empDetails.Id)).FirstOrDefault();
 
             if (checkingPayrollTrans != null)
             {
@@ -100,7 +100,7 @@ namespace Application.Services
                 var payrollTransaction = new PayrollTransactionMaster(
                     (int)entity.Month,
                    (int)entity.Year,
-                    (int)entity.EmployeeId,
+                    empDetails.Id,
                     empDetails.BPSAccountId,
                     empDetails.BPS,
                     empDetails.DesignationId,
@@ -218,7 +218,7 @@ namespace Application.Services
 
         private async Task<Response<PayrollTransactionDto>> UpdatePayroll(int id, CreatePayrollTransactionDto entity, int status)
         {
-            var emp = await _employeeService.GetByIdAsync((int)entity.EmployeeId);
+            var emp = _employeeService.GetEmpByCNIC(entity.EmployeeCNIC);
 
             var empDetails = emp.Result;
 
@@ -248,13 +248,14 @@ namespace Application.Services
             decimal netPay = grossPay - totalDeductions;
 
             _unitOfWork.CreateTransaction();
-          
-                // updating data in payroll transaction master table
-                var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById(id, new PayrollTransactionSpecs(true));
 
-                if (getPayrollTransaction == null)
-                    return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
-                getPayrollTransaction.updatePayrollTransaction(
+            // updating data in payroll transaction master table
+            var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById(id, new PayrollTransactionSpecs(true));
+
+            if (getPayrollTransaction == null)
+                return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
+
+            getPayrollTransaction.updatePayrollTransaction(
                     empDetails.BPSAccountId,
                     empDetails.BPS,
                     empDetails.DesignationId,
@@ -268,33 +269,26 @@ namespace Application.Services
                     netPay,
                     payrollTransactionLines);
 
-                await _unitOfWork.SaveAsync();
-                //Commiting the transaction 
-                _unitOfWork.Commit();
-                //returning response
-                return new Response<PayrollTransactionDto>(_mapper.Map<PayrollTransactionDto>(getPayrollTransaction), "Updated successfully");
-            
+            await _unitOfWork.SaveAsync();
+            //Commiting the transaction 
+            _unitOfWork.Commit();
+            //returning response
+            return new Response<PayrollTransactionDto>(_mapper.Map<PayrollTransactionDto>(getPayrollTransaction), "Updated successfully");
         }
 
         private async Task<Response<PayrollTransactionDto>> UpdatePayrollTransaction(UpdatePayrollTransactionDto entity, int status)
         {
-            _unitOfWork.CreateTransaction();
-          
-                var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById((int)entity.Id);
+            var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById((int)entity.Id);
+            
+            if (getPayrollTransaction == null)
+                return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
 
-                if (getPayrollTransaction == null)
-                    return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
+            // updating data in payroll transaction master table
+            getPayrollTransaction.updateAccountPayableId((Guid)entity.AccountPayableId, status);
+            await _unitOfWork.SaveAsync();
 
-                // updating data in payroll transaction master table
-                getPayrollTransaction.updateAccountPayableId((Guid)entity.AccountPayableId, status);
-                await _unitOfWork.SaveAsync();
-
-                //Commiting the transaction 
-                _unitOfWork.Commit();
-
-                //returning response
-                return new Response<PayrollTransactionDto>(null, "Updated successfully");
-           
+            //returning response
+            return new Response<PayrollTransactionDto>(null, "Updated successfully");
         }
 
         private async Task<Response<PayrollTransactionDto>> SubmitPayrollTransaction(UpdatePayrollTransactionDto entity)
@@ -450,45 +444,45 @@ namespace Application.Services
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-         
-                foreach (var role in currentUserRoles)
-                {
-                    if (transition.AllowedRole.Name == role)
-                    {
-                        if (!String.IsNullOrEmpty(data.Remarks))
-                        {
-                            var addRemarks = new Remark()
-                            {
-                                DocId = getPayrollTransaction.Id,
-                                DocType = DocType.PayrollTransaction,
-                                Remarks = data.Remarks,
-                                UserId = userId
-                            };
-                            await _unitOfWork.Remarks.Add(addRemarks);
-                        }
 
-                        getPayrollTransaction.setStatus(transition.NextStatusId);
-                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
+            foreach (var role in currentUserRoles)
+            {
+                if (transition.AllowedRole.Name == role)
+                {
+                    if (!String.IsNullOrEmpty(data.Remarks))
+                    {
+                        var addRemarks = new Remark()
                         {
-                            await AddToLedger(getPayrollTransaction);
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "PayrollTransaction Approved");
-                        }
-                        if (transition.NextStatus.State == DocumentStatus.Rejected)
-                        {
-                            await _unitOfWork.SaveAsync();
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "PayrollTransaction Rejected");
-                        }
+                            DocId = getPayrollTransaction.Id,
+                            DocType = DocType.PayrollTransaction,
+                            Remarks = data.Remarks,
+                            UserId = userId
+                        };
+                        await _unitOfWork.Remarks.Add(addRemarks);
+                    }
+
+                    getPayrollTransaction.setStatus(transition.NextStatusId);
+                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                    {
+                        await AddToLedger(getPayrollTransaction);
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "PayrollTransaction Approved");
+                    }
+                    if (transition.NextStatus.State == DocumentStatus.Rejected)
+                    {
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
-                        return new Response<bool>(true, "PayrollTransaction Reviewed");
+                        return new Response<bool>(true, "PayrollTransaction Rejected");
                     }
+                    await _unitOfWork.SaveAsync();
+                    _unitOfWork.Commit();
+                    return new Response<bool>(true, "PayrollTransaction Reviewed");
                 }
+            }
 
-                return new Response<bool>("User does not have allowed role");
+            return new Response<bool>("User does not have allowed role");
 
-          
+
         }
 
         public async Task<Response<PayrollTransactionDto>> UpdateAsync(UpdatePayrollTransactionDto entity)
@@ -610,31 +604,31 @@ namespace Application.Services
         public async Task<Response<bool>> ProcessForEdit(int[] id)
         {
             _unitOfWork.CreateTransaction();
-        
-                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
 
-                if (checkingActiveWorkFlows == null)
+            var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
+
+            if (checkingActiveWorkFlows == null)
+            {
+                return new Response<bool>("No workflow found for Payroll Transaction");
+            }
+            for (int i = 0; i < id.Length; i++)
+            {
+                var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById(id[i]);
+
+                if (getPayrollTransaction == null)
                 {
-                    return new Response<bool>("No workflow found for Payroll Transaction");
+                    return new Response<bool>($"Payroll Transaction with the id = {id[i]} not found");
                 }
-                for (int i = 0; i < id.Length; i++)
-                {
-                    var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById(id[i]);
 
-                    if (getPayrollTransaction == null)
-                    {
-                        return new Response<bool>($"Payroll Transaction with the id = {id[i]} not found");
-                    }
+                getPayrollTransaction.setStatus(6);
 
-                    getPayrollTransaction.setStatus(6);
+                await _unitOfWork.SaveAsync();
+            }
+            _unitOfWork.Commit();
 
-                    await _unitOfWork.SaveAsync();
-                }
-                _unitOfWork.Commit();
+            return new Response<bool>(true, "Payroll transaction submitted successfully");
 
-                return new Response<bool>(true, "Payroll transaction submitted successfully");
-            
-         
+
 
         }
 

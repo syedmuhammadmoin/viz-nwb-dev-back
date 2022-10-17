@@ -33,6 +33,6 @@ namespace Application.Contracts.DTOs
         [MaxLength(200)]
         public string Purpose { get; set; }
         [Required]
-        public int CampusId { get; set; }
+        public int? CampusId { get; set; }
     }
 }

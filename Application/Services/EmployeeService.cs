@@ -115,6 +115,30 @@ namespace Application.Services
             return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(result), "Returning value");
         }
 
+        public Response<EmployeeDto> GetEmpByCNIC(string cnic)
+        {
+            var getEmployee = _unitOfWork.Employee.Find(new EmployeeSpecs(cnic)).FirstOrDefault();
+            if (getEmployee == null)
+                return new Response<EmployeeDto>("Not found");
+
+            var employee = _mapper.Map<EmployeeDto>(getEmployee);
+
+            //getting employeelist in payrollItem
+            var payrollItemList = _unitOfWork.PayrollItemEmployee
+                .Find(new PayrollItemEmployeeSpecs(employee.Id, false))
+                .Select(x => x.PayrollItem)
+                .ToList();
+
+            employee.PayrollItems = _mapper.Map<List<PayrollItemDto>>(payrollItemList);
+
+            var result = MapToValue(employee);
+
+            result.PayrollItems = result.PayrollItems
+                .Where(i => i.PayrollType != PayrollType.BasicPay
+                && i.PayrollType != PayrollType.Increment).ToList();
+            return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(result), "Returning value");
+        }
+
         public async Task<Response<List<EmployeeDto>>> GetEmployeeDropDown()
         {
             var employees = await _unitOfWork.Employee.GetAll();
