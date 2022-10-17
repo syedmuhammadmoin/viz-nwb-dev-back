@@ -17,7 +17,7 @@ namespace Application.Contracts.DTOs
         [MaxLength(100)]
         public string FatherName { get; set; }
         [Required]
-        [MaxLength(20)]
+        [StringLength(13, MinimumLength = 13, ErrorMessage ="Please enter valid CNIC Number of 13 Digits without Dashes")]
         public string CNIC { get; set; }
         [Required]
         [MaxLength(40)]
@@ -32,7 +32,7 @@ namespace Application.Contracts.DTOs
         [MaxLength(50)]
         public string AccountTitle { get; set; }
         [Required]
-        public long AccountNumber { get; set; }
+        public long? AccountNumber { get; set; }
         [Required]
         [MaxLength(30)]
         public string EmployeeCode { get; set; }

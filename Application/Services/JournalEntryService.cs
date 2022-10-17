@@ -97,7 +97,7 @@ namespace Application.Services
 
 
             ReturningFiles(jVDto, DocType.JournalEntry);
-       
+
             jVDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.JournalEntry)).FirstOrDefault();
 
@@ -153,8 +153,15 @@ namespace Application.Services
 
             var jv = _mapper.Map<JournalEntryMaster>(entity);
 
+            foreach (var lines in entity.JournalEntryLines)
+            {
+                if (lines.Debit > 0 && lines.Credit > 0)
+                    return new Response<JournalEntryDto>("Debit and Credit amount should be in seperate lines");
+            }
+
             if (jv.TotalDebit != jv.TotalCredit)
                 return new Response<JournalEntryDto>("Sum of debit and credit must be equal");
+
 
             //Setting status
             jv.setStatus(status);
@@ -162,36 +169,36 @@ namespace Application.Services
             _unitOfWork.CreateTransaction();
 
 
-            
-                //Saving in table
-                var result = await _unitOfWork.JournalEntry.Add(jv);
-                await _unitOfWork.SaveAsync();
-                JournalEntryDto data = new JournalEntryDto();
-                var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.JournalEntry))
-                  .Select(e => new RemarksDto()
-                  {
-                      Remarks = e.Remarks,
-                      UserName = e.User.UserName,
-                      CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
-                  }).ToList();
 
-                if (remarks.Count() > 0)
-                {
-                    data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
-                }
-                //For creating docNo
-                jv.CreateDocNo();
-                await _unitOfWork.SaveAsync();
-                //Remarks
+            //Saving in table
+            var result = await _unitOfWork.JournalEntry.Add(jv);
+            await _unitOfWork.SaveAsync();
+            JournalEntryDto data = new JournalEntryDto();
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.JournalEntry))
+              .Select(e => new RemarksDto()
+              {
+                  Remarks = e.Remarks,
+                  UserName = e.User.UserName,
+                  CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+              }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+            //For creating docNo
+            jv.CreateDocNo();
+            await _unitOfWork.SaveAsync();
+            //Remarks
 
 
-                //Commiting the transaction
-                _unitOfWork.Commit();
+            //Commiting the transaction
+            _unitOfWork.Commit();
 
-                //returning response
-                return new Response<JournalEntryDto>(_mapper.Map<JournalEntryDto>(result), "Created successfully");
+            //returning response
+            return new Response<JournalEntryDto>(_mapper.Map<JournalEntryDto>(result), "Created successfully");
 
-            
+
 
         }
 
@@ -201,7 +208,14 @@ namespace Application.Services
                 return new Response<JournalEntryDto>("Lines are required");
 
             var totalDebit = entity.JournalEntryLines.Sum(i => i.Debit);
+
             var totalCredit = entity.JournalEntryLines.Sum(i => i.Credit);
+
+            foreach (var line in entity.JournalEntryLines)
+            {
+                if (line.Debit > 0 && line.Credit > 0 || line.Credit == line.Debit)
+                    return new Response<JournalEntryDto>("Debit and Credit amount should be in seperate lines");
+            }
 
             if (totalDebit != totalCredit)
                 return new Response<JournalEntryDto>("Sum of debit and credit must be equal");
@@ -218,17 +232,16 @@ namespace Application.Services
             jv.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-             //For updating data
-                _mapper.Map<CreateJournalEntryDto, JournalEntryMaster>(entity, jv);
+            //For updating data
+            _mapper.Map<CreateJournalEntryDto, JournalEntryMaster>(entity, jv);
 
-                await _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveAsync();
 
-                //Commiting the transaction
-                _unitOfWork.Commit();
+            //Commiting the transaction
+            _unitOfWork.Commit();
 
-                //returning response
-                return new Response<JournalEntryDto>(_mapper.Map<JournalEntryDto>(jv), "Updated successfully");
-           
+            //returning response
+            return new Response<JournalEntryDto>(_mapper.Map<JournalEntryDto>(jv), "Updated successfully");
         }
 
         private async Task AddToLedger(JournalEntryMaster jv)
@@ -288,51 +301,47 @@ namespace Application.Services
 
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
-       
+
             _unitOfWork.CreateTransaction();
-           
-                foreach (var role in currentUserRoles)
+
+            foreach (var role in currentUserRoles)
+            {
+                if (transition.AllowedRole.Name == role)
                 {
-                    if (transition.AllowedRole.Name == role)
+                    getJournalEntry.setStatus(transition.NextStatusId);
+                    if (!String.IsNullOrEmpty(data.Remarks))
                     {
-                        getJournalEntry.setStatus(transition.NextStatusId);
-                        if (!String.IsNullOrEmpty(data.Remarks))
+                        var addRemarks = new Remark()
                         {
-                            var addRemarks = new Remark()
-                            {
-                                DocId = getJournalEntry.Id,
-                                DocType = DocType.JournalEntry,
-                                Remarks = data.Remarks,
-                                UserId = userId
-                            };
-                            await _unitOfWork.Remarks.Add(addRemarks);
-                        }
-              
-                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
-                        {
-                            await AddToLedger(getJournalEntry);
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "JournalEntry Approved");
-                        }
-                 
-                        if (transition.NextStatus.State == DocumentStatus.Rejected)
-                        {
-                            await _unitOfWork.SaveAsync();
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "JournalEntry Rejected");
-                        }
+                            DocId = getJournalEntry.Id,
+                            DocType = DocType.JournalEntry,
+                            Remarks = data.Remarks,
+                            UserId = userId
+                        };
+                        await _unitOfWork.Remarks.Add(addRemarks);
+                    }
+
+                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                    {
+                        await AddToLedger(getJournalEntry);
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "JournalEntry Approved");
+                    }
+
+                    if (transition.NextStatus.State == DocumentStatus.Rejected)
+                    {
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
-                        return new Response<bool>(true, "JournalEntry Reviewed");
+                        return new Response<bool>(true, "JournalEntry Rejected");
                     }
+                    await _unitOfWork.SaveAsync();
+                    _unitOfWork.Commit();
+
+                    return new Response<bool>(true, "JournalEntry Reviewed");
                 }
+            }
 
-              
-
-
-                return new Response<bool>("User does not have allowed role");
-
-           
+            return new Response<bool>("User does not have allowed role");
         }
 
         private List<RemarksDto> ReturningRemarks(JournalEntryDto data, DocType docType)
@@ -352,7 +361,7 @@ namespace Application.Services
 
             return remarks;
         }
-  
+
         private List<FileUploadDto> ReturningFiles(JournalEntryDto data, DocType docType)
         {
 

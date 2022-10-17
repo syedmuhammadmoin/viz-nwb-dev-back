@@ -10,7 +10,7 @@ namespace Application.Contracts.DTOs
     public class UpdateCashAccountDto
     {
         [Required]
-        public int Id { get; set; }
+        public int? Id { get; set; }
         [Required]
         [StringLength(200)]
         public string CashAccountName { get; set; }
