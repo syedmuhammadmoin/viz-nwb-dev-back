@@ -21,6 +21,7 @@ namespace Infrastructure.Specifications
                 ApplyOrderByDescending(i => i.Id);
                 AddInclude("WorkflowTransitions.CurrentStatus");
                 AddInclude("WorkflowTransitions.NextStatus");
+                ApplyAsNoTracking();
             }
         }
         public WorkFlowSpecs(bool forEdit)
@@ -34,6 +35,7 @@ namespace Infrastructure.Specifications
                 AddInclude("WorkflowTransitions.CurrentStatus");
                 AddInclude("WorkflowTransitions.NextStatus");
                 AddInclude("WorkflowTransitions.AllowedRole");
+                ApplyAsNoTracking();
             }
         }
 
@@ -42,10 +44,12 @@ namespace Infrastructure.Specifications
             AddInclude("WorkflowTransitions.AllowedRole");
             AddInclude("WorkflowTransitions.CurrentStatus");
             AddInclude("WorkflowTransitions.NextStatus");
+            ApplyAsNoTracking();
         }
 
         public WorkFlowSpecs(DocType docType, int id) : base(e => (e.DocType == docType) && (e.IsActive == true) && (e.Id != id))
         {
+            ApplyAsNoTracking();
         }
     }
 }

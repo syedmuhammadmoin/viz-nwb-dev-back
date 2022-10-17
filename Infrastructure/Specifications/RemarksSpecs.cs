@@ -14,6 +14,7 @@ namespace Infrastructure.Specifications
             : base(x => x.DocId == docId && x.DocType == docType)
         {
             AddInclude(i => i.User);
+            ApplyAsNoTracking();
         }
     }
 }

@@ -16,16 +16,19 @@ namespace Infrastructure.Specifications
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
             AddInclude(i => i.Level3);
             ApplyOrderByDescending(i => i.Id);
+            ApplyAsNoTracking();
         }
 
         public Level4Specs()
         {
             AddInclude(i => i.Level3);
+            ApplyAsNoTracking();
         }
 
         public Level4Specs(bool isBudget) : base(i => i.Level1_id == new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00")
                                                     || i.Level1_id == new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00"))
         {
+            ApplyAsNoTracking();
         }
 
         public Level4Specs(int id, bool isReceivable)
@@ -41,6 +44,7 @@ namespace Infrastructure.Specifications
                   || x.Level3_id == new Guid("22300000-5566-7788-99AA-BBCCDDEEFF00")
                   ))
         {
+            ApplyAsNoTracking();
         }
 
         public Level4Specs(int getAll)
@@ -53,6 +57,7 @@ namespace Infrastructure.Specifications
                   && x.Level3_id != new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00")
                   && x.Level3_id != new Guid("22300000-5566-7788-99AA-BBCCDDEEFF00"))
         {
+            ApplyAsNoTracking();
         }
 
         public Level4Specs(string code) : base (i => i.Code == code)

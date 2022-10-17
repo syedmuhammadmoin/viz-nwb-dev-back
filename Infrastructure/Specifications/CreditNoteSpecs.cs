@@ -48,6 +48,7 @@ namespace Infrastructure.Specifications
                 AddInclude("CreditNoteLines.Account");
                 AddInclude("CreditNoteLines.Warehouse");
                 AddInclude("CreditNoteLines.Item");
+                ApplyAsNoTracking();
             }
         }
 
@@ -57,10 +58,12 @@ namespace Infrastructure.Specifications
         {
 
             AddInclude(i => i.Status);
+            ApplyAsNoTracking();
         }
         public CreditNoteSpecs() : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
         {
             AddInclude(i => i.Status);
+            ApplyAsNoTracking();
         }
     }
 }

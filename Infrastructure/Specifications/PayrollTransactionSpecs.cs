@@ -34,6 +34,8 @@ namespace Infrastructure.Specifications
                 AddInclude(a => a.Employee);
                 AddInclude("PayrollTransactionLines.PayrollItem");
                 AddInclude("PayrollTransactionLines.Account");
+                ApplyAsNoTracking();
+
             }
         }
 

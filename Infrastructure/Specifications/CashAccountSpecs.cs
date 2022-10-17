@@ -20,6 +20,7 @@ namespace Infrastructure.Specifications
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
                 AddInclude(i => i.Campus);
                 ApplyOrderByDescending(i => i.Id);
+                ApplyAsNoTracking();
             }
         }
     }

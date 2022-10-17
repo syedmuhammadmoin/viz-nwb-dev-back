@@ -22,6 +22,7 @@ namespace Infrastructure.Specifications
             : base(x => isIssuance ? x.IssuanceId == id : x.IssuanceReturnId == id)
         {
             AddInclude(x => x.IssuanceReturn);
+            ApplyAsNoTracking();
         }
     }
 }

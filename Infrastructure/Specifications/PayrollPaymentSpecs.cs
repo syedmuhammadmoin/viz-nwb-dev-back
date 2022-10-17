@@ -14,6 +14,7 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.Status);
             AddInclude(i => i.BusinessPartner);
+            ApplyAsNoTracking();
         }
     }
 }
