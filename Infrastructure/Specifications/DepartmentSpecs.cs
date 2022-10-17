@@ -19,15 +19,17 @@ namespace Infrastructure.Specifications
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
                 AddInclude(i => i.Campus);
                 ApplyOrderByDescending(i => i.Id);
+                ApplyAsNoTracking();
             }
         }
         public DepartmentSpecs()
         {
             AddInclude(i => i.Campus);
+            ApplyAsNoTracking();
         }
         public DepartmentSpecs(int campusId) : base(x => x.CampusId == campusId && x.Campus.IsActive == true)
         {
-
+            ApplyAsNoTracking();
         }
     }
 }

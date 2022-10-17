@@ -19,6 +19,7 @@ namespace Infrastructure.Specifications
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
                 AddInclude(i => i.PreviousBudget);
                 ApplyOrderByDescending(i => i.Id);
+                ApplyAsNoTracking();
             }
         }
             public EstimatedBudgetSpecs(bool forEdit)
@@ -32,6 +33,7 @@ namespace Infrastructure.Specifications
                 {
                     AddInclude(i => i.PreviousBudget);
                     AddInclude("EstimatedBudgetLines.Account");
+                    ApplyAsNoTracking();
                 }
             }
         }

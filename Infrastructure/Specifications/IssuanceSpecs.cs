@@ -27,6 +27,7 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Campus);
                 AddInclude("IssuanceLines.Warehouse");
                 AddInclude("IssuanceLines.Item");
+                ApplyAsNoTracking();
             }
         }
 
@@ -45,12 +46,14 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Requisition);
                 AddInclude("IssuanceLines.Warehouse");
                 AddInclude("IssuanceLines.Item");
+                ApplyAsNoTracking();
             }
         }
         public IssuanceSpecs()
             : base(x => x.Status.State != DocumentStatus.Paid)
         {
             AddInclude(i => i.IssuanceLines);
+            ApplyAsNoTracking();
         }
     }
 }

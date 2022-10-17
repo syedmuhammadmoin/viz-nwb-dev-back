@@ -18,6 +18,7 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.BusinessPartner);
             AddInclude(i => i.Warehouse);
             AddInclude("Level4.Level1");
+            ApplyAsNoTracking();
         }
 
         public LedgerSpecs(int id) : base(i => i.Id == id
@@ -25,6 +26,7 @@ namespace Infrastructure.Specifications
         && i.IsReconcilable == true)
         {
             AddInclude(i => i.Transactions);
+            ApplyAsNoTracking();
         }
 
         public LedgerSpecs(int id, bool forDoc) : base(i => 

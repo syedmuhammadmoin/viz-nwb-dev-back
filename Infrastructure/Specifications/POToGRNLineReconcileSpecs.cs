@@ -22,6 +22,8 @@ namespace Infrastructure.Specifications
             : base(x => isPO ? x.PurchaseOrderId == id : x.GRNId == id)
         {
             AddInclude(x => x.GRN);
+            ApplyAsNoTracking();
+
         }
     }
 }

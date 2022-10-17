@@ -48,6 +48,7 @@ namespace Infrastructure.Specifications
                 AddInclude("DebitNoteLines.Account");
                 AddInclude("DebitNoteLines.Warehouse");
                 AddInclude("DebitNoteLines.Item");
+                ApplyAsNoTracking();
             }
         }
         public DebitNoteSpecs(int transactionId) :
@@ -60,6 +61,7 @@ namespace Infrastructure.Specifications
         public DebitNoteSpecs() : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
         {
             AddInclude(i => i.Status);
+            ApplyAsNoTracking();
         }
     }
 }

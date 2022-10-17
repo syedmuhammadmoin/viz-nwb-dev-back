@@ -29,6 +29,7 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Issuance);
                 AddInclude("IssuanceReturnLines.Item");
                 AddInclude("IssuanceReturnLines.Warehouse");
+                ApplyAsNoTracking();
             }
         }
 
@@ -47,6 +48,7 @@ namespace Infrastructure.Specifications
                     AddInclude(i => i.Issuance);
                     AddInclude("IssuanceReturnLines.Item");
                     AddInclude("IssuanceReturnLines.Warehouse");
+                    ApplyAsNoTracking();
                 }
             }
             public IssuanceReturnSpecs() : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))

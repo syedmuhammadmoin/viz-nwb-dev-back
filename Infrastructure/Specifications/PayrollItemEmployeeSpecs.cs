@@ -30,12 +30,14 @@ namespace Infrastructure.Specifications
                 AddInclude("PayrollItem.Account");
                 AddInclude("Employee.Designation");
                 AddInclude("Employee.Department");
+                ApplyAsNoTracking();
             }
 
             public PayrollItemEmployeeSpecs(int empId, PayrollType payrollType)
             : base(a => a.EmployeeId == empId && a.PayrollType == payrollType)
-        {
-            }
+            {
+                  ApplyAsNoTracking();
+        }
 
         }
     }

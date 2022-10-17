@@ -22,6 +22,7 @@ namespace Infrastructure.Specifications
             : base(x => x.GRNId == id)
         {
             AddInclude(x => x.GoodsReturnNote);
+            ApplyAsNoTracking();
         }
     }
 }
