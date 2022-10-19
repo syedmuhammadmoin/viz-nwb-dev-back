@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,8 +16,11 @@ namespace Application.Contracts.Filters
         public string Campus { get; set; }
         public string BPS { get; set; }
         public int? Month { get; set; }
+        [Required]
         public int? Year { get; set; }
-        public DateTime FromDate { get; set; }
-        public DateTime ToDate { get; set; }
+        [Required]
+        public DateTime? FromDate { get; set; }
+        [Required]
+        public DateTime? ToDate { get; set; }
     }
 }

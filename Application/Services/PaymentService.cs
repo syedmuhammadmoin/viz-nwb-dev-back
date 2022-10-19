@@ -580,8 +580,6 @@ namespace Application.Services
                     }
                 }
                 return new Response<bool>("User does not have allowed role");
-
-         
         }
 
         //Overrided method
@@ -661,6 +659,8 @@ namespace Application.Services
                         Description = data.Description,
                         SalesTax = 0,
                         IncomeTax = 0,
+                        SRBTax = 0,
+                        Deduction = 0,
                         DocumentLedgerId = line.LedgerId,
                         isSubmit = false
                     };
@@ -695,7 +695,7 @@ namespace Application.Services
         public Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data)
         {
             //Fetching approved payrolltransactions
-            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, data.CampusId, "")).ToList();
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)data.Month, (int)data.Year, data.DepartmentId, (int)data.CampusId, "")).ToList();
 
 
             //Filtering payrolltransaction which doesn't have payrollpayments.
@@ -727,8 +727,8 @@ namespace Application.Services
         }
 
         public Response<List<PaymentDto>> GetPaymentByDept(DeptFilter data)
-        {
-            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, data.CampusId, "")).ToList();
+         {
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)data.Month, (int)data.Year, data.DepartmentId, (int)data.CampusId, "")).ToList();
 
             if (payrollTransactions.Count == 0)
                 return new Response<List<PaymentDto>>(null, "list is empty");
@@ -783,7 +783,7 @@ namespace Application.Services
 
         public Response<List<PaymentDto>> GetPaymentForApproval(DeptFilter data)
         {
-            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, data.CampusId, "")).ToList();
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)data.Month, (int)data.Year, data.DepartmentId, (int)data.CampusId, "")).ToList();
 
             if (payrollTransactions.Count == 0)
                 return new Response<List<PaymentDto>>(null, "list is empty");

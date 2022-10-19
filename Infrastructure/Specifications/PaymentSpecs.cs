@@ -37,7 +37,6 @@ namespace Infrastructure.Specifications
         public PaymentSpecs()
         {
             AddInclude(i => i.Status);
-            ApplyAsNoTracking();
         }
 
         public PaymentSpecs(bool forEdit, DocType docType) : base(e => (e.PaymentFormType == docType))
@@ -98,7 +97,7 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Status);
             AddInclude(i => i.DeductionAccount);
             AddInclude(i => i.PaymentRegister);
-            ApplyAsNoTracking();
+      
         }
         public PaymentSpecs(DocType docType) : base(e => ((e.PaymentFormType == docType)))
         {

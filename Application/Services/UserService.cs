@@ -134,7 +134,7 @@ namespace Application.Services
             {
                 EmployeeId = getEmployee.Id,
                 Email = model.Email,
-                UserName = model.Email,
+                UserName = getEmployee.Name
             };
 
             var userCreated = await _userManager.CreateAsync(user, model.Password);
