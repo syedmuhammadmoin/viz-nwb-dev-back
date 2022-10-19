@@ -33,36 +33,52 @@ namespace Application.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<Response<PayrollTransactionDto>> CreateAsync(CreatePayrollTransactionDto entity)
+        public async Task<Response<PayrollTransactionDto>> CreateAsync(CreatePayrollTransactionDto[] entity)
         {
-            if (entity.WorkingDays < entity.PresentDays
-                || entity.WorkingDays < entity.PresentDays + entity.LeaveDays)
-                return new Response<PayrollTransactionDto>("Present days and Leaves days sum can not be greater than working days");
+
+            foreach (var item in entity)
+            {
+                var result = await CreatePayroll(item);
+                if (!result.IsSuccess)
+                {
+                    return result;
+                }
+            }
+            return new Response<PayrollTransactionDto>(null, "Created successfully");
+
+        }
+
+        private async Task<Response<PayrollTransactionDto>> CreatePayroll(CreatePayrollTransactionDto item)
+        {
+
+            if (item.WorkingDays < item.PresentDays
+               || item.WorkingDays < item.PresentDays + item.LeaveDays)
+                return new Response<PayrollTransactionDto>($"Error in this Employee with CNIC{item.EmployeeCNIC}, Present days and Leaves days sum can not be greater than working days");
 
             //Fetching Employees by id
-            var emp = _employeeService.GetEmpByCNIC(entity.EmployeeCNIC);
+            var emp = _employeeService.GetEmpByCNIC(item.EmployeeCNIC);
 
             var empDetails = emp.Result;
 
             if (empDetails == null)
-                return new Response<PayrollTransactionDto>("Selected employee record not found");
+                return new Response<PayrollTransactionDto>($"Error in this Employee with CNIC{item.EmployeeCNIC},Selected employee record not found");
 
             if (!empDetails.isActive)
-                return new Response<PayrollTransactionDto>("Selected employee is not Active");
+                return new Response<PayrollTransactionDto>($"Error in this Employee with CNIC{item.EmployeeCNIC},Selected employee is not Active");
 
             if (empDetails.BasicPay == 0)
             {
-                return new Response<PayrollTransactionDto>("Employee basic pay is required");
+                return new Response<PayrollTransactionDto>($"Error in this Employee with CNIC{item.EmployeeCNIC},Employee basic pay is required");
             }
 
-            var checkingPayrollTrans = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)entity.Month, (int)entity.Year, empDetails.Id)).FirstOrDefault();
+            var checkingPayrollTrans = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)item.Month, (int)item.Year, empDetails.Id)).FirstOrDefault();
 
             if (checkingPayrollTrans != null)
             {
                 if (checkingPayrollTrans.StatusId != 1)
-                    return new Response<PayrollTransactionDto>("Payroll transaction is already processed");
+                    return new Response<PayrollTransactionDto>($"Error in this Employee with CNIC{item.EmployeeCNIC},Payroll transaction is already processed");
 
-                return await UpdatePayroll(checkingPayrollTrans.Id, entity, 1);
+                return await UpdatePayroll(checkingPayrollTrans.Id, item, 1);
             }
 
             //Creating Initial Transaction of a payroll
@@ -72,7 +88,7 @@ namespace Application.Services
             .Where(x => ((x.IsActive == true) && (x.PayrollType != PayrollType.BasicPay && x.PayrollType != PayrollType.Increment)))
             .Select(line => new PayrollTransactionLines(line.Id,
                    line.PayrollType,
-                   CalculateAllowance(line, (int)entity.WorkingDays, (int)entity.PresentDays, (int)entity.LeaveDays, empDetails.TotalBasicPay),
+                   CalculateAllowance(line, (int)item.WorkingDays, (int)item.PresentDays, (int)item.LeaveDays, empDetails.TotalBasicPay),
                    line.AccountId)
             ).ToList();
 
@@ -81,9 +97,9 @@ namespace Application.Services
                            .Where(p => p.PayrollType == PayrollType.Allowance || p.PayrollType == PayrollType.AssignmentAllowance)
                            .Sum(e => e.Amount), 2);
 
-            decimal totalBasicPay = entity.LeaveDays > 0 ?
-                Math.Round((decimal)(empDetails.TotalBasicPay / (int)entity.WorkingDays) * ((int)entity.PresentDays + (int)entity.LeaveDays), 2) :
-                Math.Round(((decimal)empDetails.TotalBasicPay / (int)entity.WorkingDays) * (int)entity.PresentDays, 2);
+            decimal totalBasicPay = item.LeaveDays > 0 ?
+                Math.Round((decimal)(empDetails.TotalBasicPay / (int)item.WorkingDays) * ((int)item.PresentDays + (int)item.LeaveDays), 2) :
+                Math.Round(((decimal)empDetails.TotalBasicPay / (int)item.WorkingDays) * (int)item.PresentDays, 2);
 
             decimal grossPay = totalBasicPay + totalAllowances;
 
@@ -92,29 +108,28 @@ namespace Application.Services
                                 .Sum(e => e.Amount), 2);
 
             decimal netPay = grossPay - totalDeductions;
-
             _unitOfWork.CreateTransaction();
             try
             {
                 // mapping data in payroll transaction master table
                 var payrollTransaction = new PayrollTransactionMaster(
-                    (int)entity.Month,
-                   (int)entity.Year,
-                    empDetails.Id,
-                    empDetails.BPSAccountId,
-                    empDetails.BPS,
-                    empDetails.DesignationId,
-                    empDetails.DepartmentId,
-                    empDetails.CampusId,
-                    (int)entity.WorkingDays,
-                    (int)entity.PresentDays,
-                    (int)entity.LeaveDays,
-                   (DateTime)entity.TransDate,
-                    totalBasicPay,
-                    grossPay,
-                    netPay,
-                    1,
-                    payrollTransactionLines);
+                     (int)item.Month,
+                    (int)item.Year,
+                     empDetails.Id,
+                     empDetails.BPSAccountId,
+                     empDetails.BPS,
+                     empDetails.DesignationId,
+                     empDetails.DepartmentId,
+                     empDetails.CampusId,
+                     (int)item.WorkingDays,
+                     (int)item.PresentDays,
+                     (int)item.LeaveDays,
+                    (DateTime)item.TransDate,
+                     totalBasicPay,
+                     grossPay,
+                     netPay,
+                     1,
+                     payrollTransactionLines);
 
                 await _unitOfWork.PayrollTransaction.Add(payrollTransaction);
                 await _unitOfWork.SaveAsync();
@@ -144,6 +159,7 @@ namespace Application.Services
                 return new Response<PayrollTransactionDto>(ex.Message);
             }
         }
+
 
         public Task<Response<int>> DeleteAsync(int id)
         {
@@ -279,7 +295,7 @@ namespace Application.Services
         private async Task<Response<PayrollTransactionDto>> UpdatePayrollTransaction(UpdatePayrollTransactionDto entity, int status)
         {
             var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById((int)entity.Id);
-            
+
             if (getPayrollTransaction == null)
                 return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
 
@@ -481,8 +497,6 @@ namespace Application.Services
             }
 
             return new Response<bool>("User does not have allowed role");
-
-
         }
 
         public async Task<Response<PayrollTransactionDto>> UpdateAsync(UpdatePayrollTransactionDto entity)
@@ -658,7 +672,7 @@ namespace Application.Services
             }
 
             var payrollTransactions = _unitOfWork.PayrollTransaction
-                .Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, data.CampusId))
+                .Find(new PayrollTransactionSpecs((int)data.Month, (int)data.Year, data.DepartmentId, (int)data.CampusId))
                 .ToList();
 
             if (payrollTransactions.Count() > 0)
@@ -681,7 +695,7 @@ namespace Application.Services
                 }
             }
 
-            var getpayrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, data.CampusId, true)).ToList();
+            var getpayrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)data.Month, (int)data.Year, data.DepartmentId, (int)data.CampusId, true)).ToList();
 
             if (getpayrollTransactions.Count == 0)
             {
@@ -700,7 +714,7 @@ namespace Application.Services
 
         public Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data)
         {
-            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(data.Month, data.Year, data.DepartmentId, data.CampusId, false)).ToList();
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)data.Month, (int)data.Year, data.DepartmentId, (int)data.CampusId, false)).ToList();
 
             if (payrollTransactions.Count == 0)
                 return new Response<List<PayrollTransactionDto>>("list is empty");
@@ -718,8 +732,8 @@ namespace Application.Services
 
         public Response<List<PayrollTransactionDto>> GetPayrollReport(PayrollFilter filter)
         {
-            filter.FromDate = filter.FromDate.Date;
-            filter.ToDate = filter.ToDate.Date;
+            filter.FromDate = filter.FromDate?.Date;
+            filter.ToDate = filter.ToDate?.Date;
             var employees = new List<int?>();
             var months = new List<int?>();
             var years = new List<int?>();
@@ -738,7 +752,7 @@ namespace Application.Services
             }
 
             var payrollTransactions = _unitOfWork.PayrollTransaction
-                .Find(new PayrollTransactionSpecs(months, years, employees, filter.FromDate, filter.ToDate,
+                .Find(new PayrollTransactionSpecs(months, years, employees, (DateTime)filter.FromDate, (DateTime)filter.ToDate,
                 filter.Designation, filter.Department, filter.Campus, filter.BPS))
                 .ToList();
 
