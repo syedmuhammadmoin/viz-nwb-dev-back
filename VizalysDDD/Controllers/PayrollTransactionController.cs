@@ -31,7 +31,7 @@ namespace Vizalys.Api.Controllers
         [AllowAnonymous]
         //[ClaimRequirement("Permission", new string[] { Permissions.PayrollTransactionClaims.Create })]
         [HttpPost]
-        public async Task<ActionResult<Response<PayrollTransactionDto>>> CreateAsync([FromHeader(Name = "key")] string key, CreatePayrollTransactionDto entity)
+        public async Task<ActionResult<Response<PayrollTransactionDto>>> CreateAsync([FromHeader(Name = "key")] string key, CreatePayrollTransactionDto[] entity)
         {
             if (key != _configuration["ApiKey:Key"])
             {
