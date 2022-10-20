@@ -28,6 +28,9 @@ namespace Application.Contracts.DTOs
         public decimal SalesTax { get; set; }
         public decimal IncomeTax { get; set; }
         public decimal SRBTax { get; set; }
+        public decimal SalesTaxInAmount { get; set; }
+        public decimal IncomeTaxInAmount { get; set; }
+        public decimal SRBTaxInAmount { get; set; }
         public decimal Deduction { get; set; }
         public decimal NetPayment { get; set; }
         public decimal ReconciledAmount { get; set; }
