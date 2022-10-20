@@ -208,6 +208,9 @@ namespace Application.Mapper
                 .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
                 .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                 .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
+                .ForMember(dto => dto.SalesTax, core => core.MapFrom(a => (a.GrossPayment * a.SalesTax)/ 100))
+                .ForMember(dto => dto.IncomeTax, core => core.MapFrom(a => (a.GrossPayment * a.IncomeTax) / 100))
+                .ForMember(dto => dto.SRBTax, core => core.MapFrom(a => (a.GrossPayment * a.SRBTax)/ 100))
               .ForMember(dto => dto.Status, core => core.MapFrom(
                     a => a.BankReconStatus == DocumentStatus.Unreconciled ? "In Payment" :
                     a.BankReconStatus == DocumentStatus.Partial ? "Partial Reconciled" :

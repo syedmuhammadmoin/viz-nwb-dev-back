@@ -31,11 +31,11 @@ namespace Application.Contracts.DTOs
         [Required]
         [Range(1, double.MaxValue, ErrorMessage = "Gross amount must be greater than 0")]
         public decimal? GrossPayment { get; set; }
-        [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 1 and 100")]
+        [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 0 and 100")]
         public decimal? SalesTax { get; set; }
-        [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 1 and 100")]
+        [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 0 and 100")]
         public decimal? IncomeTax { get; set; }
-        [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 1 and 100")]
+        [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 0 and 100")]
         public decimal? SRBTax { get;  set; }
         public decimal? Deduction { get; set; }
         public int? DocumentLedgerId { get; set; }

@@ -125,9 +125,6 @@ namespace Application.Services
             if (model.Password != model.ConfirmPassword)
                 return new Response<bool>("Confirm password doesn't match with the password");
 
-            //setting Employee Email from user
-            getEmployee.setEmployeeEmail(model.Email);
-            await _unitOfWork.SaveAsync();
 
             //Registering user
             var user = new User
