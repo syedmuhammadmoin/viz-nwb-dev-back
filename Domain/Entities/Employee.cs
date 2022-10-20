@@ -63,6 +63,7 @@ namespace Domain.Entities
         [MaxLength(80)]
         public string DutyShift { get; private set; }
         public int? NoOfIncrements { get; private set; }
+        [MaxLength(100)]
         public string Email { get; private set; }
         public bool isActive { get; private set; }
 

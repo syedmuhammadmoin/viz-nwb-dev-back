@@ -11,6 +11,7 @@ namespace Domain.Entities
 {
     public class WorkFlowStatus : BaseEntity<int>
     {
+        [MaxLength(500)]
         public string Status { get; private set; }
         public DocumentStatus State { get; private set; }
         public StatusType Type { get; private set; }

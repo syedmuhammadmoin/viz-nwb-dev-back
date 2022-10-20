@@ -19,6 +19,7 @@ namespace Domain.Entities
         [ForeignKey("EmployeeId")]
         public Employee Employee { get;private set; }
         public Guid BPSAccountId { get; private set; }
+        [MaxLength(500)]
         public string BPSName { get; private set; }
         public int CampusId { get;private set; }
         [ForeignKey("CampusId")]
