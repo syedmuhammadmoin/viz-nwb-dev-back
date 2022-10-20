@@ -69,5 +69,8 @@ namespace Application.Contracts.DTOs
         public string Faculty { get; set; }
         [MaxLength(80)]
         public string DutyShift { get; set; }
+        [MaxLength(100)]
+        [EmailAddress]
+        public string Email { get; set; }
     }
 }
