@@ -29,8 +29,6 @@ namespace Infrastructure.Specifications
                 AddInclude("PurchaseOrderLines.Account");
                 AddInclude("PurchaseOrderLines.Item");
                 AddInclude("PurchaseOrderLines.Warehouse");
-                ApplyAsNoTracking();
-
             }
         }
 
@@ -49,7 +47,6 @@ namespace Infrastructure.Specifications
                 AddInclude("PurchaseOrderLines.Account");
                 AddInclude("PurchaseOrderLines.Item");
                 AddInclude("PurchaseOrderLines.Warehouse");
-                ApplyAsNoTracking();
             }
         }
         public PurchaseOrderSpecs()

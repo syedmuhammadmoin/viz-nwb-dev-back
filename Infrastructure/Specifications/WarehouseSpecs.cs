@@ -19,13 +19,13 @@ namespace Infrastructure.Specifications
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
                 ApplyOrderByDescending(i => i.Id);
                 AddInclude(i => i.Campus);
-                ApplyAsNoTracking();
+                
             }
         }
 
         public WarehouseSpecs(int campusId) : base(x => x.CampusId == campusId)
         {
-            ApplyAsNoTracking();
+            
         }
     }
 }

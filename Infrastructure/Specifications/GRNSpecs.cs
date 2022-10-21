@@ -29,7 +29,6 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.PurchaseOrder);
                 AddInclude("GRNLines.Item");
                 AddInclude("GRNLines.Warehouse");
-                ApplyAsNoTracking();
             }
         }
 
@@ -48,19 +47,16 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.PurchaseOrder);
                 AddInclude("GRNLines.Item");
                 AddInclude("GRNLines.Warehouse");
-                ApplyAsNoTracking();
             }
         }
         public GRNSpecs()
             : base(x => x.Status.State != DocumentStatus.Paid)
         {
             AddInclude(i => i.GRNLines);
-            ApplyAsNoTracking();
         }
         public GRNSpecs(int id) : base(x => x.Id == id)
         {
             AddInclude(i => i.GRNLines);
-            ApplyAsNoTracking();
         }
     }
 }

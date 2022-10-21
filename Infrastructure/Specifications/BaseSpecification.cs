@@ -24,8 +24,6 @@ namespace Infrastructure.Specifications
         public List<string> IncludeStrings { get; } = new List<string>();
         public Expression<Func<T, object>> OrderBy { get; private set; }
         public Expression<Func<T, object>> OrderByDescending { get; private set; }
-        public bool AsNoTracking { get; private set; } = false;
-
         public int Take { get; private set; }
         public int Skip { get; private set; }
         public bool IsPagingEnabled { get; private set; } = false;
@@ -44,11 +42,6 @@ namespace Infrastructure.Specifications
             Skip = skip;
             Take = take;
             IsPagingEnabled = true;
-        }
-
-        protected virtual void ApplyAsNoTracking()
-        {
-            AsNoTracking = true;
         }
 
         protected virtual void ApplyOrderBy(Expression<Func<T, object>> orderByExpression)

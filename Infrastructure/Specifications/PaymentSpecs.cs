@@ -31,7 +31,6 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Status);
                 AddInclude(i => i.DeductionAccount);
                 AddInclude(i => i.PaymentRegister);
-                ApplyAsNoTracking();
             }
         }
         public PaymentSpecs()
@@ -49,23 +48,19 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Status);
                 AddInclude(i => i.DeductionAccount);
                 AddInclude(i => i.PaymentRegister);
-                ApplyAsNoTracking();
             }
         }
         public PaymentSpecs(bool forRecon) : base(p => p.BankReconStatus != DocumentStatus.Reconciled)
         {
-            ApplyAsNoTracking();
         }
         public PaymentSpecs(int transactionId) :
             base(p => (p.Status.State == DocumentStatus.Unpaid
             || p.Status.State == DocumentStatus.Partial) && (p.TransactionId == transactionId))
         {
-            ApplyAsNoTracking();
         }
         public PaymentSpecs(string forWorkFlow) : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
         {
             AddInclude(i => i.Status);
-            ApplyAsNoTracking();
         }
         public PaymentSpecs(PaymentType paymentType, DocType docType) : base(e => (e.PaymentType == paymentType) && (e.PaymentFormType == docType))
         {
@@ -79,7 +74,6 @@ namespace Infrastructure.Specifications
             && (x.BankReconStatus == DocumentStatus.Unreconciled || x.BankReconStatus == DocumentStatus.Partial)
             ))
         {
-            ApplyAsNoTracking();
         }
         public PaymentSpecs(DocType docType, bool isApproval) 
             : base(e => isApproval ?
@@ -114,7 +108,6 @@ namespace Infrastructure.Specifications
             : base(x => 
             isLedgerId ? x.DocumentLedgerId == ledgerId : false)
         {
-            ApplyAsNoTracking();
         }
         public PaymentSpecs(Guid? deductionAccountId) : base(x => 
             (Guid)deductionAccountId == x.DeductionAccountId)
@@ -123,7 +116,6 @@ namespace Infrastructure.Specifications
         }
         public PaymentSpecs(DocType docType, int ledgerId) : base(x => x.PaymentFormType == docType && x.DocumentLedgerId == ledgerId)
         {
-            ApplyAsNoTracking();
         }
     }
 }

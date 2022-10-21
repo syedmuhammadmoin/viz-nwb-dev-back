@@ -20,7 +20,6 @@ namespace Infrastructure.Specifications
                 ApplyOrderByDescending(i => i.Id);
                 AddInclude(i => i.BankAccount);
                 AddInclude(i => i.BankStmtLines);
-                ApplyAsNoTracking();
 
             }
         }
@@ -28,8 +27,6 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.BankAccount);
             AddInclude(i => i.BankStmtLines);
-            ApplyAsNoTracking();
-
         }
     }
 }

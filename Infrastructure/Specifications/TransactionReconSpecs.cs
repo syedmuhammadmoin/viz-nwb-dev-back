@@ -15,7 +15,6 @@ namespace Infrastructure.Specifications
         {
             AddInclude("PaymentLedger.Transactions");
             AddInclude("DocumentLedger.Transactions");
-            ApplyAsNoTracking();
         }
     }
 }

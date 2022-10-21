@@ -28,7 +28,6 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Employee);
                 AddInclude("RequisitionLines.Item");
                 AddInclude("RequisitionLines.Warehouse");
-                ApplyAsNoTracking();
             }
         }
 
@@ -46,14 +45,12 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Employee);
                 AddInclude("RequisitionLines.Item");
                 AddInclude("RequisitionLines.Warehouse");
-                ApplyAsNoTracking();
             }
         }
         public RequisitionSpecs()
         : base(x => x.Status.State != DocumentStatus.Paid)
         {
             AddInclude(i => i.RequisitionLines);
-            ApplyAsNoTracking();
         }
     }
 }
