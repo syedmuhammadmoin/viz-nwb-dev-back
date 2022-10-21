@@ -56,7 +56,6 @@ namespace Infrastructure.Specifications
             : base(x => x.Status.State != DocumentStatus.Paid)
         {
             AddInclude(i => i.PurchaseOrderLines);
-            ApplyAsNoTracking();    
         }
         public PurchaseOrderSpecs(int id) : base(x => x.Id == id)
         {
