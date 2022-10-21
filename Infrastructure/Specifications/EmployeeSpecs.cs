@@ -50,7 +50,6 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Department);
             AddInclude(i => i.Designation);
             AddInclude("Department.Campus");
-            ApplyAsNoTracking();
         }
 
         public EmployeeSpecs(bool isActive, int?[] departmentIds)

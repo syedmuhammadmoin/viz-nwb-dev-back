@@ -35,14 +35,13 @@ namespace Application.Services
                 if (getDesignation != null)
                 {
                     _mapper.Map<DesignationDto, Designation>(item, getDesignation);
+                    await _unitOfWork.SaveAsync();
                 }
                 else
                 {
                     designationtList.Add(_mapper.Map<Designation>(item));
                 }
             }
-
-            await _unitOfWork.SaveAsync();
 
             if (designationtList.Any())
             {
