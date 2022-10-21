@@ -28,7 +28,6 @@ namespace Infrastructure.Specifications
         }
         public StockSpecs(int itemId, int warehouseId) : base(x => x.ItemId == itemId && x.WarehouseId == warehouseId)
         {
-            ApplyAsNoTracking();
         }
     }
 }
