@@ -15,14 +15,12 @@ namespace Infrastructure.Specifications
             && x.ItemId == itemId
             && x.WarehouseId == warehouseId)
         {
-            ApplyAsNoTracking();
         }
 
         public POToGRNLineReconcileSpecs(bool isPO,int id ) 
             : base(x => isPO ? x.PurchaseOrderId == id : x.GRNId == id)
         {
             AddInclude(x => x.GRN);
-            ApplyAsNoTracking();
 
         }
     }

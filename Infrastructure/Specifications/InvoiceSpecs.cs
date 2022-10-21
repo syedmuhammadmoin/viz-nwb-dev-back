@@ -29,7 +29,6 @@ namespace Infrastructure.Specifications
                 AddInclude("InvoiceLines.Account");
                 AddInclude("InvoiceLines.Warehouse");
                 AddInclude("InvoiceLines.Item");
-                ApplyAsNoTracking();
             }
         }
 
@@ -49,7 +48,6 @@ namespace Infrastructure.Specifications
                 AddInclude("InvoiceLines.Account");
                 AddInclude("InvoiceLines.Warehouse");
                 AddInclude("InvoiceLines.Item");
-                ApplyAsNoTracking();
             }
         }
 
@@ -59,12 +57,10 @@ namespace Infrastructure.Specifications
         {
 
             AddInclude(i => i.Status);
-            ApplyAsNoTracking();
         }
         public InvoiceSpecs() : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
         {
             AddInclude(i => i.Status);
-            ApplyAsNoTracking();
         }
         
         //For aging report
@@ -72,7 +68,6 @@ namespace Infrastructure.Specifications
             : base(c => c.Status.State == DocumentStatus.Unpaid || c.Status.State == DocumentStatus.Partial)
         {
             AddInclude(i => i.Customer);
-            ApplyAsNoTracking();
         }
     }
 }

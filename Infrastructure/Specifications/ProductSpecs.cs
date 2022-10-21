@@ -24,15 +24,12 @@ namespace Infrastructure.Specifications
                 ApplyOrderByDescending(i => i.Id);
                 AddInclude(i => i.Category);
                 AddInclude(i => i.UnitOfMeasurement);
-                ApplyAsNoTracking();
-
             }
         }
         public ProductSpecs()
         {
             AddInclude(i => i.Category);
             AddInclude(i => i.UnitOfMeasurement);
-            ApplyAsNoTracking();
         }
     }
 }

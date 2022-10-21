@@ -34,8 +34,6 @@ namespace Infrastructure.Specifications
                 AddInclude(a => a.Employee);
                 AddInclude("PayrollTransactionLines.PayrollItem");
                 AddInclude("PayrollTransactionLines.Account");
-                ApplyAsNoTracking();
-
             }
         }
 
@@ -59,7 +57,6 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Status);
                 AddInclude("PayrollTransactionLines.PayrollItem");
                 AddInclude("PayrollTransactionLines.Account");
-                ApplyAsNoTracking();
             }
 
         }
@@ -97,7 +94,6 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Status);
             AddInclude("PayrollTransactionLines.PayrollItem");
             AddInclude("PayrollTransactionLines.Account");
-            ApplyAsNoTracking();
         }
 
         public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, int campusId, bool isPayrollTransactoin)

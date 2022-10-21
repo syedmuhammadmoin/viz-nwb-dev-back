@@ -21,23 +21,22 @@ namespace Infrastructure.Specifications
                 ApplyOrderByDescending(i => i.Id);
             }
         }
-            public PayrollItemEmployeeSpecs(int id, bool isPayrollItem)
-            : base(isPayrollItem ? a => a.PayrollItemId == id
-            : a => a.EmployeeId == id)
+        public PayrollItemEmployeeSpecs(int id, bool isPayrollItem)
+        : base(isPayrollItem ? a => a.PayrollItemId == id
+        : a => a.EmployeeId == id)
         {
-                AddInclude(i => i.PayrollItem);
-                AddInclude(i => i.Employee);
-                AddInclude("PayrollItem.Account");
-                AddInclude("Employee.Designation");
-                AddInclude("Employee.Department");
-                ApplyAsNoTracking();
-            }
-
-            public PayrollItemEmployeeSpecs(int empId, PayrollType payrollType)
-            : base(a => a.EmployeeId == empId && a.PayrollType == payrollType)
-            {
-                  ApplyAsNoTracking();
+            AddInclude(i => i.PayrollItem);
+            AddInclude(i => i.Employee);
+            AddInclude("PayrollItem.Account");
+            AddInclude("Employee.Designation");
+            AddInclude("Employee.Department");
         }
 
+        public PayrollItemEmployeeSpecs(int empId, PayrollType payrollType)
+        : base(a => a.EmployeeId == empId && a.PayrollType == payrollType)
+        {
+
         }
+
     }
+}

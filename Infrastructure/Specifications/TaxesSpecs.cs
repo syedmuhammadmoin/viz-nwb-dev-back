@@ -25,11 +25,11 @@ namespace Infrastructure.Specifications
         public TaxesSpecs()
         {
             AddInclude(i => i.Account);
-            ApplyAsNoTracking();
+            
         }
         public TaxesSpecs(TaxType taxType) : base(x => x.TaxType == taxType)
         {
-            ApplyAsNoTracking();
+            
         }
     }
 }

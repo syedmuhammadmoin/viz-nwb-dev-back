@@ -13,7 +13,6 @@ namespace Infrastructure.Specifications
             : base(isPaymentId ? p => p.PaymentId == id
             : p => p.BankStmtId == id)
         { 
-        ApplyAsNoTracking();
         }
     }
 }

@@ -11,7 +11,6 @@ namespace Application.Contracts.Response
         public int PageStart { get; private set; }
         public int PageEnd { get; private set; }
         public int TotalRecords { get; private set; }
-        public int StatusCode { get; private set; }
 
         public PaginationResponse(T data, int pageStart, int pageEnd, int totalRecords, string message)
         {

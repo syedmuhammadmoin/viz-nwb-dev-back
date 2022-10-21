@@ -12,7 +12,6 @@ namespace Infrastructure.Specifications
         public GetLedgerByIdSpecs()
         {
             AddInclude(i => i.Transactions);
-            ApplyAsNoTracking();
         }
     }
 }

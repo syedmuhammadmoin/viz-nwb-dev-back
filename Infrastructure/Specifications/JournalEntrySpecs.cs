@@ -27,7 +27,6 @@ namespace Infrastructure.Specifications
                 AddInclude("JournalEntryLines.BusinessPartner");
                 AddInclude("JournalEntryLines.Account");
                 AddInclude("JournalEntryLines.Warehouse");
-                ApplyAsNoTracking();
             }
         }
 
@@ -45,7 +44,6 @@ namespace Infrastructure.Specifications
                 AddInclude("JournalEntryLines.BusinessPartner");
                 AddInclude("JournalEntryLines.Account");
                 AddInclude("JournalEntryLines.Warehouse");
-                ApplyAsNoTracking();
             }
         }
         public JournalEntrySpecs() : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))

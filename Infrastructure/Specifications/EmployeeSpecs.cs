@@ -27,7 +27,6 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Department);
                 AddInclude(i => i.Designation);
                 AddInclude("Department.Campus");
-                ApplyAsNoTracking();
             }
         }
 
@@ -41,7 +40,6 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Department);
                 AddInclude(i => i.Designation);
                 AddInclude("Department.Campus");
-                ApplyAsNoTracking();
             }
         }
 
@@ -61,7 +59,6 @@ namespace Infrastructure.Specifications
 
         public EmployeeSpecs() : base(x => x.BusinessPartner.BusinessPartnerType == BusinessPartnerType.Employee)
         {
-            ApplyAsNoTracking();
         }
     }
 }
