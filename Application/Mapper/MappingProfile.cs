@@ -465,6 +465,10 @@ namespace Application.Mapper
             // FileUpload Mapping
             CreateMap<FileUpload, FileUploadDto>();
             CreateMap<FileUploadDto, FileUpload>();
+
+            // User Mapping
+            CreateMap<User, UsersListDto>()
+                .ForMember(dto => dto.Name, core => core.MapFrom(a => a.Employee.Name));
         }
     }
 }
