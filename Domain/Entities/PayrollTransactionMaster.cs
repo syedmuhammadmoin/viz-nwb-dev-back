@@ -43,6 +43,8 @@ namespace Domain.Entities
         public decimal GrossSalary { get;private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal NetSalary { get;private set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal NetIncrement { get; private set; }
         public int StatusId { get;private set; }
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get;private set; }
@@ -52,7 +54,7 @@ namespace Domain.Entities
         public int? LedgerId { get; private set; }
         public virtual List<PayrollTransactionLines> PayrollTransactionLines { get;private set; }
 
-        public PayrollTransactionMaster(int month, int year, int employeeId, Guid bpsAccountId, string bpsName, int designationId, int departmentId, int campusId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId, List<PayrollTransactionLines> payrollTransactionLines)
+        public PayrollTransactionMaster(int month, int year, int employeeId, Guid bpsAccountId, string bpsName, int designationId, int departmentId, int campusId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netIncrement, decimal netSalary, int statusId, List<PayrollTransactionLines> payrollTransactionLines)
         {
             Month = month;
             Year = year;
@@ -69,12 +71,13 @@ namespace Domain.Entities
             BasicSalary = basicSalary;
             GrossSalary = grossSalary;
             NetSalary = netSalary;
+            NetIncrement = netIncrement;
             StatusId = statusId;
             PayrollTransactionLines = payrollTransactionLines;
         }
 
 
-        public void updatePayrollTransaction(Guid bpsAccountId, string bpsName, int designationId, int departmentId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, List<PayrollTransactionLines> payrollTransactionLines)
+        public void updatePayrollTransaction(Guid bpsAccountId, string bpsName, int designationId, int departmentId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, decimal netIncrement, List<PayrollTransactionLines> payrollTransactionLines)
         {
             BPSAccountId = bpsAccountId;
             BPSName = bpsName;
@@ -87,6 +90,7 @@ namespace Domain.Entities
             BasicSalary = basicSalary;
             GrossSalary = grossSalary;
             NetSalary = netSalary;
+            NetIncrement = netIncrement;
             PayrollTransactionLines = payrollTransactionLines;
         }
         public void updateAccountPayableId(Guid accountPayableId,int statusId)
