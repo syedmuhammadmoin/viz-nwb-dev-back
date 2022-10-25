@@ -17,7 +17,7 @@ namespace Application.Contracts.DTOs
         [Required]
         [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public decimal? Cost { get; set; }
-        [Range(0.00, 100.00, ErrorMessage = "Please enter a positive value")]
+        [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 0 and 100")]
         public decimal? Tax { get; set; }
         [Required]
         [MaxLength(500)]
