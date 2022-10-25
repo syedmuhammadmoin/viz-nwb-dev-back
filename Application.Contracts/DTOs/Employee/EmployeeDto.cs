@@ -17,7 +17,7 @@ namespace Application.Contracts.DTOs
         public string BankName { get; set;}
         public string BranchName { get; set;}
         public string AccountTitle { get; set;}
-        public long AccountNumber { get; set;}
+        public string AccountNumber { get; set;}
         public string EmployeeCode { get; set;}
         public string Domicile { get;  set; }
         public string Contact { get;  set; }
