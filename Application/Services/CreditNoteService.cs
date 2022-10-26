@@ -168,6 +168,20 @@ namespace Application.Services
 
             //setting BusinessPartnerReceivable
             var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.CustomerId);
+
+            //Validation for Payable and Receivable
+
+            foreach (var check in entity.CreditNoteLines)
+            {
+
+                var level4 = _unitOfWork.Level4.Find(new Level4Specs(0,(Guid)check.AccountId)).Where(x => x.Id == check.AccountId).FirstOrDefault();
+
+                if (level4 != null)
+                {
+                    return new Response<CreditNoteDto>("Account Invalid");
+                }
+
+            }
             crn.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
 
             //Setting status
