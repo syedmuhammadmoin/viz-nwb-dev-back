@@ -175,6 +175,19 @@ namespace Application.Services
 
             //setting BusinessPartnerPayable
             var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.VendorId);
+
+            //Validation for Payable and Receivable
+            
+            foreach (var check in entity.DebitNoteLines)
+            {
+                var level4 = _unitOfWork.Level4.Find(new Level4Specs(0, (Guid)check.AccountId)).Where(x => x.Id == check.AccountId).FirstOrDefault();
+               
+                if (level4 != null)
+                {
+                    return new Response<DebitNoteDto>("Account Invalid");
+                }
+
+            }
             dbn.setPayableAccountId((Guid)businessPartner.AccountPayableId);
 
             //Setting status
