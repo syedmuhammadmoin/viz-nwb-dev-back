@@ -28,6 +28,24 @@ namespace Application.Services
         public async Task<Response<BusinessPartnerDto>> CreateAsync(CreateBusinessPartnerDto entity)
         {
             var businessPartner = _mapper.Map<BusinessPartner>(entity);
+            
+            var AccountReceivable = _unitOfWork.Level4.Find(new Level4Specs(0, true)).Where(x => x.Id == entity.AccountReceivableId).ToList();
+
+            //Validation for same Accounts
+
+            if (AccountReceivable.Count == 0)
+            {
+                return new Response<BusinessPartnerDto>("Account Receivable is Invalid");
+            }
+
+            var AccountPayable = _unitOfWork.Level4.Find(new Level4Specs(0, false)).Where(x => x.Id == entity.AccountPayableId).ToList();
+
+            //Validation for Payable and Receivable
+
+            if (AccountPayable.Count == 0)
+            {
+                return new Response<BusinessPartnerDto>("Account Payable is Invalid");
+            }
             var result = await _unitOfWork.BusinessPartner.Add(businessPartner);
             await _unitOfWork.SaveAsync();
 
@@ -82,7 +100,7 @@ namespace Application.Services
         public async Task<Response<List<BusinessPartnerDto>>> GetBusinessPartnerDropDown()
         {
             var specification = new BusinessPartnerSpecs(true);
-            
+
             var businessPartners = await _unitOfWork.BusinessPartner.GetAll(specification);
             if (!businessPartners.Any())
                 return new Response<List<BusinessPartnerDto>>("List is empty");
