@@ -44,7 +44,7 @@ namespace Application.Services
                     return result;
                 }
             }
-            return new Response<PayrollTransactionDto>(null, "Created successfully");
+            return new Response<PayrollTransactionDto>(null, "Records populated successfully");
 
         }
 
