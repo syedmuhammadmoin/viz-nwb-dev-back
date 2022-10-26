@@ -55,7 +55,7 @@ namespace Application.Services
 
             // FOR PAYMENT
             var payment = await _unitOfWork.Payment.GetById((int)entity.PaymentId, new PaymentSpecs(true));
-            decimal paymentTotalAmount = payment.GrossPayment - ((payment.GrossPayment * payment.IncomeTax)/100) - ((payment.GrossPayment * payment.SalesTax) / 100) - ((payment.GrossPayment * payment.SRBTax) / 100);
+            decimal paymentTotalAmount = payment.GrossPayment - ((payment.GrossPayment * payment.IncomeTax) / 100) - ((payment.GrossPayment * payment.SalesTax) / 100) - ((payment.GrossPayment * payment.SRBTax) / 100) - payment.Deduction;
             var reconciledPaymentAmount = _unitOfWork.BankReconciliation.Find(new BankReconSpecs((int)entity.PaymentId, true)).Sum(i => i.Amount);
             decimal unreconciledPaymentAmount = paymentTotalAmount - reconciledPaymentAmount;
 
