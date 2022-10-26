@@ -2,6 +2,7 @@
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -27,17 +28,18 @@ namespace Application.Services
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UserService(UserManager<User> userManager, IUnitOfWork unitOfWork, IConfiguration configuration,
-            RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContextAccessor)
+            RoleManager<IdentityRole> roleManager, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
             _roleManager = roleManager;
-
+            _mapper = mapper;
         }
 
         // For Users
@@ -131,7 +133,7 @@ namespace Application.Services
             {
                 EmployeeId = getEmployee.Id,
                 Email = model.Email,
-                UserName = getEmployee.Name
+                UserName = model.Email
             };
 
             var userCreated = await _userManager.CreateAsync(user, model.Password);
@@ -163,20 +165,20 @@ namespace Application.Services
 
         }
 
-        public async Task<Response<IEnumerable<User>>> GetUsersAsync()
+        public async Task<Response<IEnumerable<UsersListDto>>> GetUsersAsync()
         {
             //Getting current user
             var currentUser = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             //Removing current user from list
-            IEnumerable<User> users = await _userManager.Users.Where(a => a.Id != currentUser).ToListAsync();
+            IEnumerable<User> users = await _userManager.Users.Where(a => a.Id != currentUser).Include(a =>a.Employee).ToListAsync();
 
             if (users == null)
             {
-                return new Response<IEnumerable<User>>("User list cannot be found");
+                return new Response<IEnumerable<UsersListDto>>("User list cannot be found");
             }
 
-            return new Response<IEnumerable<User>>(users, currentUser);
+            return new Response<IEnumerable<UsersListDto>>(_mapper.Map<List<UsersListDto>>(users), currentUser);
         }
 
         public async Task<Response<UserDto>> GetUserAsync(string id)

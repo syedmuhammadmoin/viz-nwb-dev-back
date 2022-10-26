@@ -25,7 +25,8 @@ namespace Domain.Entities
         public string BranchName { get; private set; }
         [MaxLength(50)]
         public string AccountTitle { get; private set; }
-        public long AccountNumber { get; private set; }
+        [MaxLength(50)]
+        public string AccountNumber { get; private set; }
         [MaxLength(30)]
         public string EmployeeCode { get; private set; }
         [MaxLength(100)]

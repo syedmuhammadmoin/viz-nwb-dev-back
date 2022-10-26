@@ -31,6 +31,7 @@ namespace Application.Contracts.DTOs
         public int AbsentDays { get; set; }
         public decimal TotalAllowances { get; set; }
         public decimal TotalDeductions { get; set; }
+        public decimal NetIncrement{ get; set; }
         public decimal TaxDeduction { get; set; }
         public decimal GrossPay { get; set; }
         public decimal NetSalary { get; set; }

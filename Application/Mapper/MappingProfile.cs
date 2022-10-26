@@ -378,7 +378,8 @@ namespace Application.Mapper
               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State == DocumentStatus.Unpaid ? "Unpaid" : a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
               .ForMember(dto => dto.AbsentDays, core => core.MapFrom(a => a.WorkingDays - a.PresentDays - a.LeaveDays))
-              .ForMember(dto => dto.NetSalary, core => core.MapFrom(a => a.NetSalary));
+              .ForMember(dto => dto.NetSalary, core => core.MapFrom(a => a.NetSalary))
+              .ForMember(dto => dto.NetIncrement, core => core.MapFrom(a => a.NetIncrement));
 
             CreateMap<PayrollTransactionLines, PayrollTransactionLinesDto>()
               .ForMember(dto => dto.PayrollItem, core => core.MapFrom(a => a.PayrollItem.Name))
@@ -465,6 +466,10 @@ namespace Application.Mapper
             // FileUpload Mapping
             CreateMap<FileUpload, FileUploadDto>();
             CreateMap<FileUploadDto, FileUpload>();
+
+            // User Mapping
+            CreateMap<User, UsersListDto>()
+                .ForMember(dto => dto.Name, core => core.MapFrom(a => a.Employee.Name));
         }
     }
 }

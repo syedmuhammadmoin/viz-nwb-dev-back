@@ -127,6 +127,7 @@ namespace Application.Services
                     (DateTime)item.TransDate,
                      totalBasicPay,
                      grossPay,
+                     empDetails.TotalIncrement, 
                      netPay,
                      1,
                      payrollTransactionLines);
@@ -282,7 +283,8 @@ namespace Application.Services
                     (DateTime)entity.TransDate,
                     totalBasicPay,
                     grossPay,
-                    netPay,
+                    netPay, 
+                    empDetails.TotalIncrement,
                     payrollTransactionLines);
 
             await _unitOfWork.SaveAsync();

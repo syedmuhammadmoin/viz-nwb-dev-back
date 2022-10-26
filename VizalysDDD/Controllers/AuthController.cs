@@ -52,7 +52,7 @@ namespace Vizalys.Api.Controllers
         //  /api/auth/GetUser
         [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.Create, Permissions.AuthClaims.View, Permissions.AuthClaims.Delete, Permissions.AuthClaims.Edit })]
         [HttpGet("Users")]
-        public async Task<ActionResult<Response<IEnumerable<User>>>> GetUsersAsync()
+        public async Task<ActionResult<Response<IEnumerable<UsersListDto>>>> GetUsersAsync()
         {
             var result = await _userService.GetUsersAsync();
 
