@@ -134,7 +134,7 @@ namespace Application.Services
 
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
-            var    getInvoice  = await _unitOfWork.Invoice.GetById(data.DocId, new InvoiceSpecs(true));
+            var getInvoice = await _unitOfWork.Invoice.GetById(data.DocId, new InvoiceSpecs(true));
 
             if (getInvoice == null)
             {
@@ -164,63 +164,63 @@ namespace Application.Services
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-           
-                foreach (var role in currentUserRoles)
+
+            foreach (var role in currentUserRoles)
+            {
+                if (transition.AllowedRole.Name == role)
                 {
-                    if (transition.AllowedRole.Name == role)
+                    getInvoice.setStatus(transition.NextStatusId);
+
+                    if (!String.IsNullOrEmpty(data.Remarks))
                     {
-                        getInvoice.setStatus(transition.NextStatusId);
-
-                        if (!String.IsNullOrEmpty(data.Remarks))
+                        var addRemarks = new Remark()
                         {
-                            var addRemarks = new Remark()
-                            {
-                                DocId = getInvoice.Id,
-                                DocType = DocType.Invoice,
-                                Remarks = data.Remarks,
-                                UserId = userId
-                            };
-                            await _unitOfWork.Remarks.Add(addRemarks);
+                            DocId = getInvoice.Id,
+                            DocType = DocType.Invoice,
+                            Remarks = data.Remarks,
+                            UserId = userId
+                        };
+                        await _unitOfWork.Remarks.Add(addRemarks);
+                    }
+
+
+
+
+                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                    {
+
+                        var totalTax = getInvoice.InvoiceLines.Sum(i => i.Tax);
+
+                        Guid taxAccount = new Guid("00000000-0000-0000-0000-000000000000");
+                        if (totalTax > 0)
+                        {
+                            var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.SalesTaxLiability)).Select(i => i.AccountId).FirstOrDefault();
+
+                            if (getTaxAccount == null)
+                                return new Response<bool>("Kindly set TaxAccountId");
+                            taxAccount = (Guid)getTaxAccount;
                         }
 
-
-                      
-
-                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
-                        {
-
-                            var totalTax = getInvoice.InvoiceLines.Sum(i => i.Tax);
-
-                            Guid taxAccount = new Guid("00000000-0000-0000-0000-000000000000");
-                            if (totalTax > 0)
-                            {
-                                var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.SalesTaxLiability)).Select(i => i.AccountId).FirstOrDefault();
-
-                                if (getTaxAccount == null)
-                                    return new Response<bool>("Kindly set TaxAccountId");
-                                taxAccount = (Guid)getTaxAccount;
-                            }
-
-                            await AddToLedger(getInvoice, taxAccount);
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "Invoice Approved");
-                        }
-                        if (transition.NextStatus.State == DocumentStatus.Rejected)
-                        {
-                            await _unitOfWork.SaveAsync();
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "Invoice Rejected");
-                        }
+                        await AddToLedger(getInvoice, taxAccount);
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Invoice Approved");
+                    }
+                    if (transition.NextStatus.State == DocumentStatus.Rejected)
+                    {
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
-                        return new Response<bool>(true, "Invoice Reviewed");
+                        return new Response<bool>(true, "Invoice Rejected");
                     }
+                    await _unitOfWork.SaveAsync();
+                    _unitOfWork.Commit();
+                    return new Response<bool>(true, "Invoice Reviewed");
                 }
+            }
 
-                return new Response<bool>("User does not have allowed role");
+            return new Response<bool>("User does not have allowed role");
 
-           
-          
+
+
         }
 
         //Private Methods for Invoice
@@ -251,27 +251,41 @@ namespace Application.Services
 
             //setting BusinessPartnerReceivable
             var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.CustomerId);
+            
+            //Validation for Payable and Receivable
+
+            foreach (var check in entity.InvoiceLines)
+            {
+
+                var level4 = _unitOfWork.Level4.Find(new Level4Specs(0, (Guid)check.AccountId)).Where(x => x.Id == check.AccountId).FirstOrDefault();
+
+                if (level4 != null)
+                {
+                    return new Response<InvoiceDto>("Account Invalid");
+                }
+                
+            }
             inv.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
 
             //Setting status
             inv.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-            
-                //Saving in table
-                var result = await _unitOfWork.Invoice.Add(inv);
-                await _unitOfWork.SaveAsync();
 
-                //For creating docNo
-                inv.CreateDocNo();
-                await _unitOfWork.SaveAsync();
+            //Saving in table
+            var result = await _unitOfWork.Invoice.Add(inv);
+            await _unitOfWork.SaveAsync();
 
-                //Commiting the transaction 
-                _unitOfWork.Commit();
+            //For creating docNo
+            inv.CreateDocNo();
+            await _unitOfWork.SaveAsync();
 
-                //returning response
-                return new Response<InvoiceDto>(_mapper.Map<InvoiceDto>(result), "Created successfully");
-           
+            //Commiting the transaction 
+            _unitOfWork.Commit();
+
+            //returning response
+            return new Response<InvoiceDto>(_mapper.Map<InvoiceDto>(result), "Created successfully");
+
         }
 
         private async Task<Response<InvoiceDto>> UpdateINV(CreateInvoiceDto entity, int status)
@@ -293,21 +307,21 @@ namespace Application.Services
             inv.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-           
-                //For updating data
-                _mapper.Map<CreateInvoiceDto, InvoiceMaster>(entity, inv);
 
-                //setting BusinessPartnerReceivable
-                var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.CustomerId);
-                inv.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
-                await _unitOfWork.SaveAsync();
+            //For updating data
+            _mapper.Map<CreateInvoiceDto, InvoiceMaster>(entity, inv);
 
-                //Commiting the transaction
-                _unitOfWork.Commit();
+            //setting BusinessPartnerReceivable
+            var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.CustomerId);
+            inv.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
+            await _unitOfWork.SaveAsync();
 
-                //returning response
-                return new Response<InvoiceDto>(_mapper.Map<InvoiceDto>(inv), "Updated successfully");
-            
+            //Commiting the transaction
+            _unitOfWork.Commit();
+
+            //returning response
+            return new Response<InvoiceDto>(_mapper.Map<InvoiceDto>(inv), "Updated successfully");
+
         }
 
         private async Task AddToLedger(InvoiceMaster inv, Guid taxAccountId)
@@ -439,7 +453,7 @@ namespace Application.Services
             return data;
         }
 
-       
+
         private List<FileUploadDto> ReturningFiles(InvoiceDto data, DocType docType)
         {
 
