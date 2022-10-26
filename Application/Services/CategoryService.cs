@@ -27,6 +27,37 @@ namespace Application.Services
         public async Task<Response<CategoryDto>> CreateAsync(CreateCategoryDto entity)
         {
             var category = _mapper.Map<Category>(entity);
+
+            //Validation for same Accounts
+
+            if (entity.InventoryAccountId == entity.CostAccountId || entity.InventoryAccountId == entity.RevenueAccountId || entity.CostAccountId == entity.RevenueAccountId)
+            {
+                return new Response<CategoryDto>("Account Cannot Be Same");
+            }
+
+            //Validation for Payable and Receivable
+
+            var InventoryAccountId = _unitOfWork.Level4.Find(new Level4Specs(0, (Guid) entity.InventoryAccountId)).Where(x => x.Id == entity.InventoryAccountId).FirstOrDefault();
+
+            if (InventoryAccountId != null)
+            {
+                return new Response<CategoryDto>("Inventory account Invalid");
+            }
+            
+            var RevenueAccountId = _unitOfWork.Level4.Find(new Level4Specs(0, (Guid) entity.RevenueAccountId)).Where(x => x.Id == entity.RevenueAccountId).FirstOrDefault();
+
+            if (RevenueAccountId != null)
+            {
+                return new Response<CategoryDto>("Revenue account Invalid");
+            }
+
+            var CostAccountId = _unitOfWork.Level4.Find(new Level4Specs(0, (Guid)entity.CostAccountId)).Where(x => x.Id == entity.CostAccountId).FirstOrDefault();
+
+            if (CostAccountId != null)
+            {
+                return new Response<CategoryDto>("Cost account Invalid");
+            }
+            
             var result = await _unitOfWork.Category.Add(category);
             await _unitOfWork.SaveAsync();
 
@@ -47,7 +78,7 @@ namespace Application.Services
 
         public async Task<Response<CategoryDto>> GetByIdAsync(int id)
         {
-            
+
             var specification = new CategorySpecs();
             var category = await _unitOfWork.Category.GetById(id, specification);
             if (category == null)
