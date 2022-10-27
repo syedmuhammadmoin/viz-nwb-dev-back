@@ -43,6 +43,19 @@ namespace Application.Services
                     {
                         return new Response<BankStmtDto>("Lines are required");
                     }
+
+                    foreach (var line in entity.BankStmtLines)
+                    {
+                        if (line.Credit < 0 || line.Debit < 0)
+                        {
+                            return new Response<BankStmtDto>("Credit & Debit amount should be a postive value");
+                        }
+
+                        if (line.StmtDate.Date > DateTime.UtcNow)
+                        {
+                            return new Response<BankStmtDto>("Future date statment can not be created ");
+                        }
+                    }
                 }
 
                 foreach (var line in entity.BankStmtLines)
