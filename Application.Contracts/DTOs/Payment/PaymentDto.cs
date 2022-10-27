@@ -27,9 +27,11 @@ namespace Application.Contracts.DTOs
         public int? CampusId { get; set; }
         public string CampusName { get; set; }
         public decimal GrossPayment { get; set; }
-        public decimal SalesTax { get; set; }
-        public decimal IncomeTax { get; set; }
-        public decimal SRBTax { get; set; }
+        public string SalesTaxId { get; set; }
+        public string IncomeTaxId { get; set; }
+        public decimal SalesTax { get; set; } // for editting in payment as percentage
+        public decimal IncomeTax { get; set; } // for editting in payment as percentage
+        public decimal SRBTax { get; set; } // for editting in payment as percentage
         public decimal SalesTaxInAmount { get; set; }
         public decimal IncomeTaxInAmount { get; set; }
         public decimal SRBTaxInAmount { get; set; }
