@@ -604,7 +604,7 @@ namespace Application.Services
 
             foreach (var e in getBankReconStatus)
             {
-                var netPayment = e.GrossPayment - ((e.GrossPayment * e.IncomeTax)/100) - ((e.GrossPayment * e.SalesTax) / 100) - ((e.GrossPayment * e.SRBTax) / 100);
+                var netPayment = e.GrossPayment - ((e.GrossPayment * e.IncomeTax)/100) - ((e.GrossPayment * e.SalesTax) / 100) - ((e.GrossPayment * e.SRBTax) / 100) - e.Deduction;
                 var reconciledPayment = _unitOfWork.BankReconciliation.Find(new BankReconSpecs(e.Id, true)).Sum(a => a.Amount);
 
 

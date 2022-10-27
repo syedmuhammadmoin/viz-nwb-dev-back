@@ -51,6 +51,11 @@ namespace Application.Services
             {
                 return new Response<bool>("There is no user with that Email");
             }
+            var employeeName = await _userManager.Users
+                                        .Include(i => i.Employee)
+                                        .Where(i => i.Id == user.Id)
+                                        .Select(i => i.Employee.Name)
+                                        .FirstOrDefaultAsync();
 
             //Checking user password
             var result = await _userManager.CheckPasswordAsync(user, model.Password);
@@ -64,7 +69,7 @@ namespace Application.Services
             //Declaring claims list
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Name, employeeName == null ? "Naveed" : employeeName),
                 new Claim("Email", model.Email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
             };
@@ -171,7 +176,7 @@ namespace Application.Services
             var currentUser = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             //Removing current user from list
-            IEnumerable<User> users = await _userManager.Users.Where(a => a.Id != currentUser).Include(a =>a.Employee).ToListAsync();
+            IEnumerable<User> users = await _userManager.Users.Where(a => a.Id != currentUser).Include(a => a.Employee).ToListAsync();
 
             if (users == null)
             {
