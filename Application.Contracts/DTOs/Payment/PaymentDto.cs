@@ -14,6 +14,8 @@ namespace Application.Contracts.DTOs
         public PaymentType PaymentType { get; set; }
         public int BusinessPartnerId { get; set; }
         public string BusinessPartnerName { get; set; }
+        public string BusinessPartnerAddress { get; set; }
+        public string BusinessPartnerMobile { get; set; }
         public DocType PaymentFormType { get; set; }
         public Guid AccountId { get; set; }
         public string AccountName { get; set; }
@@ -46,8 +48,9 @@ namespace Application.Contracts.DTOs
         public string Status { get; set; }
         public DocumentStatus State { get; set; }
         public IEnumerable<FileUploadDto> FileUploadList { get; set; }
-
         public bool IsAllowedRole { get; set; }
-
+        public string BankName { get; set; }
+        public string AccountTitle { get; set; }
+        public long AccountNumber { get; set; }
     }
 }

@@ -157,6 +157,7 @@ namespace Application.Mapper
             // Bill Mapping
             CreateMap<BillMaster, BillDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
+              .ForMember(dto => dto.VendorAddress, core => core.MapFrom(a => a.Vendor.Address))
               .ForMember(dto => dto.PayableAccountName, core => core.MapFrom(a => a.PayableAccount.Name))
               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State == DocumentStatus.Unpaid ? "Unpaid" : a.Status.Status))
@@ -203,6 +204,8 @@ namespace Application.Mapper
             //Payment Mapping
             CreateMap<Payment, PaymentDto>()
                 .ForMember(dto => dto.BusinessPartnerName, core => core.MapFrom(a => a.BusinessPartner.Name))
+                .ForMember(dto => dto.BusinessPartnerAddress, core => core.MapFrom(a => a.BusinessPartner.Address))
+                .ForMember(dto => dto.BusinessPartnerMobile, core => core.MapFrom(a => a.BusinessPartner.Mobile))
                 .ForMember(dto => dto.PaymentRegisterName, core => core.MapFrom(a => a.PaymentRegister.Name))
                 .ForMember(dto => dto.DeductionAccountName, core => core.MapFrom(a => a.DeductionAccount.Name))
                 .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
