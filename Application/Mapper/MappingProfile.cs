@@ -198,10 +198,11 @@ namespace Application.Mapper
             CreateMap<CreateDebitNoteDto, DebitNoteMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => e.Quantity * e.Cost)))
                .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => e.Quantity * e.Cost * e.Tax / 100)))
-               .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => (e.Quantity * e.Cost) + (e.Quantity * e.Cost * e.Tax / 100))));
+               .ForMember(core => core.OtherTax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => e.AnyOtherTax)))
+               .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => (e.Quantity * e.Cost) + (e.Quantity * e.Cost * e.Tax / 100) + (e.AnyOtherTax))));
 
             CreateMap<CreateDebitNoteLinesDto, DebitNoteLines>()
-               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
+               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100) + (a.AnyOtherTax)));
 
             //Payment Mapping
             CreateMap<Payment, PaymentDto>()
@@ -216,16 +217,16 @@ namespace Application.Mapper
                 .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
                 .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                 .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
-                .ForMember(dto => dto.SalesTaxInAmount, core => core.MapFrom(a => (a.GrossPayment * a.SalesTax)/ 100))
+                .ForMember(dto => dto.SalesTaxInAmount, core => core.MapFrom(a => (a.GrossPayment * a.SalesTax) / 100))
                 .ForMember(dto => dto.IncomeTaxInAmount, core => core.MapFrom(a => (a.GrossPayment * a.IncomeTax) / 100))
-                .ForMember(dto => dto.SRBTaxInAmount, core => core.MapFrom(a => (a.GrossPayment * a.SRBTax)/ 100))
+                .ForMember(dto => dto.SRBTaxInAmount, core => core.MapFrom(a => (a.GrossPayment * a.SRBTax) / 100))
               .ForMember(dto => dto.Status, core => core.MapFrom(
                     a => a.BankReconStatus == DocumentStatus.Unreconciled ? "In Payment" :
                     a.BankReconStatus == DocumentStatus.Partial ? "Partial Reconciled" :
                     a.BankReconStatus == DocumentStatus.Reconciled ? "Reconciled" : a.Status.Status));
 
             CreateMap<CreatePaymentDto, Payment>()
-                .ForMember(core => core.NetPayment, dto => dto.MapFrom(a => (a.GrossPayment - ((a.GrossPayment * a.IncomeTax)/100) - ((a.GrossPayment * a.SalesTax) / 100) - ((a.GrossPayment * a.SRBTax) / 100) - a.Deduction)));
+                .ForMember(core => core.NetPayment, dto => dto.MapFrom(a => (a.GrossPayment - ((a.GrossPayment * a.IncomeTax) / 100) - ((a.GrossPayment * a.SalesTax) / 100) - ((a.GrossPayment * a.SRBTax) / 100) - a.Deduction)));
 
             // CashAccount Mapping
             CreateMap<CashAccount, CashAccountDto>()
@@ -352,7 +353,7 @@ namespace Application.Mapper
 
             CreateMap<CreateGRNLinesDto, GRNLines>()
                .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
-           
+
             // EstimatedBudget Mapping
             CreateMap<EstimatedBudgetMaster, EstimatedBudgetDto>()
                 .ForMember(dto => dto.From, core => core.MapFrom(a => a.PreviousBudget.From))
