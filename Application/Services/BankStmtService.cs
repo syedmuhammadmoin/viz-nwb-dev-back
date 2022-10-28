@@ -57,6 +57,10 @@ namespace Application.Services
                         }
                     }
                 }
+                else
+                {
+                    return new Response<BankStmtDto>("Please upload correct file");
+                }
 
                 foreach (var line in entity.BankStmtLines)
                 {
@@ -78,15 +82,20 @@ namespace Application.Services
                 _unitOfWork.Commit();
                 return new Response<BankStmtDto>(_mapper.Map<BankStmtDto>(bankStmt), "Created successfully");
             }
-            catch (NullReferenceException)
+            catch (FormatException)
             {
                 _unitOfWork.Rollback();
-                return new Response<BankStmtDto>("All fields are required in spreadsheet");
+                return new Response<BankStmtDto>("Lines are in wrong format");
             }
             catch (InvalidCastException)
             {
                 _unitOfWork.Rollback();
                 return new Response<BankStmtDto>("Date Format should be DD/MM/YYYY");
+            }
+            catch (NullReferenceException)
+            {
+                _unitOfWork.Rollback();
+                return new Response<BankStmtDto>("All fields are required in spreadsheet");
             }
             catch (Exception ex)
             {

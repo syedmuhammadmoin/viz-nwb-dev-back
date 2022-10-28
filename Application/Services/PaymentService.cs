@@ -82,6 +82,14 @@ namespace Application.Services
 
             var paymentDto = _mapper.Map<PaymentDto>(payment);
 
+            var getBank = _unitOfWork.BankAccount.Find(new BankAccountSpecs(payment.PaymentRegisterId)).FirstOrDefault();
+
+
+            // Mapping Bank details in payment 
+            paymentDto.BankName = getBank.BankName;
+            paymentDto.AccountTitle = getBank.AccountTitle;
+            paymentDto.AccountNumber = getBank.AccountNumber;
+
             //Returning
             ReturningRemarks(paymentDto, docType);
 

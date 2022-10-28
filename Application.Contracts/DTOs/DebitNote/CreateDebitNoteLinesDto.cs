@@ -19,6 +19,7 @@ namespace Application.Contracts.DTOs
         public decimal? Cost { get; set; }
         [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 0 and 100")]
         public decimal? Tax { get; set; }
+        public decimal AnyOtherTax { get; set; }
         [Required]
         [MaxLength(500)]
         public string Description { get; set; }
