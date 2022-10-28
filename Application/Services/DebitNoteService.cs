@@ -256,7 +256,7 @@ namespace Application.Services
                     line.WarehouseId,
                     line.Description,
                     'C',
-                    amount + tax,
+                    amount + tax + line.AnyOtherTax,
                     dbn.CampusId,
                     dbn.NoteDate
                     );
