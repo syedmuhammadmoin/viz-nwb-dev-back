@@ -40,9 +40,7 @@ namespace Application.Services
                     entity.BankStmtLines = await ImportStmtLines(file);
 
                     if (entity.BankStmtLines.Count() == 0)
-                    {
                         return new Response<BankStmtDto>("Lines are required");
-                    }
 
                     foreach (var line in entity.BankStmtLines)
                     {
@@ -57,10 +55,9 @@ namespace Application.Services
                         }
                     }
                 }
-                else
-                {
-                    return new Response<BankStmtDto>("Please upload correct file");
-                }
+
+                if (entity.BankStmtLines.Count() == 0)
+                    return new Response<BankStmtDto>("Lines are required, Upload a file or click on reset for Lines");
 
                 foreach (var line in entity.BankStmtLines)
                 {
