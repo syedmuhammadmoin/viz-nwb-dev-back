@@ -23,6 +23,7 @@ namespace Application.Contracts.DTOs
         public string CampusName { get; set; }
         public decimal TotalBeforeTax { get; set; }
         public decimal TotalTax { get; set; }
+        public decimal OtherTax { get; set; }
         public decimal TotalAmount { get; set; }
         public decimal ReconciledAmount { get; set; }
         public IEnumerable<PaidDocListDto> PaidAmountList { get; set; }
