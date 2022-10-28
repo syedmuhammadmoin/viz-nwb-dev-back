@@ -24,6 +24,8 @@ namespace Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalBeforeTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
+        public decimal Tax { get; private set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal TotalTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal OtherTax { get; private set; }

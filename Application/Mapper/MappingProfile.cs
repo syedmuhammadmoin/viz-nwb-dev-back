@@ -197,8 +197,9 @@ namespace Application.Mapper
 
             CreateMap<CreateDebitNoteDto, DebitNoteMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => e.Quantity * e.Cost)))
-               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => e.Quantity * e.Cost * e.Tax / 100)))
+               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e =>( e.Quantity * e.Cost * e.Tax / 100) + e.AnyOtherTax)))
                .ForMember(core => core.OtherTax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => e.AnyOtherTax)))
+               .ForMember(core => core.Tax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => (e.Quantity * e.Cost * e.Tax / 100))))
                .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => (e.Quantity * e.Cost) + (e.Quantity * e.Cost * e.Tax / 100) + (e.AnyOtherTax))));
 
             CreateMap<CreateDebitNoteLinesDto, DebitNoteLines>()
