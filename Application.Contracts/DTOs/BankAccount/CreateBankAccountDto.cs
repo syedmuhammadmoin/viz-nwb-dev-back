@@ -11,7 +11,10 @@ namespace Application.Contracts.DTOs
     public class CreateBankAccountDto
     {
         [Required]
-        public long? AccountNumber { get; set; }
+        [MaxLength(50)]
+        public string AccountNumber { get; set; }
+        [MaxLength(50)]
+        public string IBAN { get; set; }
         [Required]
         [MaxLength(50)]
         public string AccountTitle { get; set; }
