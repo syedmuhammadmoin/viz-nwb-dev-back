@@ -231,13 +231,13 @@ namespace Application.Services
         public async Task<Response<EmployeeDto>> UpdateAsync(UpdateEmployeeDto entity)
         {
             var getEmployee = await _unitOfWork.Employee.GetById((int)entity.Id, new EmployeeSpecs(true));
-          
             if (getEmployee == null)
                 return new Response<EmployeeDto>("Not found");
 
-            //For updating data
-            _mapper.Map<UpdateEmployeeDto, Employee>(entity, getEmployee);
+            getEmployee.updateEmployee(entity.NoOfIncrements);
+            getEmployee.BusinessPartner.updateAccountPayableId((Guid)entity.AccountPayableId);
             await _unitOfWork.SaveAsync();
+
             return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(getEmployee), "Updated successfully");
         }
     }
