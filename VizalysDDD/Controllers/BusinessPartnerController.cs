@@ -75,5 +75,10 @@ namespace Vizalys.Api.Controllers
             return Ok(await _businessPartnerService.GetBusinessPartnerDropDown()); // Status Code : 200
         }
 
+        [HttpGet("AllBusinessPartnerDropdown")]
+        public ActionResult<Response<List<EmployeeBusinessPartnerDto>>> GetAllBusinessPartnerDropDown()
+        {
+            return Ok(_businessPartnerService.GetAllBusinessPartnerDropDown()); // Status Code : 200
+        }
     }
 }
