@@ -57,5 +57,7 @@ namespace Application.Contracts.DTOs
         public decimal NetPay { get; set; }
         public virtual List<PayrollItemDto> PayrollItems { get; set; }
         public string Email { get; set; }
+        public Guid AccountPayableId { get; set; }
+        public string AccountPayableName { get; set; }
     }
 }
