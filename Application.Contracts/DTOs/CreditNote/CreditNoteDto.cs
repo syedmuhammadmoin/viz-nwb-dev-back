@@ -14,6 +14,9 @@ namespace Application.Contracts.DTOs
         public string DocNo { get; set; }
         public int CustomerId { get; set; }
         public string CustomerName { get; set; }
+        public string CustomerAddress { get; set; }
+        public string IncomeTaxId { get; set; }
+        public string SalesTaxId { get; set; }
         public int StatusId { get; set; }
         public string Status { get; set; }
         public DateTime NoteDate { get; set; }

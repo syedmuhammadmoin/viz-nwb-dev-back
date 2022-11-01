@@ -115,6 +115,9 @@ namespace Application.Mapper
             // Invoice Mapping
             CreateMap<InvoiceMaster, InvoiceDto>()
               .ForMember(dto => dto.CustomerName, core => core.MapFrom(a => a.Customer.Name))
+              .ForMember(dto => dto.CustomerAddress, core => core.MapFrom(a => a.Customer.Address))
+              .ForMember(dto => dto.SalesTaxId, core => core.MapFrom(a => a.Customer.SalesTaxId))
+              .ForMember(dto => dto.IncomeTaxId, core => core.MapFrom(a => a.Customer.IncomeTaxId))
               .ForMember(dto => dto.ReceivableAccountName, core => core.MapFrom(a => a.ReceivableAccount.Name))
               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State == DocumentStatus.Unpaid ? "Unpaid" : a.Status.Status))
@@ -136,6 +139,9 @@ namespace Application.Mapper
             // CreditNote Mapping
             CreateMap<CreditNoteMaster, CreditNoteDto>()
               .ForMember(dto => dto.CustomerName, core => core.MapFrom(a => a.Customer.Name))
+              .ForMember(dto => dto.CustomerAddress, core => core.MapFrom(a => a.Customer.Address))
+              .ForMember(dto => dto.SalesTaxId, core => core.MapFrom(a => a.Customer.SalesTaxId))
+              .ForMember(dto => dto.IncomeTaxId, core => core.MapFrom(a => a.Customer.IncomeTaxId))
                .ForMember(dto => dto.ReceivableAccountName, core => core.MapFrom(a => a.ReceivableAccount.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
@@ -185,6 +191,9 @@ namespace Application.Mapper
             // DebitNote Mapping
             CreateMap<DebitNoteMaster, DebitNoteDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
+              .ForMember(dto => dto.VendorAddress, core => core.MapFrom(a => a.Vendor.Address))
+              .ForMember(dto => dto.SalesTaxId, core => core.MapFrom(a => a.Vendor.SalesTaxId))
+              .ForMember(dto => dto.IncomeTaxId, core => core.MapFrom(a => a.Vendor.IncomeTaxId))
               .ForMember(dto => dto.PayableAccountName, core => core.MapFrom(a => a.PayableAccount.Name))
               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))

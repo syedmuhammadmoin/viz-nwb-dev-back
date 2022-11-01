@@ -34,5 +34,9 @@ namespace Infrastructure.Specifications
         public BankAccountSpecs(Guid clearingAccountId) : base(e => e.ClearingAccountId == clearingAccountId)
         {
         }
+        public BankAccountSpecs(string accountNumber) : base(e => e.AccountNumber == accountNumber)
+        {
+
+        }
     }
 }

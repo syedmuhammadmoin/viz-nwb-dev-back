@@ -36,15 +36,25 @@ namespace Infrastructure.GlobalExceptionFilter
             {
                 StatusCode = 500
             };
+
+            string result;
+            if (exception.InnerException == null)
+            {
+                result = exception.StackTrace;
+            }
+            else
+            {
+                result = exception.InnerException.Message;
+            }
+
             var Logs = new LogItem
             {
                 Status = responses.StatusCode,
                 Message = exception.Message,
-                Detail = exception.StackTrace,
+                Detail = result,
                 TraceId = context.HttpContext.TraceIdentifier,
-
-
             };
+
             // Creating New Context
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
            .UseSqlServer(_configuration.GetConnectionString("DefaultConnection"))
@@ -60,9 +70,6 @@ namespace Infrastructure.GlobalExceptionFilter
                 transaction.Commit();
             }
             context.ExceptionHandled = true;
-
         }
-
     }
-
 }

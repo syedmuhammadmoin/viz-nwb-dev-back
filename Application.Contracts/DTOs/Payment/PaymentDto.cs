@@ -53,6 +53,6 @@ namespace Application.Contracts.DTOs
         public bool IsAllowedRole { get; set; }
         public string BankName { get; set; }
         public string AccountTitle { get; set; }
-        public long AccountNumber { get; set; }
+        public string AccountNumber { get; set; }
     }
 }

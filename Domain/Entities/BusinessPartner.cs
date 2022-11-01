@@ -31,6 +31,10 @@ namespace Domain.Entities
         public string IncomeTaxId { get; private set; }
         [MaxLength(50)]
         public string SalesTaxId { get; private set; }
+        [MaxLength(100)]
+        public string BankName { get; private set; }
+        [MaxLength(100)]
+        public string BranchCode { get; private set; }
         [MaxLength(50)]
         public string BankAccountTitle { get; private set; }
         [MaxLength(30)]

@@ -32,6 +32,10 @@ namespace Application.Contracts.DTOs
         public string BankAccountTitle { get; set; }
         [MaxLength(30)]
         public string BankAccountNumber { get; set; }
+        [MaxLength(100)]
+        public string BankName { get; set; }
+        [MaxLength(50)]
+        public string BranchCode { get; set; }
         [Required]
         public Guid? AccountReceivableId { get; set; }
         [Required]
