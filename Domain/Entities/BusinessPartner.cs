@@ -45,12 +45,19 @@ namespace Domain.Entities
         public Guid? AccountPayableId { get; private set; }
         [ForeignKey("AccountPayableId")]
         public Level4 AccountPayable { get; private set; }
+        public List<Employee> EmployeesList { get; set; }
+
 
         public BusinessPartner(string name, BusinessPartnerType businessPartnerType, string cnic)
         {
             Name = name;
             BusinessPartnerType = businessPartnerType;
             CNIC = cnic;
+        }
+        
+        public void updateAccountPayableId(Guid accountPayableId)
+        {
+            AccountPayableId = accountPayableId;
         }
 
         protected BusinessPartner()

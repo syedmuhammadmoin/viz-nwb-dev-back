@@ -76,6 +76,11 @@ namespace Domain.Entities
         {
             Email = email;
         }
+        
+        public void updateEmployee(int? noOfIncrements)
+        {
+            NoOfIncrements = noOfIncrements;
+        }
 
         protected Employee()
         {
