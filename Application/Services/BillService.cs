@@ -80,13 +80,13 @@ namespace Application.Services
                 return new Response<BillDto>("Not found");
 
             var billDto = _mapper.Map<BillDto>(bill);
-            ReturningRemarks(billDto , DocType.Bill);
+            ReturningRemarks(billDto, DocType.Bill);
 
 
-         
-            ReturningFiles(billDto , DocType.Bill);
 
-            
+            ReturningFiles(billDto, DocType.Bill);
+
+
             if ((billDto.State == DocumentStatus.Unpaid || billDto.State == DocumentStatus.Partial || billDto.State == DocumentStatus.Paid) && billDto.TransactionId != null)
             {
                 return new Response<BillDto>(MapToValue(billDto), "Returning value");
@@ -163,44 +163,44 @@ namespace Application.Services
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-          
-                foreach (var role in currentUserRoles)
-                {
-                    if (transition.AllowedRole.Name == role)
-                    {
-                        getBill.setStatus(transition.NextStatusId);
-                        if (!String.IsNullOrEmpty(data.Remarks))
-                        {
-                            var addRemarks = new Remark()
-                            {
-                                DocId = getBill.Id,
-                                DocType = DocType.Bill,
-                                Remarks = data.Remarks,
-                                UserId = userId
-                            };
-                            await _unitOfWork.Remarks.Add(addRemarks);
-                        }
 
-                       
-                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
+            foreach (var role in currentUserRoles)
+            {
+                if (transition.AllowedRole.Name == role)
+                {
+                    getBill.setStatus(transition.NextStatusId);
+                    if (!String.IsNullOrEmpty(data.Remarks))
+                    {
+                        var addRemarks = new Remark()
                         {
-                            await AddToLedger(getBill);
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "Bill Approved");
-                        }
-                        if (transition.NextStatus.State == DocumentStatus.Rejected)
-                        {
-                            await _unitOfWork.SaveAsync();
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "Bill Rejected");
-                        }
+                            DocId = getBill.Id,
+                            DocType = DocType.Bill,
+                            Remarks = data.Remarks,
+                            UserId = userId
+                        };
+                        await _unitOfWork.Remarks.Add(addRemarks);
+                    }
+
+
+                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                    {
+                        await AddToLedger(getBill);
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Bill Approved");
+                    }
+                    if (transition.NextStatus.State == DocumentStatus.Rejected)
+                    {
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
-                        return new Response<bool>(true, "Bill Reviewed");
+                        return new Response<bool>(true, "Bill Rejected");
                     }
+                    await _unitOfWork.SaveAsync();
+                    _unitOfWork.Commit();
+                    return new Response<bool>(true, "Bill Reviewed");
                 }
+            }
 
-                return new Response<bool>("User does not have allowed role");
+            return new Response<bool>("User does not have allowed role");
 
         }
 
@@ -233,27 +233,45 @@ namespace Application.Services
 
             //setting BusinessPartnerPayable
             var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.VendorId);
+
+            // checking if employee is business partner
+            if (businessPartner.BusinessPartnerType == BusinessPartnerType.Employee)
+            {
+                //checking if bill campus matches the employee campus
+
+                //checking if bill campus matches the employee campus
+                var employeeCampusId = _unitOfWork.Employee.Find(new EmployeeSpecs(businessPartner.CNIC)).Select(x => x.Department.CampusId).FirstOrDefault();
+
+                if (employeeCampusId != entity.CampusId)
+                    return new Response<BillDto>("Employee's campus is different than selected bill campus");
+
+                //checking if account payable has been assigned to employee
+
+                if (businessPartner.AccountPayableId == null)
+                    return new Response<BillDto>("Account Id not found for the business partner");
+            }
+
             bill.setPayableAccountId((Guid)businessPartner.AccountPayableId);
 
             //Setting status
             bill.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-         
-                //Saving in table
-                var result = await _unitOfWork.Bill.Add(bill);
-                await _unitOfWork.SaveAsync();
 
-                //For creating docNo
-                bill.CreateDocNo();
-                await _unitOfWork.SaveAsync();
+            //Saving in table
+            var result = await _unitOfWork.Bill.Add(bill);
+            await _unitOfWork.SaveAsync();
 
-                //Commiting the transaction 
-                _unitOfWork.Commit();
+            //For creating docNo
+            bill.CreateDocNo();
+            await _unitOfWork.SaveAsync();
 
-                //returning response
-                return new Response<BillDto>(_mapper.Map<BillDto>(result), "Created successfully");
-         
+            //Commiting the transaction 
+            _unitOfWork.Commit();
+
+            //returning response
+            return new Response<BillDto>(_mapper.Map<BillDto>(result), "Created successfully");
+
         }
 
         private async Task<Response<BillDto>> UpdateBILL(CreateBillDto entity, int status)
@@ -273,22 +291,37 @@ namespace Application.Services
             bill.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-         
-                //For updating data
-                _mapper.Map<CreateBillDto, BillMaster>(entity, bill);
 
-                //setting BusinessPartnerPayable
-                var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.VendorId);
-                bill.setPayableAccountId((Guid)businessPartner.AccountPayableId);
+            //For updating data
+            _mapper.Map<CreateBillDto, BillMaster>(entity, bill);
 
-                await _unitOfWork.SaveAsync();
+            //setting BusinessPartnerPayable
+            var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.VendorId);
 
-                //Commiting the transaction
-                _unitOfWork.Commit();
+            if (businessPartner.BusinessPartnerType == BusinessPartnerType.Employee)
+            {
+                //checking if bill campus matches the employee campus
+                var employeeCampusId = _unitOfWork.Employee.Find(new EmployeeSpecs(businessPartner.CNIC)).Select(x => x.Department.CampusId).FirstOrDefault();
 
-                //returning response
-                return new Response<BillDto>(_mapper.Map<BillDto>(bill), "Created successfully");
-            
+                if (employeeCampusId != entity.CampusId)
+                    return new Response<BillDto>("Employee's campus is different than selected bill campus");
+
+                //checking if account payable has been assigned to employee
+
+                if (businessPartner.AccountPayableId == null)
+                    return new Response<BillDto>("Account Id not found for the business partner");
+            }
+
+            bill.setPayableAccountId((Guid)businessPartner.AccountPayableId);
+
+            await _unitOfWork.SaveAsync();
+
+            //Commiting the transaction
+            _unitOfWork.Commit();
+
+            //returning response
+            return new Response<BillDto>(_mapper.Map<BillDto>(bill), "Created successfully");
+
         }
 
         private async Task AddToLedger(BillMaster bill)
@@ -459,7 +492,7 @@ namespace Application.Services
 
             return remarks;
         }
-       
+
         private List<FileUploadDto> ReturningFiles(BillDto data, DocType docType)
         {
 
