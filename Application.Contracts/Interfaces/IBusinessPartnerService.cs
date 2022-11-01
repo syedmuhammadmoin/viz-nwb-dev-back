@@ -12,5 +12,6 @@ namespace Application.Contracts.Interfaces
     public interface IBusinessPartnerService :ICrudService<CreateBusinessPartnerDto, BusinessPartnerDto, int, BusinessPartnerFilter>
     {
         Task<Response<List<BusinessPartnerDto>>> GetBusinessPartnerDropDown();
+        Response<List<EmployeeBusinessPartnerDto>> GetAllBusinessPartnerDropDown();
     }
 }
