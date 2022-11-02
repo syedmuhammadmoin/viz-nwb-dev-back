@@ -237,18 +237,10 @@ namespace Application.Services
             // checking if employee is business partner
             if (businessPartner.BusinessPartnerType == BusinessPartnerType.Employee)
             {
-                //checking if bill campus matches the employee campus
-
-                //checking if bill campus matches the employee campus
-                var employeeCampusId = _unitOfWork.Employee.Find(new EmployeeSpecs(businessPartner.CNIC)).Select(x => x.Department.CampusId).FirstOrDefault();
-
-                if (employeeCampusId != entity.CampusId)
-                    return new Response<BillDto>("Employee's campus is different than selected bill campus");
-
                 //checking if account payable has been assigned to employee
 
                 if (businessPartner.AccountPayableId == null)
-                    return new Response<BillDto>("Account Id not found for the business partner");
+                    return new Response<BillDto>("Payable account not found for the business partner");
             }
 
             bill.setPayableAccountId((Guid)businessPartner.AccountPayableId);
@@ -288,31 +280,25 @@ namespace Application.Services
             if (bill.StatusId != 1 && bill.StatusId != 2)
                 return new Response<BillDto>("Only draft document can be edited");
 
+            //setting BusinessPartnerPayable
+            var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.VendorId);
+
+            if (businessPartner.BusinessPartnerType == BusinessPartnerType.Employee)
+            {
+                //checking if account payable has been assigned to employee
+                if (businessPartner.AccountPayableId == null)
+                    return new Response<BillDto>("Payable account not found for the business partner");
+            }
+
+            bill.setPayableAccountId((Guid)businessPartner.AccountPayableId);
+
+
             bill.setStatus(status);
 
             _unitOfWork.CreateTransaction();
 
             //For updating data
             _mapper.Map<CreateBillDto, BillMaster>(entity, bill);
-
-            //setting BusinessPartnerPayable
-            var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.VendorId);
-
-            if (businessPartner.BusinessPartnerType == BusinessPartnerType.Employee)
-            {
-                //checking if bill campus matches the employee campus
-                var employeeCampusId = _unitOfWork.Employee.Find(new EmployeeSpecs(businessPartner.CNIC)).Select(x => x.Department.CampusId).FirstOrDefault();
-
-                if (employeeCampusId != entity.CampusId)
-                    return new Response<BillDto>("Employee's campus is different than selected bill campus");
-
-                //checking if account payable has been assigned to employee
-
-                if (businessPartner.AccountPayableId == null)
-                    return new Response<BillDto>("Account Id not found for the business partner");
-            }
-
-            bill.setPayableAccountId((Guid)businessPartner.AccountPayableId);
 
             await _unitOfWork.SaveAsync();
 
@@ -475,6 +461,7 @@ namespace Application.Services
             }
             return new Response<List<BillDto>>(billDto, "Returning Report");
         }
+
         private List<RemarksDto> ReturningRemarks(BillDto data, DocType docType)
         {
             var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Bill))

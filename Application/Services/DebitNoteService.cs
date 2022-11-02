@@ -80,7 +80,7 @@ namespace Application.Services
 
 
             //Returning
-        
+
             ReturningFiles(debitNoteDto, DocType.DebitNote);
 
 
@@ -175,27 +175,36 @@ namespace Application.Services
 
             //setting BusinessPartnerPayable
             var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.VendorId);
+
+            // checking if employee is business partner
+            if (businessPartner.BusinessPartnerType == BusinessPartnerType.Employee)
+            {
+                //checking if account payable has been assigned to employee
+
+                if (businessPartner.AccountPayableId == null)
+                    return new Response<DebitNoteDto>("Payable account not found for the business partner");
+            }
             dbn.setPayableAccountId((Guid)businessPartner.AccountPayableId);
 
             //Setting status
             dbn.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-          
-                //Saving in table
-                var result = await _unitOfWork.DebitNote.Add(dbn);
-                await _unitOfWork.SaveAsync();
 
-                //For creating docNo
-                dbn.CreateDocNo();
-                await _unitOfWork.SaveAsync();
+            //Saving in table
+            var result = await _unitOfWork.DebitNote.Add(dbn);
+            await _unitOfWork.SaveAsync();
 
-                //Commiting the transaction 
-                _unitOfWork.Commit();
+            //For creating docNo
+            dbn.CreateDocNo();
+            await _unitOfWork.SaveAsync();
 
-                //returning response
-                return new Response<DebitNoteDto>(_mapper.Map<DebitNoteDto>(result), "Created successfully");
-         
+            //Commiting the transaction 
+            _unitOfWork.Commit();
+
+            //returning response
+            return new Response<DebitNoteDto>(_mapper.Map<DebitNoteDto>(result), "Created successfully");
+
         }
 
         private async Task<Response<DebitNoteDto>> UpdateDBN(CreateDebitNoteDto entity, int status)
@@ -214,24 +223,32 @@ namespace Application.Services
 
             //setting BusinessPartnerPayable
             var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.VendorId);
+
+            if (businessPartner.BusinessPartnerType == BusinessPartnerType.Employee)
+            {
+                //checking if account payable has been assigned to employee
+                if (businessPartner.AccountPayableId == null)
+                    return new Response<DebitNoteDto>("Payable account not found for the business partner");
+            }
+
             dbn.setPayableAccountId((Guid)businessPartner.AccountPayableId);
 
             dbn.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-          
-                //For updating data
-                _mapper.Map<CreateDebitNoteDto, DebitNoteMaster>(entity, dbn);
 
-                await _unitOfWork.SaveAsync();
+            //For updating data
+            _mapper.Map<CreateDebitNoteDto, DebitNoteMaster>(entity, dbn);
 
-                //Commiting the transaction
-                _unitOfWork.Commit();
+            await _unitOfWork.SaveAsync();
 
-                //returning response
-                return new Response<DebitNoteDto>(_mapper.Map<DebitNoteDto>(dbn), "Created successfully");
-            
-         
+            //Commiting the transaction
+            _unitOfWork.Commit();
+
+            //returning response
+            return new Response<DebitNoteDto>(_mapper.Map<DebitNoteDto>(dbn), "Created successfully");
+
+
         }
 
         private async Task AddToLedger(DebitNoteMaster dbn)
@@ -319,80 +336,80 @@ namespace Application.Services
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-          
-                foreach (var role in currentUserRoles)
+
+            foreach (var role in currentUserRoles)
+            {
+                if (transition.AllowedRole.Name == role)
                 {
-                    if (transition.AllowedRole.Name == role)
-                    {             
-                        getDebitNote.setStatus(transition.NextStatusId);
-                        if (!String.IsNullOrEmpty(data.Remarks))
+                    getDebitNote.setStatus(transition.NextStatusId);
+                    if (!String.IsNullOrEmpty(data.Remarks))
+                    {
+                        var addRemarks = new Remark()
                         {
-                            var addRemarks = new Remark()
-                            {
-                                DocId = getDebitNote.Id,
-                                DocType = DocType.DebitNote,
-                                Remarks = data.Remarks,
-                                UserId = userId
-                            };
-                            await _unitOfWork.Remarks.Add(addRemarks);
-                        }
+                            DocId = getDebitNote.Id,
+                            DocType = DocType.DebitNote,
+                            Remarks = data.Remarks,
+                            UserId = userId
+                        };
+                        await _unitOfWork.Remarks.Add(addRemarks);
+                    }
 
-                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                    {
+                        await AddToLedger(getDebitNote);
+
+                        if (getDebitNote.DocumentLedgerId != 0 && getDebitNote.DocumentLedgerId != null)
                         {
-                            await AddToLedger(getDebitNote);
-
-                            if (getDebitNote.DocumentLedgerId != 0 && getDebitNote.DocumentLedgerId != null)
+                            TransactionReconcileService trecon = new TransactionReconcileService(_unitOfWork);
+                            //Getting transaction with Payment Transaction Id
+                            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(true, (int)getDebitNote.TransactionId)).FirstOrDefault();
+                            if (getUnreconciledDocumentAmount == null)
                             {
-                                TransactionReconcileService trecon = new TransactionReconcileService(_unitOfWork);
-                                //Getting transaction with Payment Transaction Id
-                                var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(true, (int)getDebitNote.TransactionId)).FirstOrDefault();
-                                if (getUnreconciledDocumentAmount == null)
-                                {
-                                    _unitOfWork.Rollback();
-                                    return new Response<bool>("Ledger not found");
-                                }
-
-                                var reconModel = new CreateTransactionReconcileDto()
-                                {
-                                    PaymentLedgerId = getUnreconciledDocumentAmount.Id,
-                                    DocumentLedgerId = (int)getDebitNote.DocumentLedgerId,
-                                    Amount = getDebitNote.TotalAmount
-                                };
-
-                                //Checking Reconciliation Validation
-                                var checkValidation = trecon.CheckReconValidation(reconModel);
-                                if (!checkValidation.IsSuccess)
-                                {
-                                    _unitOfWork.Rollback();
-                                    return new Response<bool>(checkValidation.Message);
-                                }
-
-                                var reconcile = await trecon.ReconciliationProcess(reconModel);
-                                if (!reconcile.IsSuccess)
-                                {
-                                    _unitOfWork.Rollback();
-                                    return new Response<bool>(reconcile.Message);
-                                }
+                                _unitOfWork.Rollback();
+                                return new Response<bool>("Ledger not found");
                             }
 
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "DebitNote Approved");
+                            var reconModel = new CreateTransactionReconcileDto()
+                            {
+                                PaymentLedgerId = getUnreconciledDocumentAmount.Id,
+                                DocumentLedgerId = (int)getDebitNote.DocumentLedgerId,
+                                Amount = getDebitNote.TotalAmount
+                            };
+
+                            //Checking Reconciliation Validation
+                            var checkValidation = trecon.CheckReconValidation(reconModel);
+                            if (!checkValidation.IsSuccess)
+                            {
+                                _unitOfWork.Rollback();
+                                return new Response<bool>(checkValidation.Message);
+                            }
+
+                            var reconcile = await trecon.ReconciliationProcess(reconModel);
+                            if (!reconcile.IsSuccess)
+                            {
+                                _unitOfWork.Rollback();
+                                return new Response<bool>(reconcile.Message);
+                            }
                         }
-                        if (transition.NextStatus.State == DocumentStatus.Rejected)
-                        {
-                            await _unitOfWork.SaveAsync();
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "DebitNote Rejected");
-                        }
+
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "DebitNote Approved");
+                    }
+                    if (transition.NextStatus.State == DocumentStatus.Rejected)
+                    {
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
-                        return new Response<bool>(true, "DebitNote Reviewed");
+                        return new Response<bool>(true, "DebitNote Rejected");
                     }
+                    await _unitOfWork.SaveAsync();
+                    _unitOfWork.Commit();
+                    return new Response<bool>(true, "DebitNote Reviewed");
                 }
+            }
 
-                return new Response<bool>("User does not have allowed role");
+            return new Response<bool>("User does not have allowed role");
 
-          
+
         }
 
         private DebitNoteDto MapToValue(DebitNoteDto data)
@@ -432,6 +449,7 @@ namespace Application.Services
             // Returning DebitNoteDto with all values assigned
             return data;
         }
+
         private List<RemarksDto> ReturningRemarks(DebitNoteDto data, DocType docType)
         {
             var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.DebitNote))
@@ -449,7 +467,7 @@ namespace Application.Services
 
             return remarks;
         }
-    
+
         private List<FileUploadDto> ReturningFiles(DebitNoteDto data, DocType docType)
         {
 
