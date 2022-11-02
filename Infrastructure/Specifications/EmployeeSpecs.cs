@@ -34,9 +34,11 @@ namespace Infrastructure.Specifications
         {
             if (forEdit)
             {
+                AddInclude(i => i.BusinessPartner);
             }
             else
             {
+                AddInclude("BusinessPartner.AccountPayable");
                 AddInclude(i => i.Department);
                 AddInclude(i => i.Designation);
                 AddInclude("Department.Campus");

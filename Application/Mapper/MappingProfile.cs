@@ -37,11 +37,12 @@ namespace Application.Mapper
             CreateMap<Employee, EmployeeDto>()
                 .ForMember(dto => dto.DepartmentName, core => core.MapFrom(a => a.Department.Name))
                 .ForMember(dto => dto.DesignationName, core => core.MapFrom(a => a.Designation.Name))
+                .ForMember(dto => dto.AccountPayableName, core => core.MapFrom(a => a.BusinessPartner.AccountPayable.Name))
+                .ForMember(dto => dto.AccountPayableId, core => core.MapFrom(a => a.BusinessPartner.AccountPayableId))
                 .ForMember(dto => dto.CampusId, core => core.MapFrom(a => a.Department.Campus.Id))
                 .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Department.Campus.Name));
 
             CreateMap<CreateEmployeeDto, Employee>();
-            CreateMap<UpdateEmployeeDto, Employee>();
 
             // EmployeeDropDown for payrollPayment
             CreateMap<Employee, EmployeeDropDownPaymentDto>()

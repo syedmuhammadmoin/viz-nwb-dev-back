@@ -35,5 +35,10 @@ namespace Infrastructure.Specifications
         public BusinessPartnerSpecs(bool isNotEmployee) : base(x => isNotEmployee == true && x.BusinessPartnerType != BusinessPartnerType.Employee)
         {
         }
+
+        public BusinessPartnerSpecs(int getAll)
+        {
+            AddInclude(i => i.EmployeesList);
+        }
     }
 }
