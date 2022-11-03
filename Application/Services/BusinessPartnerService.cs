@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
@@ -28,21 +29,25 @@ namespace Application.Services
         public async Task<Response<BusinessPartnerDto>> CreateAsync(CreateBusinessPartnerDto entity)
         {
             var businessPartner = _mapper.Map<BusinessPartner>(entity);
-            
-            var AccountReceivable = _unitOfWork.Level4.Find(new Level4Specs(0, true)).Where(x => x.Id == entity.AccountReceivableId).ToList();
 
-            //Validation for same Accounts
+            var Receivablelevel4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountReceivableId);
 
-            if (AccountReceivable.Count == 0)
+            var AccountReceivable = ReceivableAndPayable.ValidateReceivable((Guid)Receivablelevel4.Level3_id);
+
+            //Validation for Receivable
+
+            if (AccountReceivable == false)
             {
                 return new Response<BusinessPartnerDto>("Account Receivable is Invalid");
             }
 
-            var AccountPayable = _unitOfWork.Level4.Find(new Level4Specs(0, false)).Where(x => x.Id == entity.AccountPayableId).ToList();
+            var Payablelevel4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountPayableId);
 
-            //Validation for Payable and Receivable
+            var AccountPayable = ReceivableAndPayable.ValidatePayable((Guid)Payablelevel4.Level3_id);
 
-            if (AccountPayable.Count == 0)
+            //Validation for Payable
+
+            if (AccountPayable == false)
             {
                 return new Response<BusinessPartnerDto>("Account Payable is Invalid");
             }
