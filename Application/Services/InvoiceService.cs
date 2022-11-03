@@ -256,8 +256,9 @@ namespace Application.Services
 
             foreach (var check in entity.InvoiceLines)
             {
+                var level4 = await _unitOfWork.Level4.GetById((Guid)check.AccountId);
 
-                var level4 = _unitOfWork.Level4.Find(new Level4Specs(0, (Guid)check.AccountId)).Where(x => x.Id == check.AccountId).FirstOrDefault();
+                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
 
                 if (level4 != null)
                 {
