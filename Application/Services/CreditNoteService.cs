@@ -174,9 +174,11 @@ namespace Application.Services
             foreach (var check in entity.CreditNoteLines)
             {
 
-                var level4 = _unitOfWork.Level4.Find(new Level4Specs(0,(Guid)check.AccountId)).Where(x => x.Id == check.AccountId).FirstOrDefault();
+                var level4 = await _unitOfWork.Level4.GetById((Guid)check.AccountId);
 
-                if (level4 != null)
+                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+
+                if (level3 == false)
                 {
                     return new Response<CreditNoteDto>("Account Invalid");
                 }
