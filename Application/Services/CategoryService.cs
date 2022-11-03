@@ -30,7 +30,6 @@ namespace Application.Services
             var category = _mapper.Map<Category>(entity);
 
             //Validation for same Accounts
-
             if (entity.InventoryAccountId == entity.CostAccountId || entity.InventoryAccountId == entity.RevenueAccountId || entity.CostAccountId == entity.RevenueAccountId)
             {
                 return new Response<CategoryDto>("Account Cannot Be Same");
@@ -98,6 +97,39 @@ namespace Application.Services
 
             if (category == null)
                 return new Response<CategoryDto>("Not found");
+
+            //Validation for same Accounts
+            if (entity.InventoryAccountId == entity.CostAccountId || entity.InventoryAccountId == entity.RevenueAccountId || entity.CostAccountId == entity.RevenueAccountId)
+            {
+                return new Response<CategoryDto>("Account Cannot Be Same");
+            }
+
+            //Validation for Payable and Receivable
+            var Inventorylevel4 = await _unitOfWork.Level4.GetById((Guid)entity.InventoryAccountId);
+
+            var InventoryAccountId = ReceivableAndPayable.Validate(Inventorylevel4.Level3_id);
+
+            if (InventoryAccountId == false)
+            {
+                return new Response<CategoryDto>("Inventory account Invalid");
+            }
+
+            var Revenuelevel4 = await _unitOfWork.Level4.GetById((Guid)entity.RevenueAccountId);
+
+            var RevenueAccountId = ReceivableAndPayable.Validate(Revenuelevel4.Level3_id);
+
+            if (RevenueAccountId == false)
+            {
+                return new Response<CategoryDto>("Revenue account Invalid");
+            }
+            var Costlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.CostAccountId);
+
+            var CostAccountId = ReceivableAndPayable.Validate(Costlevel4.Level3_id);
+
+            if (CostAccountId == false)
+            {
+                return new Response<CategoryDto>("Cost account Invalid");
+            }
 
             //For updating data
             _mapper.Map<CreateCategoryDto, Category>(entity, category);

@@ -253,14 +253,13 @@ namespace Application.Services
             var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.CustomerId);
             
             //Validation for Payable and Receivable
-
             foreach (var check in entity.InvoiceLines)
             {
                 var level4 = await _unitOfWork.Level4.GetById((Guid)check.AccountId);
 
                 var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
 
-                if (level4 != null)
+                if (level3 == false)
                 {
                     return new Response<InvoiceDto>("Account Invalid");
                 }
@@ -314,6 +313,22 @@ namespace Application.Services
 
             //setting BusinessPartnerReceivable
             var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.CustomerId);
+            
+            //Validation for Payable and Receivable
+            foreach (var check in entity.InvoiceLines)
+            {
+                var level4 = await _unitOfWork.Level4.GetById((Guid)check.AccountId);
+
+                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+
+                if (level3 == false)
+                {
+                    return new Response<InvoiceDto>("Account Invalid");
+                }
+
+            }
+            
+            inv.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
             inv.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
             await _unitOfWork.SaveAsync();
 

@@ -36,7 +36,6 @@ namespace Application.Services
             var AccountReceivable = ReceivableAndPayable.ValidateReceivable((Guid)Receivablelevel4.Level3_id);
 
             //Validation for Receivable
-
             if (AccountReceivable == false)
             {
                 return new Response<BusinessPartnerDto>("Account Receivable is Invalid");
@@ -47,7 +46,6 @@ namespace Application.Services
             var AccountPayable = ReceivableAndPayable.ValidatePayable((Guid)Payablelevel4.Level3_id);
 
             //Validation for Payable
-
             if (AccountPayable == false)
             {
                 return new Response<BusinessPartnerDto>("Account Payable is Invalid");
@@ -93,6 +91,25 @@ namespace Application.Services
             if (businessPartner == null)
                 return new Response<BusinessPartnerDto>("Not found");
 
+            var Receivablelevel4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountReceivableId);
+
+            var AccountReceivable = ReceivableAndPayable.ValidateReceivable((Guid)Receivablelevel4.Level3_id);
+
+            //Validation for Receivable
+            if (AccountReceivable == false)
+            {
+                return new Response<BusinessPartnerDto>("Account Receivable is Invalid");
+            }
+
+            var Payablelevel4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountPayableId);
+
+            var AccountPayable = ReceivableAndPayable.ValidatePayable((Guid)Payablelevel4.Level3_id);
+
+            //Validation for Payable
+            if (AccountPayable == false)
+            {
+                return new Response<BusinessPartnerDto>("Account Payable is Invalid");
+            }
             //For updating data
             _mapper.Map<CreateBusinessPartnerDto, BusinessPartner>(entity, businessPartner);
             await _unitOfWork.SaveAsync();
