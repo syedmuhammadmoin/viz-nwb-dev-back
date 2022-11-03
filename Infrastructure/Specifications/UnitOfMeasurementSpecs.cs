@@ -18,12 +18,12 @@ namespace Infrastructure.Specifications
                 var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
                 ApplyOrderByDescending(i => i.Id);
-                ApplyAsNoTracking();
+
             }
         }
-            public UnitOfMeasurementSpecs()
-            {
-                ApplyAsNoTracking();
-        }
+        public UnitOfMeasurementSpecs()
+        {
+
         }
     }
+}

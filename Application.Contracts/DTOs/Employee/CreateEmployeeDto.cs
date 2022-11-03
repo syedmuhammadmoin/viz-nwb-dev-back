@@ -32,7 +32,8 @@ namespace Application.Contracts.DTOs
         [MaxLength(50)]
         public string AccountTitle { get; set; }
         [Required]
-        public long? AccountNumber { get; set; }
+        [MaxLength(50)]
+        public string AccountNumber { get; set; }
         [Required]
         [MaxLength(30)]
         public string EmployeeCode { get; set; }
@@ -69,5 +70,8 @@ namespace Application.Contracts.DTOs
         public string Faculty { get; set; }
         [MaxLength(80)]
         public string DutyShift { get; set; }
+        [MaxLength(100)]
+        [EmailAddress]
+        public string Email { get; set; }
     }
 }

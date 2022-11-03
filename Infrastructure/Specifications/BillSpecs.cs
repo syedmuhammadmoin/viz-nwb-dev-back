@@ -31,8 +31,6 @@ namespace Infrastructure.Specifications
                 AddInclude("BillLines.Account");
                 AddInclude("BillLines.Warehouse");
                 AddInclude("BillLines.Item");
-                ApplyAsNoTracking();
-
             }
         }
         public BillSpecs(bool forEdit)
@@ -52,7 +50,6 @@ namespace Infrastructure.Specifications
                 AddInclude("BillLines.Account");
                 AddInclude("BillLines.Warehouse");
                 AddInclude("BillLines.Item");
-                ApplyAsNoTracking();
             }
         }
         public BillSpecs(int transactionId) :
@@ -61,16 +58,13 @@ namespace Infrastructure.Specifications
         {
 
             AddInclude(i => i.Status);
-            ApplyAsNoTracking();
         }
         public BillSpecs() : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
         {
             AddInclude(i => i.Status);
-            ApplyAsNoTracking();
         }
         public BillSpecs(int grnId, bool isGRN) : base(p => isGRN ? p.GRNId == grnId : true )
         {
-            ApplyAsNoTracking();
         }
 
         //For aging report
@@ -78,7 +72,6 @@ namespace Infrastructure.Specifications
             : base(c => c.Status.State == DocumentStatus.Unpaid || c.Status.State == DocumentStatus.Partial)
         {
             AddInclude(i => i.Vendor);
-            ApplyAsNoTracking();
         }
     }
 }

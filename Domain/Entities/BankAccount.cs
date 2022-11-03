@@ -14,7 +14,10 @@ namespace Domain.Entities
     {
         [MaxLength(20)]
         public string DocNo { get; private set; }
-        public long AccountNumber { get; private set; }
+        [MaxLength(50)]
+        public string AccountNumber { get; private set; }
+        [MaxLength(50)]
+        public string IBAN { get; private set; }
         [MaxLength(50)]
         public string AccountTitle { get; private set; }
         public BankAccountType BankAccountType { get; private set; }

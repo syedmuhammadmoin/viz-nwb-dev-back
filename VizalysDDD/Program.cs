@@ -87,19 +87,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Default",
-        builder =>
+        b =>
         {
-            builder.WithOrigins(
-                                "http://localhost:4100",
-                                "http://localhost:4200",
-                                "http://localhost:4300",
-                                "http://localhost:4400",
-                                "http://localhost:4500",
-                                "http://localhost:4600",
-                                "http://nwb.vizalys.com",
-                                "http://www.nwb.vizalys.com",
-                                "http://nwbtest.vizalys.com",
-                                "http://www.nwbtest.vizalys.com")
+            b.WithOrigins(
+                            // App:CorsOrigins in appsettings.json can contain more than one address separated by comma.
+                            builder.Configuration["App:CorsOrigins"]
+                                .Split(",", StringSplitOptions.RemoveEmptyEntries)
+                                .ToArray())
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
         });

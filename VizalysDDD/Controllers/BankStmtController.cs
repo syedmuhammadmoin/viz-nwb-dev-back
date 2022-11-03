@@ -111,11 +111,11 @@ namespace Vizalys.Api.Controllers
             //Setiing Table Name  
             dt.TableName = "BankStmtLines";
             //Add Columns  
-            dt.Columns.Add("Reference", typeof(int));
+            dt.Columns.Add("Reference (In Numbers)", typeof(int));
             dt.Columns.Add("StmtDate", typeof(DateTime));
             dt.Columns.Add("Label", typeof(string));
-            dt.Columns.Add("Debit", typeof(float));
-            dt.Columns.Add("Credit", typeof(float));
+            dt.Columns.Add("Debit", typeof(decimal));
+            dt.Columns.Add("Credit", typeof(decimal));
             dt.AcceptChanges();
             return dt;
         }

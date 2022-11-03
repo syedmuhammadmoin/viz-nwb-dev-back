@@ -23,7 +23,6 @@ namespace Infrastructure.Specifications
                 ApplyOrderByDescending(i => i.Id);
                 AddInclude(i => i.AccountPayable);
                 AddInclude(i => i.AccountReceivable);
-                ApplyAsNoTracking();
             }
         }
 
@@ -31,12 +30,15 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.AccountPayable);
             AddInclude(i => i.AccountReceivable);
-            ApplyAsNoTracking();
         }
 
         public BusinessPartnerSpecs(bool isNotEmployee) : base(x => isNotEmployee == true && x.BusinessPartnerType != BusinessPartnerType.Employee)
         {
-            ApplyAsNoTracking();
+        }
+
+        public BusinessPartnerSpecs(int getAll)
+        {
+            AddInclude(i => i.EmployeesList);
         }
     }
 }

@@ -9,6 +9,8 @@ namespace Application.Contracts.DTOs
 {
     public class CreateCampusDto
     {
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Id can not be set to zero")]
         public int? Id { get; set; }
         [MaxLength(100)]
         [Required]

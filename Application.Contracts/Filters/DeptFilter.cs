@@ -11,11 +11,11 @@ namespace Application.Contracts.Filters
     {
         public int?[] DepartmentId { get; set; }
         [Required]
-        public int Month { get; set; }
+        public int? Month { get; set; }
         [Required]
-        public int Year { get; set; }
+        public int? Year { get; set; }
         [Required]
-        public int CampusId { get; set; }
+        public int? CampusId { get; set; }
         public Guid AccountPayableId { get; set; }
     }
 }

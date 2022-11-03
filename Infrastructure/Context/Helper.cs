@@ -120,6 +120,11 @@ namespace Infrastructure.Context
                 HasIndex(b => b.CNIC)
                 .IsUnique();
 
+            //Unique Code for all Bank 4accounts
+            modelBuilder.Entity<BankAccount>().
+                HasIndex(b => b.AccountNumber)
+                .IsUnique();
+
             //Changing Identity users and roles tables name
             modelBuilder.Entity<User>(entity =>
             {

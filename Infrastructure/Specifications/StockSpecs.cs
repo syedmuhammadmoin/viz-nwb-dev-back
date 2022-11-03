@@ -23,12 +23,11 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Warehouse);
                 AddInclude("Item.Category");
                 AddInclude("Item.UnitOfMeasurement");
-                ApplyAsNoTracking();
+                
             }
         }
         public StockSpecs(int itemId, int warehouseId) : base(x => x.ItemId == itemId && x.WarehouseId == warehouseId)
         {
-            ApplyAsNoTracking();
         }
     }
 }

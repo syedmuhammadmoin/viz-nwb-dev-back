@@ -22,7 +22,6 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Campus);
                 AddInclude(i => i.ChAccount);
                 AddInclude(i => i.ClearingAccount);
-                ApplyAsNoTracking();
             }
         }
 
@@ -31,11 +30,13 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Campus);
             AddInclude(i => i.ChAccount);
             AddInclude(i => i.ClearingAccount);
-            ApplyAsNoTracking();
         }
         public BankAccountSpecs(Guid clearingAccountId) : base(e => e.ClearingAccountId == clearingAccountId)
         {
-            ApplyAsNoTracking();
+        }
+        public BankAccountSpecs(string accountNumber) : base(e => e.AccountNumber == accountNumber)
+        {
+
         }
     }
 }

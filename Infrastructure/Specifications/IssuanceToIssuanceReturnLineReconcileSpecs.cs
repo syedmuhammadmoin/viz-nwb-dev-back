@@ -15,14 +15,12 @@ namespace Infrastructure.Specifications
            && x.ItemId == itemId
            && x.WarehouseId == warehouseId)
         {
-            ApplyAsNoTracking();
         }
 
         public IssuanceToIssuanceReturnLineReconcileSpecs(bool isIssuance, int id)
             : base(x => isIssuance ? x.IssuanceId == id : x.IssuanceReturnId == id)
         {
             AddInclude(x => x.IssuanceReturn);
-            ApplyAsNoTracking();
         }
     }
 }

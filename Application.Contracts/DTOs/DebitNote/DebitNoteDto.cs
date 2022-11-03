@@ -13,6 +13,9 @@ namespace Application.Contracts.DTOs
         public string DocNo { get; set; }
         public int VendorId { get; set; }
         public string VendorName { get; set; }
+        public string VendorAddress { get; set; }
+        public string IncomeTaxId { get; set; }
+        public string SalesTaxId { get; set; }
         public Guid PayableAccountId { get; set; }
         public string PayableAccountName { get; set; }
         public DateTime NoteDate { get; set; }
@@ -23,6 +26,8 @@ namespace Application.Contracts.DTOs
         public string CampusName { get; set; }
         public decimal TotalBeforeTax { get; set; }
         public decimal TotalTax { get; set; }
+        public decimal Tax { get; set; }
+        public decimal OtherTax { get; set; }
         public decimal TotalAmount { get; set; }
         public decimal ReconciledAmount { get; set; }
         public IEnumerable<PaidDocListDto> PaidAmountList { get; set; }
@@ -33,8 +38,6 @@ namespace Application.Contracts.DTOs
         public int? TransactionId { get; set; }
         public virtual List<DebitNoteLinesDto> DebitNoteLines { get; set; }
         public IEnumerable<FileUploadDto> FileUploadList { get; set; }
-
-
         public bool IsAllowedRole { get; set; }
     }
 }

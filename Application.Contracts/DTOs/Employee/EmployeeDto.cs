@@ -17,7 +17,7 @@ namespace Application.Contracts.DTOs
         public string BankName { get; set;}
         public string BranchName { get; set;}
         public string AccountTitle { get; set;}
-        public long AccountNumber { get; set;}
+        public string AccountNumber { get; set;}
         public string EmployeeCode { get; set;}
         public string Domicile { get;  set; }
         public string Contact { get;  set; }
@@ -56,5 +56,8 @@ namespace Application.Contracts.DTOs
         public decimal TaxDeduction { get; set; }
         public decimal NetPay { get; set; }
         public virtual List<PayrollItemDto> PayrollItems { get; set; }
+        public string Email { get; set; }
+        public Guid? AccountPayableId { get; set; }
+        public string AccountPayableName { get; set; }
     }
 }

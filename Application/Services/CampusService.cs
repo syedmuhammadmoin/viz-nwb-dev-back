@@ -35,14 +35,13 @@ namespace Application.Services
                 if (getCampus != null)
                 {
                     _mapper.Map<CreateCampusDto, Campus>(item, getCampus);
+                    await _unitOfWork.SaveAsync();
                 }
                 else
                 {
                     campusList.Add(_mapper.Map<Campus>(item));
                 }
             }
-
-            await _unitOfWork.SaveAsync();
 
             if (campusList.Any())
             {

@@ -12,7 +12,9 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? Id { get; set; }
         [Required]
-        public long? AccountNumber { get; set; }
+        public string AccountNumber { get; set; }
+        public string IBAN { get; set; }
+
         [MaxLength(100)]
         public string AccountTitle { get; set; }
         [Required]

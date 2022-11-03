@@ -30,8 +30,9 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<long>("AccountNumber")
-                        .HasColumnType("bigint");
+                    b.Property<string>("AccountNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("AccountTitle")
                         .HasMaxLength(50)
@@ -68,6 +69,10 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("IBAN")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
@@ -92,6 +97,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountNumber")
+                        .IsUnique()
+                        .HasFilter("[AccountNumber] IS NOT NULL");
 
                     b.HasIndex("CampusId");
 
@@ -518,6 +527,14 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("BankName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("BranchCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<int>("BusinessPartnerType")
                         .HasColumnType("int");
 
@@ -912,6 +929,9 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal>("AnyOtherTax")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("Cost")
                         .HasColumnType("decimal(18,2)");
 
@@ -1008,11 +1028,17 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("NoteDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal>("OtherTax")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<Guid>("PayableAccountId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("Tax")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
@@ -1119,8 +1145,9 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<long>("AccountNumber")
-                        .HasColumnType("bigint");
+                    b.Property<string>("AccountNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("AccountTitle")
                         .HasMaxLength(50)
@@ -1186,7 +1213,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("EmployeeCode")
                         .HasMaxLength(30)
@@ -3111,13 +3139,15 @@ namespace Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Detail")
+                        .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
                     b.Property<string>("Message")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(100)
@@ -3130,7 +3160,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("TraceId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.HasKey("Id");
 
@@ -3516,7 +3547,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BPSName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<decimal>("BasicSalary")
                         .HasColumnType("decimal(18,2)");
@@ -3565,6 +3597,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<int>("Month")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("NetIncrement")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("NetSalary")
                         .HasColumnType("decimal(18,2)");
@@ -4589,7 +4624,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");

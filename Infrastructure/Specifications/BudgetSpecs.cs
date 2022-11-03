@@ -19,7 +19,6 @@ namespace Infrastructure.Specifications
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
                 ApplyOrderByDescending(i => i.Id);
                 AddInclude(i => i.Campus);
-                ApplyAsNoTracking();
             }
         }
 
@@ -33,12 +32,10 @@ namespace Infrastructure.Specifications
             {
                 AddInclude(i => i.Campus);
                 AddInclude("BudgetLines.Account");
-                ApplyAsNoTracking();
             }
         }
         public BudgetSpecs(DateTime date, int campusId) : base(a => (date >= a.From && date <= a.To) && campusId == a.CampusId)
         {
-            ApplyAsNoTracking();
         }
 
         public BudgetSpecs(string budgetName) : base(a => budgetName == a.BudgetName)
@@ -46,8 +43,6 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Campus);
             AddInclude(i => i.BudgetLines);
             AddInclude("BudgetLines.Account");
-            ApplyAsNoTracking();
-
         }
     }
 }

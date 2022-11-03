@@ -42,6 +42,7 @@ namespace Application.Services
                     if (getDepartment != null)
                     {
                         _mapper.Map<CreateDepartmentDto, Department>(item, getDepartment);
+                        await _unitOfWork.SaveAsync();
                     }
                     else
                     {
@@ -55,8 +56,6 @@ namespace Application.Services
                 }
             }
 
-            await _unitOfWork.SaveAsync();
-
             if (departmentList.Any())
             {
                 await _unitOfWork.Department.AddRange(departmentList);
@@ -67,7 +66,7 @@ namespace Application.Services
 
             if (errors.Count > 0)
             {
-                message = "Records populated successfully with errors";
+                message = "Records populated with some errors";
             }
             return new Response<DepartmentDto>(null, message, errors.ToArray());
         }

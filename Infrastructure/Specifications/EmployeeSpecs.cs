@@ -27,7 +27,6 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Department);
                 AddInclude(i => i.Designation);
                 AddInclude("Department.Campus");
-                ApplyAsNoTracking();
             }
         }
 
@@ -35,13 +34,14 @@ namespace Infrastructure.Specifications
         {
             if (forEdit)
             {
+                AddInclude(i => i.BusinessPartner);
             }
             else
             {
+                AddInclude("BusinessPartner.AccountPayable");
                 AddInclude(i => i.Department);
                 AddInclude(i => i.Designation);
                 AddInclude("Department.Campus");
-                ApplyAsNoTracking();
             }
         }
 
@@ -50,7 +50,6 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Department);
             AddInclude(i => i.Designation);
             AddInclude("Department.Campus");
-            ApplyAsNoTracking();
         }
 
         public EmployeeSpecs(bool isActive, int?[] departmentIds)
@@ -62,7 +61,6 @@ namespace Infrastructure.Specifications
 
         public EmployeeSpecs() : base(x => x.BusinessPartner.BusinessPartnerType == BusinessPartnerType.Employee)
         {
-            ApplyAsNoTracking();
         }
     }
 }

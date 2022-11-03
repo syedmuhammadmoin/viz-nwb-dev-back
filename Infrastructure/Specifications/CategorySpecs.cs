@@ -21,7 +21,6 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.InventoryAccount);
                 AddInclude(i => i.CostAccount);
                 AddInclude(i => i.RevenueAccount);
-                ApplyAsNoTracking();
             }
         }
         public CategorySpecs()
@@ -29,7 +28,6 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.InventoryAccount);
             AddInclude(i => i.CostAccount);
             AddInclude(i => i.RevenueAccount);
-            ApplyAsNoTracking();
         }
     }
 }

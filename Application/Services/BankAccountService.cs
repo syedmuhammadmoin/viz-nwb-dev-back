@@ -28,13 +28,19 @@ namespace Application.Services
 
         public async Task<Response<BankAccountDto>> CreateAsync(CreateBankAccountDto entity)
         {
+            // checking account number already exist or not
+            var checkExistingAccount = _unitOfWork.BankAccount.Find(new BankAccountSpecs(entity.AccountNumber)).FirstOrDefault();
+
+            if (checkExistingAccount != null)
+                return new Response<BankAccountDto>("Account number already exist");
+
             var checkingCode = _unitOfWork.Level4.Find(new Level4Specs(entity.AccountCode)).FirstOrDefault();
             if (checkingCode != null)
-                return new Response<BankAccountDto>("Duplicate code");
+                return new Response<BankAccountDto>("Duplicate account code");
 
             var checkingCodeForClearingAccount = _unitOfWork.Level4.Find(new Level4Specs($"{entity.AccountCode}C")).FirstOrDefault();
             if (checkingCodeForClearingAccount != null)
-                return new Response<BankAccountDto>("Duplicate code");
+                return new Response<BankAccountDto>("Duplicate account code");
 
             _unitOfWork.CreateTransaction();
           

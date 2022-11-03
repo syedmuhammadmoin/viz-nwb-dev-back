@@ -14,6 +14,8 @@ namespace Application.Contracts.DTOs
         public PaymentType PaymentType { get; set; }
         public int BusinessPartnerId { get; set; }
         public string BusinessPartnerName { get; set; }
+        public string BusinessPartnerAddress { get; set; }
+        public string BusinessPartnerMobile { get; set; }
         public DocType PaymentFormType { get; set; }
         public Guid AccountId { get; set; }
         public string AccountName { get; set; }
@@ -25,9 +27,14 @@ namespace Application.Contracts.DTOs
         public int? CampusId { get; set; }
         public string CampusName { get; set; }
         public decimal GrossPayment { get; set; }
-        public decimal SalesTax { get; set; }
-        public decimal IncomeTax { get; set; }
-        public decimal SRBTax { get; set; }
+        public string SalesTaxId { get; set; }
+        public string IncomeTaxId { get; set; }
+        public decimal SalesTax { get; set; } // for editting in payment as percentage
+        public decimal IncomeTax { get; set; } // for editting in payment as percentage
+        public decimal SRBTax { get; set; } // for editting in payment as percentage
+        public decimal SalesTaxInAmount { get; set; }
+        public decimal IncomeTaxInAmount { get; set; }
+        public decimal SRBTaxInAmount { get; set; }
         public decimal Deduction { get; set; }
         public decimal NetPayment { get; set; }
         public decimal ReconciledAmount { get; set; }
@@ -43,8 +50,9 @@ namespace Application.Contracts.DTOs
         public string Status { get; set; }
         public DocumentStatus State { get; set; }
         public IEnumerable<FileUploadDto> FileUploadList { get; set; }
-
         public bool IsAllowedRole { get; set; }
-
+        public string BankName { get; set; }
+        public string AccountTitle { get; set; }
+        public string AccountNumber { get; set; }
     }
 }

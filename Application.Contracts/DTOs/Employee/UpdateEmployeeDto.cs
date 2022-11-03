@@ -12,5 +12,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? Id { get; set; }
         public int? NoOfIncrements { get; set; }
+        [Required]
+        public Guid? AccountPayableId { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Domain.Constants;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +23,12 @@ namespace Application.Contracts.DTOs
         public string SalesTaxId { get; set; }
         public string BankAccountTitle { get; set; }
         public string BankAccountNumber { get; set; }
+        public string BankName { get; set; }
+        public string BranchCode { get; set; }
         public Guid AccountReceivableId { get; set; }
         public string AccountReceivable { get; set; }
         public Guid AccountPayableId { get; set; }
         public string AccountPayable { get; set; }
+        public List<BusinessPartner> EmployeeList { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -27,17 +28,18 @@ namespace Application.Services
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UserService(UserManager<User> userManager, IUnitOfWork unitOfWork, IConfiguration configuration,
-            RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContextAccessor)
+            RoleManager<IdentityRole> roleManager, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
             _roleManager = roleManager;
-
+            _mapper = mapper;
         }
 
         // For Users
@@ -49,6 +51,11 @@ namespace Application.Services
             {
                 return new Response<bool>("There is no user with that Email");
             }
+            var employeeName = await _userManager.Users
+                                        .Include(i => i.Employee)
+                                        .Where(i => i.Id == user.Id)
+                                        .Select(i => i.Employee.Name)
+                                        .FirstOrDefaultAsync();
 
             //Checking user password
             var result = await _userManager.CheckPasswordAsync(user, model.Password);
@@ -62,7 +69,7 @@ namespace Application.Services
             //Declaring claims list
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Name, employeeName == null ? "Naveed" : employeeName),
                 new Claim("Email", model.Email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
             };
@@ -125,16 +132,13 @@ namespace Application.Services
             if (model.Password != model.ConfirmPassword)
                 return new Response<bool>("Confirm password doesn't match with the password");
 
-            //setting Employee Email from user
-            getEmployee.setEmployeeEmail(model.Email);
-            await _unitOfWork.SaveAsync();
 
             //Registering user
             var user = new User
             {
                 EmployeeId = getEmployee.Id,
                 Email = model.Email,
-                UserName = model.Email,
+                UserName = model.Email
             };
 
             var userCreated = await _userManager.CreateAsync(user, model.Password);
@@ -166,20 +170,20 @@ namespace Application.Services
 
         }
 
-        public async Task<Response<IEnumerable<User>>> GetUsersAsync()
+        public async Task<Response<IEnumerable<UsersListDto>>> GetUsersAsync()
         {
             //Getting current user
             var currentUser = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             //Removing current user from list
-            IEnumerable<User> users = await _userManager.Users.Where(a => a.Id != currentUser).ToListAsync();
+            IEnumerable<User> users = await _userManager.Users.Where(a => a.Id != currentUser).Include(a => a.Employee).ToListAsync();
 
             if (users == null)
             {
-                return new Response<IEnumerable<User>>("User list cannot be found");
+                return new Response<IEnumerable<UsersListDto>>("User list cannot be found");
             }
 
-            return new Response<IEnumerable<User>>(users, currentUser);
+            return new Response<IEnumerable<UsersListDto>>(_mapper.Map<List<UsersListDto>>(users), currentUser);
         }
 
         public async Task<Response<UserDto>> GetUserAsync(string id)

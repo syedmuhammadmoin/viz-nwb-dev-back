@@ -2,6 +2,7 @@
 using Domain.Constants;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,9 @@ namespace Application.Contracts.DTOs
         public string DocNo { get; set; }
         public int VendorId { get; set; }
         public string VendorName { get; set; }
+        public string VendorAddress { get; set; }
+        public string IncomeTaxId { get; set; }
+        public string SalesTaxId { get; set; }
         public Guid PayableAccountId { get; set; }
         public string PayableAccountName { get; set; }
         public DateTime BillDate { get; set; }
@@ -32,14 +36,11 @@ namespace Application.Contracts.DTOs
         public decimal TotalPaid { get; set; }
         public IEnumerable<PaidDocListDto> PaidAmountList { get; set; }
         public IEnumerable<UnreconciledBusinessPartnerPaymentsDto> BPUnreconPaymentList { get; set; }
-     
         public decimal PendingAmount { get; set; }
-
         public IEnumerable<FileUploadDto> FileUploadList { get; set; }
         public int? GRNId { get; set; }
         public string GRNDocNo { get; set; }
         public IEnumerable<RemarksDto> RemarksList { get; set; }
-
         public int? TransactionId { get; set; }
         public int? LedgerId { get; set; }
         public virtual List<BillLinesDto> BillLines { get; set; }

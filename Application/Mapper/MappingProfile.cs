@@ -37,11 +37,12 @@ namespace Application.Mapper
             CreateMap<Employee, EmployeeDto>()
                 .ForMember(dto => dto.DepartmentName, core => core.MapFrom(a => a.Department.Name))
                 .ForMember(dto => dto.DesignationName, core => core.MapFrom(a => a.Designation.Name))
+                .ForMember(dto => dto.AccountPayableName, core => core.MapFrom(a => a.BusinessPartner.AccountPayable.Name))
+                .ForMember(dto => dto.AccountPayableId, core => core.MapFrom(a => a.BusinessPartner.AccountPayableId))
                 .ForMember(dto => dto.CampusId, core => core.MapFrom(a => a.Department.Campus.Id))
                 .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Department.Campus.Name));
 
             CreateMap<CreateEmployeeDto, Employee>();
-            CreateMap<UpdateEmployeeDto, Employee>();
 
             // EmployeeDropDown for payrollPayment
             CreateMap<Employee, EmployeeDropDownPaymentDto>()
@@ -115,6 +116,9 @@ namespace Application.Mapper
             // Invoice Mapping
             CreateMap<InvoiceMaster, InvoiceDto>()
               .ForMember(dto => dto.CustomerName, core => core.MapFrom(a => a.Customer.Name))
+              .ForMember(dto => dto.CustomerAddress, core => core.MapFrom(a => a.Customer.Address))
+              .ForMember(dto => dto.SalesTaxId, core => core.MapFrom(a => a.Customer.SalesTaxId))
+              .ForMember(dto => dto.IncomeTaxId, core => core.MapFrom(a => a.Customer.IncomeTaxId))
               .ForMember(dto => dto.ReceivableAccountName, core => core.MapFrom(a => a.ReceivableAccount.Name))
               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State == DocumentStatus.Unpaid ? "Unpaid" : a.Status.Status))
@@ -136,6 +140,9 @@ namespace Application.Mapper
             // CreditNote Mapping
             CreateMap<CreditNoteMaster, CreditNoteDto>()
               .ForMember(dto => dto.CustomerName, core => core.MapFrom(a => a.Customer.Name))
+              .ForMember(dto => dto.CustomerAddress, core => core.MapFrom(a => a.Customer.Address))
+              .ForMember(dto => dto.SalesTaxId, core => core.MapFrom(a => a.Customer.SalesTaxId))
+              .ForMember(dto => dto.IncomeTaxId, core => core.MapFrom(a => a.Customer.IncomeTaxId))
                .ForMember(dto => dto.ReceivableAccountName, core => core.MapFrom(a => a.ReceivableAccount.Name))
                .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
@@ -157,6 +164,9 @@ namespace Application.Mapper
             // Bill Mapping
             CreateMap<BillMaster, BillDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
+              .ForMember(dto => dto.VendorAddress, core => core.MapFrom(a => a.Vendor.Address))
+              .ForMember(dto => dto.SalesTaxId, core => core.MapFrom(a => a.Vendor.SalesTaxId))
+              .ForMember(dto => dto.IncomeTaxId, core => core.MapFrom(a => a.Vendor.IncomeTaxId))
               .ForMember(dto => dto.PayableAccountName, core => core.MapFrom(a => a.PayableAccount.Name))
               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State == DocumentStatus.Unpaid ? "Unpaid" : a.Status.Status))
@@ -182,6 +192,9 @@ namespace Application.Mapper
             // DebitNote Mapping
             CreateMap<DebitNoteMaster, DebitNoteDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
+              .ForMember(dto => dto.VendorAddress, core => core.MapFrom(a => a.Vendor.Address))
+              .ForMember(dto => dto.SalesTaxId, core => core.MapFrom(a => a.Vendor.SalesTaxId))
+              .ForMember(dto => dto.IncomeTaxId, core => core.MapFrom(a => a.Vendor.IncomeTaxId))
               .ForMember(dto => dto.PayableAccountName, core => core.MapFrom(a => a.PayableAccount.Name))
               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
@@ -194,27 +207,37 @@ namespace Application.Mapper
 
             CreateMap<CreateDebitNoteDto, DebitNoteMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => e.Quantity * e.Cost)))
-               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => e.Quantity * e.Cost * e.Tax / 100)))
-               .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => (e.Quantity * e.Cost) + (e.Quantity * e.Cost * e.Tax / 100))));
+               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e =>( e.Quantity * e.Cost * e.Tax / 100) + e.AnyOtherTax)))
+               .ForMember(core => core.OtherTax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => e.AnyOtherTax)))
+               .ForMember(core => core.Tax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => (e.Quantity * e.Cost * e.Tax / 100))))
+               .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => (e.Quantity * e.Cost) + (e.Quantity * e.Cost * e.Tax / 100) + (e.AnyOtherTax))));
 
             CreateMap<CreateDebitNoteLinesDto, DebitNoteLines>()
-               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
+               .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100) + (a.AnyOtherTax)));
 
             //Payment Mapping
             CreateMap<Payment, PaymentDto>()
                 .ForMember(dto => dto.BusinessPartnerName, core => core.MapFrom(a => a.BusinessPartner.Name))
+                .ForMember(dto => dto.BusinessPartnerAddress, core => core.MapFrom(a => a.BusinessPartner.Address))
+                .ForMember(dto => dto.BusinessPartnerMobile, core => core.MapFrom(a => a.BusinessPartner.Mobile))
+                .ForMember(dto => dto.SalesTaxId, core => core.MapFrom(a => a.BusinessPartner.SalesTaxId))
+                .ForMember(dto => dto.IncomeTaxId, core => core.MapFrom(a => a.BusinessPartner.IncomeTaxId))
+                .ForMember(dto => dto.BusinessPartnerMobile, core => core.MapFrom(a => a.BusinessPartner.Mobile))
                 .ForMember(dto => dto.PaymentRegisterName, core => core.MapFrom(a => a.PaymentRegister.Name))
                 .ForMember(dto => dto.DeductionAccountName, core => core.MapFrom(a => a.DeductionAccount.Name))
                 .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
                 .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
                 .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
+                .ForMember(dto => dto.SalesTaxInAmount, core => core.MapFrom(a => (a.GrossPayment * a.SalesTax) / 100))
+                .ForMember(dto => dto.IncomeTaxInAmount, core => core.MapFrom(a => (a.GrossPayment * a.IncomeTax) / 100))
+                .ForMember(dto => dto.SRBTaxInAmount, core => core.MapFrom(a => (a.GrossPayment * a.SRBTax) / 100))
               .ForMember(dto => dto.Status, core => core.MapFrom(
                     a => a.BankReconStatus == DocumentStatus.Unreconciled ? "In Payment" :
                     a.BankReconStatus == DocumentStatus.Partial ? "Partial Reconciled" :
                     a.BankReconStatus == DocumentStatus.Reconciled ? "Reconciled" : a.Status.Status));
 
             CreateMap<CreatePaymentDto, Payment>()
-                .ForMember(core => core.NetPayment, dto => dto.MapFrom(a => (a.GrossPayment - ((a.GrossPayment * a.IncomeTax)/100) - ((a.GrossPayment * a.SalesTax) / 100) - ((a.GrossPayment * a.SRBTax) / 100) - a.Deduction)));
+                .ForMember(core => core.NetPayment, dto => dto.MapFrom(a => (a.GrossPayment - ((a.GrossPayment * a.IncomeTax) / 100) - ((a.GrossPayment * a.SalesTax) / 100) - ((a.GrossPayment * a.SRBTax) / 100) - a.Deduction)));
 
             // CashAccount Mapping
             CreateMap<CashAccount, CashAccountDto>()
@@ -341,7 +364,7 @@ namespace Application.Mapper
 
             CreateMap<CreateGRNLinesDto, GRNLines>()
                .ForMember(core => core.SubTotal, dto => dto.MapFrom(a => (a.Quantity * a.Cost) + (a.Quantity * a.Cost * a.Tax / 100)));
-           
+
             // EstimatedBudget Mapping
             CreateMap<EstimatedBudgetMaster, EstimatedBudgetDto>()
                 .ForMember(dto => dto.From, core => core.MapFrom(a => a.PreviousBudget.From))
@@ -375,7 +398,8 @@ namespace Application.Mapper
               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State == DocumentStatus.Unpaid ? "Unpaid" : a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
               .ForMember(dto => dto.AbsentDays, core => core.MapFrom(a => a.WorkingDays - a.PresentDays - a.LeaveDays))
-              .ForMember(dto => dto.NetSalary, core => core.MapFrom(a => a.NetSalary));
+              .ForMember(dto => dto.NetSalary, core => core.MapFrom(a => a.NetSalary))
+              .ForMember(dto => dto.NetIncrement, core => core.MapFrom(a => a.NetIncrement));
 
             CreateMap<PayrollTransactionLines, PayrollTransactionLinesDto>()
               .ForMember(dto => dto.PayrollItem, core => core.MapFrom(a => a.PayrollItem.Name))
@@ -462,6 +486,10 @@ namespace Application.Mapper
             // FileUpload Mapping
             CreateMap<FileUpload, FileUploadDto>();
             CreateMap<FileUploadDto, FileUpload>();
+
+            // User Mapping
+            CreateMap<User, UsersListDto>()
+                .ForMember(dto => dto.Name, core => core.MapFrom(a => a.Employee.Name));
         }
     }
 }

@@ -40,10 +40,24 @@ namespace Application.Services
                     entity.BankStmtLines = await ImportStmtLines(file);
 
                     if (entity.BankStmtLines.Count() == 0)
-                    {
                         return new Response<BankStmtDto>("Lines are required");
+
+                    foreach (var line in entity.BankStmtLines)
+                    {
+                        if (line.Credit < 0 || line.Debit < 0)
+                        {
+                            return new Response<BankStmtDto>("Credit & Debit amount should be a postive value");
+                        }
+
+                        if (line.StmtDate.Date > DateTime.UtcNow)
+                        {
+                            return new Response<BankStmtDto>("Future date statment can not be created ");
+                        }
                     }
                 }
+
+                if (entity.BankStmtLines.Count() == 0)
+                    return new Response<BankStmtDto>("Lines are required, Upload a file or click on reset for Lines");
 
                 foreach (var line in entity.BankStmtLines)
                 {
@@ -65,15 +79,20 @@ namespace Application.Services
                 _unitOfWork.Commit();
                 return new Response<BankStmtDto>(_mapper.Map<BankStmtDto>(bankStmt), "Created successfully");
             }
-            catch (NullReferenceException)
+            catch (FormatException)
             {
                 _unitOfWork.Rollback();
-                return new Response<BankStmtDto>("All fields are required in spreadsheet");
+                return new Response<BankStmtDto>("Lines are in wrong format");
             }
             catch (InvalidCastException)
             {
                 _unitOfWork.Rollback();
                 return new Response<BankStmtDto>("Date Format should be DD/MM/YYYY");
+            }
+            catch (NullReferenceException)
+            {
+                _unitOfWork.Rollback();
+                return new Response<BankStmtDto>("All fields are required in spreadsheet");
             }
             catch (Exception ex)
             {

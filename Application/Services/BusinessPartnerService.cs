@@ -26,6 +26,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
         public async Task<Response<BusinessPartnerDto>> CreateAsync(CreateBusinessPartnerDto entity)
         {
             var businessPartner = _mapper.Map<BusinessPartner>(entity);
@@ -97,6 +98,7 @@ namespace Application.Services
             await _unitOfWork.SaveAsync();
             return new Response<BusinessPartnerDto>(_mapper.Map<BusinessPartnerDto>(businessPartner), "Updated successfully");
         }
+
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
@@ -113,5 +115,31 @@ namespace Application.Services
             return new Response<List<BusinessPartnerDto>>(_mapper.Map<List<BusinessPartnerDto>>(businessPartners), "Returning List");
         }
 
+        public Response<List<EmployeeBusinessPartnerDto>> GetAllBusinessPartnerDropDown()
+        {
+            // fetching business partner and employee with Employee Code
+            var businessPartners = _unitOfWork.BusinessPartner.Find(new BusinessPartnerSpecs(1))
+                .OrderByDescending(x => x.Id)
+                .Select(e => new BusinessPartnerDto
+                {
+                Id = e.Id,
+                Name = e.EmployeesList.Count() > 0 ? $"{e.EmployeesList.Select(i => i.EmployeeCode).FirstOrDefault()} - {e.Name}" : e.Name,
+                BusinessPartnerType = e.BusinessPartnerType
+                })
+                .ToList();
+
+            if (!businessPartners.Any())
+                return new Response<List<EmployeeBusinessPartnerDto>>("List is empty");
+
+            var bPDto = businessPartners.GroupBy(e => e.BusinessPartnerType)
+                .Select(i => new EmployeeBusinessPartnerDto()
+                {
+                    Type = i.Key.ToString(),
+                    BusinessPartner = i.ToList()
+                })
+                .ToList();
+
+            return new Response<List<EmployeeBusinessPartnerDto>>(_mapper.Map<List<EmployeeBusinessPartnerDto>>(bPDto), "Returning List");
+        }
     }
 }

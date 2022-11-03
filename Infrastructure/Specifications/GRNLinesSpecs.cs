@@ -14,7 +14,6 @@ namespace Infrastructure.Specifications
         : base(x => x.ItemId == itemId && x.WarehouseId == warehouseId && x.MasterId == masterId
         && (x.Status == DocumentStatus.Partial || x.Status == DocumentStatus.Unreconciled))
         {
-            ApplyAsNoTracking();
         }
     }
 }

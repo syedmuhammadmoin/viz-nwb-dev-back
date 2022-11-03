@@ -25,7 +25,8 @@ namespace Domain.Entities
         public string BranchName { get; private set; }
         [MaxLength(50)]
         public string AccountTitle { get; private set; }
-        public long AccountNumber { get; private set; }
+        [MaxLength(50)]
+        public string AccountNumber { get; private set; }
         [MaxLength(30)]
         public string EmployeeCode { get; private set; }
         [MaxLength(100)]
@@ -63,6 +64,7 @@ namespace Domain.Entities
         [MaxLength(80)]
         public string DutyShift { get; private set; }
         public int? NoOfIncrements { get; private set; }
+        [MaxLength(100)]
         public string Email { get; private set; }
         public bool isActive { get; private set; }
 
@@ -73,6 +75,11 @@ namespace Domain.Entities
         public void setEmployeeEmail(string email)
         {
             Email = email;
+        }
+        
+        public void updateEmployee(int? noOfIncrements)
+        {
+            NoOfIncrements = noOfIncrements;
         }
 
         protected Employee()
