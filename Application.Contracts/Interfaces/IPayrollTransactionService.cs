@@ -17,5 +17,6 @@ namespace Application.Contracts.Interfaces
         Task<Response<List<PayrollTransactionDto>>> GetEmployeesByDept(DeptFilter data);
         Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data);
         Response<List<PayrollTransactionDto>> GetPayrollReport(PayrollFilter filter);
+        Response<List<PayrollExecutiveReportDto>> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter);
     }
 }

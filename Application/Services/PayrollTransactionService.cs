@@ -127,7 +127,7 @@ namespace Application.Services
                     (DateTime)item.TransDate,
                      totalBasicPay,
                      grossPay,
-                     empDetails.TotalIncrement, 
+                     empDetails.TotalIncrement,
                      netPay,
                      1,
                      payrollTransactionLines);
@@ -283,7 +283,7 @@ namespace Application.Services
                     (DateTime)entity.TransDate,
                     totalBasicPay,
                     grossPay,
-                    netPay, 
+                    netPay,
                     empDetails.TotalIncrement,
                     payrollTransactionLines);
 
@@ -811,5 +811,32 @@ namespace Application.Services
             return files;
         }
 
+        public Response<List<PayrollExecutiveReportDto>> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter)
+        {
+            //Fetching payroll as per the filters
+            var getPayrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)filter.Month, (int)filter.Year, filter.Campus, filter.PayrollItem)).FirstOrDefault();
+
+            if (getPayrollTransaction == null)
+                return new Response<List<PayrollExecutiveReportDto>>("Payroll not found");
+
+            //decimal totalAmount = 0;
+
+            var result = new List<PayrollExecutiveReportDto>();
+            foreach (var line in getPayrollTransaction.PayrollTransactionLines)
+            {
+                var getPayrollItem = getPayrollTransaction.PayrollTransactionLines
+                    .GroupBy(x => x.PayrollItem)
+                    .Select(x => new PayrollExecutiveReportDto
+                    {
+                        Amount = line.Amount,
+                        PayrollType = line.PayrollType,
+                        PayrollItem = line.PayrollItem.Name
+                    }).FirstOrDefault();
+
+                result.Add(getPayrollItem);
+            }
+
+            return new Response<List<PayrollExecutiveReportDto>>(result, "Payroll found");
+        }
     }
 }
