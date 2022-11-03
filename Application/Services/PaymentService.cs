@@ -172,30 +172,38 @@ namespace Application.Services
             }
 
             //Validation for same  Accounts
+
             if (entity.PaymentRegisterId == entity.AccountId || entity.PaymentRegisterId == entity.DeductionAccountId || entity.DeductionAccountId == entity.AccountId)
             {
                 return new Response<PaymentDto>("Accounts Cannot Be Same");
             }
 
-            var PaymentRegisterId = _unitOfWork.Level4.Find(new Level4Specs()).Where(x => x.Id == entity.PaymentRegisterId).Select(x => x.Level3_id).FirstOrDefault();
-
             //Validation for Payable and Receivable
 
-            if (PaymentRegisterId != new Guid("12500000-5566-7788-99AA-BBCCDDEEFF00"))
+
+            var BankAccountlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.PaymentRegisterId);
+
+            var BankAccount = ReceivableAndPayable.ValidateBankAccount( BankAccountlevel4.Level3_id);
+
+            if (BankAccount == false )
             {
                 return new Response<PaymentDto>("Payment register account Invalid");
             }
 
-            var AccountId = _unitOfWork.Level4.Find(new Level4Specs(0, (Guid)entity.AccountId)).Where(x => x.Id == entity.AccountId).ToList();
-          
-            if (AccountId.Count != 0)
+            var AccountIdlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.DeductionAccountId);
+
+            var AccountIdlevel3 = ReceivableAndPayable.Validate(AccountIdlevel4.Level3_id);
+
+            if (AccountIdlevel3 == false)
             {
                 return new Response<PaymentDto>("Account Invalid");
             }
-            
-            var DeductionAccountId = _unitOfWork.Level4.Find(new Level4Specs(0, (Guid)entity.DeductionAccountId)).Where(x => x.Id == entity.DeductionAccountId).ToList();
-            
-            if (DeductionAccountId.Count != 0)
+
+            var level4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountId);
+
+            var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+
+            if (level3 == false)
             {
                 return new Response<PaymentDto>("Deduction account Invalid");
             }
