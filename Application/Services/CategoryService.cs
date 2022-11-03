@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
@@ -36,24 +37,28 @@ namespace Application.Services
             }
 
             //Validation for Payable and Receivable
+            var Inventorylevel4 = await _unitOfWork.Level4.GetById((Guid)entity.InventoryAccountId);
 
-            var InventoryAccountId = _unitOfWork.Level4.Find(new Level4Specs(0, (Guid) entity.InventoryAccountId)).Where(x => x.Id == entity.InventoryAccountId).FirstOrDefault();
+            var InventoryAccountId = ReceivableAndPayable.Validate(Inventorylevel4.Level3_id);
 
-            if (InventoryAccountId != null)
+            if (InventoryAccountId == false)
             {
                 return new Response<CategoryDto>("Inventory account Invalid");
             }
-            
-            var RevenueAccountId = _unitOfWork.Level4.Find(new Level4Specs(0, (Guid) entity.RevenueAccountId)).Where(x => x.Id == entity.RevenueAccountId).FirstOrDefault();
 
-            if (RevenueAccountId != null)
+            var Revenuelevel4 = await _unitOfWork.Level4.GetById((Guid)entity.RevenueAccountId);
+
+            var RevenueAccountId = ReceivableAndPayable.Validate(Revenuelevel4.Level3_id);
+
+            if (RevenueAccountId == false)
             {
                 return new Response<CategoryDto>("Revenue account Invalid");
             }
+            var Costlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.CostAccountId);
 
-            var CostAccountId = _unitOfWork.Level4.Find(new Level4Specs(0, (Guid)entity.CostAccountId)).Where(x => x.Id == entity.CostAccountId).FirstOrDefault();
+            var CostAccountId = ReceivableAndPayable.Validate(Costlevel4.Level3_id);
 
-            if (CostAccountId != null)
+            if (CostAccountId == false)
             {
                 return new Response<CategoryDto>("Cost account Invalid");
             }
