@@ -814,23 +814,23 @@ namespace Application.Services
         public Response<List<PayrollExecutiveReportDto>> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter)
         {
             //Fetching payroll as per the filters
-            var getPayrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)filter.Month, (int)filter.Year, filter.Campus, filter.PayrollItem)).FirstOrDefault();
+            var getPayrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)filter.Month, (int)filter.Year, filter.Campus, filter.PayrollItem)).ToList();
 
-            if (getPayrollTransaction == null)
+            if (getPayrollTransaction.Count() < 0)
                 return new Response<List<PayrollExecutiveReportDto>>("Payroll not found");
 
             //decimal totalAmount = 0;
 
             var result = new List<PayrollExecutiveReportDto>();
-            foreach (var line in getPayrollTransaction.PayrollTransactionLines)
+            foreach (var line in getPayrollTransaction)
             {
-                var getPayrollItem = getPayrollTransaction.PayrollTransactionLines
-                    .GroupBy(x => x.PayrollItem)
+                var getPayrollItem = getPayrollTransaction
+                    .GroupBy(x => x.PayrollTransactionLines.Select(x => x.PayrollItem))
                     .Select(x => new PayrollExecutiveReportDto
                     {
-                        Amount = line.Amount,
-                        PayrollType = line.PayrollType,
-                        PayrollItem = line.PayrollItem.Name
+                        Amount = line.PayrollTransactionLines.Select(i => i.Amount).FirstOrDefault(),
+                        PayrollType = line.PayrollTransactionLines.Select(i => i.PayrollType).FirstOrDefault(),
+                        PayrollItem = line.PayrollTransactionLines.Select(i => i.PayrollItem.Name).FirstOrDefault()
                     }).FirstOrDefault();
 
                 result.Add(getPayrollItem);
