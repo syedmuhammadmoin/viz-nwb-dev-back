@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
@@ -56,6 +57,15 @@ namespace Application.Services
             if (tax == null)
                 return new Response<TaxDto>("Not found");
 
+            var taxLevel4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountId);
+
+            var AccountId = ReceivableAndPayable.Validate(taxLevel4.Level3_id);
+
+            if(AccountId == false)
+            {
+                return new  Response<TaxDto>("Account Invalid");
+            }
+            
             //For updating data
             _mapper.Map<UpdateTaxDto, Taxes>(entity, tax);
             await _unitOfWork.SaveAsync();
