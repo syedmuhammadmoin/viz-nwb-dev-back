@@ -819,22 +819,17 @@ namespace Application.Services
             if (getPayrollTransaction.Count() < 0)
                 return new Response<List<PayrollExecutiveReportDto>>("Payroll not found");
 
-            //decimal totalAmount = 0;
+            //Selecting all payroll Items grouped by their payrollItem
+            var getPayrollTransactionLines = getPayrollTransaction.SelectMany(x => x.PayrollTransactionLines).ToList();
 
-            var result = new List<PayrollExecutiveReportDto>();
-            foreach (var line in getPayrollTransaction)
-            {
-                var getPayrollItem = getPayrollTransaction
-                    .GroupBy(x => x.PayrollTransactionLines.Select(x => x.PayrollItem))
-                    .Select(x => new PayrollExecutiveReportDto
-                    {
-                        Amount = line.PayrollTransactionLines.Select(i => i.Amount).FirstOrDefault(),
-                        PayrollType = line.PayrollTransactionLines.Select(i => i.PayrollType).FirstOrDefault(),
-                        PayrollItem = line.PayrollTransactionLines.Select(i => i.PayrollItem.Name).FirstOrDefault()
-                    }).FirstOrDefault();
-
-                result.Add(getPayrollItem);
-            }
+            var result = getPayrollTransaction.SelectMany(x => x.PayrollTransactionLines).ToList()
+                .GroupBy(l => l.PayrollItemId)
+                .Select(cl => new PayrollExecutiveReportDto
+                {
+                    Amount = cl.Sum(c => c.Amount),
+                    PayrollType = cl.First().PayrollType,
+                    PayrollItem = cl.First().PayrollItem.Name,
+                }).ToList();
 
             return new Response<List<PayrollExecutiveReportDto>>(result, "Payroll found");
         }
