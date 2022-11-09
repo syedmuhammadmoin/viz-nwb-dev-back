@@ -820,18 +820,44 @@ namespace Application.Services
                 return new Response<List<PayrollExecutiveReportDto>>("Payroll not found");
 
             //Selecting all payroll Items grouped by their payrollItem
+            var basicPayItemList = new List<PayrollExecutiveReportDto>();
+
+            foreach (var item in getPayrollTransaction)
+            {
+                var getBasicPayOfEmp = getPayrollTransaction.Select(x => new PayrollExecutiveReportDto
+                {
+                    Amount = x.BasicSalary,
+                    PayrollType = PayrollType.BasicPay,
+                    PayrollItem = x.BPSName,
+                }).FirstOrDefault();
+
+                basicPayItemList.Add(getBasicPayOfEmp);
+            }
+
+            // Selecting all payroll Items grouped by their payrollItem
             var getPayrollTransactionLines = getPayrollTransaction.SelectMany(x => x.PayrollTransactionLines).ToList();
 
             var result = getPayrollTransaction.SelectMany(x => x.PayrollTransactionLines).ToList()
-                .GroupBy(l => l.PayrollItemId)
+                .GroupBy(l => new { l.PayrollItem, l.PayrollType })
                 .Select(cl => new PayrollExecutiveReportDto
                 {
                     Amount = cl.Sum(c => c.Amount),
-                    PayrollType = cl.First().PayrollType,
-                    PayrollItem = cl.First().PayrollItem.Name,
+                    PayrollType = cl.Key.PayrollType,
+                    PayrollItem = cl.Key.PayrollItem.Name,
                 }).ToList();
 
-            return new Response<List<PayrollExecutiveReportDto>>(result, "Payroll found");
+            var allPayrollItems = basicPayItemList.Concat(result);
+
+            var returningAllPayrollItems = allPayrollItems
+                .GroupBy(x => new { x.PayrollItem, x.PayrollType })
+                .Select(x => new PayrollExecutiveReportDto()
+                {
+                    Amount = x.Sum(s => s.Amount),
+                    PayrollType = x.Key.PayrollType,
+                    PayrollItem = x.Key.PayrollItem,
+                }).ToList();
+
+            return new Response<List<PayrollExecutiveReportDto>>(returningAllPayrollItems, "Payroll found");
         }
     }
 }
