@@ -9,6 +9,13 @@ namespace Application.Contracts.DTOs
 {
     public class PayrollExecutiveReportDto
     {
+        public decimal TenureAmount { get; set; }
+        public decimal ContractualAmount { get; set; }
+        public decimal RegularAmount { get; set; }
+        public virtual List<PayrollItemsDto> PayrollItems { get; set; }
+    }
+    public class PayrollItemsDto
+    {
         public string PayrollItem { get; set; }
         public PayrollType PayrollType { get; set; }
         public decimal Amount { get; set; }
