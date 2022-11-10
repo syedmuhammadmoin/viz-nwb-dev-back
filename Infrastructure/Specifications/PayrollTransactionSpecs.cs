@@ -146,13 +146,17 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Status);
         }
 
-        public PayrollTransactionSpecs(int month, int year, string campusName, string payrollItem) 
-            : base(x => x.Month == month && x.Year == year
+        public PayrollTransactionSpecs(int?[] months, int year, string campusName, string payrollItem) 
+            : base(x =>
+            months.Count() > 0 ? months.Contains(x.Month) : true
+            && (x.Status.State == DocumentStatus.Unpaid || x.Status.State == DocumentStatus.Paid)
+            && x.Year == year
             && x.Campus.Name.Contains(campusName != null ? campusName : "")
             && x.PayrollTransactionLines.Select(x=> x.PayrollItem.Name).FirstOrDefault().Contains(payrollItem != null ? payrollItem : "")
             )
         {
             AddInclude(i => i.PayrollTransactionLines);
+            AddInclude(i => i.Employee);
             AddInclude("PayrollTransactionLines.PayrollItem");
         }
     }
