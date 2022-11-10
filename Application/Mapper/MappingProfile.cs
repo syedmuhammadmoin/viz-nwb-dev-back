@@ -399,6 +399,7 @@ namespace Application.Mapper
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
               .ForMember(dto => dto.AbsentDays, core => core.MapFrom(a => a.WorkingDays - a.PresentDays - a.LeaveDays))
               .ForMember(dto => dto.NetSalary, core => core.MapFrom(a => a.NetSalary))
+              .ForMember(dto => dto.EmployeeType, core => core.MapFrom(a => a.EmployeeType))
               .ForMember(dto => dto.NetIncrement, core => core.MapFrom(a => a.NetIncrement));
 
             CreateMap<PayrollTransactionLines, PayrollTransactionLinesDto>()
