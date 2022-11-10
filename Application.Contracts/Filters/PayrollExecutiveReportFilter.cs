@@ -11,8 +11,7 @@ namespace Application.Contracts.Filters
     {
         public string Campus { get; set; }
         public string PayrollItem { get; set; }
-        [Required]
-        public int? Month { get; set; }
+        public int?[] Month { get; set; }
         [Required]
         public int? Year { get; set; }
     }
