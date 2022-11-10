@@ -50,7 +50,6 @@ namespace Application.Services
 
         private async Task<Response<PayrollTransactionDto>> CreatePayroll(CreatePayrollTransactionDto item)
         {
-
             if (item.WorkingDays < item.PresentDays
                || item.WorkingDays < item.PresentDays + item.LeaveDays)
                 return new Response<PayrollTransactionDto>($"Error in this Employee with CNIC{item.EmployeeCNIC}, Present days and Leaves days sum can not be greater than working days");
@@ -130,6 +129,7 @@ namespace Application.Services
                      empDetails.TotalIncrement,
                      netPay,
                      1,
+                     empDetails.EmployeeType,
                      payrollTransactionLines);
 
                 await _unitOfWork.PayrollTransaction.Add(payrollTransaction);
@@ -285,6 +285,7 @@ namespace Application.Services
                     grossPay,
                     netPay,
                     empDetails.TotalIncrement,
+                    empDetails.EmployeeType,
                     payrollTransactionLines);
 
             await _unitOfWork.SaveAsync();
@@ -811,53 +812,73 @@ namespace Application.Services
             return files;
         }
 
-        public Response<List<PayrollExecutiveReportDto>> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter)
+        public Response<PayrollExecutiveReportDto> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter)
         {
             //Fetching payroll as per the filters
-            var getPayrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)filter.Month, (int)filter.Year, filter.Campus, filter.PayrollItem)).ToList();
+            var getPayrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(filter.Month, 
+                (int)filter.Year, filter.Campus, filter.PayrollItem)).ToList();
 
             if (getPayrollTransaction.Count() < 0)
-                return new Response<List<PayrollExecutiveReportDto>>("Payroll not found");
+                return new Response<PayrollExecutiveReportDto>("Payroll not found");
 
             //Selecting all payroll Items grouped by their payrollItem
-            var basicPayItemList = new List<PayrollExecutiveReportDto>();
+            var basicPayItemList = new List<PayrollItemsDto>();
 
             foreach (var item in getPayrollTransaction)
             {
-                var getBasicPayOfEmp = getPayrollTransaction.Select(x => new PayrollExecutiveReportDto
+                var getBasicPayOfEmp = getPayrollTransaction.Select(x => new PayrollItemsDto
                 {
-                    Amount = x.BasicSalary,
+                    Amount = item.BasicSalary,
                     PayrollType = PayrollType.BasicPay,
-                    PayrollItem = x.BPSName,
+                    PayrollItem = item.BPSName,
                 }).FirstOrDefault();
 
                 basicPayItemList.Add(getBasicPayOfEmp);
             }
 
             // Selecting all payroll Items grouped by their payrollItem
-            var getPayrollTransactionLines = getPayrollTransaction.SelectMany(x => x.PayrollTransactionLines).ToList();
-
-            var result = getPayrollTransaction.SelectMany(x => x.PayrollTransactionLines).ToList()
+            var payrollItems = getPayrollTransaction.SelectMany(x => x.PayrollTransactionLines).ToList()
                 .GroupBy(l => new { l.PayrollItem, l.PayrollType })
-                .Select(cl => new PayrollExecutiveReportDto
+                .Select(cl => new PayrollItemsDto
                 {
                     Amount = cl.Sum(c => c.Amount),
                     PayrollType = cl.Key.PayrollType,
                     PayrollItem = cl.Key.PayrollItem.Name,
                 }).ToList();
 
-            var allPayrollItems = basicPayItemList.Concat(result);
+            var allPayrollItems = basicPayItemList.Concat(payrollItems);
 
-            var returningAllPayrollItems = allPayrollItems
+            var PayrollExecutiveReportDto = allPayrollItems
                 .GroupBy(x => new { x.PayrollItem, x.PayrollType })
-                .Select(x => new PayrollExecutiveReportDto()
+                .Select(x => new PayrollItemsDto()
                 {
                     Amount = x.Sum(s => s.Amount),
                     PayrollType = x.Key.PayrollType,
                     PayrollItem = x.Key.PayrollItem,
                 }).ToList();
 
-            return new Response<List<PayrollExecutiveReportDto>>(returningAllPayrollItems, "Payroll found");
+            var sumTotalOfEmployeeType = getPayrollTransaction
+                .GroupBy(i => i.EmployeeType)
+                .Select(i => new
+                {
+                    EmployeeType = i.Key,
+                    Amount = i.Sum(s => s.NetSalary),
+                }).ToList();
+
+            var result = new PayrollExecutiveReportDto()
+            {
+                ContractualAmount = sumTotalOfEmployeeType
+                        .Where(i => i.EmployeeType == "Contract")
+                        .Select(i => i.Amount).FirstOrDefault(),
+                RegularAmount = sumTotalOfEmployeeType
+                        .Where(i => i.EmployeeType == "Regular")
+                        .Select(i => i.Amount).FirstOrDefault(),
+                TenureAmount = sumTotalOfEmployeeType
+                        .Where(i => i.EmployeeType == "Tenure")
+                        .Select(i => i.Amount).FirstOrDefault(),
+                PayrollItems = PayrollExecutiveReportDto
+            };
+            return new Response<PayrollExecutiveReportDto>(result, "Payroll found");
         }
     }
 }
