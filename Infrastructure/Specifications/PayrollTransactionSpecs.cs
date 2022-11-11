@@ -152,7 +152,9 @@ namespace Infrastructure.Specifications
             && (x.Status.State == DocumentStatus.Unpaid || x.Status.State == DocumentStatus.Paid)
             && x.Year == year
             && x.Campus.Name.Contains(campusName != null ? campusName : "")
-            && x.PayrollTransactionLines.Select(x=> x.PayrollItem.Name).FirstOrDefault().Contains(payrollItem != null ? payrollItem : "")
+            //&& (x.BPSName.Contains(payrollItem != null ? payrollItem : "" ))
+            //|| (x.PayrollTransactionLines.Select(x=> x.PayrollItem.Name).FirstOrDefault()
+            //.Contains(payrollItem != null ? payrollItem : ""))
             )
         {
             AddInclude(i => i.PayrollTransactionLines);
