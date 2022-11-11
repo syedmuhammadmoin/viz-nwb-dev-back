@@ -814,6 +814,11 @@ namespace Application.Services
 
         public Response<PayrollExecutiveReportDto> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter)
         {
+            if (filter.Month == null)
+            {
+               filter.Month = new int?[0]; 
+            }
+
             //Fetching payroll as per the filters
             var getPayrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(filter.Month, 
                 (int)filter.Year, filter.Campus, filter.PayrollItem)).ToList();
