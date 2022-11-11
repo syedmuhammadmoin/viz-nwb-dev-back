@@ -74,7 +74,7 @@ namespace Application.Services
 
             if (checkingPayrollTrans != null)
             {
-                if (checkingPayrollTrans.StatusId != 1)
+                if (checkingPayrollTrans.StatusId != 1 && checkingPayrollTrans.StatusId != 2)
                     return new Response<PayrollTransactionDto>($"Error in this Employee with CNIC{item.EmployeeCNIC},Payroll transaction is already processed");
 
                 return await UpdatePayroll(checkingPayrollTrans.Id, item, 1);
@@ -110,27 +110,73 @@ namespace Application.Services
             _unitOfWork.CreateTransaction();
             try
             {
-                // mapping data in payroll transaction master table
+                //// mapping data in payroll transaction master table
+                //var payrollTransaction = new PayrollTransactionMaster(
+                //     (int)item.Month,
+                //    (int)item.Year,
+                //     empDetails.Id,
+                //     empDetails.BPSAccountId,
+                //     empDetails.BPS,
+                //     empDetails.DesignationId,
+                //     empDetails.DepartmentId,
+                //     empDetails.CampusId,
+                //     (int)item.WorkingDays,
+                //     (int)item.PresentDays,
+                //     (int)item.LeaveDays,
+                //    (DateTime)item.TransDate,
+                //     totalBasicPay,
+                //     grossPay,
+                //     empDetails.TotalIncrement,
+                //     netPay,
+                //     1,
+                //     empDetails.EmployeeType,
+                //     payrollTransactionLines);
+
                 var payrollTransaction = new PayrollTransactionMaster(
-                     (int)item.Month,
+                    (int)item.Month,
                     (int)item.Year,
-                     empDetails.Id,
-                     empDetails.BPSAccountId,
-                     empDetails.BPS,
-                     empDetails.DesignationId,
-                     empDetails.DepartmentId,
-                     empDetails.CampusId,
-                     (int)item.WorkingDays,
-                     (int)item.PresentDays,
-                     (int)item.LeaveDays,
+                    empDetails.BPSAccountId,
+                    empDetails.BPS,
+                    empDetails.CampusId,
+                    (int)item.WorkingDays,
+                    (int)item.PresentDays,
+                    (int)item.LeaveDays,
                     (DateTime)item.TransDate,
-                     totalBasicPay,
-                     grossPay,
-                     empDetails.TotalIncrement,
-                     netPay,
-                     1,
-                     empDetails.EmployeeType,
-                     payrollTransactionLines);
+                    totalBasicPay,
+                    grossPay,
+                    netPay,
+                    1,
+                    empDetails.Id,
+                    empDetails.Name,
+                    empDetails.FatherName,
+                    empDetails.CNIC,
+                    empDetails.EmployeeType,
+                    empDetails.BankName,
+                    empDetails.BranchName,
+                    empDetails.AccountTitle,
+                    empDetails.AccountNumber,
+                    empDetails.EmployeeCode,
+                    empDetails.Domicile,
+                    empDetails.Contact,
+                    empDetails.Religion,
+                    empDetails.Nationality,
+                    empDetails.Maritalstatus,
+                    empDetails.Gender,
+                    empDetails.PlaceofBirth,
+                    empDetails.DesignationId,
+                    empDetails.DepartmentId,
+                    empDetails.Address,
+                    empDetails.DateofJoining,
+                    empDetails.DateofRetirment,
+                    empDetails.DateofBirth,
+                    empDetails.Faculty,
+                    empDetails.DutyShift,
+                    empDetails.NoOfIncrements,
+                    empDetails.Email,
+                    empDetails.BasicPayItemId,
+                    empDetails.IncrementItemId,
+                    payrollTransactionLines
+                    );
 
                 await _unitOfWork.PayrollTransaction.Add(payrollTransaction);
                 await _unitOfWork.SaveAsync();
@@ -272,11 +318,27 @@ namespace Application.Services
             if (getPayrollTransaction == null)
                 return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
 
+            //getPayrollTransaction.updatePayrollTransaction(
+            //        empDetails.BPSAccountId,
+            //        empDetails.BPS,
+            //        empDetails.DesignationId,
+            //        empDetails.DepartmentId,
+            //        (int)entity.WorkingDays,
+            //        (int)entity.PresentDays,
+            //        (int)entity.LeaveDays,
+            //        (DateTime)entity.TransDate,
+            //        totalBasicPay,
+            //        grossPay,
+            //        netPay,
+            //        empDetails.TotalIncrement,
+            //        empDetails.EmployeeType,
+            //        payrollTransactionLines);
+
+
             getPayrollTransaction.updatePayrollTransaction(
                     empDetails.BPSAccountId,
                     empDetails.BPS,
-                    empDetails.DesignationId,
-                    empDetails.DepartmentId,
+                    empDetails.CampusId,
                     (int)entity.WorkingDays,
                     (int)entity.PresentDays,
                     (int)entity.LeaveDays,
@@ -284,9 +346,37 @@ namespace Application.Services
                     totalBasicPay,
                     grossPay,
                     netPay,
-                    empDetails.TotalIncrement,
+                    1,
+                    empDetails.Name,
+                    empDetails.FatherName,
                     empDetails.EmployeeType,
-                    payrollTransactionLines);
+                    empDetails.BankName,
+                    empDetails.BranchName,
+                    empDetails.AccountTitle,
+                    empDetails.AccountNumber,
+                    empDetails.EmployeeCode,
+                    empDetails.Domicile,
+                    empDetails.Contact,
+                    empDetails.Religion,
+                    empDetails.Nationality,
+                    empDetails.Maritalstatus,
+                    empDetails.Gender,
+                    empDetails.PlaceofBirth,
+                    empDetails.DesignationId,
+                    empDetails.DepartmentId,
+                    empDetails.Address,
+                    empDetails.DateofJoining,
+                    empDetails.DateofRetirment,
+                    empDetails.DateofBirth,
+                    empDetails.Faculty,
+                    empDetails.DutyShift,
+                    empDetails.NoOfIncrements,
+                    empDetails.Email,
+                    empDetails.BasicPayItemId,
+                    empDetails.IncrementItemId,
+                    payrollTransactionLines
+                );
+
 
             await _unitOfWork.SaveAsync();
             //Commiting the transaction 
