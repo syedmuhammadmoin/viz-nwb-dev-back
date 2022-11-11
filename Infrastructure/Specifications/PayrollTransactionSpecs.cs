@@ -148,7 +148,7 @@ namespace Infrastructure.Specifications
 
         public PayrollTransactionSpecs(int?[] months, int year, string campusName, string payrollItem) 
             : base(x =>
-            months.Count() > 0 ? months.Contains(x.Month) : true
+            (months.Count() > 0 ? months.Contains(x.Month) : true)
             && (x.Status.State == DocumentStatus.Unpaid || x.Status.State == DocumentStatus.Paid)
             && x.Year == year
             && x.Campus.Name.Contains(campusName != null ? campusName : "")

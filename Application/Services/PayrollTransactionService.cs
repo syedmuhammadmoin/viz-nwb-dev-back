@@ -818,7 +818,7 @@ namespace Application.Services
             var getPayrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(filter.Month, 
                 (int)filter.Year, filter.Campus, filter.PayrollItem)).ToList();
 
-            if (getPayrollTransaction.Count() < 0)
+            if (getPayrollTransaction.Count() == 0)
                 return new Response<PayrollExecutiveReportDto>("Payroll not found");
 
             //Selecting all payroll Items grouped by their payrollItem
