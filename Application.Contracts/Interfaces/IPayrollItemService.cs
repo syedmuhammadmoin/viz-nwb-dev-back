@@ -12,5 +12,6 @@ namespace Application.Contracts.Interfaces
     public interface IPayrollItemService : ICrudService<CreatePayrollItemDto, PayrollItemDto, int, PayrollItemFilter>
     {
         Task<Response<List<PayrollItemDto>>> GetBaicPayList();
+        Task<Response<List<PayrollItemDto>>> GetPayrollItemDropDown();
     }
 }

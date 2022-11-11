@@ -80,5 +80,10 @@ namespace Vizalys.Api.Controllers
             return BadRequest(results); // Status code : 400
         }
 
+        [HttpGet("Dropdown")]
+        public async Task<ActionResult<Response<List<PayrollItemDto>>>> GetPayrollItemDropDown()
+        {
+            return Ok(await _payrollItemService.GetPayrollItemDropDown()); // Status Code : 200
+        }
     }
 }
