@@ -190,22 +190,14 @@ namespace Vizalys.Api.Controllers
             }
         }
 
-        [HttpGet("PayrollExecutiveReport")]
-        public ActionResult<Response<List<PayrollExecutiveReportDto>>> GetPayrollExecutiveReport([FromQuery] PayrollExecutiveReportFilter filter)
+        [HttpPost("PayrollExecutiveReport")]
+        public ActionResult<Response<List<PayrollExecutiveReportDto>>> GetPayrollExecutiveReport( PayrollExecutiveReportFilter filter)
         {
-            try
-            {
                 var result = _payrollTransactionService.GetPayrollExecutiveReport(filter);
                 if (result.IsSuccess)
                     return Ok(result); // Status Code : 200
 
                 return BadRequest(result); // Status code : 400
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    e.Message);
-            }
         }
         [HttpPost("DocUpload/{id:int}")]
         public async Task<ActionResult<Response<int>>> UploadFile(IFormFile file, int id)
