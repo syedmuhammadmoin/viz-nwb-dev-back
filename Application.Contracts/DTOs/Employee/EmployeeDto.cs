@@ -25,8 +25,10 @@ namespace Application.Contracts.DTOs
         public string Nationality { get;  set; }
         public string Maritalstatus { get;  set; }
         public string Gender { get;  set; }
+        public int BasicPayItemId { get; set; }
+        public int? IncrementItemId { get; set; }
         public string BPS { get; set; }
-        public Guid BPSAccountId { get; set; } 
+        public Guid BPSAccountId { get; set; }
         public string PlaceofBirth { get;  set; }
         public int BusinessPartnerId { get; set; }
         public int DesignationId { get; set; }
