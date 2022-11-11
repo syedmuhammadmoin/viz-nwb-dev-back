@@ -36,5 +36,10 @@ namespace Infrastructure.Specifications
         public PayrollItemSpecs(bool isBasicPay) : base(x => isBasicPay ? x.PayrollType == PayrollType.BasicPay : false)
         {
         }
+
+        public PayrollItemSpecs(int getAll) : base (x=> x.IsActive == true)
+        {
+
+        }
     }
 }
