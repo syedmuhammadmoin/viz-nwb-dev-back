@@ -45,8 +45,7 @@ namespace Infrastructure.Migrations
                 name: "BasicPayItemId",
                 table: "PayrollTransactionMaster",
                 type: "int",
-                nullable: false,
-                defaultValue: 0);
+                nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "BranchName",

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221111143223_AddAllEmpFieldsInPayroll")]
+    [Migration("20221113154441_AddAllEmpFieldsInPayroll")]
     partial class AddAllEmpFieldsInPayroll
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -3568,7 +3568,7 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("BasicPayItemId")
+                    b.Property<int?>("BasicPayItemId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("BasicSalary")
@@ -6131,8 +6131,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.PayrollItem", "BasicPayItem")
                         .WithMany()
                         .HasForeignKey("BasicPayItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
