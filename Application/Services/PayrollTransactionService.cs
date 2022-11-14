@@ -904,53 +904,107 @@ namespace Application.Services
 
         public Response<PayrollExecutiveReportDto> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter)
         {
+            
+            var months = new List<int?>();
+            var campuses = new List<int?>();
+            var payrollTypes = new List<int?>();
+
             if (filter.Month == null)
             {
-               filter.Month = new int?[0]; 
+                filter.Month = new int?[0];
+            }
+
+            if (filter.Campus != null)
+            {
+                campuses.Add(filter.Campus);
+            }
+
+            if (filter.PayrollItem != null)
+            {
+                payrollTypes.Add(filter.PayrollItem);
             }
 
             //Fetching payroll as per the filters
             var getPayrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(filter.Month, 
-                (int)filter.Year, filter.Campus, filter.PayrollItem)).ToList();
+                (int)filter.Year, campuses)).ToList();
 
             if (getPayrollTransaction.Count() == 0)
                 return new Response<PayrollExecutiveReportDto>("Payroll not found");
 
             //Selecting all payroll Items grouped by their payrollItem
-            var basicPayItemList = new List<PayrollItemsDto>();
+            var itemList = new List<PayrollItemsDto>();
 
-            foreach (var item in getPayrollTransaction)
+            foreach (var payroll in getPayrollTransaction)
             {
-                var getBasicPayOfEmp = getPayrollTransaction.Select(x => new PayrollItemsDto
+                //var getBasicPayOfEmp = getPayrollTransaction.Select(x => new PayrollItemsDto
+                //{
+                //    Amount = item.BasicSalary,
+                //    PayrollType = PayrollType.BasicPay,
+                //    PayrollItem = item.BPSName,
+                //}).FirstOrDefault();
+                //basicPayItemList.Add(getBasicPayOfEmp);
+
+                itemList.Add(new PayrollItemsDto()
                 {
-                    Amount = item.BasicSalary,
+                    PayrollItemId = payroll.BasicPayItemId, 
+                    PayrollItem = payroll.BPSName,
                     PayrollType = PayrollType.BasicPay,
-                    PayrollItem = item.BPSName,
-                }).FirstOrDefault();
+                    Amount = payroll.BasicSalary,
+                });
 
-                basicPayItemList.Add(getBasicPayOfEmp);
+                var payrollItems = payroll.PayrollTransactionLines
+                    .Where(e => (payrollTypes.Count() > 0 ? payrollTypes.Contains(e.PayrollItemId) : true))
+                    .ToList();
+                
+                if (payrollItems.Count() > 0)
+                {
+                    foreach (var lines in payrollItems)
+                    {
+                        itemList.Add(new PayrollItemsDto()
+                        {
+                            PayrollItemId = lines.PayrollItemId,
+                            PayrollItem = lines.PayrollItem.Name,
+                            PayrollType = lines.PayrollType,
+                            Amount = lines.Amount
+                        });
+                    }
+                }
+
             }
-
-            // Selecting all payroll Items grouped by their payrollItem
-            var payrollItems = getPayrollTransaction.SelectMany(x => x.PayrollTransactionLines).ToList()
-                .GroupBy(l => new { l.PayrollItem, l.PayrollType })
-                .Select(cl => new PayrollItemsDto
+            
+            itemList = itemList.Where(e => (payrollTypes.Count() > 0 ? payrollTypes.Contains(e.PayrollItemId) : true))
+                .GroupBy(x => new { x.PayrollType, x.PayrollItemId, x.PayrollItem })
+                .Select(c => new PayrollItemsDto
                 {
-                    Amount = cl.Sum(c => c.Amount),
-                    PayrollType = cl.Key.PayrollType,
-                    PayrollItem = cl.Key.PayrollItem.Name,
-                }).ToList();
+                    PayrollItemId = c.Key.PayrollItemId,
+                    PayrollItem = c.Key.PayrollItem,
+                    PayrollType = c.Key.PayrollType,
+                    Amount = c.Sum(e => e.Amount)
+                })
+                .ToList();
 
-            var allPayrollItems = basicPayItemList.Concat(payrollItems);
 
-            var PayrollExecutiveReportDto = allPayrollItems
-                .GroupBy(x => new { x.PayrollItem, x.PayrollType })
-                .Select(x => new PayrollItemsDto()
-                {
-                    Amount = x.Sum(s => s.Amount),
-                    PayrollType = x.Key.PayrollType,
-                    PayrollItem = x.Key.PayrollItem,
-                }).ToList();
+
+            //// Selecting all payroll Items grouped by their payrollItem
+            //var payrollItems = getPayrollTransaction.SelectMany(x => x.PayrollTransactionLines).ToList()
+            //    .GroupBy(l => new { l.PayrollItem, l.PayrollType })
+            //    .Select(cl => new PayrollItemsDto
+            //    {
+            //        Amount = cl.Sum(c => c.Amount),
+            //        PayrollType = cl.Key.PayrollType,
+            //        PayrollItem = cl.Key.PayrollItem.Name,
+            //    }).ToList();
+
+            //var allPayrollItems = basicPayItemList.Concat(payrollItems);
+
+            //var PayrollExecutiveReportDto = allPayrollItems
+            //    .GroupBy(x => new { x.PayrollItem, x.PayrollType })
+            //    .Select(x => new PayrollItemsDto()
+            //    {
+            //        Amount = x.Sum(s => s.Amount),
+            //        PayrollType = x.Key.PayrollType,
+            //        PayrollItem = x.Key.PayrollItem,
+            //    }).ToList();
 
             var sumTotalOfEmployeeType = getPayrollTransaction
                 .GroupBy(i => i.EmployeeType)
@@ -971,7 +1025,7 @@ namespace Application.Services
                 TenureAmount = sumTotalOfEmployeeType
                         .Where(i => i.EmployeeType == "Tenure")
                         .Select(i => i.Amount).FirstOrDefault(),
-                PayrollItems = PayrollExecutiveReportDto
+                PayrollItems = itemList
             };
             return new Response<PayrollExecutiveReportDto>(result, "Payroll found");
         }
