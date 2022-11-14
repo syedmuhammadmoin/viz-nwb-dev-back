@@ -914,14 +914,14 @@ namespace Application.Services
                 filter.Month = new int?[0];
             }
 
-            if (filter.Campus != null)
+            if (filter.CampusId != null)
             {
-                campuses.Add(filter.Campus);
+                campuses.Add(filter.CampusId);
             }
 
-            if (filter.PayrollItem != null)
+            if (filter.PayrollItemId != null)
             {
-                payrollTypes.Add(filter.PayrollItem);
+                payrollTypes.Add(filter.PayrollItemId);
             }
 
             //Fetching payroll as per the filters

@@ -150,7 +150,7 @@ namespace Infrastructure.Specifications
             : base(x =>
             (months.Count() > 0 ? months.Contains(x.Month) : true)
             && (campus.Count() > 0 ? campus.Contains(x.CampusId) : true)
-            && (x.Status.State == DocumentStatus.Unpaid || x.Status.State == DocumentStatus.Paid)
+            && (x.Status.State == DocumentStatus.Unpaid || x.Status.State == DocumentStatus.Paid || x.Status.State == DocumentStatus.Partial)
             && x.Year == year
             )
         {

@@ -9,8 +9,8 @@ namespace Application.Contracts.Filters
 {
     public class PayrollExecutiveReportFilter
     {
-        public int? Campus { get; set; }
-        public int? PayrollItem { get; set; }
+        public int? CampusId { get; set; }
+        public int? PayrollItemId { get; set; }
         public int?[] Month { get; set; }
         [Required]
         public int? Year { get; set; }
