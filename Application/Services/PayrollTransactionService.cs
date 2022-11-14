@@ -936,13 +936,7 @@ namespace Application.Services
 
             foreach (var payroll in getPayrollTransaction)
             {
-                //var getBasicPayOfEmp = getPayrollTransaction.Select(x => new PayrollItemsDto
-                //{
-                //    Amount = item.BasicSalary,
-                //    PayrollType = PayrollType.BasicPay,
-                //    PayrollItem = item.BPSName,
-                //}).FirstOrDefault();
-                //basicPayItemList.Add(getBasicPayOfEmp);
+                //Adding basic payItems in PayrollItemsDto
 
                 itemList.Add(new PayrollItemsDto()
                 {
@@ -952,6 +946,7 @@ namespace Application.Services
                     Amount = payroll.BasicSalary,
                 });
 
+                //filtering other payrollItems (Allowance, deduction,assignment allowance)
                 var payrollItems = payroll.PayrollTransactionLines
                     .Where(e => (payrollTypes.Count() > 0 ? payrollTypes.Contains(e.PayrollItemId) : true))
                     .ToList();
@@ -982,30 +977,7 @@ namespace Application.Services
                     Amount = c.Sum(e => e.Amount)
                 })
                 .ToList();
-
-
-
-            //// Selecting all payroll Items grouped by their payrollItem
-            //var payrollItems = getPayrollTransaction.SelectMany(x => x.PayrollTransactionLines).ToList()
-            //    .GroupBy(l => new { l.PayrollItem, l.PayrollType })
-            //    .Select(cl => new PayrollItemsDto
-            //    {
-            //        Amount = cl.Sum(c => c.Amount),
-            //        PayrollType = cl.Key.PayrollType,
-            //        PayrollItem = cl.Key.PayrollItem.Name,
-            //    }).ToList();
-
-            //var allPayrollItems = basicPayItemList.Concat(payrollItems);
-
-            //var PayrollExecutiveReportDto = allPayrollItems
-            //    .GroupBy(x => new { x.PayrollItem, x.PayrollType })
-            //    .Select(x => new PayrollItemsDto()
-            //    {
-            //        Amount = x.Sum(s => s.Amount),
-            //        PayrollType = x.Key.PayrollType,
-            //        PayrollItem = x.Key.PayrollItem,
-            //    }).ToList();
-
+            //calculating payrollAmount by their employeeType
             var sumTotalOfEmployeeType = getPayrollTransaction
                 .GroupBy(i => i.EmployeeType)
                 .Select(i => new
@@ -1027,6 +999,7 @@ namespace Application.Services
                         .Select(i => i.Amount).FirstOrDefault(),
                 PayrollItems = itemList
             };
+
             return new Response<PayrollExecutiveReportDto>(result, "Payroll found");
         }
     }
