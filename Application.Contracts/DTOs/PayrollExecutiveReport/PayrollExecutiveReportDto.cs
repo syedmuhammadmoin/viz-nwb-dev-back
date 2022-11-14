@@ -16,6 +16,7 @@ namespace Application.Contracts.DTOs
     }
     public class PayrollItemsDto
     {
+        public int PayrollItemId { get; set; }
         public string PayrollItem { get; set; }
         public PayrollType PayrollType { get; set; }
         public decimal Amount { get; set; }
