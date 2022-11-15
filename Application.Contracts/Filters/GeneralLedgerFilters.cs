@@ -14,7 +14,7 @@ namespace Application.Contracts.Filters
         public DateTime? DocDate { get; set; }
         [Required]
         public DateTime? DocDate2 { get; set; }
-        public string BusinessPartnerName { get; set; }
+        public int? BusinessPartnerId { get; set; }
         public string WarehouseName { get; set; }
         public string CampusName { get; set; }
     }

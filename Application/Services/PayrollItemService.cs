@@ -218,5 +218,14 @@ namespace Application.Services
 
             return new Response<List<PayrollItemDto>>(_mapper.Map<List<PayrollItemDto>>(result), "Returning List");
         }
+
+        public Response<List<PayrollItemDto>> GetPayrollItemDropDown()
+        {
+            var result =  _unitOfWork.PayrollItem.Find(new PayrollItemSpecs (1)).ToList();
+            if (!result.Any())
+                return new Response<List<PayrollItemDto>>("List is empty");
+
+            return new Response<List<PayrollItemDto>>(_mapper.Map<List<PayrollItemDto>>(result), "Returning List");
+        }
     }
 }

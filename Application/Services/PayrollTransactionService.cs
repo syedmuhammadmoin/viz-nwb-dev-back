@@ -50,7 +50,6 @@ namespace Application.Services
 
         private async Task<Response<PayrollTransactionDto>> CreatePayroll(CreatePayrollTransactionDto item)
         {
-
             if (item.WorkingDays < item.PresentDays
                || item.WorkingDays < item.PresentDays + item.LeaveDays)
                 return new Response<PayrollTransactionDto>($"Error in this Employee with CNIC{item.EmployeeCNIC}, Present days and Leaves days sum can not be greater than working days");
@@ -75,7 +74,7 @@ namespace Application.Services
 
             if (checkingPayrollTrans != null)
             {
-                if (checkingPayrollTrans.StatusId != 1)
+                if (checkingPayrollTrans.StatusId != 1 && checkingPayrollTrans.StatusId != 2)
                     return new Response<PayrollTransactionDto>($"Error in this Employee with CNIC{item.EmployeeCNIC},Payroll transaction is already processed");
 
                 return await UpdatePayroll(checkingPayrollTrans.Id, item, 1);
@@ -111,26 +110,73 @@ namespace Application.Services
             _unitOfWork.CreateTransaction();
             try
             {
-                // mapping data in payroll transaction master table
+                //// mapping data in payroll transaction master table
+                //var payrollTransaction = new PayrollTransactionMaster(
+                //     (int)item.Month,
+                //    (int)item.Year,
+                //     empDetails.Id,
+                //     empDetails.BPSAccountId,
+                //     empDetails.BPS,
+                //     empDetails.DesignationId,
+                //     empDetails.DepartmentId,
+                //     empDetails.CampusId,
+                //     (int)item.WorkingDays,
+                //     (int)item.PresentDays,
+                //     (int)item.LeaveDays,
+                //    (DateTime)item.TransDate,
+                //     totalBasicPay,
+                //     grossPay,
+                //     empDetails.TotalIncrement,
+                //     netPay,
+                //     1,
+                //     empDetails.EmployeeType,
+                //     payrollTransactionLines);
+
                 var payrollTransaction = new PayrollTransactionMaster(
-                     (int)item.Month,
+                    (int)item.Month,
                     (int)item.Year,
-                     empDetails.Id,
-                     empDetails.BPSAccountId,
-                     empDetails.BPS,
-                     empDetails.DesignationId,
-                     empDetails.DepartmentId,
-                     empDetails.CampusId,
-                     (int)item.WorkingDays,
-                     (int)item.PresentDays,
-                     (int)item.LeaveDays,
+                    empDetails.BPSAccountId,
+                    empDetails.BPS,
+                    empDetails.CampusId,
+                    (int)item.WorkingDays,
+                    (int)item.PresentDays,
+                    (int)item.LeaveDays,
                     (DateTime)item.TransDate,
-                     totalBasicPay,
-                     grossPay,
-                     empDetails.TotalIncrement, 
-                     netPay,
-                     1,
-                     payrollTransactionLines);
+                    totalBasicPay,
+                    grossPay,
+                    netPay,
+                    1,
+                    empDetails.Id,
+                    empDetails.Name,
+                    empDetails.FatherName,
+                    empDetails.CNIC,
+                    empDetails.EmployeeType,
+                    empDetails.BankName,
+                    empDetails.BranchName,
+                    empDetails.AccountTitle,
+                    empDetails.AccountNumber,
+                    empDetails.EmployeeCode,
+                    empDetails.Domicile,
+                    empDetails.Contact,
+                    empDetails.Religion,
+                    empDetails.Nationality,
+                    empDetails.Maritalstatus,
+                    empDetails.Gender,
+                    empDetails.PlaceofBirth,
+                    empDetails.DesignationId,
+                    empDetails.DepartmentId,
+                    empDetails.Address,
+                    empDetails.DateofJoining,
+                    empDetails.DateofRetirment,
+                    empDetails.DateofBirth,
+                    empDetails.Faculty,
+                    empDetails.DutyShift,
+                    empDetails.NoOfIncrements,
+                    empDetails.Email,
+                    empDetails.BasicPayItemId,
+                    empDetails.IncrementItemId,
+                    payrollTransactionLines
+                    );
 
                 await _unitOfWork.PayrollTransaction.Add(payrollTransaction);
                 await _unitOfWork.SaveAsync();
@@ -272,20 +318,65 @@ namespace Application.Services
             if (getPayrollTransaction == null)
                 return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
 
+            //getPayrollTransaction.updatePayrollTransaction(
+            //        empDetails.BPSAccountId,
+            //        empDetails.BPS,
+            //        empDetails.DesignationId,
+            //        empDetails.DepartmentId,
+            //        (int)entity.WorkingDays,
+            //        (int)entity.PresentDays,
+            //        (int)entity.LeaveDays,
+            //        (DateTime)entity.TransDate,
+            //        totalBasicPay,
+            //        grossPay,
+            //        netPay,
+            //        empDetails.TotalIncrement,
+            //        empDetails.EmployeeType,
+            //        payrollTransactionLines);
+
+
             getPayrollTransaction.updatePayrollTransaction(
                     empDetails.BPSAccountId,
                     empDetails.BPS,
-                    empDetails.DesignationId,
-                    empDetails.DepartmentId,
+                    empDetails.CampusId,
                     (int)entity.WorkingDays,
                     (int)entity.PresentDays,
                     (int)entity.LeaveDays,
                     (DateTime)entity.TransDate,
                     totalBasicPay,
                     grossPay,
-                    netPay, 
-                    empDetails.TotalIncrement,
-                    payrollTransactionLines);
+                    netPay,
+                    1,
+                    empDetails.Name,
+                    empDetails.FatherName,
+                    empDetails.EmployeeType,
+                    empDetails.BankName,
+                    empDetails.BranchName,
+                    empDetails.AccountTitle,
+                    empDetails.AccountNumber,
+                    empDetails.EmployeeCode,
+                    empDetails.Domicile,
+                    empDetails.Contact,
+                    empDetails.Religion,
+                    empDetails.Nationality,
+                    empDetails.Maritalstatus,
+                    empDetails.Gender,
+                    empDetails.PlaceofBirth,
+                    empDetails.DesignationId,
+                    empDetails.DepartmentId,
+                    empDetails.Address,
+                    empDetails.DateofJoining,
+                    empDetails.DateofRetirment,
+                    empDetails.DateofBirth,
+                    empDetails.Faculty,
+                    empDetails.DutyShift,
+                    empDetails.NoOfIncrements,
+                    empDetails.Email,
+                    empDetails.BasicPayItemId,
+                    empDetails.IncrementItemId,
+                    payrollTransactionLines
+                );
+
 
             await _unitOfWork.SaveAsync();
             //Commiting the transaction 
@@ -811,5 +902,105 @@ namespace Application.Services
             return files;
         }
 
+        public Response<PayrollExecutiveReportDto> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter)
+        {
+            
+            var months = new List<int?>();
+            var campuses = new List<int?>();
+            var payrollTypes = new List<int?>();
+
+            if (filter.Month == null)
+            {
+                filter.Month = new int?[0];
+            }
+
+            if (filter.CampusId != null)
+            {
+                campuses.Add(filter.CampusId);
+            }
+
+            if (filter.PayrollItemId != null)
+            {
+                payrollTypes.Add(filter.PayrollItemId);
+            }
+
+            //Fetching payroll as per the filters
+            var getPayrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(filter.Month, 
+                (int)filter.Year, campuses)).ToList();
+
+            if (getPayrollTransaction.Count() == 0)
+                return new Response<PayrollExecutiveReportDto>("Payroll not found");
+
+            //Selecting all payroll Items grouped by their payrollItem
+            var itemList = new List<PayrollItemsDto>();
+
+            foreach (var payroll in getPayrollTransaction)
+            {
+                //Adding basic payItems in PayrollItemsDto
+
+                itemList.Add(new PayrollItemsDto()
+                {
+                    PayrollItemId = payroll.BasicPayItemId, 
+                    PayrollItem = payroll.BPSName,
+                    PayrollType = PayrollType.BasicPay,
+                    Amount = payroll.BasicSalary,
+                });
+
+                //filtering other payrollItems (Allowance, deduction,assignment allowance)
+                var payrollItems = payroll.PayrollTransactionLines
+                    .Where(e => (payrollTypes.Count() > 0 ? payrollTypes.Contains(e.PayrollItemId) : true))
+                    .ToList();
+                
+                if (payrollItems.Count() > 0)
+                {
+                    foreach (var lines in payrollItems)
+                    {
+                        itemList.Add(new PayrollItemsDto()
+                        {
+                            PayrollItemId = lines.PayrollItemId,
+                            PayrollItem = lines.PayrollItem.Name,
+                            PayrollType = lines.PayrollType,
+                            Amount = lines.Amount
+                        });
+                    }
+                }
+
+            }
+            
+            itemList = itemList.Where(e => (payrollTypes.Count() > 0 ? payrollTypes.Contains(e.PayrollItemId) : true))
+                .GroupBy(x => new { x.PayrollType, x.PayrollItemId, x.PayrollItem })
+                .Select(c => new PayrollItemsDto
+                {
+                    PayrollItemId = c.Key.PayrollItemId,
+                    PayrollItem = c.Key.PayrollItem,
+                    PayrollType = c.Key.PayrollType,
+                    Amount = c.Sum(e => e.Amount)
+                })
+                .ToList();
+            //calculating payrollAmount by their employeeType
+            var sumTotalOfEmployeeType = getPayrollTransaction
+                .GroupBy(i => i.EmployeeType)
+                .Select(i => new
+                {
+                    EmployeeType = i.Key,
+                    Amount = i.Sum(s => s.NetSalary),
+                }).ToList();
+
+            var result = new PayrollExecutiveReportDto()
+            {
+                ContractualAmount = sumTotalOfEmployeeType
+                        .Where(i => i.EmployeeType == "Contract")
+                        .Select(i => i.Amount).FirstOrDefault(),
+                RegularAmount = sumTotalOfEmployeeType
+                        .Where(i => i.EmployeeType == "Regular")
+                        .Select(i => i.Amount).FirstOrDefault(),
+                TenureAmount = sumTotalOfEmployeeType
+                        .Where(i => i.EmployeeType == "Tenure")
+                        .Select(i => i.Amount).FirstOrDefault(),
+                PayrollItems = itemList
+            };
+
+            return new Response<PayrollExecutiveReportDto>(result, "Payroll found");
+        }
     }
 }

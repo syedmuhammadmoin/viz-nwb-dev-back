@@ -387,19 +387,15 @@ namespace Application.Mapper
 
             // PayrollTransaction Mapping
             CreateMap<PayrollTransactionMaster, PayrollTransactionDto>()
-              .ForMember(dto => dto.Employee, core => core.MapFrom(a => a.Employee.Name))
-              .ForMember(dto => dto.CNIC, core => core.MapFrom(a => a.Employee.CNIC))
+              .ForMember(dto => dto.Employee, core => core.MapFrom(a => a.Name))
               .ForMember(dto => dto.BusinessPartnerId, core => core.MapFrom(a => a.Employee.BusinessPartnerId))
               .ForMember(dto => dto.AccountPayable, core => core.MapFrom(a => a.AccountPayable.Name))
               .ForMember(dto => dto.Department, core => core.MapFrom(a => a.Department.Name))
               .ForMember(dto => dto.Designation, core => core.MapFrom(a => a.Designation.Name))
               .ForMember(dto => dto.Campus, core => core.MapFrom(a => a.Campus.Name))
-              .ForMember(dto => dto.BPSName, core => core.MapFrom(a => a.BPSName))
               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State == DocumentStatus.Unpaid ? "Unpaid" : a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
-              .ForMember(dto => dto.AbsentDays, core => core.MapFrom(a => a.WorkingDays - a.PresentDays - a.LeaveDays))
-              .ForMember(dto => dto.NetSalary, core => core.MapFrom(a => a.NetSalary))
-              .ForMember(dto => dto.NetIncrement, core => core.MapFrom(a => a.NetIncrement));
+              .ForMember(dto => dto.AbsentDays, core => core.MapFrom(a => a.WorkingDays - a.PresentDays - a.LeaveDays));
 
             CreateMap<PayrollTransactionLines, PayrollTransactionLinesDto>()
               .ForMember(dto => dto.PayrollItem, core => core.MapFrom(a => a.PayrollItem.Name))

@@ -49,6 +49,7 @@ namespace Application.Contracts.DTOs
         public decimal BasicSalary { get; set; }
         public string CNIC { get; set; }
         public string Religion { get; set; }
+        public string EmployeeType { get; set; }
         public DateTime TransDate { get; set; }
         public IEnumerable<FileUploadDto> FileUploadList { get; set; }
         public virtual List<PayrollTransactionLinesDto> PayrollTransactionLines { get; set; }

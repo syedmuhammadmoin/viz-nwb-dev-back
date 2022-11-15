@@ -157,6 +157,7 @@ namespace Application.Services
         {
             decimal totalIncrement = 0;
             decimal incrementAmount = 0;
+            int? increamentId= null;
 
             // if (data.IncrementId != null && data.NoOfIncrements != null)
             if (data.NoOfIncrements != null)
@@ -166,6 +167,7 @@ namespace Application.Services
                                 .FirstOrDefault();
                 if (increment != null)
                 {
+                    increamentId= increment.Id;
                     incrementAmount = increment.Value;
                     totalIncrement = (incrementAmount * (int)(data.NoOfIncrements));
                 }
@@ -201,6 +203,8 @@ namespace Application.Services
                 decimal netPay = grossPay - totalDeductions - taxDeduction;
 
                 //mapping calculated value to employeedto
+                data.BasicPayItemId = basicPayItem.Id;
+                data.IncrementItemId = increamentId;
                 data.BasicPay = basicPayItem.Value;
                 data.BPS = basicPayItem.Name;
                 data.BPSAccountId = basicPayItem.AccountId;
