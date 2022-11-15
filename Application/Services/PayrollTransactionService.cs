@@ -1002,5 +1002,39 @@ namespace Application.Services
 
             return new Response<PayrollExecutiveReportDto>(result, "Payroll found");
         }
+
+        public Response<List<BankAdviceReportDto>> GetBankAdviceReportReport(BankAdviceReportFilter filter)
+        {
+            var campuses = new List<int?>();
+
+            if (filter.CampusId != null)
+            {
+                campuses.Add(filter.CampusId);
+            }
+
+            //Fetching payroll as per the filters
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)filter.Month,(int)filter.Year, campuses)).ToList();
+
+            if (payrollTransactions.Count() == 0)
+            {
+                return new Response<List<BankAdviceReportDto>>(null, "List is empty");
+            }
+
+            var response = new List<BankAdviceReportDto>();
+
+            foreach (var payroll in payrollTransactions)
+            {
+                response.Add(new BankAdviceReportDto()
+                {
+                    EmployeeName = payroll.Name,
+                    BankName = payroll.BankName,
+                    BranchName = payroll.BranchName,
+                    AccountNumber = payroll.Employee.AccountNumber,
+                    Amount = payroll.NetSalary
+                });
+            }
+
+            return new Response<List<BankAdviceReportDto>>(response, "Returning Bank advice report");
+        }
     }
 }

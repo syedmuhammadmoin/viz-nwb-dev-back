@@ -131,7 +131,7 @@ namespace Vizalys.Api.Controllers
                     e.Message);
             }
         }
-        
+
         [ClaimRequirement("Permission", new string[] { Permissions.EmployeeClaims.View, Permissions.PayrollTransactionClaims.Create, Permissions.PayrollTransactionClaims.Edit })]
         [HttpPost("GetforSubmit")]
         public async Task<ActionResult<Response<List<PayrollTransactionDto>>>> GetEmployeeByDept(DeptFilter data)
@@ -158,7 +158,7 @@ namespace Vizalys.Api.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var result =  _payrollTransactionService.GetPayrollTransactionByDept(data);
+                    var result = _payrollTransactionService.GetPayrollTransactionByDept(data);
                     if (result.IsSuccess)
                         return Ok(result); // Status Code : 200
                     return BadRequest(result);
@@ -172,6 +172,7 @@ namespace Vizalys.Api.Controllers
             }
         }
         [ClaimRequirement("Permission", new string[] { Permissions.PayrollTransactionClaims.Create, Permissions.PayrollTransactionClaims.View, Permissions.PayrollTransactionClaims.Delete, Permissions.PayrollTransactionClaims.Edit })]
+
         [HttpGet("Report")]
         public ActionResult<Response<List<PayrollTransactionDto>>> GetPayrollReport([FromQuery] PayrollFilter filter)
         {
@@ -191,14 +192,15 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpPost("PayrollExecutiveReport")]
-        public ActionResult<Response<List<PayrollExecutiveReportDto>>> GetPayrollExecutiveReport( PayrollExecutiveReportFilter filter)
+        public ActionResult<Response<List<PayrollExecutiveReportDto>>> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter)
         {
-                var result = _payrollTransactionService.GetPayrollExecutiveReport(filter);
-                if (result.IsSuccess)
-                    return Ok(result); // Status Code : 200
+            var result = _payrollTransactionService.GetPayrollExecutiveReport(filter);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
 
-                return BadRequest(result); // Status code : 400
+            return BadRequest(result); // Status code : 400
         }
+
         [HttpPost("DocUpload/{id:int}")]
         public async Task<ActionResult<Response<int>>> UploadFile(IFormFile file, int id)
         {
@@ -218,6 +220,16 @@ namespace Vizalys.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     e.Message);
             }
+        }
+
+        [HttpGet("BankAdviceReport")]
+        public  ActionResult<Response<List<PayrollTransactionDto>>> GetBankAdviceReportReport([FromQuery] BankAdviceReportFilter filter)
+        {
+            var result = _payrollTransactionService.GetBankAdviceReportReport(filter);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
         }
     }
 }
