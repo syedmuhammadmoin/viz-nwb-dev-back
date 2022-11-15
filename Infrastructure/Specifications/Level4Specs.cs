@@ -41,7 +41,19 @@ namespace Infrastructure.Specifications
                   ))
         {
         }
+        public Level4Specs(int id, Guid Level4)
+           : base(
+                 (x => x.Level3_id == new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00")
+                 || x.Level3_id == new Guid("12100000-5566-7788-99AA-BBCCDDEEFF00")
+                 || x.Level3_id == new Guid("12300000-5566-7788-99AA-BBCCDDEEFF00")
+                 || x.Level3_id == new Guid("12900000-5566-7788-99AA-BBCCDDEEFF00")
+                 || x.Level3_id == new Guid("12110000-5566-7788-99AA-BBCCDDEEFF00")
+                 || x.Level3_id == new Guid("12120000-5566-7788-99AA-BBCCDDEEFF00")
+                 || x.Level3_id == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00")
+                 ))
 
+        {
+        }
         public Level4Specs(int getAll)
             : base(x => x.Level3_id != new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00")
                   && x.Level3_id != new Guid("12100000-5566-7788-99AA-BBCCDDEEFF00")
@@ -49,11 +61,13 @@ namespace Infrastructure.Specifications
                   && x.Level3_id != new Guid("12900000-5566-7788-99AA-BBCCDDEEFF00")
                   && x.Level3_id != new Guid("12110000-5566-7788-99AA-BBCCDDEEFF00")
                   && x.Level3_id != new Guid("12120000-5566-7788-99AA-BBCCDDEEFF00")
-                  && x.Level3_id != new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00"))
+                  && x.Level3_id != new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00")
+                  && x.Level3_id != new Guid("12500000-5566-7788-99AA-BBCCDDEEFF00")
+            )
         {
         }
 
-        public Level4Specs(string code) : base (i => i.Code == code)
+        public Level4Specs(string code) : base(i => i.Code == code)
         {
         }
 
@@ -65,6 +79,17 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Level3);
             AddInclude("Level3.Level2");
             AddInclude(i => i.Level1);
+        }
+        public Level4Specs(Guid Level3Id)
+                : base(x => x.Level3_id != new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00")
+                  || x.Level3_id != new Guid("12100000-5566-7788-99AA-BBCCDDEEFF00")
+                  || x.Level3_id != new Guid("12300000-5566-7788-99AA-BBCCDDEEFF00")
+                  || x.Level3_id != new Guid("12900000-5566-7788-99AA-BBCCDDEEFF00")
+                  || x.Level3_id != new Guid("12110000-5566-7788-99AA-BBCCDDEEFF00")
+                  || x.Level3_id != new Guid("12120000-5566-7788-99AA-BBCCDDEEFF00")
+                  || x.Level3_id != new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00"))
+        {
+
         }
     }
 }

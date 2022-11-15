@@ -179,6 +179,39 @@ namespace Application.Services
                     return new Response<PaymentDto>("Deduction account is required");
             }
 
+            //Validation for same  Accounts
+            if (entity.PaymentRegisterId == entity.AccountId || entity.PaymentRegisterId == entity.DeductionAccountId || entity.DeductionAccountId == entity.AccountId)
+            {
+                return new Response<PaymentDto>("Accounts Cannot Be Same");
+            }
+
+            //Validation for Payable and Receivable
+            var BankAccountlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.PaymentRegisterId);
+
+            var BankAccount = ReceivableAndPayable.ValidateBankAccount( BankAccountlevel4.Level3_id);
+
+            if (BankAccount == false )
+            {
+                return new Response<PaymentDto>("Payment register account Invalid");
+            }
+
+            var AccountIdlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.DeductionAccountId);
+
+            var AccountIdlevel3 = ReceivableAndPayable.Validate(AccountIdlevel4.Level3_id);
+
+            if (AccountIdlevel3 == false)
+            {
+                return new Response<PaymentDto>("Account Invalid");
+            }
+
+            var level4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountId);
+
+            var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+
+            if (level3 == false)
+            {
+                return new Response<PaymentDto>("Deduction account Invalid");
+            }
             //Setting status
             payment.setStatus(status);
 
@@ -210,6 +243,39 @@ namespace Application.Services
 
             if (payment.StatusId != 1 && payment.StatusId != 2)
                 return new Response<PaymentDto>("Only draft payments can be edited");
+            //Validation for same  Accounts
+            if (entity.PaymentRegisterId == entity.AccountId || entity.PaymentRegisterId == entity.DeductionAccountId || entity.DeductionAccountId == entity.AccountId)
+            {
+                return new Response<PaymentDto>("Accounts Cannot Be Same");
+            }
+
+            //Validation for Payable and Receivable
+            var BankAccountlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.PaymentRegisterId);
+
+            var BankAccount = ReceivableAndPayable.ValidateBankAccount(BankAccountlevel4.Level3_id);
+
+            if (BankAccount == false)
+            {
+                return new Response<PaymentDto>("Payment register account Invalid");
+            }
+
+            var AccountIdlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.DeductionAccountId);
+
+            var AccountIdlevel3 = ReceivableAndPayable.Validate(AccountIdlevel4.Level3_id);
+
+            if (AccountIdlevel3 == false)
+            {
+                return new Response<PaymentDto>("Account Invalid");
+            }
+
+            var level4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountId);
+
+            var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+
+            if (level3 == false)
+            {
+                return new Response<PaymentDto>("Deduction account Invalid");
+            }
 
             payment.setStatus(status);
 

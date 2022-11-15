@@ -232,6 +232,7 @@ namespace Application.Services
             var bill = _mapper.Map<BillMaster>(entity);
 
             //setting BusinessPartnerPayable
+            
             var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.VendorId);
 
             // checking if employee is business partner
@@ -242,7 +243,17 @@ namespace Application.Services
                 if (businessPartner.AccountPayableId == null)
                     return new Response<BillDto>("Payable account not found for the business partner");
             }
+            
+            //Validation for Payable and Receivable
+            foreach (var check in entity.BillLines)
+            {
+                var level4 =await _unitOfWork.Level4.GetById((Guid) check.AccountId);
 
+                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+
+                if (level3 == false)
+                    return new Response<BillDto>("Account Invalid");
+            }
             bill.setPayableAccountId((Guid)businessPartner.AccountPayableId);
 
             //Setting status
@@ -288,6 +299,17 @@ namespace Application.Services
                 //checking if account payable has been assigned to employee
                 if (businessPartner.AccountPayableId == null)
                     return new Response<BillDto>("Payable account not found for the business partner");
+            }
+
+            //Validation for Payable and Receivable
+            foreach (var check in entity.BillLines)
+            {
+                var level4 = await _unitOfWork.Level4.GetById((Guid)check.AccountId);
+
+                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+
+                if (level3 == false)
+                    return new Response<BillDto>("Account Invalid");
             }
 
             bill.setPayableAccountId((Guid)businessPartner.AccountPayableId);
@@ -501,6 +523,6 @@ namespace Application.Services
             }
 
             return files;
-        }
+        }     
     }
 }

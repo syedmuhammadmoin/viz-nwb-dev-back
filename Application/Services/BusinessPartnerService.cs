@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
@@ -29,6 +30,26 @@ namespace Application.Services
         public async Task<Response<BusinessPartnerDto>> CreateAsync(CreateBusinessPartnerDto entity)
         {
             var businessPartner = _mapper.Map<BusinessPartner>(entity);
+
+            var Receivablelevel4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountReceivableId);
+
+            var AccountReceivable = ReceivableAndPayable.ValidateReceivable((Guid)Receivablelevel4.Level3_id);
+
+            //Validation for Receivable
+            if (AccountReceivable == false)
+            {
+                return new Response<BusinessPartnerDto>("Account Receivable is Invalid");
+            }
+
+            var Payablelevel4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountPayableId);
+
+            var AccountPayable = ReceivableAndPayable.ValidatePayable((Guid)Payablelevel4.Level3_id);
+
+            //Validation for Payable
+            if (AccountPayable == false)
+            {
+                return new Response<BusinessPartnerDto>("Account Payable is Invalid");
+            }
             var result = await _unitOfWork.BusinessPartner.Add(businessPartner);
             await _unitOfWork.SaveAsync();
 
@@ -70,6 +91,25 @@ namespace Application.Services
             if (businessPartner == null)
                 return new Response<BusinessPartnerDto>("Not found");
 
+            var Receivablelevel4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountReceivableId);
+
+            var AccountReceivable = ReceivableAndPayable.ValidateReceivable((Guid)Receivablelevel4.Level3_id);
+
+            //Validation for Receivable
+            if (AccountReceivable == false)
+            {
+                return new Response<BusinessPartnerDto>("Account Receivable is Invalid");
+            }
+
+            var Payablelevel4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountPayableId);
+
+            var AccountPayable = ReceivableAndPayable.ValidatePayable((Guid)Payablelevel4.Level3_id);
+
+            //Validation for Payable
+            if (AccountPayable == false)
+            {
+                return new Response<BusinessPartnerDto>("Account Payable is Invalid");
+            }
             //For updating data
             _mapper.Map<CreateBusinessPartnerDto, BusinessPartner>(entity, businessPartner);
             await _unitOfWork.SaveAsync();
@@ -84,7 +124,7 @@ namespace Application.Services
         public async Task<Response<List<BusinessPartnerDto>>> GetBusinessPartnerDropDown()
         {
             var specification = new BusinessPartnerSpecs(true);
-            
+
             var businessPartners = await _unitOfWork.BusinessPartner.GetAll(specification);
             if (!businessPartners.Any())
                 return new Response<List<BusinessPartnerDto>>("List is empty");

@@ -160,7 +160,7 @@ namespace Application.Services
         }
 
         private async Task<Response<CreditNoteDto>> SaveCRN(CreateCreditNoteDto entity, int status)
-        {
+            {
             if (entity.CreditNoteLines.Count() == 0)
                 return new Response<CreditNoteDto>("Lines are required");
 
@@ -168,6 +168,21 @@ namespace Application.Services
 
             //setting BusinessPartnerReceivable
             var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.CustomerId);
+
+            //Validation for Payable and Receivable
+            foreach (var check in entity.CreditNoteLines)
+            {
+
+                var level4 = await _unitOfWork.Level4.GetById((Guid)check.AccountId);
+
+                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+
+                if (level3 == false)
+                {
+                    return new Response<CreditNoteDto>("Account Invalid");
+                }
+
+            }
             crn.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
 
             //Setting status
@@ -207,6 +222,21 @@ namespace Application.Services
 
             //setting BusinessPartnerReceivable
             var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.CustomerId);
+
+            //Validation for Payable and Receivable
+            foreach (var check in entity.CreditNoteLines)
+            {
+
+                var level4 = await _unitOfWork.Level4.GetById((Guid)check.AccountId);
+
+                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+
+                if (level3 == false)
+                {
+                    return new Response<CreditNoteDto>("Account Invalid");
+                }
+
+            }
             crn.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
 
             crn.setStatus(status);
