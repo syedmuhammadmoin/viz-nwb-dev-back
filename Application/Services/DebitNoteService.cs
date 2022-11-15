@@ -184,6 +184,17 @@ namespace Application.Services
                 if (businessPartner.AccountPayableId == null)
                     return new Response<DebitNoteDto>("Payable account not found for the business partner");
             }
+
+            //Validation for Payable and Receivable
+            foreach (var check in entity.DebitNoteLines)
+            {
+                var level4 = await _unitOfWork.Level4.GetById((Guid)check.AccountId);
+
+                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+
+                if (level3 == false)
+                    return new Response<DebitNoteDto>("Account Invalid");
+            }
             dbn.setPayableAccountId((Guid)businessPartner.AccountPayableId);
 
             //Setting status
@@ -229,6 +240,17 @@ namespace Application.Services
                 //checking if account payable has been assigned to employee
                 if (businessPartner.AccountPayableId == null)
                     return new Response<DebitNoteDto>("Payable account not found for the business partner");
+            }
+
+            //Validation for Payable and Receivable
+            foreach (var check in entity.DebitNoteLines)
+            {
+                var level4 = await _unitOfWork.Level4.GetById((Guid)check.AccountId);
+
+                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+
+                if (level3 == false)
+                    return new Response<DebitNoteDto>("Account Invalid");
             }
 
             dbn.setPayableAccountId((Guid)businessPartner.AccountPayableId);

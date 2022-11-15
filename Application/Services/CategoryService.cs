@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
@@ -27,6 +28,40 @@ namespace Application.Services
         public async Task<Response<CategoryDto>> CreateAsync(CreateCategoryDto entity)
         {
             var category = _mapper.Map<Category>(entity);
+
+            //Validation for same Accounts
+            if (entity.InventoryAccountId == entity.CostAccountId || entity.InventoryAccountId == entity.RevenueAccountId || entity.CostAccountId == entity.RevenueAccountId)
+            {
+                return new Response<CategoryDto>("Account Cannot Be Same");
+            }
+
+            //Validation for Payable and Receivable
+            var Inventorylevel4 = await _unitOfWork.Level4.GetById((Guid)entity.InventoryAccountId);
+
+            var InventoryAccountId = ReceivableAndPayable.Validate(Inventorylevel4.Level3_id);
+
+            if (InventoryAccountId == false)
+            {
+                return new Response<CategoryDto>("Inventory account Invalid");
+            }
+
+            var Revenuelevel4 = await _unitOfWork.Level4.GetById((Guid)entity.RevenueAccountId);
+
+            var RevenueAccountId = ReceivableAndPayable.Validate(Revenuelevel4.Level3_id);
+
+            if (RevenueAccountId == false)
+            {
+                return new Response<CategoryDto>("Revenue account Invalid");
+            }
+            var Costlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.CostAccountId);
+
+            var CostAccountId = ReceivableAndPayable.Validate(Costlevel4.Level3_id);
+
+            if (CostAccountId == false)
+            {
+                return new Response<CategoryDto>("Cost account Invalid");
+            }
+            
             var result = await _unitOfWork.Category.Add(category);
             await _unitOfWork.SaveAsync();
 
@@ -47,7 +82,7 @@ namespace Application.Services
 
         public async Task<Response<CategoryDto>> GetByIdAsync(int id)
         {
-            
+
             var specification = new CategorySpecs();
             var category = await _unitOfWork.Category.GetById(id, specification);
             if (category == null)
@@ -62,6 +97,39 @@ namespace Application.Services
 
             if (category == null)
                 return new Response<CategoryDto>("Not found");
+
+            //Validation for same Accounts
+            if (entity.InventoryAccountId == entity.CostAccountId || entity.InventoryAccountId == entity.RevenueAccountId || entity.CostAccountId == entity.RevenueAccountId)
+            {
+                return new Response<CategoryDto>("Account Cannot Be Same");
+            }
+
+            //Validation for Payable and Receivable
+            var Inventorylevel4 = await _unitOfWork.Level4.GetById((Guid)entity.InventoryAccountId);
+
+            var InventoryAccountId = ReceivableAndPayable.Validate(Inventorylevel4.Level3_id);
+
+            if (InventoryAccountId == false)
+            {
+                return new Response<CategoryDto>("Inventory account Invalid");
+            }
+
+            var Revenuelevel4 = await _unitOfWork.Level4.GetById((Guid)entity.RevenueAccountId);
+
+            var RevenueAccountId = ReceivableAndPayable.Validate(Revenuelevel4.Level3_id);
+
+            if (RevenueAccountId == false)
+            {
+                return new Response<CategoryDto>("Revenue account Invalid");
+            }
+            var Costlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.CostAccountId);
+
+            var CostAccountId = ReceivableAndPayable.Validate(Costlevel4.Level3_id);
+
+            if (CostAccountId == false)
+            {
+                return new Response<CategoryDto>("Cost account Invalid");
+            }
 
             //For updating data
             _mapper.Map<CreateCategoryDto, Category>(entity, category);
