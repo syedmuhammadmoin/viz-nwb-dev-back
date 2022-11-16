@@ -107,31 +107,14 @@ namespace Application.Services
                                 .Sum(e => e.Amount), 2);
 
             decimal netPay = grossPay - totalDeductions;
+
+            if (netPay < 0)
+                return new Response<PayrollTransactionDto>($"Net salary for Employee with CNIC{item.EmployeeCNIC} shouldn't be less than deductions ");
+
+
             _unitOfWork.CreateTransaction();
             try
             {
-                //// mapping data in payroll transaction master table
-                //var payrollTransaction = new PayrollTransactionMaster(
-                //     (int)item.Month,
-                //    (int)item.Year,
-                //     empDetails.Id,
-                //     empDetails.BPSAccountId,
-                //     empDetails.BPS,
-                //     empDetails.DesignationId,
-                //     empDetails.DepartmentId,
-                //     empDetails.CampusId,
-                //     (int)item.WorkingDays,
-                //     (int)item.PresentDays,
-                //     (int)item.LeaveDays,
-                //    (DateTime)item.TransDate,
-                //     totalBasicPay,
-                //     grossPay,
-                //     empDetails.TotalIncrement,
-                //     netPay,
-                //     1,
-                //     empDetails.EmployeeType,
-                //     payrollTransactionLines);
-
                 var payrollTransaction = new PayrollTransactionMaster(
                     (int)item.Month,
                     (int)item.Year,
@@ -310,6 +293,9 @@ namespace Application.Services
 
             decimal netPay = grossPay - totalDeductions;
 
+            if (netPay < 0)
+                return new Response<PayrollTransactionDto>($"Net salary for Employee with CNIC{entity.EmployeeCNIC} shouldn't be less than deductions ");
+
             _unitOfWork.CreateTransaction();
 
             // updating data in payroll transaction master table
@@ -317,23 +303,6 @@ namespace Application.Services
 
             if (getPayrollTransaction == null)
                 return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
-
-            //getPayrollTransaction.updatePayrollTransaction(
-            //        empDetails.BPSAccountId,
-            //        empDetails.BPS,
-            //        empDetails.DesignationId,
-            //        empDetails.DepartmentId,
-            //        (int)entity.WorkingDays,
-            //        (int)entity.PresentDays,
-            //        (int)entity.LeaveDays,
-            //        (DateTime)entity.TransDate,
-            //        totalBasicPay,
-            //        grossPay,
-            //        netPay,
-            //        empDetails.TotalIncrement,
-            //        empDetails.EmployeeType,
-            //        payrollTransactionLines);
-
 
             getPayrollTransaction.updatePayrollTransaction(
                     empDetails.BPSAccountId,
