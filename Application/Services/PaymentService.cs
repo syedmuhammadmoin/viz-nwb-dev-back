@@ -177,6 +177,15 @@ namespace Application.Services
             {
                 if (entity.DeductionAccountId == null)
                     return new Response<PaymentDto>("Deduction account is required");
+
+                var AccountIdlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.DeductionAccountId);
+
+                var AccountIdlevel3 = ReceivableAndPayable.Validate(AccountIdlevel4.Level3_id);
+
+                if (AccountIdlevel3 == false)
+                {
+                    return new Response<PaymentDto>("Account Invalid");
+                }
             }
 
             //Validation for same  Accounts
@@ -195,23 +204,6 @@ namespace Application.Services
                 return new Response<PaymentDto>("Payment register account Invalid");
             }
 
-            var AccountIdlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.DeductionAccountId);
-
-            var AccountIdlevel3 = ReceivableAndPayable.Validate(AccountIdlevel4.Level3_id);
-
-            if (AccountIdlevel3 == false)
-            {
-                return new Response<PaymentDto>("Account Invalid");
-            }
-
-            var level4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountId);
-
-            var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
-
-            if (level3 == false)
-            {
-                return new Response<PaymentDto>("Deduction account Invalid");
-            }
             //Setting status
             payment.setStatus(status);
 
@@ -237,6 +229,21 @@ namespace Application.Services
         {
             var specification = new PaymentSpecs(true, entity.PaymentFormType);
             var payment = await _unitOfWork.Payment.GetById((int)entity.Id, specification);
+            
+            if (entity.Deduction > 0)
+            {
+                if (entity.DeductionAccountId == null)
+                    return new Response<PaymentDto>("Deduction account is required");
+
+                var AccountIdlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.DeductionAccountId);
+
+                var AccountIdlevel3 = ReceivableAndPayable.Validate(AccountIdlevel4.Level3_id);
+
+                if (AccountIdlevel3 == false)
+                {
+                    return new Response<PaymentDto>("Account Invalid");
+                }
+            }
 
             if (payment == null)
                 return new Response<PaymentDto>("Not found");
@@ -259,23 +266,14 @@ namespace Application.Services
                 return new Response<PaymentDto>("Payment register account Invalid");
             }
 
-            var AccountIdlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.DeductionAccountId);
+            //var level4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountId);
 
-            var AccountIdlevel3 = ReceivableAndPayable.Validate(AccountIdlevel4.Level3_id);
+            //var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
 
-            if (AccountIdlevel3 == false)
-            {
-                return new Response<PaymentDto>("Account Invalid");
-            }
-
-            var level4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountId);
-
-            var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
-
-            if (level3 == false)
-            {
-                return new Response<PaymentDto>("Deduction account Invalid");
-            }
+            //if (level3 == false)
+            //{
+            //    return new Response<PaymentDto>("Deduction account Invalid");
+            //}
 
             payment.setStatus(status);
 
