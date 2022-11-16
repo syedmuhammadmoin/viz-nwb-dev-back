@@ -21,7 +21,6 @@ namespace Application.Contracts.Helper
                                || id == new Guid("12110000-5566-7788-99AA-BBCCDDEEFF00")
                                || id == new Guid("12120000-5566-7788-99AA-BBCCDDEEFF00")
                                || id == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00")
-                               || id == new Guid("12500000-5566-7788-99AA-BBCCDDEEFF00")
                                )
             {
                 return false; // Account Invalid
