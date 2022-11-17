@@ -910,9 +910,11 @@ namespace Application.Services
 
                 //filtering other payrollItems (Allowance, deduction,assignment allowance)
                 var payrollItems = payroll.PayrollTransactionLines
-                    .Where(e => (filter.AccountId != null ? (e.PayrollItem.AccountId == filter.AccountId) : true))
+                    .Where(e => (
+                    filter.AccountId == null ? true :
+                    filter.AccountId != null ? (e.AccountId == filter.AccountId) : false))
                     .ToList();
-                
+
                 if (payrollItems.Count() > 0)
                 {
                     foreach (var lines in payrollItems)
@@ -928,7 +930,9 @@ namespace Application.Services
                 }
             }
             
-            itemList = itemList.Where(e => (filter.AccountId != null ? (e.AccountId == filter.AccountId) : true))
+            itemList = itemList.Where(e => (
+                    filter.AccountId == null ? true :
+                    filter.AccountId != null ? (e.AccountId == filter.AccountId) : false))
                 .GroupBy(x => new { x.PayrollType, x.AccountId, x.AccountName })
                 .Select(c => new PayrollItemsDto
                 {
@@ -938,6 +942,11 @@ namespace Application.Services
                     Amount = c.Sum(e => e.Amount)
                 })
                 .ToList();
+
+            if (itemList.Count == 0)
+                return new Response<PayrollExecutiveReportDto>("Payroll Items not found for selected COA");
+            
+
             //calculating payrollAmount by their employeeType
             var sumTotalOfEmployeeType = getPayrollTransaction
                 .GroupBy(i => i.EmployeeType)
