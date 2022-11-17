@@ -873,10 +873,8 @@ namespace Application.Services
 
         public Response<PayrollExecutiveReportDto> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter)
         {
-            
             var months = new List<int?>();
             var campuses = new List<int?>();
-            var payrollTypes = new List<int?>();
 
             if (filter.Month == null)
             {
@@ -886,11 +884,6 @@ namespace Application.Services
             if (filter.CampusId != null)
             {
                 campuses.Add(filter.CampusId);
-            }
-
-            if (filter.PayrollItemId != null)
-            {
-                payrollTypes.Add(filter.PayrollItemId);
             }
 
             //Fetching payroll as per the filters
@@ -909,15 +902,15 @@ namespace Application.Services
 
                 itemList.Add(new PayrollItemsDto()
                 {
-                    PayrollItemId = payroll.BasicPayItemId, 
-                    PayrollItem = payroll.BPSName,
+                    AccountId = payroll.BPSAccountId, 
+                    AccountName = payroll.BPSName,
                     PayrollType = PayrollType.BasicPay,
                     Amount = payroll.BasicSalary,
                 });
 
                 //filtering other payrollItems (Allowance, deduction,assignment allowance)
                 var payrollItems = payroll.PayrollTransactionLines
-                    .Where(e => (payrollTypes.Count() > 0 ? payrollTypes.Contains(e.PayrollItemId) : true))
+                    .Where(e => (filter.AccountId != null ? (e.PayrollItem.AccountId == filter.AccountId) : true))
                     .ToList();
                 
                 if (payrollItems.Count() > 0)
@@ -926,22 +919,21 @@ namespace Application.Services
                     {
                         itemList.Add(new PayrollItemsDto()
                         {
-                            PayrollItemId = lines.PayrollItemId,
-                            PayrollItem = lines.PayrollItem.Name,
+                            AccountId = lines.AccountId,
+                            AccountName = lines.Account.Name,
                             PayrollType = lines.PayrollType,
                             Amount = lines.Amount
                         });
                     }
                 }
-
             }
             
-            itemList = itemList.Where(e => (payrollTypes.Count() > 0 ? payrollTypes.Contains(e.PayrollItemId) : true))
-                .GroupBy(x => new { x.PayrollType, x.PayrollItemId, x.PayrollItem })
+            itemList = itemList.Where(e => (filter.AccountId != null ? (e.AccountId == filter.AccountId) : true))
+                .GroupBy(x => new { x.PayrollType, x.AccountId, x.AccountName })
                 .Select(c => new PayrollItemsDto
                 {
-                    PayrollItemId = c.Key.PayrollItemId,
-                    PayrollItem = c.Key.PayrollItem,
+                    AccountId = c.Key.AccountId,
+                    AccountName = c.Key.AccountName,
                     PayrollType = c.Key.PayrollType,
                     Amount = c.Sum(e => e.Amount)
                 })
