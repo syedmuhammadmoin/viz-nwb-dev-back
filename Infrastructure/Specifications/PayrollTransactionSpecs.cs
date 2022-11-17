@@ -154,7 +154,8 @@ namespace Infrastructure.Specifications
             && x.Year == year
             )
         {
-            AddInclude("PayrollTransactionLines.PayrollItem");
+            AddInclude(i => i.PayrollTransactionLines);
+            AddInclude("PayrollTransactionLines.Account"); 
         }
         public PayrollTransactionSpecs(int month, int year, List<int?> campuses)
             : base(x =>
@@ -165,6 +166,7 @@ namespace Infrastructure.Specifications
             )
         {
             AddInclude(a => a.Employee);
+            
         }
     }
 }

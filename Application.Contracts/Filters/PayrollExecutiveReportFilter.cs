@@ -10,7 +10,7 @@ namespace Application.Contracts.Filters
     public class PayrollExecutiveReportFilter
     {
         public int? CampusId { get; set; }
-        public int? PayrollItemId { get; set; }
+        public Guid? AccountId { get; set; }
         public int?[] Month { get; set; }
         [Required]
         public int? Year { get; set; }
