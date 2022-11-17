@@ -943,10 +943,6 @@ namespace Application.Services
                 })
                 .ToList();
 
-            if (itemList.Count == 0)
-                return new Response<PayrollExecutiveReportDto>("Payroll Items not found for selected COA");
-            
-
             //calculating payrollAmount by their employeeType
             var sumTotalOfEmployeeType = getPayrollTransaction
                 .GroupBy(i => i.EmployeeType)
