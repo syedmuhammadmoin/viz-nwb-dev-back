@@ -154,7 +154,19 @@ namespace Infrastructure.Specifications
             && x.Year == year
             )
         {
-            AddInclude("PayrollTransactionLines.PayrollItem");
+            AddInclude(i => i.PayrollTransactionLines);
+            AddInclude("PayrollTransactionLines.Account"); 
+        }
+        public PayrollTransactionSpecs(int month, int year, List<int?> campuses)
+            : base(x =>
+            (x.Month == month)
+            && x.Year == year
+            && (campuses.Count() > 0 ? campuses.Contains(x.CampusId) : true)
+            && (x.Status.State == DocumentStatus.Unpaid || x.Status.State == DocumentStatus.Paid || x.Status.State == DocumentStatus.Partial)
+            )
+        {
+            AddInclude(a => a.Employee);
+            
         }
     }
 }

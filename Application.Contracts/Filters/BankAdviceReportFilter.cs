@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Filters
 {
-    public class PayrollExecutiveReportFilter
+    public class BankAdviceReportFilter
     {
+        [Required]
         public int? CampusId { get; set; }
-        public Guid? AccountId { get; set; }
-        public int?[] Month { get; set; }
+        [Required]
+        public int? Month { get; set; }
         [Required]
         public int? Year { get; set; }
     }

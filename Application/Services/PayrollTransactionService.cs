@@ -107,31 +107,14 @@ namespace Application.Services
                                 .Sum(e => e.Amount), 2);
 
             decimal netPay = grossPay - totalDeductions;
+
+            if (netPay < 0)
+                return new Response<PayrollTransactionDto>($"Net salary for Employee with CNIC{item.EmployeeCNIC} shouldn't be less than deductions ");
+
+
             _unitOfWork.CreateTransaction();
             try
             {
-                //// mapping data in payroll transaction master table
-                //var payrollTransaction = new PayrollTransactionMaster(
-                //     (int)item.Month,
-                //    (int)item.Year,
-                //     empDetails.Id,
-                //     empDetails.BPSAccountId,
-                //     empDetails.BPS,
-                //     empDetails.DesignationId,
-                //     empDetails.DepartmentId,
-                //     empDetails.CampusId,
-                //     (int)item.WorkingDays,
-                //     (int)item.PresentDays,
-                //     (int)item.LeaveDays,
-                //    (DateTime)item.TransDate,
-                //     totalBasicPay,
-                //     grossPay,
-                //     empDetails.TotalIncrement,
-                //     netPay,
-                //     1,
-                //     empDetails.EmployeeType,
-                //     payrollTransactionLines);
-
                 var payrollTransaction = new PayrollTransactionMaster(
                     (int)item.Month,
                     (int)item.Year,
@@ -310,6 +293,9 @@ namespace Application.Services
 
             decimal netPay = grossPay - totalDeductions;
 
+            if (netPay < 0)
+                return new Response<PayrollTransactionDto>($"Net salary for Employee with CNIC{entity.EmployeeCNIC} shouldn't be less than deductions ");
+
             _unitOfWork.CreateTransaction();
 
             // updating data in payroll transaction master table
@@ -317,23 +303,6 @@ namespace Application.Services
 
             if (getPayrollTransaction == null)
                 return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
-
-            //getPayrollTransaction.updatePayrollTransaction(
-            //        empDetails.BPSAccountId,
-            //        empDetails.BPS,
-            //        empDetails.DesignationId,
-            //        empDetails.DepartmentId,
-            //        (int)entity.WorkingDays,
-            //        (int)entity.PresentDays,
-            //        (int)entity.LeaveDays,
-            //        (DateTime)entity.TransDate,
-            //        totalBasicPay,
-            //        grossPay,
-            //        netPay,
-            //        empDetails.TotalIncrement,
-            //        empDetails.EmployeeType,
-            //        payrollTransactionLines);
-
 
             getPayrollTransaction.updatePayrollTransaction(
                     empDetails.BPSAccountId,
@@ -904,10 +873,8 @@ namespace Application.Services
 
         public Response<PayrollExecutiveReportDto> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter)
         {
-            
             var months = new List<int?>();
             var campuses = new List<int?>();
-            var payrollTypes = new List<int?>();
 
             if (filter.Month == null)
             {
@@ -919,17 +886,12 @@ namespace Application.Services
                 campuses.Add(filter.CampusId);
             }
 
-            if (filter.PayrollItemId != null)
-            {
-                payrollTypes.Add(filter.PayrollItemId);
-            }
-
             //Fetching payroll as per the filters
             var getPayrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(filter.Month, 
                 (int)filter.Year, campuses)).ToList();
 
-            if (getPayrollTransaction.Count() == 0)
-                return new Response<PayrollExecutiveReportDto>("Payroll not found");
+            //if (getPayrollTransaction.Count() == 0)
+            //    return new Response<PayrollExecutiveReportDto>("Payroll not found");
 
             //Selecting all payroll Items grouped by their payrollItem
             var itemList = new List<PayrollItemsDto>();
@@ -940,43 +902,47 @@ namespace Application.Services
 
                 itemList.Add(new PayrollItemsDto()
                 {
-                    PayrollItemId = payroll.BasicPayItemId, 
-                    PayrollItem = payroll.BPSName,
+                    AccountId = payroll.BPSAccountId, 
+                    AccountName = payroll.BPSName,
                     PayrollType = PayrollType.BasicPay,
                     Amount = payroll.BasicSalary,
                 });
 
                 //filtering other payrollItems (Allowance, deduction,assignment allowance)
                 var payrollItems = payroll.PayrollTransactionLines
-                    .Where(e => (payrollTypes.Count() > 0 ? payrollTypes.Contains(e.PayrollItemId) : true))
+                    .Where(e => (
+                    filter.AccountId == null ? true :
+                    filter.AccountId != null ? (e.AccountId == filter.AccountId) : false))
                     .ToList();
-                
+
                 if (payrollItems.Count() > 0)
                 {
                     foreach (var lines in payrollItems)
                     {
                         itemList.Add(new PayrollItemsDto()
                         {
-                            PayrollItemId = lines.PayrollItemId,
-                            PayrollItem = lines.PayrollItem.Name,
+                            AccountId = lines.AccountId,
+                            AccountName = lines.Account.Name,
                             PayrollType = lines.PayrollType,
                             Amount = lines.Amount
                         });
                     }
                 }
-
             }
             
-            itemList = itemList.Where(e => (payrollTypes.Count() > 0 ? payrollTypes.Contains(e.PayrollItemId) : true))
-                .GroupBy(x => new { x.PayrollType, x.PayrollItemId, x.PayrollItem })
+            itemList = itemList.Where(e => (
+                    filter.AccountId == null ? true :
+                    filter.AccountId != null ? (e.AccountId == filter.AccountId) : false))
+                .GroupBy(x => new { x.PayrollType, x.AccountId, x.AccountName })
                 .Select(c => new PayrollItemsDto
                 {
-                    PayrollItemId = c.Key.PayrollItemId,
-                    PayrollItem = c.Key.PayrollItem,
+                    AccountId = c.Key.AccountId,
+                    AccountName = c.Key.AccountName,
                     PayrollType = c.Key.PayrollType,
                     Amount = c.Sum(e => e.Amount)
                 })
                 .ToList();
+
             //calculating payrollAmount by their employeeType
             var sumTotalOfEmployeeType = getPayrollTransaction
                 .GroupBy(i => i.EmployeeType)
@@ -1001,6 +967,40 @@ namespace Application.Services
             };
 
             return new Response<PayrollExecutiveReportDto>(result, "Payroll found");
+        }
+
+        public Response<List<BankAdviceReportDto>> GetBankAdviceReportReport(BankAdviceReportFilter filter)
+        {
+            var campuses = new List<int?>();
+
+            if (filter.CampusId != null)
+            {
+                campuses.Add(filter.CampusId);
+            }
+
+            //Fetching payroll as per the filters
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)filter.Month,(int)filter.Year, campuses)).ToList();
+
+            if (payrollTransactions.Count() == 0)
+            {
+                return new Response<List<BankAdviceReportDto>>(null, "List is empty");
+            }
+
+            var response = new List<BankAdviceReportDto>();
+
+            foreach (var payroll in payrollTransactions)
+            {
+                response.Add(new BankAdviceReportDto()
+                {
+                    EmployeeName = payroll.Name,
+                    BankName = payroll.BankName,
+                    BranchName = payroll.BranchName,
+                    AccountNumber = payroll.Employee.AccountNumber,
+                    Amount = payroll.NetSalary
+                });
+            }
+
+            return new Response<List<BankAdviceReportDto>>(response, "Returning Bank advice report");
         }
     }
 }
