@@ -37,6 +37,8 @@ namespace Application.Contracts.DTOs
         public decimal? IncomeTax { get; set; }
         [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 0 and 100")]
         public decimal? SRBTax { get;  set; }
+        [MaxLength(20)]
+        public string ChequeNo { get; set; }
         public decimal? Deduction { get; set; }
         public int? DocumentLedgerId { get; set; }
         public Guid? DeductionAccountId { get; set; }

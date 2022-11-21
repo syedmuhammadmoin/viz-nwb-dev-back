@@ -1,6 +1,7 @@
 ﻿using Domain.Constants;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +33,7 @@ namespace Application.Contracts.DTOs
         public decimal SalesTax { get; set; } // for editting in payment as percentage
         public decimal IncomeTax { get; set; } // for editting in payment as percentage
         public decimal SRBTax { get; set; } // for editting in payment as percentage
+        public string ChequeNo { get; set; }
         public decimal SalesTaxInAmount { get; set; }
         public decimal IncomeTaxInAmount { get; set; }
         public decimal SRBTaxInAmount { get; set; }

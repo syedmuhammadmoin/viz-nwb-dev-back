@@ -14,6 +14,8 @@ namespace Application.Contracts.DTOs
         public PaymentRegisterType PaymentRegisterType { get; set; } // 1 = cashAccount, 2 = BankAccount
         [Required]
         public Guid? PaymentRegisterId { get; set; }
+        [MaxLength(20)]
+        public string ChequeNo { get; set; }
         [Required]
         public string Description { get; set; }
         public List<CreatePayrollPaymentLinesDto> CreatePayrollTransLines { get; set; }
