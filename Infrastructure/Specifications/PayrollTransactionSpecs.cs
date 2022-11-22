@@ -155,7 +155,8 @@ namespace Infrastructure.Specifications
             )
         {
             AddInclude(i => i.PayrollTransactionLines);
-            AddInclude("PayrollTransactionLines.Account"); 
+            AddInclude("BasicPayItem.Account");
+            AddInclude("PayrollTransactionLines.Account");
         }
         
         public PayrollTransactionSpecs(int month, int year, List<int?> campuses)
