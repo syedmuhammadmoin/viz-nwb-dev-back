@@ -9,13 +9,13 @@ namespace Application.Contracts.Filters
 {
     public class GeneralLedgerFilters
     {
-        public string AccountName { get; set; }
+        public Guid? AccountId { get; set; }
         [Required]
         public DateTime? DocDate { get; set; }
         [Required]
         public DateTime? DocDate2 { get; set; }
         public int? BusinessPartnerId { get; set; }
-        public string WarehouseName { get; set; }
-        public string CampusName { get; set; }
+        public int? WarehouseId { get; set; }
+        public int? CampusId { get; set; }
     }
 }

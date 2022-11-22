@@ -10,7 +10,7 @@ namespace Application.Contracts.DTOs
     public class GeneralLedgerDto
     {
         public int LedgerId { get; set; }
-        public int CampusId { get; set; }
+        public int? CampusId { get; set; }
         public Guid Level1Id { get; set; }
         public string Nature { get; set; }
         public Guid AccountId { get; set; }
@@ -26,6 +26,7 @@ namespace Application.Contracts.DTOs
         public decimal Balance { get; set; }
         public int? BId { get; set; }
         public string BusinessPartnerName { get; set; }
+        public int? WarehouseId { get; set; }
         public string WarehouseName { get; set; }
         public string CampusName { get; set; }
         public bool IsOpeningBalance { get; set; }
