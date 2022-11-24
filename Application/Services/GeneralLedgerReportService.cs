@@ -4,6 +4,7 @@ using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,31 @@ namespace Application.Services
         }
         public Response<List<GeneralLedgerDto>> GetLedger(GeneralLedgerFilters filters)
         {
+            var accounts = new List<Guid?>();
+            var warehouses = new List<int?>();
+            var campuses = new List<int?>();
+            var businessPartners = new List<int?>();
+
+            if (filters.AccountId != null)
+            {
+                accounts.Add(filters.AccountId);
+            }
+            
+            if (filters.WarehouseId != null)
+            {
+                warehouses.Add(filters.WarehouseId);
+            }
+
+            if (filters.CampusId != null)
+            {
+                campuses.Add(filters.CampusId);
+            }
+
+            if (filters.BusinessPartnerId != null)
+            {
+                businessPartners.Add(filters.BusinessPartnerId);
+            }
+
             //Calling general ledger view
             var generalLedger = _unitOfWork.Ledger.Find(new LedgerSpecs())
                 .Select(i => new GeneralLedgerDto()
@@ -46,8 +72,8 @@ namespace Application.Services
                     LedgerId = i.Id,
                     AccountId = i.Level4_id,
                     AccountName = i.Level4.Name,
-                    TransactionId = i.Id,
-                    CampusId = i.Id,
+                    TransactionId = i.TransactionId,
+                    CampusId = i.CampusId,
                     DocDate = i.TransactionDate,
                     DocType = i.Transactions.DocType,
                     DocNo = i.Transactions.DocNo,
@@ -77,10 +103,11 @@ namespace Application.Services
 
             //Getting Data for Opening Balance
             var forOpeningBalance = generalLedgerView
-            .Where(e => (e.AccountName.Contains(filters.AccountName != null ? filters.AccountName : "")) &&
-            (e.BId == filters.BusinessPartnerId)&&
-            (e.CampusName.Contains(filters.CampusName != null ? filters.CampusName : "")) &&
-            (e.WarehouseName.Contains(filters.WarehouseName != null ? filters.WarehouseName : "")) &&
+            .Where(e => 
+            (accounts.Count() > 0 ? accounts.Contains(e.AccountId) : true) &&
+            (warehouses.Count() > 0 ? warehouses.Contains(e.WarehouseId) : true) &&
+            (businessPartners.Count() > 0 ? businessPartners.Contains(e.BId) : true) &&
+            (campuses.Count() > 0 ? campuses.Contains(e.CampusId) : true) &&
             (e.DocDate < filters.DocDate))
             .OrderBy(x => x.DocDate)
             .ThenBy(x => x.TransactionId)
@@ -111,10 +138,11 @@ namespace Application.Services
 
             //Getting data for the given data range
             var glWithOutOpeningBalance = generalLedgerView
-                .Where(e => (e.AccountName.Contains(filters.AccountName != null ? filters.AccountName : "")) &&
-                (e.BId == filters.BusinessPartnerId)&&
-                (e.CampusName.Contains(filters.CampusName != null ? filters.CampusName : "")) &&
-                (e.WarehouseName.Contains(filters.WarehouseName != null ? filters.WarehouseName : "")))
+          .Where(e => 
+            (accounts.Count() > 0 ? accounts.Contains(e.AccountId) : true) &&
+            (warehouses.Count() > 0 ? warehouses.Contains(e.WarehouseId) : true) &&
+            (businessPartners.Count() > 0 ? businessPartners.Contains(e.BId) : true) &&
+            (campuses.Count() > 0 ? campuses.Contains(e.CampusId) : true))
                 .OrderBy(x => x.DocDate)
                 .ThenBy(x => x.TransactionId)
                 .GroupBy(x => x.AccountId)
@@ -138,17 +166,20 @@ namespace Application.Services
                             Balance = i == 1 ? getCummulativeBalance(j.Debit - j.Credit) : cummulativeBalance += (j.Debit - j.Credit),
                             BId = j.BId,
                             BusinessPartnerName = j.BusinessPartnerName,
+                            CampusId = j.CampusId,
                             CampusName = j.CampusName,
+                            WarehouseId = j.WarehouseId,
                             WarehouseName = j.WarehouseName,
                         }
                         ));
 
             var glWithOutOpeningBalance2 = glWithOutOpeningBalance
-                .Where(e => (e.AccountName.Contains(filters.AccountName != null ? filters.AccountName : "")) &&
-                (e.BId == filters.BusinessPartnerId)&&
-                (e.CampusName.Contains(filters.CampusName != null ? filters.CampusName : "")) &&
-                (e.WarehouseName.Contains(filters.WarehouseName != null ? filters.WarehouseName : "")) &&
-                (e.DocDate >= filters.DocDate && e.DocDate <= filters.DocDate2));
+             .Where(e => 
+            (accounts.Count() > 0 ? accounts.Contains(e.AccountId) : true) &&
+            (warehouses.Count() > 0 ? warehouses.Contains(e.WarehouseId) : true) &&
+            (businessPartners.Count() > 0 ? businessPartners.Contains(e.BId) : true) &&
+            (campuses.Count() > 0 ? campuses.Contains(e.CampusId) : true) &&
+            (e.DocDate >= filters.DocDate && e.DocDate <= filters.DocDate2));
 
 
             //Merging and data with opening balance

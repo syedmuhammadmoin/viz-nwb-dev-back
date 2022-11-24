@@ -903,7 +903,7 @@ namespace Application.Services
                 itemList.Add(new PayrollItemsDto()
                 {
                     AccountId = payroll.BPSAccountId, 
-                    AccountName = payroll.BPSName,
+                    AccountName = payroll.BasicPayItem.Account.Name,
                     PayrollType = PayrollType.BasicPay,
                     Amount = payroll.BasicSalary,
                 });

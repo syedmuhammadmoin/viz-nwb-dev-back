@@ -42,6 +42,8 @@ namespace Domain.Entities
         public decimal IncomeTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Deduction { get; private set; }
+        [MaxLength(20)]
+        public string ChequeNo { get; private set; }
         public Guid? DeductionAccountId { get; private set; }
         [ForeignKey("OtherDeductionAccountId")]
         public Level4 DeductionAccount { get; private set; }
