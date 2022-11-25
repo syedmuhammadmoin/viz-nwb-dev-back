@@ -22,8 +22,32 @@ namespace Application.Services
         {
             _unitOfWork = unitOfWork;
         }
-        public Response<List<PNLDto>> GetProfitLoss(PNLFilters pnl)
+        public Response<List<PNLDto>> GetProfitLoss(PNLFilters filters)
         {
+            var accounts = new List<Guid?>();
+            var warehouses = new List<int?>();
+            var campuses = new List<int?>();
+            var businessPartners = new List<int?>();
+
+            if (filters.AccountId != null)
+            {
+                accounts.Add(filters.AccountId);
+            }
+
+            if (filters.WarehouseId != null)
+            {
+                warehouses.Add(filters.WarehouseId);
+            }
+
+            if (filters.CampusId != null)
+            {
+                campuses.Add(filters.CampusId);
+            }
+
+            if (filters.BusinessPartnerId != null)
+            {
+                businessPartners.Add(filters.BusinessPartnerId);
+            }
             //Calling general ledger view
             var generalLedger = _unitOfWork.Ledger.Find(new LedgerSpecs())
                 .Select(i => new GeneralLedgerDto()
@@ -33,8 +57,8 @@ namespace Application.Services
                     AccountName = i.Level4.Name,
                     Level1Id = i.Level4.Level1_id,
                     Nature = i.Level4.Level1.Name,
-                    TransactionId = i.Id,
-                    CampusId = i.Id,
+                    TransactionId = i.TransactionId,
+                    CampusId = i.CampusId,
                     DocDate = i.TransactionDate,
                     DocType = i.Transactions.DocType,
                     DocNo = i.Transactions.DocNo,
@@ -62,12 +86,12 @@ namespace Application.Services
                 });
 
             var result = from glv in generalLedgerView
-                         where (glv.AccountName.Contains(pnl.AccountName != null ? pnl.AccountName : "") &&
-                         (glv.BusinessPartnerName.Contains(pnl.BusinessPartner != null ? pnl.BusinessPartner : "") &&
-                         glv.WarehouseName.Contains(pnl.Warehouse != null ? pnl.Warehouse : "") &&
-                         glv.CampusName.Contains(pnl.Campus != null ? pnl.Warehouse : "") &&
+                         where ((accounts.Count() > 0 ? accounts.Contains(glv.AccountId) : true) &&
+                        (warehouses.Count() > 0 ? warehouses.Contains(glv.WarehouseId) : true) &&
+                        (businessPartners.Count() > 0 ? businessPartners.Contains(glv.BId) : true) &&
+                        (campuses.Count() > 0 ? campuses.Contains(glv.CampusId) : true) &&
                          (glv.Level1Id == new Guid("40000000-5566-7788-99AA-BBCCDDEEFF00") || glv.Level1Id == new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00")) &&
-                         (glv.DocDate >= pnl.DocDate && glv.DocDate <= pnl.DocDate2)))
+                         (glv.DocDate >= filters.DocDate && glv.DocDate <= filters.DocDate2))
                          select new
                          {
                              glv,

@@ -11,6 +11,6 @@ namespace Application.Contracts.Filters
     {
         [Required]
         public DateTime? DocDate { get; set; }
-        public string CampusName { get; set; }
+        public int? CampusId { get; set; }
     }
 }

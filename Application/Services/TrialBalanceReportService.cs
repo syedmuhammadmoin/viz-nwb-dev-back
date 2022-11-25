@@ -26,19 +26,22 @@ namespace Application.Services
         {
             filters.DocDate = filters.DocDate?.Date;
             filters.DocDate2 = filters.DocDate2?.Date;
+            var accounts = new List<Guid?>();
+            var campuses = new List<int?>();
             if (filters.DocDate > filters.DocDate2)
             {
                 return new Response<List<TrialBalanceDto>>("Start date is greater than end date");
-                
-            }
-            if (filters.AccountName == null)
-            {
-                filters.AccountName = "";
+
             }
 
-            if (filters.CampusName == null)
+            if (filters.AccountId != null)
             {
-                filters.CampusName = "";
+                accounts.Add(filters.AccountId);
+            }
+
+            if (filters.CampusId != null)
+            {
+                campuses.Add(filters.CampusId);
             }
 
             //Calling general ledger view
@@ -48,8 +51,8 @@ namespace Application.Services
                     LedgerId = i.Id,
                     AccountId = i.Level4_id,
                     AccountName = i.Level4.Name,
-                    TransactionId = i.Id,
-                    CampusId = i.Id,
+                    TransactionId = i.TransactionId,
+                    CampusId = i.CampusId,
                     DocDate = i.TransactionDate,
                     DocType = i.Transactions.DocType,
                     DocNo = i.Transactions.DocNo,
@@ -79,8 +82,9 @@ namespace Application.Services
 
 
             var forOpeningBalance = generalLedgerView
-            .Where(e => (e.AccountName.Contains(filters.AccountName)) &&
-            (e.CampusName.Contains(filters.CampusName)) &&
+            .Where(e =>
+            (accounts.Count() > 0 ? accounts.Contains(e.AccountId) : true) &&
+            (campuses.Count() > 0 ? campuses.Contains(e.CampusId) : true) &&
             (e.DocDate < filters.DocDate))
             .OrderBy(x => x.DocDate)
             .ThenBy(x => x.TransactionId)
@@ -94,8 +98,9 @@ namespace Application.Services
             });
 
             var trialBalanceWithOutOpeningBalance = generalLedgerView
-                .Where(e => (e.AccountName.Contains(filters.AccountName)) &&
-                (e.CampusName.Contains(filters.CampusName)) &&
+                .Where(e =>
+                (accounts.Count() > 0 ? accounts.Contains(e.AccountId) : true) &&
+                (campuses.Count() > 0 ? campuses.Contains(e.CampusId) : true) &&
                 (e.DocDate >= filters.DocDate && e.DocDate <= filters.DocDate2))
                 .OrderBy(x => x.DocDate)
                 .ThenBy(x => x.TransactionId)
@@ -126,7 +131,7 @@ namespace Application.Services
                    0 : ((x.Sum(e => e.DebitOB) + x.Sum(e => e.Debit)) - (x.Sum(e => e.CreditOB) + x.Sum(e => e.Credit))) * -1
                });
 
-            return new Response<List<TrialBalanceDto>>(groupOpeningBalance.ToList(),"Returning List");
+            return new Response<List<TrialBalanceDto>>(groupOpeningBalance.ToList(), "Returning List");
 
         }
     }

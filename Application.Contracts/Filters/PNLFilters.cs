@@ -9,13 +9,13 @@ namespace Application.Contracts.Filters
 {
     public class PNLFilters
     {
-        public string AccountName { get; set; }
+        public Guid? AccountId { get; set; }
         [Required]
         public DateTime? DocDate { get; set; }
         [Required]
         public DateTime? DocDate2 { get; set; }
-        public string BusinessPartner { get; set; }
-        public string Warehouse { get; set; }
-        public string Campus { get; set; }
+        public int? BusinessPartnerId { get; set; }
+        public int? WarehouseId { get; set; }
+        public int? CampusId { get; set; }
     }
 }

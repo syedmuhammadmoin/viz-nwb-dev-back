@@ -20,13 +20,14 @@ namespace Application.Services
         {
             _unitOfWork = unitOfWork;
         }
-        public Response<List<BalanceSheetDto>> GetBalanceSheet(BalanceSheetFilters balanceSheet)
+        public Response<List<BalanceSheetDto>> GetBalanceSheet(BalanceSheetFilters filters)
         {
-            balanceSheet.DocDate = balanceSheet.DocDate?.Date;
+            filters.DocDate = filters.DocDate?.Date;
+            var campuses = new List<int?>();
 
-            if (balanceSheet.CampusName == null)
+            if (filters.CampusId != null)
             {
-                balanceSheet.CampusName = "";
+                campuses.Add(filters.CampusId);
             }
             //Calling general ledger view
             var generalLedger = _unitOfWork.Ledger.Find(new LedgerSpecs())
@@ -37,8 +38,8 @@ namespace Application.Services
                     AccountName = i.Level4.Name,
                     Level1Id = i.Level4.Level1_id,
                     Nature = i.Level4.Level1.Name,
-                    TransactionId = i.Id,
-                    CampusId = i.Id,
+                    TransactionId = i.TransactionId,
+                    CampusId = i.CampusId,
                     DocDate = i.TransactionDate,
                     DocType = i.Transactions.DocType,
                     DocNo = i.Transactions.DocNo,
@@ -67,8 +68,8 @@ namespace Application.Services
                 });
 
             var profitNLoss = from glv in generalLedgerView
-                              where glv.CampusName.Contains(balanceSheet.CampusName) &&
-                              (glv.DocDate <= balanceSheet.DocDate) &&
+                              where (campuses.Count() > 0 ? campuses.Contains(glv.CampusId) : true) &&
+                              (glv.DocDate <= filters.DocDate) &&
                               (glv.Level1Id == new Guid("40000000-5566-7788-99AA-BBCCDDEEFF00") || glv.Level1Id == new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00"))
                               select new
                               {
@@ -108,14 +109,14 @@ namespace Application.Services
             };
 
             var result = (from glv in generalLedgerView
-                          where glv.CampusName.Contains(balanceSheet.CampusName) &&
-                          (glv.DocDate <= balanceSheet.DocDate) &&
+                          where (campuses.Count() > 0 ? campuses.Contains(glv.CampusId) : true) &&
+                          (glv.DocDate <= filters.DocDate) &&
                           (glv.Level1Id == new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00") || glv.Level1Id == new Guid("20000000-5566-7788-99AA-BBCCDDEEFF00")
                           || glv.Level1Id == new Guid("30000000-5566-7788-99AA-BBCCDDEEFF00"))
                           select new
                           {
                               glv
-                              
+
                           } into t1
                           group t1 by new
                           {
@@ -137,8 +138,6 @@ namespace Application.Services
             result.Add(pNl);
 
             return new Response<List<BalanceSheetDto>>(result, "Return Balance Sheet");
-
         }
-
     }
 }
