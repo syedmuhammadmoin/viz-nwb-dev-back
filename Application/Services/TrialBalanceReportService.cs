@@ -53,6 +53,7 @@ namespace Application.Services
                     AccountName = i.Level4.Name,
                     TransactionId = i.TransactionId,
                     CampusId = i.CampusId,
+                    WarehouseId = i.WarehouseId,
                     DocDate = i.TransactionDate,
                     DocType = i.Transactions.DocType,
                     DocNo = i.Transactions.DocNo,
