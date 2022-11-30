@@ -28,11 +28,9 @@ namespace Application.Services
             filters.DocDate2 = filters.DocDate2?.Date;
             var accounts = new List<Guid?>();
             var campuses = new List<int?>();
+            
             if (filters.DocDate > filters.DocDate2)
-            {
                 return new Response<List<TrialBalanceDto>>("Start date is greater than end date");
-
-            }
 
             if (filters.AccountId != null)
             {
@@ -53,6 +51,7 @@ namespace Application.Services
                     AccountName = i.Level4.Name,
                     TransactionId = i.TransactionId,
                     CampusId = i.CampusId,
+                    WarehouseId = i.WarehouseId,
                     DocDate = i.TransactionDate,
                     DocType = i.Transactions.DocType,
                     DocNo = i.Transactions.DocNo,

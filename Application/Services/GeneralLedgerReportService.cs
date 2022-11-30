@@ -45,6 +45,10 @@ namespace Application.Services
             var campuses = new List<int?>();
             var businessPartners = new List<int?>();
 
+            if (filters.DocDate2 < filters.DocDate)
+                return new Response<List<GeneralLedgerDto>>("Start date is greater than end date");
+
+
             if (filters.AccountId != null)
             {
                 accounts.Add(filters.AccountId);
@@ -74,6 +78,7 @@ namespace Application.Services
                     AccountName = i.Level4.Name,
                     TransactionId = i.TransactionId,
                     CampusId = i.CampusId,
+                    WarehouseId = i.WarehouseId,
                     DocDate = i.TransactionDate,
                     DocType = i.Transactions.DocType,
                     DocNo = i.Transactions.DocNo,
