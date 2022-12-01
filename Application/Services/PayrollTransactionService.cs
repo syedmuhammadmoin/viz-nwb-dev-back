@@ -87,7 +87,8 @@ namespace Application.Services
             .Where(x => ((x.IsActive == true) && (x.PayrollType != PayrollType.BasicPay && x.PayrollType != PayrollType.Increment)))
             .Select(line => new PayrollTransactionLines(line.Id,
                    line.PayrollType,
-                   CalculateAllowance(line, (int)item.WorkingDays, (int)item.PresentDays, (int)item.LeaveDays, empDetails.TotalBasicPay),
+                   line.Value,
+                   CalculateAllowance(line, (int)item.WorkingDays, (int)item.PresentDays, (int)item.LeaveDays),
                    line.AccountId)
             ).ToList();
 
@@ -157,7 +158,10 @@ namespace Application.Services
                     empDetails.NoOfIncrements,
                     empDetails.Email,
                     empDetails.BasicPayItemId,
+                    empDetails.BasicPay,
                     empDetails.IncrementItemId,
+                    empDetails.IncrementName,
+                    empDetails.IncrementAmount,
                     payrollTransactionLines
                     );
 
@@ -273,7 +277,8 @@ namespace Application.Services
             .Where(x => ((x.IsActive == true) && (x.PayrollType != PayrollType.BasicPay && x.PayrollType != PayrollType.Increment)))
             .Select(line => new PayrollTransactionLines(line.Id,
                    line.PayrollType,
-                   CalculateAllowance(line, (int)entity.WorkingDays, (int)entity.PresentDays, (int)entity.LeaveDays, empDetails.TotalBasicPay),
+                   line.Value,
+                   CalculateAllowance(line, (int)entity.WorkingDays, (int)entity.PresentDays, (int)entity.LeaveDays),
                    line.AccountId)
             ).ToList();
 
@@ -342,10 +347,12 @@ namespace Application.Services
                     empDetails.NoOfIncrements,
                     empDetails.Email,
                     empDetails.BasicPayItemId,
+                    empDetails.BasicPay,
                     empDetails.IncrementItemId,
+                    empDetails.IncrementName,
+                    empDetails.IncrementAmount,
                     payrollTransactionLines
                 );
-
 
             await _unitOfWork.SaveAsync();
             //Commiting the transaction 
@@ -380,7 +387,7 @@ namespace Application.Services
             return await this.UpdatePayrollTransaction(entity, 6);
         }
 
-        private decimal CalculateAllowance(PayrollItemDto line, int workingDays, int presentDays, int leaveDays, decimal totalBasicPay)
+        private decimal CalculateAllowance(PayrollItemDto line, int workingDays, int presentDays, int leaveDays)
         {
 
             if (line.PayrollType == PayrollType.Allowance || line.PayrollType == PayrollType.AssignmentAllowance)

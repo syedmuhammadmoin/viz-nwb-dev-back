@@ -15,9 +15,6 @@ namespace Domain.Entities
         public string DocNo { get;private set; }
         public int Month { get;private set; }
         public int Year { get;private set; }
-        public Guid BPSAccountId { get; private set; }
-        [MaxLength(500)]
-        public string BPSName { get; private set; }
         public int CampusId { get;private set; }
         [ForeignKey("CampusId")]
         public Campus Campus { get;private set; }
@@ -103,19 +100,33 @@ namespace Domain.Entities
         public string Email { get; private set; }
 
         /// <summary>
-        /// Payroll Items for Basic Pay and Increment
+        /// Payroll Items for Basic Pay
         /// </summary>
         public int BasicPayItemId { get; private set; }
-        [ForeignKey("BasicPayItemId ")]
+        [ForeignKey("BasicPayItemId")]
         public PayrollItem BasicPayItem { get; private set; }
+
+        public Guid BPSAccountId { get; private set; }
+        [ForeignKey("BPSAccountId")]
+        public Level4 BPSAccount { get; private set; }
+        
+        [MaxLength(500)]
+        public string BPSName { get; private set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal BPSAmount { get; private set; }
+        /// <summary>
+        /// Payroll Items for Increment
+        /// </summary>
         public int? IncrementItemId { get; private set; }
         [ForeignKey("IncrementItemId")]
         public PayrollItem IncrementItem { get; private set; }
+        [MaxLength(500)]
+        public string IncrementName { get; private set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal IncrementAmount { get; private set; }
 
         // Payroll Lines
         public virtual List<PayrollTransactionLines> PayrollTransactionLines { get;private set; }
-
-
 
         //Construtors
         //public PayrollTransactionMaster(int month, int year, int employeeId, Guid bpsAccountId, string bpsName, int designationId, int departmentId, int campusId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netIncrement, decimal netSalary, int statusId, string employeeType, List<PayrollTransactionLines> payrollTransactionLines)
@@ -149,7 +160,8 @@ namespace Domain.Entities
             string domicile, string contact, string religion, string nationality, string maritalstatus, string gender,
             string placeofBirth, int designationId, int departmentId, string address, DateTime dateofJoining,
             DateTime dateofRetirment, DateTime dateofBirth, string faculty,
-            string dutyShift, int? noOfIncrements, string email, int basicPayItemId, int? incrementItemId,
+            string dutyShift, int? noOfIncrements, string email, int basicPayItemId, decimal bpsAmount, 
+            int? incrementItemId, string incrementName, decimal incrementAmount,
             List<PayrollTransactionLines> payrollTransactionLines)
         {
             Month = month;
@@ -193,11 +205,12 @@ namespace Domain.Entities
             NoOfIncrements = noOfIncrements;
             Email = email;
             BasicPayItemId = basicPayItemId;
+            BPSAmount = bpsAmount;
             IncrementItemId = incrementItemId;
+            IncrementName = incrementName;
+            IncrementAmount = incrementAmount;
             PayrollTransactionLines = payrollTransactionLines;
         }
-
-
 
         //public void updatePayrollTransaction(Guid bpsAccountId, string bpsName, int designationId, int departmentId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, string employeeType, List<PayrollTransactionLines> payrollTransactionLines)
         //{
@@ -216,8 +229,6 @@ namespace Domain.Entities
         //    PayrollTransactionLines = payrollTransactionLines;
         //}
 
-
-
         public void updatePayrollTransaction(Guid bPSAccountId, string bPSName,
             int campusId, int workingDays, int presentDays, int leaveDays,
             DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId,
@@ -226,7 +237,8 @@ namespace Domain.Entities
             string domicile, string contact, string religion, string nationality, string maritalstatus, string gender,
             string placeofBirth, int designationId, int departmentId, string address, DateTime dateofJoining,
             DateTime dateofRetirment, DateTime dateofBirth, string faculty,
-            string dutyShift, int? noOfIncrements, string email, int basicPayItemId, int? incrementItemId,
+            string dutyShift, int? noOfIncrements, string email, int basicPayItemId, decimal bpsAmount,
+            int? incrementItemId, string incrementName, decimal incrementAmount,
             List<PayrollTransactionLines> payrollTransactionLines)
         {
             BPSAccountId = bPSAccountId;
@@ -266,7 +278,10 @@ namespace Domain.Entities
             NoOfIncrements = noOfIncrements;
             Email = email;
             BasicPayItemId = basicPayItemId;
+            BPSAmount = bpsAmount;
             IncrementItemId = incrementItemId;
+            IncrementName = incrementName;
+            IncrementAmount = incrementAmount;
             PayrollTransactionLines = payrollTransactionLines;
         }
 
