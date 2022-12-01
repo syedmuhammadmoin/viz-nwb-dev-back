@@ -48,7 +48,8 @@ namespace Application.Contracts.DTOs
         public string Faculty { get;  set; }
         public string DutyShift { get;  set; }
         public decimal BasicPay { get; set; }
-        public decimal Increment { get; set; }
+        public decimal IncrementAmount { get; set; }
+        public string IncrementName { get; set; }
         public int? NoOfIncrements { get; set; }
         public decimal TotalIncrement { get; set; }
         public decimal TotalBasicPay { get; set; }

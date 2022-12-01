@@ -157,7 +157,8 @@ namespace Application.Services
         {
             decimal totalIncrement = 0;
             decimal incrementAmount = 0;
-            int? increamentId= null;
+            int? increamentId = null;
+            string incrementName = null;
 
             // if (data.IncrementId != null && data.NoOfIncrements != null)
             if (data.NoOfIncrements != null)
@@ -168,6 +169,7 @@ namespace Application.Services
                 if (increment != null)
                 {
                     increamentId= increment.Id;
+                    incrementName = increment.Name;
                     incrementAmount = increment.Value;
                     totalIncrement = (incrementAmount * (int)(data.NoOfIncrements));
                 }
@@ -208,7 +210,8 @@ namespace Application.Services
                 data.BasicPay = basicPayItem.Value;
                 data.BPS = basicPayItem.Name;
                 data.BPSAccountId = basicPayItem.AccountId;
-                data.Increment = incrementAmount;
+                data.IncrementAmount = incrementAmount;
+                data.IncrementName = incrementName;
                 data.TotalIncrement = totalIncrement;
                 data.TotalBasicPay = totalBasicPay;
                 data.TotalAllowances = totalAllowances;
@@ -217,8 +220,6 @@ namespace Application.Services
                 data.TaxDeduction = taxDeduction;
                 data.NetPay = netPay;
             }
-
-
             return data;
         }
 
