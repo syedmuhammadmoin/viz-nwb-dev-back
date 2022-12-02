@@ -54,7 +54,10 @@ namespace Domain.Entities
             BusinessPartnerType = businessPartnerType;
             CNIC = cnic;
         }
-        
+        public void updateName(string name)
+        {
+            Name = name;
+        }
         public void updateAccountPayableId(Guid accountPayableId)
         {
             AccountPayableId = accountPayableId;
