@@ -30,53 +30,55 @@ namespace Application.Services
         {
             List<Employee> employeetList = new List<Employee>();
             _unitOfWork.CreateTransaction();
-           
-                foreach (var item in entity)
+
+            foreach (var item in entity)
+            {
+                var checkCNIC = _unitOfWork.Employee.Find(new EmployeeSpecs(item.CNIC)).FirstOrDefault();
+
+                if (checkCNIC != null)
                 {
-                    var checkCNIC = _unitOfWork.Employee.Find(new EmployeeSpecs(item.CNIC)).FirstOrDefault();
-
-                    if (checkCNIC != null)
-                    {
-                        _mapper.Map<CreateEmployeeDto, Employee>(item, checkCNIC);
-                        await _unitOfWork.SaveAsync();
-                    }
-                    else
-                    {
-                        // mapping businessPartner model
-                        var businessPartner = new BusinessPartner(
-                            item.Name,
-                            BusinessPartnerType.Employee,
-                            item.CNIC
-                            );
-
-                        // Saving BP 
-                        var savingBP = await _unitOfWork.BusinessPartner.Add(businessPartner);
-                        await _unitOfWork.SaveAsync();
-
-                        // Check if bp is created
-                        if (savingBP == null)
-                        {
-                            _unitOfWork.Rollback();
-                            return new Response<EmployeeDto>("Error creating Employee");
-                        }
-
-                        var employee = _mapper.Map<Employee>(item);
-
-                        employee.setBusinessPartnerId(savingBP.Id);
-
-                        employeetList.Add(employee);
-                    }
-                }
-
-                if (employeetList.Any())
-                {
-                    await _unitOfWork.Employee.AddRange(employeetList);
+                    var businessPartner = await _unitOfWork.BusinessPartner.GetById(checkCNIC.BusinessPartnerId);
+                    businessPartner.updateName(item.Name);
+                    _mapper.Map<CreateEmployeeDto, Employee>(item, checkCNIC);
                     await _unitOfWork.SaveAsync();
                 }
+                else
+                {
+                    // mapping businessPartner model
+                    var businessPartner = new BusinessPartner(
+                        item.Name,
+                        BusinessPartnerType.Employee,
+                        item.CNIC
+                        );
 
-                _unitOfWork.Commit();
-                return new Response<EmployeeDto>(null, "Records populated successfully");
-         
+                    // Saving BP 
+                    var savingBP = await _unitOfWork.BusinessPartner.Add(businessPartner);
+                    await _unitOfWork.SaveAsync();
+
+                    // Check if bp is created
+                    if (savingBP == null)
+                    {
+                        _unitOfWork.Rollback();
+                        return new Response<EmployeeDto>("Error creating Employee");
+                    }
+
+                    var employee = _mapper.Map<Employee>(item);
+
+                    employee.setBusinessPartnerId(savingBP.Id);
+
+                    employeetList.Add(employee);
+                }
+            }
+
+            if (employeetList.Any())
+            {
+                await _unitOfWork.Employee.AddRange(employeetList);
+                await _unitOfWork.SaveAsync();
+            }
+
+            _unitOfWork.Commit();
+            return new Response<EmployeeDto>(null, "Records populated successfully");
+
         }
 
         public async Task<PaginationResponse<List<EmployeeDto>>> GetAllAsync(TransactionFormFilter filter)
@@ -168,7 +170,7 @@ namespace Application.Services
                                 .FirstOrDefault();
                 if (increment != null)
                 {
-                    increamentId= increment.Id;
+                    increamentId = increment.Id;
                     incrementName = increment.Name;
                     incrementAmount = increment.Value;
                     totalIncrement = (incrementAmount * (int)(data.NoOfIncrements));
