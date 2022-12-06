@@ -146,8 +146,8 @@ namespace Domain.Constants
         {
             public const string View = "Permissions.Profiling.ProductsClaims.View";
             public const string Create = "Permissions.Profiling.ProductsClaims.Create";
-            public const string Edit = "Permissions.ProductsClaims.Edit";
-            public const string Delete = "Permissions.ProductsClaims.Delete";
+            public const string Edit = "Permissions.Profiling.ProductsClaims.Edit";
+            public const string Delete = "Permissions.Profiling.ProductsClaims.Delete";
         }
 
         public static class Level4Claims
@@ -250,10 +250,10 @@ namespace Domain.Constants
 
         public static class CampusClaims
         {
-            public const string View = "Permissions.Profling.CampusClaims.View";
-            public const string Create = "Permissions.Profling.CampusClaims.Create";
-            public const string Edit = "Permissions.Profling.CampusClaims.Edit";
-            public const string Delete = "Permissions.Profling.CampusClaims.Delete";
+            public const string View = "Permissions.Profiling.CampusClaims.View";
+            public const string Create = "Permissions.Profiling.CampusClaims.Create";
+            public const string Edit = "Permissions.Profiling.CampusClaims.Edit";
+            public const string Delete = "Permissions.Profiling.CampusClaims.Delete";
         }
 
         public static class CreditNoteClaims
