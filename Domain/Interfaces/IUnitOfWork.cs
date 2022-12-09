@@ -56,6 +56,7 @@ namespace Domain.Interfaces
         IGoodsReturnNoteRepository GoodsReturnNote { get; }
         IIssuanceToIssuanceReturnLineReconcileRepository IssuanceToIssuanceReturnLineReconcile { get; }
         IIssuanceReturnRepository IssuanceReturn { get; }
+        IRequestRepository Request { get; }
         IRemarkRepository Remarks { get; }
 
         IFileUploadRepository Fileupload { get; }
