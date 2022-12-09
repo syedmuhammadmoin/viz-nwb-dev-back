@@ -66,6 +66,7 @@ namespace Domain.Constants
         InventoryAdjustment,
         Quotation,
         Requisition,
+        Request,
         Receipt,
         PayrollTransaction,
         PayrollPayment,
