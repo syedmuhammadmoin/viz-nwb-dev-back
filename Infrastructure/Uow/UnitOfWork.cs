@@ -66,6 +66,7 @@ namespace Infrastructure.Uow
         public IGoodsReturnNoteRepository GoodsReturnNote { get; private set; }
         public IGRNToGoodsReturnNoteLineReconcileRepository GRNToGoodsReturnNoteLineReconcile { get; private set; }
         public IIssuanceToIssuanceReturnLineReconcileRepository IssuanceToIssuanceReturnLineReconcile { get; private set; }
+        public IRequestRepository Request { get; private set; }
         public IIssuanceReturnRepository IssuanceReturn { get; private set; }
         public IRemarkRepository Remarks { get; private set; }
 
@@ -119,6 +120,7 @@ namespace Infrastructure.Uow
             GRNToGoodsReturnNoteLineReconcile = new GRNToGoodsReturnNoteLineReconcileRepository(context);
             IssuanceToIssuanceReturnLineReconcile = new IssuanceToIssuanceReturnLineReconcileRepository(context);
             IssuanceReturn = new IssuanceReturnRepository(context);
+            Request = new RequestRepository(context);
             Remarks = new RemarkRepository(context);
         }
 
