@@ -207,7 +207,7 @@ namespace Application.Mapper
 
             CreateMap<CreateDebitNoteDto, DebitNoteMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => e.Quantity * e.Cost)))
-               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e =>( e.Quantity * e.Cost * e.Tax / 100) + e.AnyOtherTax)))
+               .ForMember(core => core.TotalTax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => (e.Quantity * e.Cost * e.Tax / 100) + e.AnyOtherTax)))
                .ForMember(core => core.OtherTax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => e.AnyOtherTax)))
                .ForMember(core => core.Tax, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => (e.Quantity * e.Cost * e.Tax / 100))))
                .ForMember(core => core.TotalAmount, dto => dto.MapFrom(a => a.DebitNoteLines.Sum(e => (e.Quantity * e.Cost) + (e.Quantity * e.Cost * e.Tax / 100) + (e.AnyOtherTax))));
@@ -339,6 +339,19 @@ namespace Application.Mapper
             CreateMap<CreateRequisitionDto, RequisitionMaster>();
 
             CreateMap<CreateRequisitionLinesDto, RequisitionLines>();
+            //Request Form
+            CreateMap<RequestMaster, RequestDto>()
+                .ForMember(dto => dto.EmployeeName, core => core.MapFrom(a => a.Employee.Name))
+               .ForMember(dto => dto.Campus, core => core.MapFrom(a => a.Campus.Name))
+               .ForMember(dto => dto.Status, core => core.MapFrom(
+                    a => a.Status.State == DocumentStatus.Unpaid ? "Open" :
+                    a.Status.State == DocumentStatus.Partial ? "Open" :
+                    a.Status.State == DocumentStatus.Paid ? "Closed" : a.Status.Status))
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+            CreateMap<RequestLines, RequestLinesDto>();
+
+            CreateMap<CreateRequestDto, RequestMaster>();
+            CreateMap<CreateRequestLinesDto, RequestLines>();
 
             // GRN Mapping
             CreateMap<GRNMaster, GRNDto>()
