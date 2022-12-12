@@ -39,7 +39,7 @@ namespace Domain.Entities
         public void CreateDocNo()
         {
             //Creating doc no..
-            DocNo = "REQU-" + String.Format("{0:000}", Id);
+            DocNo = "REQUEST-" + String.Format("{0:000}", Id);
         }
     }
 }
