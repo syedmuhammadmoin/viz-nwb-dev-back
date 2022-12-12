@@ -20,7 +20,7 @@ namespace Infrastructure.Repositories
 
         public IEnumerable<RequestLines> FindLines(ISpecification<RequestLines> specification)
         {
-            return SpecificationEvaluator<RequestLines, int>.GetQuery(_context.RequestFormLines
+            return SpecificationEvaluator<RequestLines, int>.GetQuery(_context.RequestLines
                 .AsQueryable(), specification);
         }
     }
