@@ -27,7 +27,6 @@ namespace Application.Interfaces
         public DbSet<BankStmtLines> BankStmtLines { get; set; }
         public DbSet<WorkFlowStatus> WorkFlowStatus { get; set; }
         public DbSet<Campus> Campuses { get; set; }
-
         public DbSet<JournalEntryMaster> JournalEntryMaster { get; set; }
         public DbSet<JournalEntryLines> JournalEntryLines { get; set; }
         public DbSet<InvoiceMaster> InvoiceMaster { get; set; }
@@ -64,9 +63,7 @@ namespace Application.Interfaces
         public DbSet<UnitOfMeasurement> UnitOfMeasurement { get; set; }
         public DbSet<IssuanceMaster> IssuanceMaster { get; set; }
         public DbSet<IssuanceLines> IssuanceLines { get; set; }
-
         public DbSet<FileUpload> FileUpload { get; set; }
-        public DbSet<LogItem> LogItems { get; set; }
         public DbSet<Stock> Stock { get; set; }
         public DbSet<POToGRNLineReconcile> POToGRNLineReconcile { get; set; }
         public DbSet<RequisitionToIssuanceLineReconcile> RequisitionToIssuanceLineReconcile { get; set; }
@@ -76,7 +73,10 @@ namespace Application.Interfaces
         public DbSet<IssuanceToIssuanceReturnLineReconcile> IssuanceToIssuanceReturnLineReconcile { get; set; }
         public DbSet<IssuanceReturnMaster> IssuanceReturnMaster { get; set; }
         public DbSet<IssuanceReturnLines> IssuanceReturnLines { get; set; }
+        public DbSet<RequestMaster> RequestMaster { get; set; }
+        public DbSet<RequestLines> RequestLines { get; set; }
         public DbSet<Remark> Remarks { get; set; }
+        public DbSet<LogItem> LogItems { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }
