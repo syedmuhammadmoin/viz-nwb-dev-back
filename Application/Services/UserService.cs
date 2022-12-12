@@ -466,6 +466,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.StockClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.GoodsReturnNoteClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.IssuanceReturnClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.RequestClaims), id);
 
 
             //Getting all claims for this role
@@ -589,6 +590,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.StockClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.GoodsReturnNoteClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.IssuanceReturnClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.RequestClaims), "12");
 
             var allClaimValues = allPermissions.Select(a => a.Value).ToList();
             return new Response<List<string>>(allClaimValues, "Returning all claims");
