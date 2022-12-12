@@ -107,15 +107,6 @@ namespace Application.Services
             if (entity.RequestLines.Count() == 0)
                 return new Response<RequestDto>("Lines are Required");
 
-            var duplicates = entity.RequestLines.GroupBy(x => new { x.ItemDescription })
-            .Where(g => g.Count() > 1)
-            .Select(y => y.Key)
-            .ToList();
-
-
-            if (duplicates.Any())
-                return new Response<RequestDto>("Duplicate Lines found");
-
             var request = _mapper.Map<RequestMaster>(entity);
 
             //Setting status
@@ -144,7 +135,7 @@ namespace Application.Services
             }
             else
             {
-                return await this.UpdateRequest(entity, 1);
+                return await this.UpdateRequest(entity, 7);
             }
         }
         private async Task<Response<RequestDto>> UpdateRequest(CreateRequestDto entity, int status)
@@ -160,15 +151,6 @@ namespace Application.Services
 
             if (request.StatusId != 1 && request.StatusId != 2)
                 return new Response<RequestDto>("Only draft document can be edited");
-
-            var duplicates = entity.RequestLines.GroupBy(x => new { x.ItemDescription })
-            .Where(g => g.Count() > 1)
-            .Select(y => y.Key)
-            .ToList();
-
-            if (duplicates.Any())
-                return new Response<RequestDto>("Duplicate Lines found");
-
 
             request.setStatus(status);
 
