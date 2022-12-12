@@ -75,7 +75,11 @@ namespace Infrastructure.Context
             .HasOne(tc => tc.RequisitionMaster)
             .WithMany(c => c.RequisitionLines)
             .OnDelete(DeleteBehavior.Cascade);
-
+            //Request
+            modelBuilder.Entity<RequestLines>()
+            .HasOne(tc => tc.RequestMaster)
+            .WithMany(c => c.RequestLines)
+            .OnDelete(DeleteBehavior.Cascade);
             //GRN
             modelBuilder.Entity<GRNLines>()
             .HasOne(tc => tc.GRNMaster)

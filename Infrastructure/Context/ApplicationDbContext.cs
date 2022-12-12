@@ -81,7 +81,6 @@ namespace Infrastructure.Context
         public DbSet<IssuanceReturnLines> IssuanceReturnLines { get; set; }
         public DbSet<RequestMaster> RequestMaster { get; set; }
         public DbSet<RequestLines> RequestLines { get; set; }
-
         public DbSet<Remark> Remarks { get; set; }
         public DbSet<LogItem> LogItems { get; set; }
 
