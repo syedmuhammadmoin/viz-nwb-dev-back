@@ -8,7 +8,7 @@ namespace Domain.Constants
 {
     public static class Permissions
     {
-        public static List<string> GeneratePermissionsForModule(string module,string submodule)
+        public static List<string> GeneratePermissionsForModule(string module, string submodule)
         {
             return new List<string>()
             {
@@ -214,7 +214,7 @@ namespace Domain.Constants
             public const string Edit = "Permissions.Profiling.UnitOfMeasurementClaims.Edit";
             public const string Delete = "Permissions.Profiling.UnitOfMeasurementClaims.Delete";
         }
-       
+
         //Transaction Forms
         public static class InvoiceClaims
         {
@@ -327,6 +327,13 @@ namespace Domain.Constants
             public const string Create = "Permissions.Procurement.IssuanceReturnClaims.Create";
             public const string Edit = "Permissions.Procurement.IssuanceReturnClaims.Edit";
             public const string Delete = "Permissions.Procurement.IssuanceReturnClaims.Delete";
+        }
+        public static class RequestClaims
+        {
+            public const string View = "Permissions.Procurement.RequestClaims.View";
+            public const string Create = "Permissions.Procurement.RequestClaims.Create";
+            public const string Edit = "Permissions.Procurement.RequestClaims.Edit";
+            public const string Delete = "Permissions.Procurement.RequestClaims.Delete";
         }
         //Reporting Form
         public static class ChartOfAccountClaims
