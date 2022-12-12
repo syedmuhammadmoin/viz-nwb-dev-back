@@ -40,6 +40,7 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Campus);
                 AddInclude(i => i.Status);
                 AddInclude(i => i.Employee);
+                AddInclude(i => i.RequestLines);
             }
         }
 
