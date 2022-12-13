@@ -18,6 +18,8 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? CampusId { get; set; }
         [Required]
+        public bool? IsWithoutWorkflow { get; set; }
+        [Required]
         public bool? isSubmit { get; set; }
         public virtual List<CreateRequisitionLinesDto> RequisitionLines { get; set; }
     }

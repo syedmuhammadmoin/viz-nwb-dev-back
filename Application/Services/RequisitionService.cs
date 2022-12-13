@@ -34,6 +34,10 @@ namespace Application.Services
         {
             if ((bool)entity.isSubmit)
             {
+                if ((bool)entity.IsWithoutWorkflow)
+	                {
+                       return await this.SaveRequisition(entity, 1);
+	                }
                 return await this.SubmitRequisition(entity);
             }
             else
@@ -73,7 +77,19 @@ namespace Application.Services
             if (requisition == null)
                 return new Response<RequisitionDto>("Not found");
 
+            var requisitionProductItemIds = requisition.RequisitionLines.Select(i => i.ItemId).ToList();
+            //Getting stock by items id
+            var stock = await _unitOfWork.Stock.GetAll(new StockSpecs(requisitionProductItemIds));
+            
             var requisitionDto = _mapper.Map<RequisitionDto>(requisition);
+
+            foreach (var line in requisitionDto.RequisitionLines)
+            {
+                line.AvailableQuantity = stock
+                    .Where(i => i.ItemId == line.ItemId)
+                    .Sum(i => i.AvailableQuantity);
+            }
+
             ReturningRemarks(requisitionDto, DocType.Requisition);
 
             if ((requisitionDto.State == DocumentStatus.Partial || requisitionDto.State == DocumentStatus.Paid))
@@ -109,6 +125,11 @@ namespace Application.Services
         {
             if ((bool)entity.isSubmit)
             {
+                if ((bool)entity.IsWithoutWorkflow)
+                {
+                    return await this.SaveRequisition(entity, 1);
+                }
+
                 return await this.SubmitRequisition(entity);
             }
             else
