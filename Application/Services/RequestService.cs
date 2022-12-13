@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
@@ -28,10 +29,7 @@ namespace Application.Services
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
         }
-        public Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
-        {
-            throw new NotImplementedException();
-        }
+ 
         public async Task<Response<RequestDto>> CreateAsync(CreateRequestDto entity)
         {
             if ((bool)entity.isSubmit)
@@ -80,10 +78,83 @@ namespace Application.Services
                 return new Response<RequestDto>("Not found");
 
             var requestDto = _mapper.Map<RequestDto>(request);
+            ReturningRemarks(requestDto, DocType.Request);
             requestDto.IsAllowedRole = false;
 
             return new Response<RequestDto>(requestDto, "Returning value");
         }
+        public async Task<Response<RequestDto>> UpdateAsync(CreateRequestDto entity)
+        {
+            if ((bool)entity.isSubmit)
+            {
+                return await this.SubmitRequest(entity);
+            }
+            else
+            {
+                return await this.UpdateRequest(entity, 1);
+            }
+        }
+        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
+        {
+            var getRequest = await _unitOfWork.Request.GetById(data.DocId, new RequestSpecs(true));
+
+            if (getRequest == null)
+            {
+                return new Response<bool>("Request with the input id not found");
+            }
+            if (getRequest.Status.State == DocumentStatus.Unpaid || getRequest.Status.State == DocumentStatus.Partial || getRequest.Status.State == DocumentStatus.Paid)
+            {
+                return new Response<bool>("Request already approved");
+            }
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Request)).FirstOrDefault();
+
+            if (workflow == null)
+            {
+                return new Response<bool>("No activated workflow found for this document");
+            }
+            var transition = workflow.WorkflowTransitions
+                  .FirstOrDefault(x => (x.CurrentStatusId == getRequest.StatusId && x.Action == data.Action));
+
+            if (transition == null)
+            {
+                return new Response<bool>("No transition found");
+            }
+            var getUser = new GetUser(this._httpContextAccessor);
+            var userId = getUser.GetCurrentUserId();
+            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+            _unitOfWork.CreateTransaction();
+
+            foreach (var role in currentUserRoles)
+            {
+                if (transition.AllowedRole.Name == role)
+                {
+                    getRequest.setStatus(transition.NextStatusId);
+                    if (!String.IsNullOrEmpty(data.Remarks))
+                    {
+                        var addRemarks = new Remark()
+                        {
+                            DocId = getRequest.Id,
+                            DocType = DocType.Request,
+                            Remarks = data.Remarks,
+                            UserId = userId
+                        };
+                        await _unitOfWork.Remarks.Add(addRemarks);
+                    }
+                    if (transition.NextStatus.State == DocumentStatus.Rejected)
+                    {
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Request Rejected");
+                    }
+                    await _unitOfWork.SaveAsync();
+                    _unitOfWork.Commit();
+                    return new Response<bool>(true, "Request Reviewed");
+                }
+            }
+
+            return new Response<bool>("User does not have allowed role");
+        }
+
         private async Task<Response<RequestDto>> SubmitRequest(CreateRequestDto entity)
         {
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Request)).FirstOrDefault();
@@ -95,11 +166,11 @@ namespace Application.Services
 
             if (entity.Id == null)
             {
-                return await this.SaveRequest(entity, 7);
+                return await this.SaveRequest(entity, 6);
             }
             else
             {
-                return await this.UpdateRequest(entity, 7);
+                return await this.UpdateRequest(entity, 6);
             }
         }
         private async Task<Response<RequestDto>> SaveRequest(CreateRequestDto entity, int status)
@@ -126,17 +197,6 @@ namespace Application.Services
             _unitOfWork.Commit();
 
             return new Response<RequestDto>(_mapper.Map<RequestDto>(result), "Created successfully");
-        }
-        public async Task<Response<RequestDto>> UpdateAsync(CreateRequestDto entity)
-        {
-            if ((bool)entity.isSubmit)
-            {
-                return await this.SubmitRequest(entity);
-            }
-            else
-            {
-                return await this.UpdateRequest(entity, 7);
-            }
         }
         private async Task<Response<RequestDto>> UpdateRequest(CreateRequestDto entity, int status)
         {
@@ -167,6 +227,24 @@ namespace Application.Services
             //returning response
             return new Response<RequestDto>(_mapper.Map<RequestDto>(request), "Updated successfully");
 
+        }
+
+        private List<RemarksDto> ReturningRemarks(RequestDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Request))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
         }
 
     }
