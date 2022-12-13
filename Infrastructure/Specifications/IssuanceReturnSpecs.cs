@@ -32,30 +32,31 @@ namespace Infrastructure.Specifications
             }
         }
 
-            public IssuanceReturnSpecs(bool forEdit)
-            {
-                if (forEdit)
-                {
-                    AddInclude(i => i.IssuanceReturnLines);
-                    AddInclude(i => i.Status);
-                }
-                else
-                {
-                    AddInclude(i => i.Campus);
-                    AddInclude(i => i.Status);
-                    AddInclude(i => i.Employee);
-                    AddInclude(i => i.Issuance);
-                    AddInclude("IssuanceReturnLines.Item");
-                    AddInclude("IssuanceReturnLines.Warehouse");
-                }
-            }
-            public IssuanceReturnSpecs() : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
+        public IssuanceReturnSpecs(bool forEdit)
         {
+            if (forEdit)
+            {
+                AddInclude(i => i.IssuanceReturnLines);
                 AddInclude(i => i.Status);
             }
-            public IssuanceReturnSpecs(int id) : base(x => x.Id == id)
-        {
-                AddInclude(i => i.IssuanceReturnLines);
+            else
+            {
+                AddInclude(i => i.Campus);
+                AddInclude(i => i.Status);
+                AddInclude(i => i.Employee);
+                AddInclude(i => i.Issuance);
+                AddInclude("IssuanceReturnLines.Item");
+                AddInclude("IssuanceReturnLines.Warehouse");
             }
         }
+        public IssuanceReturnSpecs() : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
+        {
+            AddInclude(i => i.Status);
+        }
+        public IssuanceReturnSpecs(int id) : base(x => x.Id == id)
+        {
+            AddInclude(i => i.IssuanceReturnLines);
+        }
+
     }
+}
