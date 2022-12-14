@@ -75,11 +75,7 @@ namespace Infrastructure.Context
             .HasOne(tc => tc.RequisitionMaster)
             .WithMany(c => c.RequisitionLines)
             .OnDelete(DeleteBehavior.Cascade);
-            //Request
-            modelBuilder.Entity<RequestLines>()
-            .HasOne(tc => tc.RequestMaster)
-            .WithMany(c => c.RequestLines)
-            .OnDelete(DeleteBehavior.Cascade);
+  
             //GRN
             modelBuilder.Entity<GRNLines>()
             .HasOne(tc => tc.GRNMaster)
@@ -108,6 +104,18 @@ namespace Infrastructure.Context
             modelBuilder.Entity<IssuanceReturnLines>()
             .HasOne(tc => tc.IssuanceReturnMaster)
             .WithMany(c => c.IssuanceReturnLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //Request
+            modelBuilder.Entity<RequestLines>()
+            .HasOne(tc => tc.RequestMaster)
+            .WithMany(c => c.RequestLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //Bid Evaluation
+            modelBuilder.Entity<BidEvaluationLines>()
+            .HasOne(tc => tc.BidEvaluationMaster)
+            .WithMany(c => c.BidEvaluationLines)
             .OnDelete(DeleteBehavior.Cascade);
 
             //Composite key for Same payroll
