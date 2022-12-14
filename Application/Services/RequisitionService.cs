@@ -88,6 +88,8 @@ namespace Application.Services
                 line.AvailableQuantity = stock
                     .Where(i => i.ItemId == line.ItemId && i.WarehouseId==line.WarehouseId)
                     .Sum(i => i.AvailableQuantity);
+
+                line.SubTotal = line.PurchasePrice * line.Quantity;
             }
 
             ReturningRemarks(requisitionDto, DocType.Requisition);
