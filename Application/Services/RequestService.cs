@@ -163,6 +163,12 @@ namespace Application.Services
                         };
                         await _unitOfWork.Remarks.Add(addRemarks);
                     }
+                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                    {
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Request Approved");
+                    }
                     if (transition.NextStatus.State == DocumentStatus.Rejected)
                     {
                         await _unitOfWork.SaveAsync();
