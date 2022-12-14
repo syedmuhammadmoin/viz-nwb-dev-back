@@ -23,6 +23,7 @@ namespace Domain.Entities
         public int CampusId { get; private set; }
         [ForeignKey("CampusId")]
         public Campus Campus { get; private set; }
+        public int? RequestId { get; private set; }
         public virtual List<RequisitionLines> RequisitionLines { get; private set; }
 
         protected RequisitionMaster()
