@@ -86,7 +86,7 @@ namespace Application.Services
             foreach (var line in requisitionDto.RequisitionLines)
             {
                 line.AvailableQuantity = stock
-                    .Where(i => i.ItemId == line.ItemId)
+                    .Where(i => i.ItemId == line.ItemId && i.WarehouseId==line.WarehouseId)
                     .Sum(i => i.AvailableQuantity);
             }
 
