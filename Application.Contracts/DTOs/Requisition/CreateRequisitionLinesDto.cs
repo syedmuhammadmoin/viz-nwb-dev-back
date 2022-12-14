@@ -13,6 +13,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? ItemId { get; set; }
         [Required]
+        [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public decimal PurchasePrice { get;  set; }
 
         [Required]
