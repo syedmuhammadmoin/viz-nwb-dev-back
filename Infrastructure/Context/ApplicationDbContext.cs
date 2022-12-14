@@ -83,6 +83,9 @@ namespace Infrastructure.Context
         public DbSet<LogItem> LogItems { get; set; }
         public DbSet<RequestMaster> RequestMaster { get; set; }
         public DbSet<RequestLines> RequestLines { get; set; }
+        public DbSet<BidEvaluationMaster> BidEvaluationMasters { get; set; }
+        public DbSet<BidEvaluationLines> BidEvaluationLines { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
