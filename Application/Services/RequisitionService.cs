@@ -199,7 +199,14 @@ namespace Application.Services
                         }
                         if (transition.NextStatus.State == DocumentStatus.Rejected)
                         {
-                            await _unitOfWork.SaveAsync();
+                       
+                        foreach (var line in getRequisition.RequisitionLines)
+                        {
+                            var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs(line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
+                            getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedQuantity - line.Quantity);
+                            getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
+                        }
+                        await _unitOfWork.SaveAsync();
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "Requisition Rejected");
                         }
