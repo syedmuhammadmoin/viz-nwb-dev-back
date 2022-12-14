@@ -59,6 +59,7 @@ namespace Domain.Interfaces
         IIssuanceReturnRepository IssuanceReturn { get; }
         IRemarkRepository Remarks { get; }
         IRequestRepository Request { get; }
+        IBidEvaluationRepository BidEvaluation { get; }
         Task SaveAsync();
         void CreateTransaction();
         void Commit();
