@@ -69,6 +69,7 @@ namespace Infrastructure.Uow
         public IIssuanceReturnRepository IssuanceReturn { get; private set; }
         public IRemarkRepository Remarks { get; private set; }
         public IRequestRepository Request { get; private set; }
+        public IBidEvaluationRepository BidEvaluation { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -122,6 +123,7 @@ namespace Infrastructure.Uow
             IssuanceReturn = new IssuanceReturnRepository(context);
             Remarks = new RemarkRepository(context);
             Request = new RequestRepository(context);
+            BidEvaluation = new BidEvaluationRepository(context);
         }
 
         public async Task SaveAsync()
