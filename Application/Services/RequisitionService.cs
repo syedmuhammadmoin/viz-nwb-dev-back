@@ -231,10 +231,42 @@ namespace Application.Services
             }
         }
 
+        private Response<bool> CheckOrUpdateQty(CreateRequisitionDto requisition)
+        {
+            foreach (var line in requisition.RequisitionLines)
+            {
+                var getStockRecord= _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
+
+                if (getStockRecord == null)
+                    return new Response<bool>("Item not found in stock");
+
+                if (getStockRecord.AvailableQuantity == 0)
+                    return new Response<bool>("Selected item is out of stock");
+
+
+                if (line.Quantity > getStockRecord.AvailableQuantity)
+                    return new Response<bool>("Selected item quantity is exceeding available quantity");
+
+                getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedQuantity + (int)line.Quantity);
+                getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - (int)line.Quantity);
+
+            }
+            return new Response<bool>(true, "Requisition Save Successfully");
+        }
+
         private async Task<Response<RequisitionDto>> SaveRequisition(CreateRequisitionDto entity, int status)
         {
             if (entity.RequisitionLines.Count() == 0)
                 return new Response<RequisitionDto>("Lines are required");
+
+
+
+
+            //Checking available quantity in stock
+            var checkOrUpdateQty = CheckOrUpdateQty(entity);
+            if (!checkOrUpdateQty.IsSuccess)
+                return new Response<RequisitionDto>(checkOrUpdateQty.Message);
+
 
             //Checking duplicate Lines if any
             var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId})
@@ -281,7 +313,11 @@ namespace Application.Services
 
             if (requisition.StatusId != 1 && requisition.StatusId != 2)
                 return new Response<RequisitionDto>("Only draft document can be edited");
-            
+
+
+          
+
+
             //Checking duplicate Lines if any
             var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
              .Where(g => g.Count() > 1)
@@ -290,6 +326,13 @@ namespace Application.Services
 
             if (duplicates.Any())
                 return new Response<RequisitionDto>("Duplicate Lines found");
+
+            //Checking available quantity in stock
+            var checkOrUpdateQty = CheckOrUpdateQty(entity);
+            if (!checkOrUpdateQty.IsSuccess)
+                return new Response<RequisitionDto>(checkOrUpdateQty.Message);
+
+
             //Setting status
             requisition.setStatus(status);
 
@@ -308,6 +351,8 @@ namespace Application.Services
             
         }
 
+
+      
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
