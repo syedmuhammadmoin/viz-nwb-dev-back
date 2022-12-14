@@ -79,7 +79,12 @@ namespace Application.Services
 
             var requestDto = _mapper.Map<RequestDto>(request);
             ReturningRemarks(requestDto, DocType.Request);
-            requestDto.IsAllowedRole = true;
+
+            if ((requestDto.State == DocumentStatus.Partial || requestDto.State == DocumentStatus.Paid))
+            {
+                return new Response<RequestDto>(requestDto, "Returning value");
+            }
+            requestDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Request)).FirstOrDefault();
             if (workflow != null)
             {
@@ -264,6 +269,7 @@ namespace Application.Services
 
             return remarks;
         }
+
 
     }
 }
