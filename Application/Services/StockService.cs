@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.Stock;
 using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
@@ -35,5 +36,13 @@ namespace Application.Services
             return new PaginationResponse<List<StockDto>>(_mapper.Map<List<StockDto>>(stock),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
+        public  Response<StockDto> GetStockByItemAndWarehouse(GetStockByItemAndWarehouseDto stock)
+        {
+            var getStockRecord =  _unitOfWork.Stock.Find(new StockSpecs(stock.ItemId, stock.WarehouseId)).FirstOrDefault();
+
+            return  new Response<StockDto>(_mapper.Map<StockDto>(getStockRecord),
+                "Returing Stock Details");
+        }
+
     }
 }
