@@ -73,6 +73,7 @@ namespace Domain.Constants
         GoodsReturnNote = 19,
         IssuanceReturn = 20,
         Request = 21,
+        BidEvaluation = 22
     }
     public enum ActionButton
     {
