@@ -79,7 +79,7 @@ namespace Application.Services
 
             var requestDto = _mapper.Map<RequestDto>(request);
             ReturningRemarks(requestDto, DocType.Request);
-            requestDto.IsAllowedRole = false;
+            requestDto.IsAllowedRole = true;
 
             return new Response<RequestDto>(requestDto, "Returning value");
         }
