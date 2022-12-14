@@ -49,6 +49,7 @@ namespace Domain.Interfaces
         IUnitOfMeasurementRepository UnitOfMeasurement { get; }
         ITaxRepository Taxes { get; }
         IIssuanceRepository Issuance { get; }
+        IFileUploadRepository Fileupload { get; }
         IStockRepository Stock { get; }
         IPOToGRNLineReconcileRepository POToGRNLineReconcile { get; }
         IRequisitionToIssuanceLineReconcileRepository RequisitionToIssuanceLineReconcile { get; }
@@ -57,8 +58,7 @@ namespace Domain.Interfaces
         IIssuanceToIssuanceReturnLineReconcileRepository IssuanceToIssuanceReturnLineReconcile { get; }
         IIssuanceReturnRepository IssuanceReturn { get; }
         IRemarkRepository Remarks { get; }
-
-        IFileUploadRepository Fileupload { get; }
+        IRequestRepository Request { get; }
         Task SaveAsync();
         void CreateTransaction();
         void Commit();
