@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.BidEvaluation;
 using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
@@ -339,20 +340,6 @@ namespace Application.Mapper
             CreateMap<CreateRequisitionDto, RequisitionMaster>();
 
             CreateMap<CreateRequisitionLinesDto, RequisitionLines>();
-            //Request Form
-            CreateMap<RequestMaster, RequestDto>()
-                .ForMember(dto => dto.EmployeeName, core => core.MapFrom(a => a.Employee.Name))
-               .ForMember(dto => dto.Campus, core => core.MapFrom(a => a.Campus.Name))
-               .ForMember(dto => dto.Status, core => core.MapFrom(
-                    a => a.Status.State == DocumentStatus.Unpaid ? "Open" :
-                    a.Status.State == DocumentStatus.Partial ? "Open" :
-                    a.Status.State == DocumentStatus.Paid ? "Closed" : a.Status.Status))
-              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
-            CreateMap<RequestLines, RequestLinesDto>();
-
-            CreateMap<CreateRequestDto, RequestMaster>();
-            CreateMap<CreateRequestLinesDto, RequestLines>();
-
             // GRN Mapping
             CreateMap<GRNMaster, GRNDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
@@ -499,6 +486,25 @@ namespace Application.Mapper
             // User Mapping
             CreateMap<User, UsersListDto>()
                 .ForMember(dto => dto.Name, core => core.MapFrom(a => a.Employee.Name));
+            //Request Form
+            CreateMap<RequestMaster, RequestDto>()
+                .ForMember(dto => dto.EmployeeName, core => core.MapFrom(a => a.Employee.Name))
+               .ForMember(dto => dto.Campus, core => core.MapFrom(a => a.Campus.Name))
+               .ForMember(dto => dto.Status, core => core.MapFrom(
+                    a => a.Status.State == DocumentStatus.Unpaid ? "Open" :
+                    a.Status.State == DocumentStatus.Partial ? "Open" :
+                    a.Status.State == DocumentStatus.Paid ? "Closed" : a.Status.Status))
+              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+            CreateMap<RequestLines, RequestLinesDto>();
+            CreateMap<CreateRequestDto, RequestMaster>();
+            CreateMap<CreateRequestLinesDto, RequestLines>();
+            // Bid Evaluation 
+            CreateMap<BidEvaluationMaster, BidEvaluationDto>();
+            CreateMap<BidEvaluationLines, BidEvaluationLinesDto>();
+            CreateMap<CreateBidEvaluationLinesDtos, BidEvaluationLinesDto>();
+            CreateMap<CreateBidEvaluationDtos, BidEvaluationDto>();
+
+
         }
     }
 }
