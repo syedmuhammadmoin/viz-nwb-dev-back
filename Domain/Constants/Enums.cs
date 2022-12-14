@@ -8,113 +8,114 @@ namespace Domain.Constants
 {
     public enum Roles
     {
-        SuperAdmin,
-        Admin
+        SuperAdmin = 0,
+        Admin = 1
     }
     public enum BusinessPartnerType 
     {
-        Customer,
-        Vendor,
-        Employee,
-        Supplier, 
-        Consultant, 
-        Contractor
+        Customer = 0,
+        Vendor = 1,
+        Employee = 2,
+        Supplier = 3, 
+        Consultant = 4, 
+        Contractor = 5
     }
     public enum ProductType
     {
-        Consumable,
-        Service,
-        FixedAsset
+        Consumable = 0,
+        Service = 1,
+        FixedAsset = 2
     }
     public enum DocumentStatus
     {
-        Draft,
-        Rejected,
-        Unpaid,
-        Partial,
-        Paid,
-        Submitted,
-        Reviewed,
-        Cancelled,
-        Unreconciled,
-        Reconciled
+        Draft = 0,
+        Rejected = 1,
+        Unpaid = 2,
+        Partial = 3,
+        Paid = 4,
+        Submitted = 5,
+        Reviewed = 6,
+        Cancelled = 7,
+        Unreconciled = 8,
+        Reconciled = 9
     }
     public enum PaymentType
     {
-        Inflow,
-        Outflow
+        Inflow = 0,
+        Outflow = 1 
     }
     public enum PaymentRegisterType
     {
-        CashAccount,
-        BankAccount
+        CashAccount = 0,
+        BankAccount = 1
     }
     public enum DocType
     {
-        Payment,
-        CreditNote,
-        DebitNote,
-        Invoice,
-        Bill,
-        JournalEntry,
-        BankAccount,
-        CashAccount,
-        PurchaseOrder,
-        SalesOrder,
-        GRN,
-        GDN,
-        InventoryAdjustment,
-        Quotation,
-        Requisition,
-        Receipt,
-        PayrollTransaction,
-        PayrollPayment,
-        Issuance,
-        GoodsReturnNote,
-        IssuanceReturn
+        Payment = 0,
+        CreditNote = 1,
+        DebitNote = 2,
+        Invoice = 3,
+        Bill = 4,
+        JournalEntry = 5,
+        BankAccount = 6 ,
+        CashAccount = 7,
+        PurchaseOrder = 8,
+        SalesOrder = 9,
+        GRN = 10,
+        GDN = 11,
+        InventoryAdjustment = 12,
+        Quotation = 13,
+        Requisition = 14,
+        Receipt = 15,
+        PayrollTransaction = 16,
+        PayrollPayment = 17,
+        Issuance = 18,
+        GoodsReturnNote = 19,
+        IssuanceReturn = 20,
+        Request = 21,
     }
     public enum ActionButton
     {
-        Approve,
-        Reject
+        Approve = 0,
+        Reject = 1
     }
     public enum StatusType
     {
-        Custom,
-        PreDefined,
-        PreDefinedInList,
+        Custom = 0,
+        PreDefined = 1,
+        PreDefinedInList = 2,
     }
     public enum BankAccountType
     {
-        Current,
-        Saving
+        Current = 0,
+        Saving = 1
     }
     public enum CalculationType
     {
-        Percentage,
-        FixedAmount
+        Percentage = 0,
+        FixedAmount = 1 
     }
     public enum PayrollType
     {
-        BasicPay,
-        Increment,
-        Deduction,
-        Allowance,
-        AssignmentAllowance,
-        TaxDeduction
+        BasicPay = 0,
+        Increment = 1,
+        Deduction = 2,
+        Allowance = 3,
+        AssignmentAllowance = 4,
+        TaxDeduction = 5
     }
     public enum TaxType
     {
-        SalesTaxAsset,
-        SalesTaxLiability,
-        IncomeTaxAsset,
-        IncomeTaxLiability,
-        SRBTaxAsset,
-        SRBTaxLiability
+        SalesTaxAsset = 0,
+        SalesTaxLiability = 1,
+        IncomeTaxAsset = 2,
+        IncomeTaxLiability = 3,
+        SRBTaxAsset = 4,
+        SRBTaxLiability = 5  
     }
     public enum AccountType
     {
-        SystemDefined,
-        UserDefined
+        SystemDefined = 0,
+        UserDefined = 1
     }
 }

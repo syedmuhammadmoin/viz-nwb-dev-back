@@ -49,14 +49,23 @@ namespace Infrastructure.Specifications
                 AddInclude("PurchaseOrderLines.Warehouse");
             }
         }
+        
         public PurchaseOrderSpecs()
             : base(x => x.Status.State != DocumentStatus.Paid)
         {
             AddInclude(i => i.PurchaseOrderLines);
         }
+        
         public PurchaseOrderSpecs(int id) : base(x => x.Id == id)
         {
             AddInclude(i => i.PurchaseOrderLines);
         }
+
+        public PurchaseOrderSpecs(string workflow)
+            : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
+        {
+            AddInclude(i => i.Status);
+        }
+
     }
 }

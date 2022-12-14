@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Specifications
 {
-    public class RequisitionSpecs : BaseSpecification<RequisitionMaster>
+    public class RequestSpecs : BaseSpecification<RequestMaster>
     {
-        public RequisitionSpecs(List<DateTime?> docDate,
+        public RequestSpecs(List<DateTime?> docDate,
             List<DocumentStatus?> states, TransactionFormFilter filter, bool isTotalRecord)
-            : base(x => (docDate.Count() > 0 ? docDate.Contains(x.RequisitionDate) : true)
-            && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
+            : base(x => (docDate.Count() > 0 ? docDate.Contains(x.RequestDate) : true)
+               && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
             && x.Employee.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
             && (states.Count() > 0 ? states.Contains(x.Status.State) : true))
         {
@@ -26,16 +26,13 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Campus);
                 AddInclude(i => i.Status);
                 AddInclude(i => i.Employee);
-                AddInclude("RequisitionLines.Item");
-                AddInclude("RequisitionLines.Warehouse");
             }
         }
-
-        public RequisitionSpecs(bool forEdit)
+        public RequestSpecs(bool forEdit)
         {
             if (forEdit)
             {
-                AddInclude(i => i.RequisitionLines);
+                AddInclude(i => i.RequestLines);
                 AddInclude(i => i.Status);
             }
             else
@@ -43,16 +40,16 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Campus);
                 AddInclude(i => i.Status);
                 AddInclude(i => i.Employee);
-                AddInclude("RequisitionLines.Item");
-                AddInclude("RequisitionLines.Warehouse");
+                AddInclude(i => i.RequestLines);
             }
         }
-        public RequisitionSpecs()
-        : base(x => x.Status.State != DocumentStatus.Paid)
+
+        public RequestSpecs() : base(x => x.Status.State != DocumentStatus.Paid)
         {
-            AddInclude(i => i.RequisitionLines);
+            AddInclude(i => i.RequestLines);
         }
-        public RequisitionSpecs(string workflow)
+
+        public RequestSpecs(string workflow)
          : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
         {
             AddInclude(i => i.Status);

@@ -52,5 +52,11 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.IssuanceLines);
         }
+
+        public IssuanceSpecs(string workflow)
+           : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
+        {
+            AddInclude(i => i.Status);
+        }
     }
 }

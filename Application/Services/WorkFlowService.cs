@@ -143,11 +143,81 @@ namespace Application.Services
 
             if (entity.DocType == DocType.Receipt)
             {
-                var checkingInvoice = _unitOfWork.Payment.Find(new PaymentSpecs("")).ToList();
+                var checkingWorkFlow = _unitOfWork.Payment.Find(new PaymentSpecs("")).ToList();
 
-                if (checkingInvoice.Count != 0)
+                if (checkingWorkFlow.Count != 0)
                 {
                     return new Response<WorkFlowDto>("Receipt is pending for this workflow");
+                }
+            }
+            
+            if (entity.DocType == DocType.PayrollPayment)
+            {
+                var checkingWorkFlow = _unitOfWork.Payment.Find(new PaymentSpecs("")).ToList();
+
+                if (checkingWorkFlow.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Payroll Payment is pending for this workflow");
+                }
+            }
+
+            if (entity.DocType == DocType.PurchaseOrder)
+            {
+                var checkingWorkFlow = _unitOfWork.PurchaseOrder.Find(new PurchaseOrderSpecs("")).ToList();
+
+                if (checkingWorkFlow.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Purchase Order is pending for this workflow");
+                }
+            }
+
+            if (entity.DocType == DocType.GRN)
+            {
+                var checkingGRN = _unitOfWork.GRN.Find(new GRNSpecs("")).ToList();
+
+                if (checkingGRN.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("GRN is pending for this workflow");
+                }
+            }
+
+            if (entity.DocType == DocType.Requisition)
+            {
+                var checkingRequisition = _unitOfWork.Requisition.Find(new RequisitionSpecs("")).ToList();
+
+                if (checkingRequisition.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Requisition is pending for this workflow");
+                }
+            }
+
+            if (entity.DocType == DocType.Request)
+            {
+                var checkingRequest = _unitOfWork.Request.Find(new RequestSpecs("")).ToList();
+
+                if (checkingRequest.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Requisition is pending for this workflow");
+                }
+            }
+
+            if (entity.DocType == DocType.Issuance)
+            {
+                var checkingIssuance = _unitOfWork.Issuance.Find(new IssuanceSpecs("")).ToList();
+
+                if (checkingIssuance.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Issuance is pending for this workflow");
+                }
+            }
+
+            if (entity.DocType == DocType.IssuanceReturn)
+            {
+                var checkingIssuance = _unitOfWork.IssuanceReturn.Find(new IssuanceReturnSpecs()).ToList();
+
+                if (checkingIssuance.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Issuance Return is pending for this workflow");
                 }
             }
 
