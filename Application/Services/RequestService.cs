@@ -80,6 +80,24 @@ namespace Application.Services
             var requestDto = _mapper.Map<RequestDto>(request);
             ReturningRemarks(requestDto, DocType.Request);
             requestDto.IsAllowedRole = true;
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Request)).FirstOrDefault();
+            if (workflow != null)
+            {
+                var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == requestDto.StatusId));
+
+                if (transition != null)
+                {
+                    var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+                    foreach (var role in currentUserRoles)
+                    {
+                        if (transition.AllowedRole.Name == role)
+                        {
+                            requestDto.IsAllowedRole = true;
+                        }
+                    }
+                }
+            }
 
             return new Response<RequestDto>(requestDto, "Returning value");
         }
