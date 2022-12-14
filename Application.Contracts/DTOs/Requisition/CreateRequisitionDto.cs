@@ -17,6 +17,8 @@ namespace Application.Contracts.DTOs
         public DateTime? RequisitionDate { get; set; }
         [Required]
         public int? CampusId { get; set; }
+        public int? RequestId { get; private set; }
+
         [Required]
         public bool? IsWithoutWorkflow { get; set; }
         [Required]

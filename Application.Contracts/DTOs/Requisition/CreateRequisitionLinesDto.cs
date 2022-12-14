@@ -13,11 +13,15 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? ItemId { get; set; }
         [Required]
+        public decimal PurchasePrice { get; private set; }
+
+        [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be greater than 0")]
         public int? Quantity { get; set; }
         [Required]
         [MaxLength(100)]
         public string Description { get; set; }
+        [Required]
         public int? WarehouseId { get; set; }
     }
 }

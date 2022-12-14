@@ -2,6 +2,7 @@
 using Domain.Constants;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ namespace Application.Contracts.DTOs
         public string EmployeeName { get; set; }
         public string DocNo { get; set; }
         public int StatusId { get; set; }
+        public int? RequestId { get; private set; }
+
         public string Status { get; set; }
         public string Campus { get; set; }
         public int CampusId { get; set; }
@@ -24,5 +27,6 @@ namespace Application.Contracts.DTOs
         public IEnumerable<RemarksDto> RemarksList { get; set; }
         public virtual List<RequisitionLinesDto> RequisitionLines { get; set; }
         public bool IsAllowedRole { get; set; }
+        public bool? IsWithoutWorkflow { get; set; }
     }
 }
