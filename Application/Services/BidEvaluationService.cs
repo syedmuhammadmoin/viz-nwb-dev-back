@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.DTOs;
-using Application.Contracts.DTOs.BidEvaluation;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -10,6 +9,7 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
 using Microsoft.AspNetCore.Http;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,21 +22,13 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public BidEvaluationService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public BidEvaluationService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _httpContextAccessor = httpContextAccessor;
         }
-
-        public Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Response<BidEvaluationDto>> CreateAsync(CreateBidEvaluationDtos entity)
+        public async Task<Response<BidEvaluationDto>> CreateAsync(CreateBidEvaluationDto entity)
         {
             if ((bool)entity.isSubmit)
             {
@@ -44,20 +36,36 @@ namespace Application.Services
             }
             else
             {
-                return await this.SaveBidEvaluation(entity, DocumentStatus.Draft);
+                return await this.SaveBidEvaluation(entity);
             }
         }
-
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
-
-        public Task<PaginationResponse<List<BidEvaluationDto>>> GetAllAsync(TransactionFormFilter filter)
+        public async Task<PaginationResponse<List<BidEvaluationDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            throw new NotImplementedException();
-        }
+            var OpeningDate = new List<DateTime?>();
+            var states = new List<DocumentStatus?>();
+            if (filter.DocDate != null)
+            {
+                OpeningDate.Add(filter.DocDate);
+            }
+            if (filter.State != null)
+            {
+                states.Add(filter.State);
+            }
 
+            var bidEvaluation = await _unitOfWork.BidEvaluation.GetAll(new BidEvaluationSpecs(OpeningDate, states, filter, false));
+
+            if (bidEvaluation.Count() == 0)
+                return new PaginationResponse<List<BidEvaluationDto>>(_mapper.Map<List<BidEvaluationDto>>(bidEvaluation), "List is empty");
+
+            var totalRecords = await _unitOfWork.BidEvaluation.TotalRecord(new BidEvaluationSpecs(OpeningDate, states, filter, true));
+
+            return new PaginationResponse<List<BidEvaluationDto>>(_mapper.Map<List<BidEvaluationDto>>(bidEvaluation),
+                filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
+        }
         public async Task<Response<BidEvaluationDto>> GetByIdAsync(int id)
         {
             var specification = new BidEvaluationSpecs(false);
@@ -66,12 +74,11 @@ namespace Application.Services
                 return new Response<BidEvaluationDto>("Not found");
 
             var bidEvaluationDto = _mapper.Map<BidEvaluationDto>(bidEvaluation);
-           
-          
+
+
             return new Response<BidEvaluationDto>(bidEvaluationDto, "Returning value");
         }
-
-        public async Task<Response<BidEvaluationDto>> UpdateAsync(CreateBidEvaluationDtos entity)
+        public async Task<Response<BidEvaluationDto>> UpdateAsync(CreateBidEvaluationDto entity)
         {
             if ((bool)entity.isSubmit)
             {
@@ -79,31 +86,36 @@ namespace Application.Services
             }
             else
             {
-                return await this.UpdateBidEvaluation(entity, DocumentStatus.Draft);
+                return await this.UpdateBidEvaluation(entity);
             }
         }
-
-        private async Task<Response<BidEvaluationDto>> SubmitBidEvaluation(CreateBidEvaluationDtos entity )
+        private async Task<Response<BidEvaluationDto>> SubmitBidEvaluation(CreateBidEvaluationDto entity)
         {
             if (entity.Id == null)
             {
-                return await this.SaveBidEvaluation(entity, DocumentStatus.Submitted);
+                return await this.SaveBidEvaluation(entity);
             }
             else
             {
-                return await this.UpdateBidEvaluation(entity, DocumentStatus.Submitted);
+                return await this.UpdateBidEvaluation(entity);
             }
         }
-        private async Task<Response<BidEvaluationDto>> SaveBidEvaluation(CreateBidEvaluationDtos entity , DocumentStatus status)
+        private async Task<Response<BidEvaluationDto>> SaveBidEvaluation(CreateBidEvaluationDto entity)
         {
             if (entity.BidEvaluationLines.Count() == 0)
                 return new Response<BidEvaluationDto>("Lines are required");
 
             var bidEvaluation = _mapper.Map<BidEvaluationMaster>(entity);
+
+            if (entity.isSubmit == true)
+            {
+                bidEvaluation.setStatus(DocumentStatus.Submitted);
+            }
+            else
+            {
+                bidEvaluation.setStatus(DocumentStatus.Draft);
+            }
             _unitOfWork.CreateTransaction();
-
-            bidEvaluation.setStatus(status);
-
             //Saving in table
             var result = await _unitOfWork.BidEvaluation.Add(bidEvaluation);
             await _unitOfWork.SaveAsync();
@@ -117,7 +129,7 @@ namespace Application.Services
             return new Response<BidEvaluationDto>(_mapper.Map<BidEvaluationDto>(result), "Created successfully");
 
         }
-        private async Task<Response<BidEvaluationDto>> UpdateBidEvaluation(CreateBidEvaluationDtos entity, DocumentStatus status)
+        private async Task<Response<BidEvaluationDto>> UpdateBidEvaluation(CreateBidEvaluationDto entity)
         {
             if (entity.BidEvaluationLines.Count() == 0)
                 return new Response<BidEvaluationDto>("Lines are required");
@@ -127,13 +139,20 @@ namespace Application.Services
 
             if (bidEvaluation == null)
                 return new Response<BidEvaluationDto>("Not found");
-
-            bidEvaluation.setStatus(status);
-
+            if (bidEvaluation.State != DocumentStatus.Draft)
+                return new Response<BidEvaluationDto>("Only draft document can be edited");
+            if (entity.isSubmit == true)
+            {
+                bidEvaluation.setStatus(DocumentStatus.Submitted);
+            }
+            else
+            {
+                bidEvaluation.setStatus(DocumentStatus.Draft);
+            }
             _unitOfWork.CreateTransaction();
 
             //For updating data
-            _mapper.Map<CreateBidEvaluationDtos, BidEvaluationMaster>(entity, bidEvaluation);
+            _mapper.Map<CreateBidEvaluationDto, BidEvaluationMaster>(entity, bidEvaluation);
 
             await _unitOfWork.SaveAsync();
 
