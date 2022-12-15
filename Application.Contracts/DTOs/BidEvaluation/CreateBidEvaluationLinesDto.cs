@@ -9,28 +9,28 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.DTOs
 {
-    public class CreateBidEvaluationLinesDtos
+    public class CreateBidEvaluationLinesDto
     {
         public int? Id { get; set; }
         [Required]
-        public string NameOfBider { get; private set; }
+        public string NameOfBider { get;  set; }
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal TechnicalTotal { get; private set; }
+        public decimal? TechnicalTotal { get;  set; }
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal TechnicalObtain { get; private set; }
+        public decimal? TechnicalObtain { get;  set; }
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal FinancialTotal { get; private set; }
+        public decimal? FinancialTotal { get;  set; }
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal FinancialObtain { get; private set; }
+        public decimal? FinancialObtain { get;  set; }
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal EvaluatedCost { get; private set; }
+        public decimal? EvaluatedCost { get;  set; }
         [Required]
         [MaxLength(500)]
-        public string Rule { get; private set; }
+        public string Rule { get;  set; }
     }
 }
