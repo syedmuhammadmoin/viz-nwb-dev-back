@@ -63,6 +63,7 @@ builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<IGoodsReturnNoteService, GoodsReturnNoteService>();
 builder.Services.AddScoped<IIssuanceReturnService, IssuanceReturnService>();
 builder.Services.AddScoped<IRequestService, RequestService>();
+builder.Services.AddScoped<IBidEvaluationService, BidEvaluationService>();
 
 
 //Add auto mapper config
