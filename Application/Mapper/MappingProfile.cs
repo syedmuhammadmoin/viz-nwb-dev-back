@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.DTOs;
-using Application.Contracts.DTOs.BidEvaluation;
 using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
@@ -499,10 +498,18 @@ namespace Application.Mapper
             CreateMap<CreateRequestDto, RequestMaster>();
             CreateMap<CreateRequestLinesDto, RequestLines>();
             // Bid Evaluation 
-            CreateMap<BidEvaluationMaster, BidEvaluationDto>();
+            CreateMap<BidEvaluationMaster, BidEvaluationDto>()
+               .ForMember(dto => dto.status, core => core.MapFrom(
+                   a => a.State == DocumentStatus.Draft ? "Draft" :
+                   a.State == DocumentStatus.Submitted ? "Submitted" : a.State.ToString()))
+               .ForMember(dto => dto.status, core => core.MapFrom(a => a.State));
+               ;
+                   
+                  
+
             CreateMap<BidEvaluationLines, BidEvaluationLinesDto>();
-            CreateMap<CreateBidEvaluationLinesDtos, BidEvaluationLinesDto>();
-            CreateMap<CreateBidEvaluationDtos, BidEvaluationDto>();
+            CreateMap<CreateBidEvaluationLinesDto, BidEvaluationLines>();
+            CreateMap<CreateBidEvaluationDto, BidEvaluationMaster>();
 
 
         }
