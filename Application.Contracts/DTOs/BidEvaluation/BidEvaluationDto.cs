@@ -22,7 +22,8 @@ namespace Application.Contracts.DTOs
         public DateTime DateOfClosingBid { get; set; }
         public string BidEvaluationCriteria { get; set; }
         public string LowestEvaluatedBidder { get; set; }
-        public DocumentStatus status { get; set; }
+        public DocumentStatus State { get; set; }
+        public string Status { get; set; }
         public virtual List<BidEvaluationLinesDto> BidEvaluationLines { get; set; }
     }
 }
