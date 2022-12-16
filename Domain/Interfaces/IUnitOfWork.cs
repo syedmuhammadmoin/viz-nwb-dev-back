@@ -60,6 +60,7 @@ namespace Domain.Interfaces
         IRemarkRepository Remarks { get; }
         IRequestRepository Request { get; }
         IBidEvaluationRepository BidEvaluation { get; }
+        IQuotationRepository Quotation { get; }
         Task SaveAsync();
         void CreateTransaction();
         void Commit();
