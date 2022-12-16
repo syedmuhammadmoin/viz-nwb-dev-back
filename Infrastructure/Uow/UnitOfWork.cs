@@ -70,6 +70,7 @@ namespace Infrastructure.Uow
         public IRemarkRepository Remarks { get; private set; }
         public IRequestRepository Request { get; private set; }
         public IBidEvaluationRepository BidEvaluation { get; private set; }
+        public IQuotationRepository Quotation { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -124,6 +125,7 @@ namespace Infrastructure.Uow
             Remarks = new RemarkRepository(context);
             Request = new RequestRepository(context);
             BidEvaluation = new BidEvaluationRepository(context);
+            Quotation = new QuotationRepository(context);
         }
 
         public async Task SaveAsync()
