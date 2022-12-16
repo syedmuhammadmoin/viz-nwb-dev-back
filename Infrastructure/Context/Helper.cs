@@ -118,6 +118,12 @@ namespace Infrastructure.Context
             .WithMany(c => c.BidEvaluationLines)
             .OnDelete(DeleteBehavior.Cascade);
 
+            //Quotation
+            modelBuilder.Entity<QuotationLines>()
+            .HasOne(tc => tc.QuotationMaster)
+            .WithMany(c => c.QuotationLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
             //Composite key for Same payroll
             modelBuilder.Entity<PayrollTransactionMaster>()
             .HasAlternateKey(p => new { p.Month, p.Year, p.EmployeeId });
