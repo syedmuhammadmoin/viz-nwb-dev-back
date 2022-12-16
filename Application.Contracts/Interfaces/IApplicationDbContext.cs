@@ -79,7 +79,8 @@ namespace Application.Interfaces
         public DbSet<RequestLines> RequestLines { get; set; }
         public DbSet<BidEvaluationMaster> BidEvaluationMasters { get; set; }
         public DbSet<BidEvaluationLines> BidEvaluationLines { get; set; }
-
+        public DbSet<QuotationLines> QuotationLines { get; set; }
+        public DbSet<QuotationMaster> QuotationMasters { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }
