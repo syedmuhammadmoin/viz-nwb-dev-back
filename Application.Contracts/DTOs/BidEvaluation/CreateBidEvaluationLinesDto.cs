@@ -16,18 +16,23 @@ namespace Application.Contracts.DTOs
         public string NameOfBider { get;  set; }
         [Required]
         [Column(TypeName = "decimal(18,2)")]
+        [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public decimal? TechnicalTotal { get;  set; }
         [Required]
         [Column(TypeName = "decimal(18,2)")]
+        [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public decimal? TechnicalObtain { get;  set; }
         [Required]
         [Column(TypeName = "decimal(18,2)")]
+        [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public decimal? FinancialTotal { get;  set; }
         [Required]
         [Column(TypeName = "decimal(18,2)")]
+        [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public decimal? FinancialObtain { get;  set; }
         [Required]
         [Column(TypeName = "decimal(18,2)")]
+        [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public decimal? EvaluatedCost { get;  set; }
         [Required]
         [MaxLength(500)]
