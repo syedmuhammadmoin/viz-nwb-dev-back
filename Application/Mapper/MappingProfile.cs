@@ -486,7 +486,7 @@ namespace Application.Mapper
             CreateMap<User, UsersListDto>()
                 .ForMember(dto => dto.Name, core => core.MapFrom(a => a.Employee.Name));
 
-            //Request Form
+            //Request 
             CreateMap<RequestMaster, RequestDto>()
                 .ForMember(dto => dto.EmployeeName, core => core.MapFrom(a => a.Employee.Name))
                .ForMember(dto => dto.Campus, core => core.MapFrom(a => a.Campus.Name))
@@ -508,8 +508,17 @@ namespace Application.Mapper
             CreateMap<BidEvaluationLines, BidEvaluationLinesDto>();
             CreateMap<CreateBidEvaluationLinesDto, BidEvaluationLines>();
             CreateMap<CreateBidEvaluationDto, BidEvaluationMaster>();
-
-
+            //Quotation 
+            CreateMap<QuotationMaster, QuotationDto>()
+          .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
+         .ForMember(dto => dto.Status, core => core.MapFrom(
+              a => a.Status.State == DocumentStatus.Unpaid ? "Open" :
+              a.Status.State == DocumentStatus.Partial ? "Open" :
+              a.Status.State == DocumentStatus.Paid ? "Closed" : a.Status.Status))
+        .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+            CreateMap<QuotationLines, QuotationLinesDto>();
+            CreateMap<CreateQuotationDto, QuotationMaster>();
+            CreateMap<CreateQuotationLinesDto, QuotationLines>();
         }
     }
 }
