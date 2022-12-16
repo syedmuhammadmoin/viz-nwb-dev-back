@@ -485,6 +485,7 @@ namespace Application.Mapper
             // User Mapping
             CreateMap<User, UsersListDto>()
                 .ForMember(dto => dto.Name, core => core.MapFrom(a => a.Employee.Name));
+
             //Request Form
             CreateMap<RequestMaster, RequestDto>()
                 .ForMember(dto => dto.EmployeeName, core => core.MapFrom(a => a.Employee.Name))
@@ -497,15 +498,12 @@ namespace Application.Mapper
             CreateMap<RequestLines, RequestLinesDto>();
             CreateMap<CreateRequestDto, RequestMaster>();
             CreateMap<CreateRequestLinesDto, RequestLines>();
+
             // Bid Evaluation 
             CreateMap<BidEvaluationMaster, BidEvaluationDto>()
-               .ForMember(dto => dto.status, core => core.MapFrom(
-                   a => a.State == DocumentStatus.Draft ? "Draft" :
-                   a.State == DocumentStatus.Submitted ? "Submitted" : a.State.ToString()))
-               .ForMember(dto => dto.status, core => core.MapFrom(a => a.State));
-               ;
-                   
-                  
+                .ForMember(dto => dto.Status, core => core.MapFrom(
+                    a => a.State == DocumentStatus.Draft ? "Draft" :
+                    a.State == DocumentStatus.Submitted ? "Submitted" : "N/A"));
 
             CreateMap<BidEvaluationLines, BidEvaluationLinesDto>();
             CreateMap<CreateBidEvaluationLinesDto, BidEvaluationLines>();
