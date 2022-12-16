@@ -342,6 +342,13 @@ namespace Domain.Constants
             public const string Edit = "Permissions.Procurement.BidEvaluationClaims.Edit";
             public const string Delete = "Permissions.Procurement.BidEvaluationClaims.Delete";
         }
+        public static class QuotationClaims
+        {
+            public const string View = "Permissions.Procurement.QuotationClaims.View";
+            public const string Create = "Permissions.Procurement.QuotationClaims.Create";
+            public const string Edit = "Permissions.Procurement.QuotationClaims.Edit";
+            public const string Delete = "Permissions.Procurement.QuotationClaims.Delete";
+        }
         //Reporting Form
         public static class ChartOfAccountClaims
         {
