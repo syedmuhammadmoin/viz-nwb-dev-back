@@ -81,6 +81,8 @@ namespace Application.Interfaces
         public DbSet<BidEvaluationLines> BidEvaluationLines { get; set; }
         public DbSet<QuotationLines> QuotationLines { get; set; }
         public DbSet<QuotationMaster> QuotationMasters { get; set; }
+        public DbSet<CallForQuotationLines> CallForQuotationLines { get; set; }
+        public DbSet<CallForQuotationMaster> CallForQuotationMasters { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }
