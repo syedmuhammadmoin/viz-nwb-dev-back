@@ -61,6 +61,7 @@ namespace Domain.Interfaces
         IRequestRepository Request { get; }
         IBidEvaluationRepository BidEvaluation { get; }
         IQuotationRepository Quotation { get; }
+        ICallForQuotationRepository CallForQuotation { get; }
         Task SaveAsync();
         void CreateTransaction();
         void Commit();
