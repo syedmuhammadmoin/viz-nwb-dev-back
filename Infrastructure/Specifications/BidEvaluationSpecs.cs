@@ -13,10 +13,10 @@ namespace Infrastructure.Specifications
     public class BidEvaluationSpecs : BaseSpecification<BidEvaluationMaster>
     {
         public BidEvaluationSpecs(List<DateTime?> OpeningDate,
-        List<DocumentStatus?> states, TransactionFormFilter filter, bool isTotalRecord) : base(x => (OpeningDate.Count() > 0 ? OpeningDate.Contains(x.DateOfOpeningBid) : true)
-
+        List<DocumentStatus?> states, TransactionFormFilter filter, bool isTotalRecord) : base(x => 
+        (OpeningDate.Count() > 0 ? OpeningDate.Contains(x.DateOfOpeningBid) : true)
          && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
-        && states.Count() > 0 ? states.Contains(x.State) : true)
+        && (states.Count() > 0 ? states.Contains(x.State) : true))
         {
             if (!isTotalRecord)
             {
