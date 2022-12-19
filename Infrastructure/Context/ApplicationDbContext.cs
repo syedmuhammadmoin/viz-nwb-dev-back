@@ -87,6 +87,8 @@ namespace Infrastructure.Context
         public DbSet<BidEvaluationLines> BidEvaluationLines { get; set; }
         public DbSet<QuotationLines> QuotationLines { get; set; }
         public DbSet<QuotationMaster> QuotationMasters { get; set; }
+        public DbSet<CallForQuotationLines> CallForQuotationLines { get; set; }
+        public DbSet<CallForQuotationMaster> CallForQuotationMasters { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
