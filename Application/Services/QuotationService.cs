@@ -149,20 +149,20 @@ namespace Application.Services
                 return new Response<QuotationDto>("Lines are required");
 
             var specification = new QuotationSpecs(true);
-            var Quotation = await _unitOfWork.Quotation.GetById((int)entity.Id, specification);
+            var quotation = await _unitOfWork.Quotation.GetById((int)entity.Id, specification);
 
-            if (Quotation == null)
+            if (quotation == null)
                 return new Response<QuotationDto>("Not found");
 
-            if (Quotation.StatusId != 1 && Quotation.StatusId != 2)
+            if (quotation.StatusId != 1 && quotation.StatusId != 2)
                 return new Response<QuotationDto>("Only draft document can be edited");
 
-            Quotation.setStatus(status);
+            quotation.setStatus(status);
 
             _unitOfWork.CreateTransaction();
 
             //For updating data
-            _mapper.Map<CreateQuotationDto, QuotationMaster>(entity, Quotation);
+            _mapper.Map<CreateQuotationDto, QuotationMaster>(entity, quotation);
 
             await _unitOfWork.SaveAsync();
 
@@ -170,7 +170,7 @@ namespace Application.Services
             _unitOfWork.Commit();
 
             //returning response
-            return new Response<QuotationDto>(_mapper.Map<QuotationDto>(Quotation), "Updated successfully");
+            return new Response<QuotationDto>(_mapper.Map<QuotationDto>(quotation), "Updated successfully");
         }
 
         private async Task<Response<QuotationDto>> SaveQuotation(CreateQuotationDto entity, int status)
@@ -178,19 +178,19 @@ namespace Application.Services
             if (entity.QuotationLines.Count() == 0)
                 return new Response<QuotationDto>("Lines are Required");
 
-            var Quotation = _mapper.Map<QuotationMaster>(entity);
+            var quotation = _mapper.Map<QuotationMaster>(entity);
 
             //Setting status
-            Quotation.setStatus(status);
+            quotation.setStatus(status);
 
             _unitOfWork.CreateTransaction();
 
             //Saving in table
-            var result = await _unitOfWork.Quotation.Add(Quotation);
+            var result = await _unitOfWork.Quotation.Add(quotation);
             await _unitOfWork.SaveAsync();
 
             //For creating docNo
-            Quotation.CreateDocNo();
+            quotation.CreateDocNo();
             await _unitOfWork.SaveAsync();
 
             //Commiting the transaction 
