@@ -28,5 +28,9 @@ namespace Application.Contracts.DTOs
         public virtual List<RequisitionLinesDto> RequisitionLines { get; set; }
         public bool IsAllowedRole { get; set; }
         public bool? IsWithoutWorkflow { get; set; }
+        public bool? IsShowIssuanceButton { get; set; }
+        public bool? IsShowPurchaseOrderButton { get; set; }
+        public bool? IsShowRFQButton { get; set; }
+        public bool? IsShowTenderButton { get; set; }
     }
 }
