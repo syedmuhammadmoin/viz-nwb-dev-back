@@ -519,6 +519,16 @@ namespace Application.Mapper
             CreateMap<QuotationLines, QuotationLinesDto>();
             CreateMap<CreateQuotationDto, QuotationMaster>();
             CreateMap<CreateQuotationLinesDto, QuotationLines>();
+
+            //CallForQuotation 
+            CreateMap<CallForQuotationMaster, CallForQuotationDto>()
+          .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
+          .ForMember(dto => dto.Status, core => core.MapFrom(
+           a => a.State == DocumentStatus.Draft ? "Draft" : 
+           a.State == DocumentStatus.Submitted ? "Submitted" : "N/A"));
+            CreateMap<CallForQuotationLines, CallForQuotationLinesDto>();
+            CreateMap<CreateCallForQuotationDto, CallForQuotationMaster>();
+            CreateMap<CreateCallForQuotationLinesDto, CallForQuotationLines>();
         }
     }
 }
