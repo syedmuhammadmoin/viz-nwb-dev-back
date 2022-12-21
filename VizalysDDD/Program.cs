@@ -66,6 +66,7 @@ builder.Services.AddScoped<IRequestService, RequestService>();
 builder.Services.AddScoped<IBidEvaluationService, BidEvaluationService>();
 builder.Services.AddScoped<IQuotationService, QuotationService>();
 builder.Services.AddScoped<ICallForQuotationService, CallForQuotationService>();
+builder.Services.AddScoped<IQuotationComparativeService, QuotationComparativeService>();
 
 
 //Add auto mapper config
