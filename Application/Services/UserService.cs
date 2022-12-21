@@ -574,6 +574,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.WorkflowStatusClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.WorkflowClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.ReceiptClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.GeneralLedgerClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.BudgetClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.EstimatedBudgetClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.TrialBalanceClaims), "12");
