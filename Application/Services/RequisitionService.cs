@@ -32,12 +32,15 @@ namespace Application.Services
 
         public async Task<Response<RequisitionDto>> CreateAsync(CreateRequisitionDto entity)
         {
+           
             if ((bool)entity.isSubmit)
             {
+                
                 return await this.SubmitRequisition(entity);
             }
             else
             {
+                
                 return await this.SaveRequisition(entity, 1);
             }
         }
@@ -73,7 +76,21 @@ namespace Application.Services
             if (requisition == null)
                 return new Response<RequisitionDto>("Not found");
 
+            var requisitionProductItemIds = requisition.RequisitionLines.Select(i => i.ItemId).ToList();
+            //Getting stock by items id
+            var stock = await _unitOfWork.Stock.GetAll(new StockSpecs(requisitionProductItemIds));
+            
             var requisitionDto = _mapper.Map<RequisitionDto>(requisition);
+
+            foreach (var line in requisitionDto.RequisitionLines)
+            {
+                line.AvailableQuantity = stock
+                    .Where(i => i.ItemId == line.ItemId && i.WarehouseId==line.WarehouseId)
+                    .Sum(i => i.AvailableQuantity);
+
+                line.SubTotal = line.PurchasePrice * line.Quantity;
+            }
+
             ReturningRemarks(requisitionDto, DocType.Requisition);
 
             if ((requisitionDto.State == DocumentStatus.Partial || requisitionDto.State == DocumentStatus.Paid))
@@ -109,6 +126,11 @@ namespace Application.Services
         {
             if ((bool)entity.isSubmit)
             {
+                if ((bool)entity.IsWithoutWorkflow)
+                {
+                    return await this.SaveRequisition(entity, 1);
+                }
+
                 return await this.SubmitRequisition(entity);
             }
             else
@@ -176,7 +198,14 @@ namespace Application.Services
                         }
                         if (transition.NextStatus.State == DocumentStatus.Rejected)
                         {
-                            await _unitOfWork.SaveAsync();
+                       
+                        foreach (var line in getRequisition.RequisitionLines)
+                        {
+                            var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs(line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
+                            getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity - line.Quantity);
+                            getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
+                        }
+                        await _unitOfWork.SaveAsync();
                             _unitOfWork.Commit();
                             return new Response<bool>(true, "Requisition Rejected");
                         }
@@ -193,27 +222,64 @@ namespace Application.Services
 
         private async Task<Response<RequisitionDto>> SubmitRequisition(CreateRequisitionDto entity)
         {
-            var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Requisition)).FirstOrDefault();
-
-            if (checkingActiveWorkFlows == null)
+            int statusId = (bool)entity.IsWithoutWorkflow ?3:6;
+            if (!(bool)entity.IsWithoutWorkflow)
             {
-                return new Response<RequisitionDto>("No workflow found for Requisition");
+                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Requisition)).FirstOrDefault();
+
+                if (checkingActiveWorkFlows == null)
+                {
+                    return new Response<RequisitionDto>("No workflow found for Requisition");
+                } 
             }
 
             if (entity.Id == null)
             {
-                return await this.SaveRequisition(entity, 6);
+                return await this.SaveRequisition(entity, statusId);
             }
             else
             {
-                return await this.UpdateRequisition(entity, 6);
+                return await this.UpdateRequisition(entity, statusId);
             }
+        }
+
+        private Response<bool> CheckOrUpdateQty(CreateRequisitionDto requisition)
+        {
+            foreach (var line in requisition.RequisitionLines)
+            {
+                var getStockRecord= _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
+                
+
+                if (getStockRecord.AvailableQuantity>0)
+                {
+                    int reservebableQuantity = (int)line.Quantity;
+                    if (line.Quantity> getStockRecord.AvailableQuantity)
+                    {
+                        reservebableQuantity = getStockRecord.AvailableQuantity;
+                    }
+                    getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity + reservebableQuantity);
+                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - reservebableQuantity);
+
+                }
+            }
+            return new Response<bool>(true, "Requisition Save Successfully");
         }
 
         private async Task<Response<RequisitionDto>> SaveRequisition(CreateRequisitionDto entity, int status)
         {
             if (entity.RequisitionLines.Count() == 0)
                 return new Response<RequisitionDto>("Lines are required");
+
+            //this code is not support for editable Requisition
+           
+                //Checking available quantity in stock
+                var checkOrUpdateQty = CheckOrUpdateQty(entity);
+                if (!checkOrUpdateQty.IsSuccess)
+                    return new Response<RequisitionDto>(checkOrUpdateQty.Message);
+           
+            //this code is not support for editable Requisition
+
+
 
             //Checking duplicate Lines if any
             var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId})
@@ -260,7 +326,11 @@ namespace Application.Services
 
             if (requisition.StatusId != 1 && requisition.StatusId != 2)
                 return new Response<RequisitionDto>("Only draft document can be edited");
-            
+
+
+          
+
+
             //Checking duplicate Lines if any
             var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
              .Where(g => g.Count() > 1)
@@ -269,6 +339,10 @@ namespace Application.Services
 
             if (duplicates.Any())
                 return new Response<RequisitionDto>("Duplicate Lines found");
+
+          
+
+
             //Setting status
             requisition.setStatus(status);
 
@@ -286,7 +360,7 @@ namespace Application.Services
                 return new Response<RequisitionDto>(_mapper.Map<RequisitionDto>(requisition), "Updated successfully");
             
         }
-
+      
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();

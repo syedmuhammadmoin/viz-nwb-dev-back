@@ -26,6 +26,12 @@ namespace Infrastructure.Specifications
                 
             }
         }
+
+        public StockSpecs(List<int> itemIds) 
+            : base (i => (itemIds.Count() > 0 ? itemIds.Contains(i.ItemId) : true))
+        {
+        }
+
         public StockSpecs(int itemId, int warehouseId) : base(x => x.ItemId == itemId && x.WarehouseId == warehouseId)
         {
         }

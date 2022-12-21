@@ -10,6 +10,7 @@ using Domain.Interfaces;
 using Infrastructure.Specifications;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -240,11 +241,15 @@ namespace Application.Services
                         return new Response<IssuanceDto>(checkValidation.Message);
                 }
             }
+            else
+            {
+                //Checking available quantity in stock
+                var checkOrUpdateQty = CheckOrUpdateQty(entity);
+                if (!checkOrUpdateQty.IsSuccess)
+                    return new Response<IssuanceDto>(checkOrUpdateQty.Message);
+            }
 
-            //Checking available quantity in stock
-            var checkOrUpdateQty = CheckOrUpdateQty(entity);
-            if (!checkOrUpdateQty.IsSuccess)
-                return new Response<IssuanceDto>(checkOrUpdateQty.Message);
+            
 
             //Checking duplicate Lines if any
             var duplicates = entity.IssuanceLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
@@ -386,6 +391,13 @@ namespace Application.Services
         private async Task<Response<bool>> UpdateStockOnApproveOrReject(IssuanceMaster issuance)
         {
             var getState = await _unitOfWork.WorkFlowStatus.GetById(issuance.StatusId);
+            Task<RequisitionMaster> getRequisition = null;
+
+            if (issuance.RequisitionId != null)
+            {
+                getRequisition =  _unitOfWork.Requisition.GetById((int)issuance.RequisitionId);
+            }
+
             
             if (getState == null) 
                 return new Response<bool>("Invalid Status");
@@ -396,18 +408,43 @@ namespace Application.Services
 
                 if (getStockRecord == null)
                     return new Response<bool>("Item not found in stock");
-                
-                // updating reserved quantity for APPROVED Issuance
-                if(getState.State == DocumentStatus.Unpaid)
-                {
-                    getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity - line.Quantity);
-                }
 
-                // updating reserved quantity for REJECTED Issuance
-                if (getState.State == DocumentStatus.Rejected)
+                if (issuance.RequisitionId == null)
                 {
-                    getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity - line.Quantity);
-                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
+                    // updating reserved quantity for APPROVED Issuance
+                    if (getState.State == DocumentStatus.Unpaid)
+                    {
+                        getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity - line.Quantity);
+                    }
+
+                    // updating reserved quantity for REJECTED Issuance
+                    if (getState.State == DocumentStatus.Rejected)
+                    {
+                        getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity - line.Quantity);
+                        getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
+                    }
+                }
+                else
+                {
+
+                    var reserveQty = getRequisition.Result.RequisitionLines.Where(i => i.ItemId == line.ItemId && (int)i.WarehouseId == line.WarehouseId).Sum(i => i.ReserveQuantity);
+
+                    if (line.Quantity> reserveQty)
+                        return new Response<bool>("Issuance quantity must not be greater than requested quantity");
+
+                    // updating reserved quantity for APPROVED Issuance
+                    if (getState.State == DocumentStatus.Unpaid)
+                    {
+                        getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity - line.Quantity);
+                    }
+
+                    // updating reserved quantity for REJECTED Issuance
+                    if (getState.State == DocumentStatus.Rejected)
+                    {
+                        getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity - line.Quantity);
+                        getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
+                    }
+
                 }
             }
             return new Response<bool>(true, "");
