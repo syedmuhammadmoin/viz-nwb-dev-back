@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.Stock;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -27,6 +28,17 @@ namespace Vizalys.Api.Controllers
         public async Task<ActionResult<PaginationResponse<List<StockDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var results = await _stockService.GetAllAsync(filter);
+            if (results.IsSuccess)
+                return Ok(results); // Status Code : 200
+
+            return BadRequest(results); // Status code : 400
+        }
+
+        [ClaimRequirement("Permission", new string[] { Permissions.StockClaims.View })]
+        [HttpPost]
+        public  ActionResult<StockDto> GetByItemAndWarehouseAsync(GetStockByItemAndWarehouseDto stock)
+        {
+            var results =  _stockService.GetStockByItemAndWarehouse(stock);
             if (results.IsSuccess)
                 return Ok(results); // Status Code : 200
 
