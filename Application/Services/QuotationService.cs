@@ -79,11 +79,11 @@ namespace Application.Services
         public async Task<Response<QuotationDto>> GetByIdAsync(int id)
         {
             var specification = new QuotationSpecs(false);
-            var request = await _unitOfWork.Quotation.GetById(id, specification);
-            if (request == null)
+            var quotation = await _unitOfWork.Quotation.GetById(id, specification);
+            if (quotation == null)
                 return new Response<QuotationDto>("Not found");
 
-            var quotationDto = _mapper.Map<QuotationDto>(request);
+            var quotationDto = _mapper.Map<QuotationDto>(quotation);
             ReturningRemarks(quotationDto, DocType.Quotation);
 
             if ((quotationDto.State == DocumentStatus.Partial || quotationDto.State == DocumentStatus.Paid))
