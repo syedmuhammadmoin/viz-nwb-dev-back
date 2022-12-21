@@ -93,6 +93,11 @@ namespace Application.Services
 
             ReturningRemarks(requisitionDto, DocType.Requisition);
 
+           var validateProcurementProcess = ValidateProcurementProcess(requisitionDto);
+            
+            if (!validateProcurementProcess.IsSuccess)
+                return new Response<RequisitionDto>(validateProcurementProcess.Message);
+
             if ((requisitionDto.State == DocumentStatus.Partial || requisitionDto.State == DocumentStatus.Paid))
             {
                 return new Response<RequisitionDto>(MapToValue(requisitionDto), "Returning value");
@@ -274,9 +279,11 @@ namespace Application.Services
            
                 //Checking available quantity in stock
                 var checkOrUpdateQty = CheckOrUpdateQty(entity);
+
                 if (!checkOrUpdateQty.IsSuccess)
                     return new Response<RequisitionDto>(checkOrUpdateQty.Message);
-           
+              
+            
             //this code is not support for editable Requisition
 
 
@@ -291,7 +298,6 @@ namespace Application.Services
                 return new Response<RequisitionDto>("Duplicate Lines found");
 
             var requisition = _mapper.Map<RequisitionMaster>(entity);
-
             //Setting status
             requisition.setStatus(status);
 
@@ -427,5 +433,40 @@ namespace Application.Services
             return remarks;
         }
 
+        private Response<bool> ValidateProcurementProcess(RequisitionDto data)
+        {
+            foreach(var line in data.RequisitionLines)
+            {
+                var getStock = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
+                if(getStock.AvailableQuantity >0)
+                {
+                   data.IsShowIssuanceButton = true;
+                }
+
+                if(getStock.AvailableQuantity < line.Quantity)
+                {
+                    var reservedQuantity  = line.Quantity - getStock.AvailableQuantity;
+
+                    var calculateAmount = reservedQuantity * line.PurchasePrice;
+
+                    if(calculateAmount <= 100000)
+                    {
+                        data.IsShowPurchaseOrderButton = true;
+                    }
+                    else if (calculateAmount > 100000 && calculateAmount <= 300000)
+                    {
+                        data.IsShowCFQButton = true;
+                    }
+                    else if (calculateAmount > 300000)
+                    {
+                        data.IsShowTenderButton= true;
+                    }
+                   
+                }
+                return new Response<bool>(false, "not vlalidate");
+            }
+            return new Response<bool>(true, "Validated");
+
+        }
     }
 }

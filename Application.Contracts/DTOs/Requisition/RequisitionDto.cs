@@ -26,11 +26,11 @@ namespace Application.Contracts.DTOs
         public IEnumerable<ReferncesDto> References { get; set; }
         public IEnumerable<RemarksDto> RemarksList { get; set; }
         public virtual List<RequisitionLinesDto> RequisitionLines { get; set; }
-        public bool IsAllowedRole { get; set; }
-        public bool? IsWithoutWorkflow { get; set; }
-        public bool? IsShowIssuanceButton { get; set; }
-        public bool? IsShowPurchaseOrderButton { get; set; }
-        public bool? IsShowRFQButton { get; set; }
-        public bool? IsShowTenderButton { get; set; }
+        public bool IsAllowedRole { get; set; } = false;
+        public bool IsWithoutWorkflow { get; set; } = false;
+        public bool IsShowIssuanceButton { get; set; } = false;
+        public bool IsShowPurchaseOrderButton { get; set; } = false;
+        public bool IsShowCFQButton { get; set; } = false;
+        public bool IsShowTenderButton { get; set; } = false;
     }
 }
