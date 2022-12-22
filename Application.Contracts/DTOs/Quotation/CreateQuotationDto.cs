@@ -21,8 +21,8 @@ namespace Application.Contracts.DTOs
         public string Timeframe { get;  set; }
         [Required]
         public bool? isSubmit { get; set; }
-        public int RequisitionId { get; set; }
-        public int CallForQuotationId { get; set; }
+        public int? RequisitionId { get; set; }
+        public int? CallForQuotationId { get; set; }
         public virtual List<CreateQuotationLinesDto> QuotationLines { get;  set; }
     }
 }
