@@ -72,5 +72,15 @@ namespace Vizalys.Api.Controllers
                 return Ok(result); // Status Code : 200
             return BadRequest(result);
         }
+        [ClaimRequirement("Permission", new string[] { Permissions.QuotationClaims.Create, Permissions.QuotationClaims.View, Permissions.QuotationClaims.Delete, Permissions.QuotationClaims.Edit })]
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Response<QuotationDto>>> GetByRequisitionId(int id)
+        {
+            var result = await _quotationService.GetRequisitionById(id);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
     }
 }
