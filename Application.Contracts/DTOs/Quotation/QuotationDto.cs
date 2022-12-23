@@ -24,5 +24,6 @@ namespace Application.Contracts.DTOs
         public virtual List<QuotationLinesDto> QuotationLines { get; set; }
         public IEnumerable<RemarksDto> RemarksList { get; set; }
         public IEnumerable<ReferncesDto> References { get; set; }
+        public IEnumerable<FileUploadDto> FileUploadList { get; set; }
     }
 }

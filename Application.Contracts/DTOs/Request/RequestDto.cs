@@ -22,6 +22,7 @@ namespace Application.Contracts.DTOs
         public IEnumerable<ReferncesDto> References { get; set; }
         public IEnumerable<RemarksDto> RemarksList { get; set; }
         public virtual List<RequestLinesDto> RequestLines { get; set; }
+        public IEnumerable<FileUploadDto> FileUploadList { get; set; }
         public bool IsAllowedRole { get; set; }
     }
 }
