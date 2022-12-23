@@ -16,10 +16,14 @@ namespace Vizalys.Api.Controllers
     {
         private readonly IQuotationService _quotationService;
 
-        public QuotationController(IQuotationService quotationService)
+        private readonly IFileuploadServices _fileUploadService;
+
+        public QuotationController(IQuotationService quotationService, IFileuploadServices fileuploadService)
         {
             _quotationService = quotationService;
+            _fileUploadService = fileuploadService;
         }
+
         [ClaimRequirement("Permission", new string[] { Permissions.QuotationClaims.Create })]
         [HttpPost]
         public async Task<ActionResult<Response<QuotationDto>>> CreateAsync(CreateQuotationDto entity)
@@ -30,6 +34,7 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
+        
         [ClaimRequirement("Permission", new string[] { Permissions.QuotationClaims.Create, Permissions.QuotationClaims.View, Permissions.QuotationClaims.Delete, Permissions.QuotationClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<QuotationDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
@@ -40,6 +45,7 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(results); // Status code : 400
         }
+        
         [ClaimRequirement("Permission", new string[] { Permissions.QuotationClaims.Create, Permissions.QuotationClaims.View, Permissions.QuotationClaims.Delete, Permissions.QuotationClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<QuotationDto>>> GetByIdAsync(int id)
@@ -50,6 +56,7 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
+        
         [ClaimRequirement("Permission", new string[] { Permissions.QuotationClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<QuotationDto>>> UpdateAsync(int id, CreateQuotationDto entity)
@@ -72,15 +79,29 @@ namespace Vizalys.Api.Controllers
                 return Ok(result); // Status Code : 200
             return BadRequest(result);
         }
-        [ClaimRequirement("Permission", new string[] { Permissions.QuotationClaims.Create, Permissions.QuotationClaims.View, Permissions.QuotationClaims.Delete, Permissions.QuotationClaims.Edit })]
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<Response<QuotationDto>>> GetByRequisitionId(int id)
+        
+        [ClaimRequirement("Permission", new string[] { Permissions.QuotationClaims.View, Permissions.QuotationComparativeClaims.View, Permissions.QuotationComparativeClaims.Create, Permissions.QuotationComparativeClaims.Edit })]
+        [HttpGet("GetQouteByReqId/{id:int}")]
+        public async Task<ActionResult<Response<List<QuotationDto>>>> GetQoutationByRequisitionId(int id)
         {
-            var result = await _quotationService.GetRequisitionById(id);
+            var result = await _quotationService.GetQoutationByRequisitionId(id);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 
             return BadRequest(result); // Status code : 400
+        }
+
+        [HttpPost("DocUpload/{id:int}")]
+        public async Task<ActionResult<Response<int>>> UploadFile(IFormFile file, int id)
+        {
+                if (ModelState.IsValid)
+                {
+                    var result = await _fileUploadService.UploadFile(file, id, DocType.Quotation);
+                    if (result.IsSuccess)
+                        return Ok(result); // Status Code : 200
+                    return BadRequest(result);
+                }
+                return BadRequest("Some properties are not valid"); // Status code : 400
         }
     }
 }

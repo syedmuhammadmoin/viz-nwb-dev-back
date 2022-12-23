@@ -16,9 +16,12 @@ namespace Vizalys.Api.Controllers
     {
         private readonly IRequestService _requestService;
 
-        public RequestController(IRequestService requestService)
+        private readonly IFileuploadServices _fileUploadService;
+
+        public RequestController(IRequestService requestService, IFileuploadServices fileUploadService)
         {
             _requestService = requestService;
+            _fileUploadService = fileUploadService;
         }
         [ClaimRequirement("Permission", new string[] { Permissions.RequestClaims.Create })]
         [HttpPost]
@@ -73,6 +76,17 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result);
         }
 
-
+        [HttpPost("DocUpload/{id:int}")]
+        public async Task<ActionResult<Response<int>>> UploadFile(IFormFile file, int id)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _fileUploadService.UploadFile(file, id, DocType.Quotation);
+                if (result.IsSuccess)
+                    return Ok(result); // Status Code : 200
+                return BadRequest(result);
+            }
+            return BadRequest("Some properties are not valid"); // Status code : 400
+        }
     }
 }
