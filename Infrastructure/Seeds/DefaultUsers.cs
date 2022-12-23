@@ -80,6 +80,7 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaim(superAdmin, "Procurement", "BidEvaluationClaims");
             await roleManager.AddPermissionClaim(superAdmin, "Procurement", "QuotationClaims");
             await roleManager.AddPermissionClaim(superAdmin, "Procurement", "CallForQuotationClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "QuotationComparativeClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "Finance", "ChartOfAccountClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "Report", "GeneralLedgerClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "Report", "TrialBalanceClaims");
