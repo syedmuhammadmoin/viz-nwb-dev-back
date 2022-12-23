@@ -23,6 +23,11 @@ namespace Domain.Entities
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get; private set; }
         public int? RequisitionId { get; private set; }
+        public int? CallForQuotationId { get; private set; }
+        public int QuotationComparativeId { get; private set; }
+        [ForeignKey("QuotationComparativeId")]
+        public QuotationComparativeMaster QuotationComparativeMaster { get; private set; }
+
         public virtual List<QuotationLines> QuotationLines { get; private set; }
 
         protected QuotationMaster()
@@ -35,7 +40,7 @@ namespace Domain.Entities
 
         public void CreateDocNo()
         {
-           DocNo = "QUOT-" + String.Format("{0:000}", Id);
+           DocNo = "QUOTE-" + String.Format("{0:000}", Id);
         }
     }
 }
