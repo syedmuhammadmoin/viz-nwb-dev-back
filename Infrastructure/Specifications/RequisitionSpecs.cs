@@ -57,5 +57,10 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.Status);
         }
+
+        public RequisitionSpecs(int isApproved) : base(x => x.Status.State == DocumentStatus.Unpaid) 
+        {
+            AddInclude(i => i.Status);
+        }
     }
 }
