@@ -335,10 +335,13 @@ namespace Application.Mapper
               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
               .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName))
               .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity));
-
+            
+            CreateMap<RequisitionMaster, RequisitionDropDownDto>();
+            
             CreateMap<CreateRequisitionDto, RequisitionMaster>();
-
+            
             CreateMap<CreateRequisitionLinesDto, RequisitionLines>();
+            
             // GRN Mapping
             CreateMap<GRNMaster, GRNDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
@@ -516,7 +519,10 @@ namespace Application.Mapper
               a.Status.State == DocumentStatus.Partial ? "Open" :
               a.Status.State == DocumentStatus.Paid ? "Closed" : a.Status.Status))
         .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
-            CreateMap<QuotationLines, QuotationLinesDto>();
+
+            CreateMap<QuotationLines, QuotationLinesDto>()
+            .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId == null ? null : a.ItemId))
+             .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
             CreateMap<CreateQuotationDto, QuotationMaster>();
             CreateMap<CreateQuotationLinesDto, QuotationLines>();
 
@@ -524,11 +530,23 @@ namespace Application.Mapper
             CreateMap<CallForQuotationMaster, CallForQuotationDto>()
           .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
           .ForMember(dto => dto.Status, core => core.MapFrom(
-           a => a.State == DocumentStatus.Draft ? "Draft" : 
+           a => a.State == DocumentStatus.Draft ? "Draft" :
            a.State == DocumentStatus.Submitted ? "Submitted" : "N/A"));
-            CreateMap<CallForQuotationLines, CallForQuotationLinesDto>();
+            CreateMap<CallForQuotationLines, CallForQuotationLinesDto>()
+           .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId == null ? null : a.ItemId))
+             .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
             CreateMap<CreateCallForQuotationDto, CallForQuotationMaster>();
             CreateMap<CreateCallForQuotationLinesDto, CallForQuotationLines>();
+
+            //QuotationComparative
+            CreateMap<QuotationComparativeMaster, QuotationComparativeDto>()
+                .ForMember(dto => dto.RequsisitionId, core => core.MapFrom(a => a.Requisition))
+                 .ForMember(dto => dto.Status, core => core.MapFrom(
+           a => a.State == DocumentStatus.Draft ? "Draft" :
+           a.State == DocumentStatus.Submitted ? "Submitted" : "N/A"));
+            CreateMap<QuotationComparativeLines, QuotationDto>();
+            CreateMap<CreateQuotationComparativeDto, QuotationComparativeMaster>();
+            CreateMap<CreateQuotationComparativeLinesDto, QuotationComparativeLines>();
         }
     }
 }
