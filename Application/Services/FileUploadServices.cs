@@ -50,91 +50,100 @@ namespace Application.Services
             if (file.Length > 5242880)
                 return new Response<int>("File size must be less than 5mb");
             _unitOfWork.CreateTransaction();
-           
-                string[] supportedTypes = { "txt", "doc", "docx", "pdf", "xls", "xlsx", "png", "jpeg", "jpg" };
-                var fileExt = System.IO.Path.GetExtension(file.FileName).Substring(1);
 
-                if (!supportedTypes.Contains(fileExt))
-                    return new Response<int>("File format not supported");
+            string[] supportedTypes = { "txt", "doc", "docx", "pdf", "xls", "xlsx", "png", "jpeg", "jpg" };
+            var fileExt = System.IO.Path.GetExtension(file.FileName).Substring(1);
 
-                Guid obj = Guid.NewGuid();
-                var path = new DirectoryInfo(Environment.CurrentDirectory).Parent.FullName;
-                string basePath = Path.Combine(path + "\\File\\Error\\");
-                string filedir = _Configuration["FilePath"];
-                switch (docType)
+            if (!supportedTypes.Contains(fileExt))
+                return new Response<int>("File format not supported");
+
+            Guid obj = Guid.NewGuid();
+            var path = new DirectoryInfo(Environment.CurrentDirectory).Parent.FullName;
+            string basePath = Path.Combine(path + "\\File\\Error\\");
+            string filedir = _Configuration["FilePath"];
+            switch (docType)
+            {
+                case DocType.Invoice:
+                    basePath = Path.Combine(path + filedir + "Invoice\\");
+                    break;
+                case DocType.Bill:
+                    basePath = Path.Combine(path + filedir + "Bill\\");
+                    break;
+                case DocType.CreditNote:
+                    basePath = Path.Combine(path + filedir + "CreditNote\\");
+                    break;
+                case DocType.DebitNote:
+                    basePath = Path.Combine(path + filedir + "DebitNote\\");
+                    break;
+                case DocType.Payment:
+                    basePath = Path.Combine(path + filedir + "Payment\\");
+                    break;
+                case DocType.Receipt:
+                    basePath = Path.Combine(path + filedir + "Receipt\\");
+                    break;
+                case DocType.PayrollPayment:
+                    basePath = Path.Combine(path + filedir + "PayrollPayment\\");
+                    break;
+                case DocType.PayrollTransaction:
+                    basePath = Path.Combine(path + filedir + "PayrollTransaction\\");
+                    break;
+                case DocType.JournalEntry:
+                    basePath = Path.Combine(path + filedir + "JournalEntry\\");
+                    break;
+                case DocType.PurchaseOrder:
+                    basePath = Path.Combine(path + filedir + "PurchaseOrder\\");
+                    break;
+                case DocType.GRN:
+                    basePath = Path.Combine(path + filedir + "GoodsReceivedNote\\");
+                    break;
+                case DocType.GoodsReturnNote:
+                    basePath = Path.Combine(path + filedir + "GoodsReturnNote\\");
+                    break;
+                case DocType.Quotation:
+                    basePath = Path.Combine(path + filedir + "Quotation\\");
+                    break;
+                case DocType.Request:
+                    basePath = Path.Combine(path + filedir + "Request\\");
+                    break;
+                case DocType.Requisition:
+                    basePath = Path.Combine(path + filedir + "Requisition\\");
+                    break;
+            }
+
+            bool basePathExists = System.IO.Directory.Exists(basePath);
+            if (!basePathExists) Directory.CreateDirectory(basePath);
+            var fileName = Path.GetFileNameWithoutExtension(file.FileName) + " - " + DateTime.Now.ToString("yyyy-MM-dd");
+            //var fileName = file.FileName + "-" + DateTime.Now.ToString("yyyy-MM-dd");
+            var filePath = Path.Combine(basePath, fileName);
+            var extension = Path.GetExtension(file.FileName);
+            if (!System.IO.File.Exists(filePath))
+            {
+                // Creating object of getUSer class
+                var getUser = new GetUser(_httpContextAccessor);
+
+                var userId = getUser.GetCurrentUserId();
+
+                var fileModel = new FileUpload
+                (
+                    (int)id,
+                    docType,
+                    fileName,
+                    file.ContentType,
+                    extension,
+                    userId
+                );
+                await _unitOfWork.Fileupload.Add(fileModel);
+                await _unitOfWork.SaveAsync();
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    case DocType.Invoice:
-                        basePath = Path.Combine(path + filedir + "Invoice\\");
-                        break;
-                    case DocType.Bill:
-                        basePath = Path.Combine(path + filedir + "Bill\\");
-                        break;
-                    case DocType.CreditNote:
-                        basePath = Path.Combine(path + filedir + "CreditNote\\");
-                        break;
-                    case DocType.DebitNote:
-                        basePath = Path.Combine(path + filedir + "DebitNote\\");
-                        break;
-                    case DocType.Payment:
-                        basePath = Path.Combine(path + filedir + "Payment\\");
-                        break;
-                    case DocType.Receipt:
-                        basePath = Path.Combine(path + filedir + "Receipt\\");
-                        break;
-                    case DocType.PayrollPayment:
-                        basePath = Path.Combine(path + filedir + "PayrollPayment\\");
-                        break;
-                    case DocType.PayrollTransaction:
-                        basePath = Path.Combine(path + filedir + "PayrollTransaction\\");
-                        break;
-                    case DocType.JournalEntry:
-                        basePath = Path.Combine(path + filedir + "JournalEntry\\");
-                        break;
-                    case DocType.PurchaseOrder:
-                        basePath = Path.Combine(path + filedir + "PurchaseOrder\\");
-                        break;
-                    case DocType.GRN:
-                        basePath = Path.Combine(path + filedir + "GoodsReceivedNote\\");
-                        break;
-                    case DocType.GoodsReturnNote:
-                        basePath = Path.Combine(path + filedir + "GoodsReturnNote\\");
-                        break;
+                    await file.CopyToAsync(stream);
                 }
+                //Commiting the transaction 
+                _unitOfWork.Commit();
+            }
+            return new Response<int>(1, "Created successfully");
 
-                bool basePathExists = System.IO.Directory.Exists(basePath);
-                if (!basePathExists) Directory.CreateDirectory(basePath);
-                var fileName = Path.GetFileNameWithoutExtension(file.FileName) + " - " + DateTime.Now.ToString("yyyy-MM-dd");
-                //var fileName = file.FileName + "-" + DateTime.Now.ToString("yyyy-MM-dd");
-                var filePath = Path.Combine(basePath, fileName);
-                var extension = Path.GetExtension(file.FileName);
-                if (!System.IO.File.Exists(filePath))
-                {
-                    // Creating object of getUSer class
-                    var getUser = new GetUser(_httpContextAccessor);
-
-                    var userId = getUser.GetCurrentUserId();
-
-                    var fileModel = new FileUpload
-                    (
-                        (int)id,
-                        docType,
-                        fileName,
-                        file.ContentType,
-                        extension,
-                        userId
-                    );
-                    await _unitOfWork.Fileupload.Add(fileModel);
-                    await _unitOfWork.SaveAsync();
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await file.CopyToAsync(stream);
-                    }
-                    //Commiting the transaction 
-                    _unitOfWork.Commit();
-                }
-                return new Response<int>(1, "Created successfully");
-          
         }
     }
 }
