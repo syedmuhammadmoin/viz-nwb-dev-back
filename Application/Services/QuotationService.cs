@@ -78,8 +78,11 @@ namespace Application.Services
                 return new Response<QuotationDto>("Not found");
 
             var quotationDto = _mapper.Map<QuotationDto>(quotation);
+            
             ReturningRemarks(quotationDto, DocType.Quotation);
 
+            ReturningFiles(quotationDto, DocType.Quotation);
+            
             if ((quotationDto.State == DocumentStatus.Partial || quotationDto.State == DocumentStatus.Paid))
             {
                 return new Response<QuotationDto>(quotationDto, "Returning value");
@@ -286,7 +289,27 @@ namespace Application.Services
 
             return remarks;
         }
-       
+        private List<FileUploadDto> ReturningFiles(QuotationDto data, DocType docType)
+        {
 
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.Quotation))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = e.Name,
+                        DocType = DocType.Quotation,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+
+            }
+            return files;
+
+        }
     }
 }
