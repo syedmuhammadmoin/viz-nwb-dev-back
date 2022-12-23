@@ -74,7 +74,8 @@ namespace Domain.Constants
         IssuanceReturn = 20,
         Request = 21,
         BidEvaluation = 22,
-        CallForQuotaion = 23
+        CallForQuotaion = 23,
+        QuotationComparative = 24
     }
     public enum ActionButton
     {
