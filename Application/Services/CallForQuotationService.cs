@@ -98,12 +98,6 @@ namespace Application.Services
         }
         private async Task<Response<CallForQuotationDto>> SubmitCallForQuotation(CreateCallForQuotationDto entity)
         {
-            var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Quotation)).FirstOrDefault();
-
-            if (checkingActiveWorkFlows == null)
-            {
-                return new Response<CallForQuotationDto>("No workflow found for Quottion");
-            }
 
             if (entity.Id == null)
             {
