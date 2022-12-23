@@ -9,8 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IQuotationComparativeService
+    public interface IQuotationComparativeService : ICrudService<CreateQuotationComparativeDto, QuotationComparativeDto, int, TransactionFormFilter>
     {
-        Response<List<QuotationDto>> GetRequisitionById(int requisition);
     }
 }

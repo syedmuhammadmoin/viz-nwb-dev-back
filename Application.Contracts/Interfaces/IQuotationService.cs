@@ -11,7 +11,7 @@ namespace Application.Contracts.Interfaces
 {
     public interface IQuotationService : ICrudService<CreateQuotationDto, QuotationDto, int, TransactionFormFilter>
     {
-        Task<Response<List<QuotationDto>>> GetRequisitionById(int requisition);
+        Task<Response<List<QuotationDto>>> GetQoutationByRequisitionId(int requisitionId);
         Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
     }
 }
