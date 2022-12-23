@@ -93,7 +93,9 @@ namespace Application.Services
 
             ReturningRemarks(requisitionDto, DocType.Requisition);
 
-           var validateProcurementProcess = ValidateProcurementProcess(requisitionDto);
+            ReturningFiles(requisitionDto, DocType.Requisition);
+
+          var validateProcurementProcess = ValidateProcurementProcess(requisitionDto);
             
             if (!validateProcurementProcess.IsSuccess)
                 return new Response<RequisitionDto>(validateProcurementProcess.Message);
@@ -223,6 +225,15 @@ namespace Application.Services
                 return new Response<bool>("User does not have allowed role");
 
            
+        }
+
+        public async Task<Response<List<RequisitionDropDownDto>>> GetRequisitionDropDown()
+        {
+            var requisition = await _unitOfWork.Requisition.GetAll(new RequisitionSpecs(0));
+            if (!requisition.Any())
+                return new Response<List<RequisitionDropDownDto>>("List is empty");
+
+            return new Response<List<RequisitionDropDownDto>>(_mapper.Map<List<RequisitionDropDownDto>>(requisition), "Returning List");
         }
 
         private async Task<Response<RequisitionDto>> SubmitRequisition(CreateRequisitionDto entity)
@@ -466,6 +477,28 @@ namespace Application.Services
                 return new Response<bool>(false, "not vlalidate");
             }
             return new Response<bool>(true, "Validated");
+
+        }
+        private List<FileUploadDto> ReturningFiles(RequisitionDto data, DocType docType)
+        {
+
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.Requisition))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = e.Name,
+                        DocType = DocType.Requisition,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+
+            }
+            return files;
 
         }
     }

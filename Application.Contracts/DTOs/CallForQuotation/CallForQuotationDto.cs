@@ -13,6 +13,7 @@ namespace Application.Contracts.DTOs
         public string VendorName { get; set; }
         public string DocNo { get; set; }
         public DateTime CallForQuotationDate { get; set; }
+        public string Description { get;  set; }
         public string Status { get; set; }
         public DocumentStatus State { get; set; }
         public bool IsAllowedRole { get; set; }

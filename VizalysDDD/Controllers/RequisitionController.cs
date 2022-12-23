@@ -3,6 +3,7 @@ using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Application.Services;
 using Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -17,9 +18,13 @@ namespace Vizalys.Api.Controllers
     {
         private readonly IRequisitionService _requisitionService;
 
-        public RequisitionController(IRequisitionService requisitionService)
+        private readonly IFileuploadServices _fileUploadService;
+
+
+        public RequisitionController(IRequisitionService requisitionService, IFileuploadServices fileUploadService)
         {
             _requisitionService = requisitionService;
+            _fileUploadService = fileUploadService;
         }
 
         [ClaimRequirement("Permission", new string[] { Permissions.RequisitionClaims.Create })]
@@ -76,6 +81,25 @@ namespace Vizalys.Api.Controllers
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
             return BadRequest(result);
+        }
+
+        [HttpGet("Dropdown")]
+        public async Task<ActionResult<Response<List<RequisitionDropDownDto>>>> GetRequisitionDropDown()
+        {
+            return Ok(await _requisitionService.GetRequisitionDropDown()); // Status Code : 200
+        }
+
+        [HttpPost("DocUpload/{id:int}")]
+        public async Task<ActionResult<Response<int>>> UploadFile(IFormFile file, int id)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _fileUploadService.UploadFile(file, id, DocType.Request);
+                if (result.IsSuccess)
+                    return Ok(result); // Status Code : 200
+                return BadRequest(result);
+            }
+            return BadRequest("Some properties are not valid"); // Status code : 400
         }
     }
 }
