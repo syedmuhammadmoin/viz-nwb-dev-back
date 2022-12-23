@@ -11,9 +11,9 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public int VendorId { get; set; }
+        public int? VendorId { get; set; }
         [Required]
-        public DateTime CallForQuotationDate { get; set; }
+        public DateTime? CallForQuotationDate { get; set; }
         [MaxLength(100)]
         public string Description { get; set; }
         [Required]
