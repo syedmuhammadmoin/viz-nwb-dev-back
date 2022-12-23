@@ -59,15 +59,15 @@ namespace Application.Services
                 states.Add(filter.State);
             }
 
-            var request = await _unitOfWork.Quotation.GetAll(new QuotationSpecs(docDate, states, filter, false));
+            var quotation = await _unitOfWork.Quotation.GetAll(new QuotationSpecs(docDate, states, filter, false));
 
-            if (request.Count() == 0)
+            if (quotation.Count() == 0)
             {
-                return new PaginationResponse<List<QuotationDto>>(_mapper.Map<List<QuotationDto>>(request), "List is empty");
+                return new PaginationResponse<List<QuotationDto>>(_mapper.Map<List<QuotationDto>>(quotation), "List is empty");
             }
             var totalRecords = await _unitOfWork.Quotation.TotalRecord(new QuotationSpecs(docDate, states, filter, true));
 
-            return new PaginationResponse<List<QuotationDto>>(_mapper.Map<List<QuotationDto>>(request),
+            return new PaginationResponse<List<QuotationDto>>(_mapper.Map<List<QuotationDto>>(quotation),
                     filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
         public async Task<Response<QuotationDto>> GetByIdAsync(int id)
@@ -117,6 +117,86 @@ namespace Application.Services
                 return await this.UpdateQuotation(entity, 1);
             }
         }
+
+        public async Task<Response<List<QuotationDto>>> GetQoutationByRequisitionId(int requisitionId)
+        {
+            var specification = new QuotationSpecs(requisitionId);
+            var quotation = await _unitOfWork.Quotation.GetAll(specification);
+            
+            if (quotation == null)
+                return new Response<List<QuotationDto>>("Not found");
+            
+            var quotationDto = _mapper.Map<List<QuotationDto>>(quotation);
+            
+            return new Response<List<QuotationDto>>(quotationDto, "Returning value");
+        }
+        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
+        {
+            var getQuottion = await _unitOfWork.Quotation.GetById(data.DocId, new QuotationSpecs(true));
+
+            if (getQuottion == null)
+            {
+                return new Response<bool>("Quottion with the input id not found");
+            }
+            if (getQuottion.Status.State == DocumentStatus.Unpaid || getQuottion.Status.State == DocumentStatus.Partial || getQuottion.Status.State == DocumentStatus.Paid)
+            {
+                return new Response<bool>("Quottion already approved");
+            }
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Quotation)).FirstOrDefault();
+
+            if (workflow == null)
+            {
+                return new Response<bool>("No activated workflow found for this document");
+            }
+            var transition = workflow.WorkflowTransitions
+                  .FirstOrDefault(x => (x.CurrentStatusId == getQuottion.StatusId && x.Action == data.Action));
+
+            if (transition == null)
+            {
+                return new Response<bool>("No transition found");
+            }
+            var getUser = new GetUser(this._httpContextAccessor);
+            var userId = getUser.GetCurrentUserId();
+            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+            _unitOfWork.CreateTransaction();
+
+            foreach (var role in currentUserRoles)
+            {
+                if (transition.AllowedRole.Name == role)
+                {
+                    getQuottion.setStatus(transition.NextStatusId);
+                    if (!String.IsNullOrEmpty(data.Remarks))
+                    {
+                        var addRemarks = new Remark()
+                        {
+                            DocId = getQuottion.Id,
+                            DocType = DocType.Quotation,
+                            Remarks = data.Remarks,
+                            UserId = userId
+                        };
+                        await _unitOfWork.Remarks.Add(addRemarks);
+                    }
+                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                    {
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Quottion Approved");
+                    }
+                    if (transition.NextStatus.State == DocumentStatus.Rejected)
+                    {
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Quottion Rejected");
+                    }
+                    await _unitOfWork.SaveAsync();
+                    _unitOfWork.Commit();
+                    return new Response<bool>(true, "Quottion Reviewed");
+                }
+            }
+
+            return new Response<bool>("User does not have allowed role");
+        }
+
         private async Task<Response<QuotationDto>> SubmitQuotation(CreateQuotationDto entity)
         {
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Quotation)).FirstOrDefault();
@@ -206,81 +286,7 @@ namespace Application.Services
 
             return remarks;
         }
-        public async Task<Response<List<QuotationDto>>> GetRequisitionById(int requisition)
-        {
-            var specification = new QuotationSpecs(requisition);
-            var quotation = await _unitOfWork.Quotation.GetAll(specification);
-            if (quotation == null)
-                return new Response<List<QuotationDto>>("Not found");
-            var quotationDto = _mapper.Map<List<QuotationDto>>(quotation);
-            return new Response<List<QuotationDto>>(quotationDto, "Returning value");
-        }
-        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
-        {
-            var getQuottion = await _unitOfWork.Quotation.GetById(data.DocId, new QuotationSpecs(true));
-
-            if (getQuottion == null)
-            {
-                return new Response<bool>("Quottion with the input id not found");
-            }
-            if (getQuottion.Status.State == DocumentStatus.Unpaid || getQuottion.Status.State == DocumentStatus.Partial || getQuottion.Status.State == DocumentStatus.Paid)
-            {
-                return new Response<bool>("Quottion already approved");
-            }
-            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Request)).FirstOrDefault();
-
-            if (workflow == null)
-            {
-                return new Response<bool>("No activated workflow found for this document");
-            }
-            var transition = workflow.WorkflowTransitions
-                  .FirstOrDefault(x => (x.CurrentStatusId == getQuottion.StatusId && x.Action == data.Action));
-
-            if (transition == null)
-            {
-                return new Response<bool>("No transition found");
-            }
-            var getUser = new GetUser(this._httpContextAccessor);
-            var userId = getUser.GetCurrentUserId();
-            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
-            _unitOfWork.CreateTransaction();
-
-            foreach (var role in currentUserRoles)
-            {
-                if (transition.AllowedRole.Name == role)
-                {
-                    getQuottion.setStatus(transition.NextStatusId);
-                    if (!String.IsNullOrEmpty(data.Remarks))
-                    {
-                        var addRemarks = new Remark()
-                        {
-                            DocId = getQuottion.Id,
-                            DocType = DocType.Quotation,
-                            Remarks = data.Remarks,
-                            UserId = userId
-                        };
-                        await _unitOfWork.Remarks.Add(addRemarks);
-                    }
-                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
-                    {
-                        await _unitOfWork.SaveAsync();
-                        _unitOfWork.Commit();
-                        return new Response<bool>(true, "Quottion Approved");
-                    }
-                    if (transition.NextStatus.State == DocumentStatus.Rejected)
-                    {
-                        await _unitOfWork.SaveAsync();
-                        _unitOfWork.Commit();
-                        return new Response<bool>(true, "Quottion Rejected");
-                    }
-                    await _unitOfWork.SaveAsync();
-                    _unitOfWork.Commit();
-                    return new Response<bool>(true, "Quottion Reviewed");
-                }
-            }
-
-            return new Response<bool>("User does not have allowed role");
-        }
+       
 
     }
 }
