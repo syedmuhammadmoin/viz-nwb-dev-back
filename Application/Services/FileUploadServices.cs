@@ -102,12 +102,12 @@ namespace Application.Services
                 case DocType.Quotation:
                     basePath = Path.Combine(path + filedir + "Quotation\\");
                     break;
-                case DocType.Request:
-                    basePath = Path.Combine(path + filedir + "Request\\");
-                    break;
-                case DocType.Requisition:
-                    basePath = Path.Combine(path + filedir + "Requisition\\");
-                    break;
+                //case DocType.Request:
+                //    basePath = Path.Combine(path + filedir + "Request\\");
+                //    break;
+                //case DocType.Requisition:
+                //    basePath = Path.Combine(path + filedir + "Requisition\\");
+                //    break;
                 case DocType.CallForQuotaion:
                     basePath = Path.Combine(path + filedir + "CallForQuotaion\\");
                     break;
