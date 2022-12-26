@@ -108,6 +108,9 @@ namespace Application.Services
                 case DocType.Requisition:
                     basePath = Path.Combine(path + filedir + "Requisition\\");
                     break;
+                case DocType.CallForQuotaion:
+                    basePath = Path.Combine(path + filedir + "CallForQuotaion\\");
+                    break;
             }
 
             bool basePathExists = System.IO.Directory.Exists(basePath);

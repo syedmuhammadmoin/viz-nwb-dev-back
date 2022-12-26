@@ -82,6 +82,8 @@ namespace Application.Services
             
             var callForQuotationDto = _mapper.Map<CallForQuotationDto>(callForQuotation);
 
+            ReturningFiles(callForQuotationDto,DocType.CallForQuotaion);
+
             return new Response<CallForQuotationDto>(callForQuotationDto, "Returning value");
         }
 
@@ -172,6 +174,28 @@ namespace Application.Services
 
             //returning response
             return new Response<CallForQuotationDto>(_mapper.Map<CallForQuotationDto>(callForQuotation), "Updated successfully");
+        }
+        private List<FileUploadDto> ReturningFiles(CallForQuotationDto data, DocType docType)
+        {
+
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.CallForQuotaion))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = e.Name,
+                        DocType = DocType.CallForQuotaion,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+
+            }
+            return files;
+
         }
     }
 }

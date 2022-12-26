@@ -19,6 +19,7 @@ namespace Application.Contracts.DTOs
         public DocumentStatus State { get; set; }
         public bool IsAllowedRole { get; set; }
         public virtual List<CallForQuotationLinesDto> CallForQuotationLines { get; set; }
+        public IEnumerable<FileUploadDto> FileUploadList { get; set; }
 
     }
 }
