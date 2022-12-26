@@ -133,16 +133,12 @@ namespace Application.Services
         {
             if ((bool)entity.isSubmit)
             {
-                if ((bool)entity.IsWithoutWorkflow)
-                {
-                    return await this.SaveRequisition(entity, 1);
-                }
-
                 return await this.SubmitRequisition(entity);
             }
             else
             {
-                return await this.UpdateRequisition(entity, 1);
+                return new Response<RequisitionDto>("Not allow to edit");
+                //return await this.UpdateRequisition(entity, 1);
             }
         }
 
@@ -249,6 +245,19 @@ namespace Application.Services
                 } 
             }
 
+
+            //this code is not support for editable Requisition
+
+            //Checking available quantity in stock
+            var checkOrUpdateQty = CheckOrUpdateQty(ref entity);
+
+            if (!checkOrUpdateQty.IsSuccess)
+                return new Response<RequisitionDto>(checkOrUpdateQty.Message);
+
+
+            //this code is not support for editable Requisition
+
+
             if (entity.Id == null)
             {
                 return await this.SaveRequisition(entity, statusId);
@@ -288,16 +297,7 @@ namespace Application.Services
             if (entity.RequisitionLines.Count() == 0)
                 return new Response<RequisitionDto>("Lines are required");
 
-            //this code is not support for editable Requisition
-           
-                //Checking available quantity in stock
-                var checkOrUpdateQty = CheckOrUpdateQty(ref entity);
-
-                if (!checkOrUpdateQty.IsSuccess)
-                    return new Response<RequisitionDto>(checkOrUpdateQty.Message);
-              
             
-            //this code is not support for editable Requisition
 
 
 
