@@ -15,6 +15,7 @@ namespace Application.Contracts.DTOs
         public string Category { get; set; }
         public int AvailableQuantity { get; set; }
         public int ReservedQuantity { get; set; }
+        public int ReservedRequisitionQuantity { get; set; }
         public int WarehouseId { get; set; }
         public string WarehouseName { get; set; }
     }
