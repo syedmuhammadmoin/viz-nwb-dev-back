@@ -80,7 +80,7 @@ namespace Application.Services
             var requestDto = _mapper.Map<RequestDto>(request);
             ReturningRemarks(requestDto, DocType.Request);
 
-            ReturningFiles(requestDto, DocType.Request);
+            //ReturningFiles(requestDto, DocType.Request);
 
             if ((requestDto.State == DocumentStatus.Partial || requestDto.State == DocumentStatus.Paid))
             {
@@ -277,28 +277,28 @@ namespace Application.Services
 
             return remarks;
         }
-        private List<FileUploadDto> ReturningFiles(RequestDto data, DocType docType)
-        {
+        //private List<FileUploadDto> ReturningFiles(RequestDto data, DocType docType)
+        //{
 
-            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.Request))
-                    .Select(e => new FileUploadDto()
-                    {
-                        Id = e.Id,
-                        Name = e.Name,
-                        DocType = DocType.Request,
-                        Extension = e.Extension,
-                        UserName = e.User.UserName,
-                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
-                    }).ToList();
+        //    var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.Request))
+        //            .Select(e => new FileUploadDto()
+        //            {
+        //                Id = e.Id,
+        //                Name = e.Name,
+        //                DocType = DocType.Request,
+        //                Extension = e.Extension,
+        //                UserName = e.User.UserName,
+        //                CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+        //            }).ToList();
 
-            if (files.Count() > 0)
-            {
-                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+        //    if (files.Count() > 0)
+        //    {
+        //        data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
 
-            }
-            return files;
+        //    }
+        //    return files;
 
-        }
+        //}
 
 
     }
