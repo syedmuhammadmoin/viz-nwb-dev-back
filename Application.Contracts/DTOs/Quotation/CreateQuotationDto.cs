@@ -23,7 +23,7 @@ namespace Application.Contracts.DTOs
         public bool? isSubmit { get; set; }
         public int? RequisitionId { get; set; }
         public int? CallForQuotationId { get; set; }
-        public int QuotationComparativeId { get; set; }
+        public int? QuotationComparativeId { get; set; }
         [Required]
         public virtual List<CreateQuotationLinesDto> QuotationLines { get;  set; }
     }
