@@ -74,7 +74,7 @@ namespace Vizalys.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _fileUploadService.UploadFile(file, id, DocType.Quotation);
+                var result = await _fileUploadService.UploadFile(file, id, DocType.CallForQuotaion);
                 if (result.IsSuccess)
                     return Ok(result); // Status Code : 200
                 return BadRequest(result);

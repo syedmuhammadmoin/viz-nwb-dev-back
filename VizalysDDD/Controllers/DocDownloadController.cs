@@ -68,6 +68,12 @@ namespace Vizalys.Api.Controllers
                             case DocType.GoodsReturnNote:
                                 basePath = Path.Combine(path + filedir + "GoodsReturnNote\\");
                                 break;
+                            case DocType.Quotation:
+                                basePath = Path.Combine(path + filedir + "Quotation\\");
+                                break;
+                            case DocType.CallForQuotaion:
+                                basePath = Path.Combine(path + filedir + "CallForQuotaion\\");
+                                break;
                         }
                         var filePath = Path.Combine(basePath, file.Name);
 
