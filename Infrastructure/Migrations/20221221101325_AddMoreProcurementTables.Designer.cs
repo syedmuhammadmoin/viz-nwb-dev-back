@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221221101325_AddMoreProcurementTables")]
+    partial class AddMoreProcurementTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4254,97 +4256,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("PurchaseOrderMaster");
                 });
 
-            modelBuilder.Entity("Domain.Entities.QuotationComparativeLines", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MasterId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("QoutationIds")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MasterId");
-
-                    b.HasIndex("QoutationIds");
-
-                    b.ToTable("QuotationComparativeLines");
-                });
-
-            modelBuilder.Entity("Domain.Entities.QuotationComparativeMaster", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DocNo")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("MasterId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("QuotationComparativeDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Remarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RequsisitionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("State")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MasterId");
-
-                    b.ToTable("QuotationComparativeMasters");
-                });
-
             modelBuilder.Entity("Domain.Entities.QuotationLines", b =>
                 {
                     b.Property<int>("Id")
@@ -4403,9 +4314,6 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("CallForQuotationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -4427,12 +4335,6 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("QuotationComparativeId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("QuotationComparativeMasterId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("QuotationDate")
                         .HasColumnType("datetime2");
 
@@ -4450,8 +4352,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("QuotationComparativeMasterId");
 
                     b.HasIndex("StatusId");
 
@@ -6932,35 +6832,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Vendor");
                 });
 
-            modelBuilder.Entity("Domain.Entities.QuotationComparativeLines", b =>
-                {
-                    b.HasOne("Domain.Entities.QuotationComparativeMaster", "quotationComparative")
-                        .WithMany("QuotationComparativeLines")
-                        .HasForeignKey("MasterId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.QuotationMaster", "QuotationMaster")
-                        .WithMany()
-                        .HasForeignKey("QoutationIds")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("QuotationMaster");
-
-                    b.Navigation("quotationComparative");
-                });
-
-            modelBuilder.Entity("Domain.Entities.QuotationComparativeMaster", b =>
-                {
-                    b.HasOne("Domain.Entities.RequisitionMaster", "Requisition")
-                        .WithMany()
-                        .HasForeignKey("MasterId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Requisition");
-                });
-
             modelBuilder.Entity("Domain.Entities.QuotationLines", b =>
                 {
                     b.HasOne("Domain.Entities.Product", "Item")
@@ -6981,11 +6852,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.QuotationMaster", b =>
                 {
-                    b.HasOne("Domain.Entities.QuotationComparativeMaster", "QuotationComparativeMaster")
-                        .WithMany()
-                        .HasForeignKey("QuotationComparativeMasterId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
                         .WithMany()
                         .HasForeignKey("StatusId")
@@ -6997,8 +6863,6 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("VendorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("QuotationComparativeMaster");
 
                     b.Navigation("Status");
 
@@ -7449,11 +7313,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.PurchaseOrderMaster", b =>
                 {
                     b.Navigation("PurchaseOrderLines");
-                });
-
-            modelBuilder.Entity("Domain.Entities.QuotationComparativeMaster", b =>
-                {
-                    b.Navigation("QuotationComparativeLines");
                 });
 
             modelBuilder.Entity("Domain.Entities.QuotationMaster", b =>
