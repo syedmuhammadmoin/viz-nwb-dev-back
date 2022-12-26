@@ -38,6 +38,7 @@ namespace Infrastructure.Specifications
             {
                 AddInclude(i => i.Vendor);
                 AddInclude(i => i.CallForQuotationLines);
+                AddInclude("CallForQuotationLines.Item");
             }
         }
 
