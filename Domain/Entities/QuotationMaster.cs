@@ -24,9 +24,8 @@ namespace Domain.Entities
         public WorkFlowStatus Status { get; private set; }
         public int? RequisitionId { get; private set; }
         public int? CallForQuotationId { get; private set; }
-        public int QuotationComparativeId { get; private set; }
-        [ForeignKey("QuotationComparativeId")]
-        public QuotationComparativeMaster QuotationComparativeMaster { get; private set; }
+        public int? QuotationComparativeId { get; private set; }
+        public virtual QuotationComparativeMaster QuotationComparativeMaster { get; private set; }
 
         public virtual List<QuotationLines> QuotationLines { get; private set; }
 
