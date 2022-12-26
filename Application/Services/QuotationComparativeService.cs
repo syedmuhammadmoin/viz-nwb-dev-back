@@ -20,11 +20,13 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IQuotationService _quotationService;
 
-        public QuotationComparativeService(IUnitOfWork unitOfWork, IMapper mapper)
+        public QuotationComparativeService(IUnitOfWork unitOfWork, IMapper mapper, IQuotationService quotationService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _quotationService = quotationService;
         }
         public async Task<Response<QuotationComparativeDto>> CreateAsync(CreateQuotationComparativeDto entity)
         {
@@ -110,7 +112,7 @@ namespace Application.Services
 
             if (quotationComparative.State == DocumentStatus.Submitted)
                 return new Response<QuotationComparativeDto>("Only draft document can be edited");
-           
+
             if (entity.isSubmit == true)
             {
                 quotationComparative.setStatus(DocumentStatus.Submitted);
@@ -134,11 +136,11 @@ namespace Application.Services
         }
         private async Task<Response<QuotationComparativeDto>> SaveQuotationComparative(CreateQuotationComparativeDto entity)
         {
-            
+
             if (entity.QuotationComparativeLines.Count() == 0)
                 return new Response<QuotationComparativeDto>("Lines are Required");
 
-         
+
             var quotationComparative = _mapper.Map<QuotationComparativeMaster>(entity);
 
             //Setting status
@@ -151,13 +153,14 @@ namespace Application.Services
             {
                 quotationComparative.setStatus(DocumentStatus.Draft);
             }
-
+           
             _unitOfWork.CreateTransaction();
 
             //Saving in table
             var result = await _unitOfWork.QuotationComparative.Add(quotationComparative);
+           
             await _unitOfWork.SaveAsync();
-
+           
             //For creating docNo
             quotationComparative.CreateDocNo();
             await _unitOfWork.SaveAsync();
@@ -165,8 +168,20 @@ namespace Application.Services
             //Commiting the transaction 
             _unitOfWork.Commit();
 
+           var QcbyId = GetByIdAsync(result.Id).Result;
+
+            foreach (var lines in entity.QuotationComparativeLines)
+            {
+                var quotation = new CreateQuotationDto
+                {
+                    Id = lines.QoutationId,
+                    QuotationComparativeId = QcbyId.Result.Id
+
+                };
+                await _quotationService.UpdateAsync(quotation);
+            }
             return new Response<QuotationComparativeDto>(_mapper.Map<QuotationComparativeDto>(result), "Created successfully");
         }
-       
+
     }
 }
