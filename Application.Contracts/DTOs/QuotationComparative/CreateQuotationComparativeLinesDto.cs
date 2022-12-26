@@ -12,6 +12,6 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public int? QoutationId { get;  set; }
+        public int? QoutationId { get; set; }
     }
 }
