@@ -522,7 +522,7 @@ namespace Application.Mapper
 
             CreateMap<QuotationLines, QuotationLinesDto>()
             .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId == null ? null : a.ItemId))
-             .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
+             .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName));
             CreateMap<CreateQuotationDto, QuotationMaster>();
             CreateMap<CreateQuotationLinesDto, QuotationLines>();
 
@@ -534,7 +534,7 @@ namespace Application.Mapper
            a.State == DocumentStatus.Submitted ? "Submitted" : "N/A"));
             CreateMap<CallForQuotationLines, CallForQuotationLinesDto>()
            .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId == null ? null : a.ItemId))
-             .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName));
+             .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName));
             CreateMap<CreateCallForQuotationDto, CallForQuotationMaster>();
             CreateMap<CreateCallForQuotationLinesDto, CallForQuotationLines>();
 
