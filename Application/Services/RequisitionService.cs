@@ -259,7 +259,7 @@ namespace Application.Services
             }
         }
 
-        private Response<bool> CheckOrUpdateQty(CreateRequisitionDto requisition)
+        private Response<bool> CheckOrUpdateQty(ref CreateRequisitionDto requisition)
         {
             foreach (var line in requisition.RequisitionLines)
             {
@@ -268,14 +268,16 @@ namespace Application.Services
 
                 if (getStockRecord.AvailableQuantity>0)
                 {
-                    int reservebableQuantity = (int)line.Quantity;
+                    int reserveableQuantity = (int)line.Quantity;
                     if (line.Quantity> getStockRecord.AvailableQuantity)
                     {
-                        reservebableQuantity = getStockRecord.AvailableQuantity;
+                        reserveableQuantity = getStockRecord.AvailableQuantity;
                     }
-                    getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity + reservebableQuantity);
-                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - reservebableQuantity);
-
+                    //Need to Save reserveable Quantity with Requesition
+                    line.ReserveQuantity = reserveableQuantity;
+                    getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity + reserveableQuantity);
+                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - reserveableQuantity);
+                    
                 }
             }
             return new Response<bool>(true, "Requisition Save Successfully");
@@ -289,7 +291,7 @@ namespace Application.Services
             //this code is not support for editable Requisition
            
                 //Checking available quantity in stock
-                var checkOrUpdateQty = CheckOrUpdateQty(entity);
+                var checkOrUpdateQty = CheckOrUpdateQty(ref entity);
 
                 if (!checkOrUpdateQty.IsSuccess)
                     return new Response<RequisitionDto>(checkOrUpdateQty.Message);
@@ -377,7 +379,50 @@ namespace Application.Services
                 return new Response<RequisitionDto>(_mapper.Map<RequisitionDto>(requisition), "Updated successfully");
             
         }
-      
+        private async Task<Response<RequisitionDto>> UpdateReserveQuantity(CreateRequisitionDto entity)
+        {
+            if (entity.RequisitionLines.Count() == 0)
+                return new Response<RequisitionDto>("Lines are required");
+
+            var specification = new RequisitionSpecs(true);
+            var requisition = await _unitOfWork.Requisition.GetById((int)entity.Id, specification);
+
+            if (requisition == null)
+                return new Response<RequisitionDto>("Not found");
+
+           
+
+
+
+            //Checking duplicate Lines if any
+            var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
+             .Where(g => g.Count() > 1)
+             .Select(y => y.Key)
+             .ToList();
+
+            if (duplicates.Any())
+                return new Response<RequisitionDto>("Duplicate Lines found");
+
+
+
+
+          
+
+            _unitOfWork.CreateTransaction();
+
+            //For updating data
+            _mapper.Map<CreateRequisitionDto, RequisitionMaster>(entity, requisition);
+
+            await _unitOfWork.SaveAsync();
+
+            //Commiting the transaction
+            _unitOfWork.Commit();
+
+            //returning response
+            return new Response<RequisitionDto>(_mapper.Map<RequisitionDto>(requisition), "Updated successfully");
+
+        }
+
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
