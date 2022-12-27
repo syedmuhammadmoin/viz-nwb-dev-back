@@ -34,6 +34,7 @@ namespace Infrastructure.Specifications
             if (forEdit)
             {
                 AddInclude(i => i.QuotationLines);
+                AddInclude(i => i.Status);
             }
             else
             {

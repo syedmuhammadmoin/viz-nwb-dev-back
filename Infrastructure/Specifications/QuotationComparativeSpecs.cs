@@ -29,16 +29,7 @@ namespace Infrastructure.Specifications
         }
         public QuotationComparativeSpecs(bool forEdit) 
         {
-            if (forEdit)
-            {
-                AddInclude(i => i.QuotationComparativeLines);
-                AddInclude(i => i.State);
-            }
-            else
-            {
-                AddInclude(i => i.State);
-                AddInclude(i => i.QuotationComparativeLines);
-            }
+           
         }
 
 
