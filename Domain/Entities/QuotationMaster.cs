@@ -14,24 +14,30 @@ namespace Domain.Entities
         [MaxLength(30)]
         public string DocNo { get; private set; }
         public DateTime QuotationDate { get; private set; }
+
         public int VendorId { get; private set; }
         [ForeignKey("VendorId")]
         public BusinessPartner Vendor { get; private set; }
+        
         [MaxLength(100)]
         public string Timeframe { get; private set; }
+
         public int? RequisitionId { get; private set; }
-        public int? CallForQuotationId { get; private set; }
+        
         public int? QuotationComparativeId { get; private set; }
         [ForeignKey("QuotationComparativeId")]
         public QuotationComparativeMaster QuotationComparativeMaster { get; private set; }
+        
         public int StatusId { get; private set; }
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get; private set; }
+        
         public virtual List<QuotationLines> QuotationLines { get; private set; }
 
         protected QuotationMaster()
         {
         }
+
         public void setStatus(int statusId)
         {
             StatusId = statusId;

@@ -34,7 +34,6 @@ namespace Infrastructure.Specifications
             if (forEdit)
             {
                 AddInclude(i => i.QuotationLines);
-                AddInclude(i => i.Status);
             }
             else
             {
@@ -55,8 +54,8 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Status);
         }
 
-        public QuotationSpecs( int requisitionNo)
-            : base(x => x.RequisitionId == requisitionNo && x.Status.State == DocumentStatus.Unpaid)
+        public QuotationSpecs(int requisitionId)
+            : base(x => x.RequisitionId == requisitionId && x.Status.State == DocumentStatus.Unpaid)
         {
                 ApplyOrderByDescending(i => i.Id);
                 AddInclude(i => i.QuotationLines);

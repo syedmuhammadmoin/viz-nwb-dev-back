@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,27 +30,9 @@ namespace Application.Services
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
         }
-    
-        public async Task<Response<QuotationDto>> CreateAsync(CreateQuotationDto entity)
-        {
-            if ((bool)entity.isSubmit)
-            {
-                return await this.SubmitQuotation(entity);
-            }
-            else
-            {
-                return await this.SaveQuotation(entity, 1);
-            }
-        }
-        
-        public Task<Response<int>> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-        
+
         public async Task<PaginationResponse<List<QuotationDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-
             var docDate = new List<DateTime?>();
             var states = new List<DocumentStatus?>();
 
@@ -73,31 +56,27 @@ namespace Application.Services
             return new PaginationResponse<List<QuotationDto>>(_mapper.Map<List<QuotationDto>>(quotation),
                     filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
-        
+
         public async Task<Response<QuotationDto>> GetByIdAsync(int id)
         {
-            var specification = new QuotationSpecs(false);
-            var quotation = await _unitOfWork.Quotation.GetById(id, specification);
+            var quotation = await _unitOfWork.Quotation.GetById(id, new QuotationSpecs(false));
             if (quotation == null)
                 return new Response<QuotationDto>("Not found");
 
             var quotationDto = _mapper.Map<QuotationDto>(quotation);
-            
-            ReturningRemarks(quotationDto, DocType.Quotation);
 
+            ReturningRemarks(quotationDto, DocType.Quotation);
             ReturningFiles(quotationDto, DocType.Quotation);
-            
-            if ((quotationDto.State == DocumentStatus.Partial || quotationDto.State == DocumentStatus.Paid))
-            {
+
+            if ((quotationDto.State == DocumentStatus.Unpaid || quotationDto.State == DocumentStatus.Partial || quotationDto.State == DocumentStatus.Paid))
                 return new Response<QuotationDto>(quotationDto, "Returning value");
-            }
+            
             quotationDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Quotation)).FirstOrDefault();
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
                     .FirstOrDefault(x => (x.CurrentStatusId == quotationDto.StatusId));
-
                 if (transition != null)
                 {
                     var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
@@ -110,65 +89,66 @@ namespace Application.Services
                     }
                 }
             }
-
             return new Response<QuotationDto>(quotationDto, "Returning value");
         }
+
+        public async Task<Response<List<QuotationDto>>> GetQoutationByRequisitionId(int requisitionId)
+        {
+            var quotation = await _unitOfWork.Quotation.GetAll(new QuotationSpecs(requisitionId));
+            if (quotation.Count() == 0)
+                return new Response<List<QuotationDto>>("Not found");
+
+            var quotationDto = _mapper.Map<List<QuotationDto>>(quotation);
+            return new Response<List<QuotationDto>>(quotationDto, "Returning value");
+        }
         
+        public async Task<Response<QuotationDto>> CreateAsync(CreateQuotationDto entity)
+        {
+            if ((bool)entity.isSubmit)
+            {
+                return await SubmitQuotation(entity);
+            }
+            else
+            {
+                return await SaveQuotation(entity, 1);
+            }
+        }
+
         public async Task<Response<QuotationDto>> UpdateAsync(CreateQuotationDto entity)
         {
             if ((bool)entity.isSubmit)
             {
-                return await this.SubmitQuotation(entity);
+                return await SubmitQuotation(entity);
             }
             else
             {
-                return await this.UpdateQuotation(entity, 1);
+                return await UpdateQuotation(entity, 1);
             }
-        }
-        
-        public async Task<Response<List<QuotationDto>>> GetQoutationByRequisitionId(int requisitionId)
-        {
-            var specification = new QuotationSpecs(requisitionId);
-            var quotation = await _unitOfWork.Quotation.GetAll(specification);
-            
-            if (quotation == null)
-                return new Response<List<QuotationDto>>("Not found");
-            
-            var quotationDto = _mapper.Map<List<QuotationDto>>(quotation);
-            
-            return new Response<List<QuotationDto>>(quotationDto, "Returning value");
         }
         
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
             var getQuottion = await _unitOfWork.Quotation.GetById(data.DocId, new QuotationSpecs(true));
-
             if (getQuottion == null)
-            {
                 return new Response<bool>("Quottion with the input id not found");
-            }
+            
             if (getQuottion.Status.State == DocumentStatus.Unpaid || getQuottion.Status.State == DocumentStatus.Partial || getQuottion.Status.State == DocumentStatus.Paid)
-            {
                 return new Response<bool>("Quottion already approved");
-            }
+            
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Quotation)).FirstOrDefault();
-
             if (workflow == null)
-            {
                 return new Response<bool>("No activated workflow found for this document");
-            }
+            
             var transition = workflow.WorkflowTransitions
                   .FirstOrDefault(x => (x.CurrentStatusId == getQuottion.StatusId && x.Action == data.Action));
-
             if (transition == null)
-            {
                 return new Response<bool>("No transition found");
-            }
+            
             var getUser = new GetUser(this._httpContextAccessor);
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+            
             _unitOfWork.CreateTransaction();
-
             foreach (var role in currentUserRoles)
             {
                 if (transition.AllowedRole.Name == role)
@@ -202,26 +182,28 @@ namespace Application.Services
                     return new Response<bool>(true, "Quottion Reviewed");
                 }
             }
-
             return new Response<bool>("User does not have allowed role");
         }
+        
+        public Task<Response<int>> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+        
         
         private async Task<Response<QuotationDto>> SubmitQuotation(CreateQuotationDto entity)
         {
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Quotation)).FirstOrDefault();
-
             if (checkingActiveWorkFlows == null)
-            {
                 return new Response<QuotationDto>("No workflow found for Quottion");
-            }
 
             if (entity.Id == null)
             {
-                return await this.SaveQuotation(entity, 6);
+                return await SaveQuotation(entity, 6);
             }
             else
             {
-                return await this.UpdateQuotation(entity, 6);
+                return await UpdateQuotation(entity, 6);
             }
         }
         
@@ -230,9 +212,7 @@ namespace Application.Services
             if (entity.QuotationLines.Count() == 0)
                 return new Response<QuotationDto>("Lines are required");
 
-            var specification = new QuotationSpecs(true);
-            var quotation = await _unitOfWork.Quotation.GetById((int)entity.Id, specification);
-
+            var quotation = await _unitOfWork.Quotation.GetById((int)entity.Id, new QuotationSpecs(true));
             if (quotation == null)
                 return new Response<QuotationDto>("Not found");
 
@@ -241,13 +221,12 @@ namespace Application.Services
 
             quotation.setStatus(status);
 
-            _unitOfWork.CreateTransaction();
-
             //For updating data
             _mapper.Map<CreateQuotationDto, QuotationMaster>(entity, quotation);
+            
+            _unitOfWork.CreateTransaction();
 
             await _unitOfWork.SaveAsync();
-
             //Commiting the transaction
             _unitOfWork.Commit();
 
@@ -266,7 +245,7 @@ namespace Application.Services
             quotation.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-
+            
             //Saving in table
             var result = await _unitOfWork.Quotation.Add(quotation);
             await _unitOfWork.SaveAsync();
@@ -277,7 +256,6 @@ namespace Application.Services
 
             //Commiting the transaction 
             _unitOfWork.Commit();
-
             return new Response<QuotationDto>(_mapper.Map<QuotationDto>(result), "Created successfully");
         }
         
