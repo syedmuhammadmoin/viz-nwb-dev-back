@@ -335,13 +335,13 @@ namespace Application.Mapper
               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
               .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName))
               .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity));
-            
+
             CreateMap<RequisitionMaster, RequisitionDropDownDto>();
-            
+
             CreateMap<CreateRequisitionDto, RequisitionMaster>();
-            
+
             CreateMap<CreateRequisitionLinesDto, RequisitionLines>();
-            
+
             // GRN Mapping
             CreateMap<GRNMaster, GRNDto>()
               .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
