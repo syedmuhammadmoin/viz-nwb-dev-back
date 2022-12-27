@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221221101325_AddMoreProcurementTables")]
-    partial class AddMoreProcurementTables
+    [Migration("20221227145832_AddRequestBidAndQuotationTables")]
+    partial class AddRequestBidAndQuotationTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -382,7 +382,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BidEvaluationMasters");
+                    b.ToTable("BidEvaluationMaster");
                 });
 
             modelBuilder.Entity("Domain.Entities.BillLines", b =>
@@ -822,7 +822,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("VendorId");
 
-                    b.ToTable("CallForQuotationMasters");
+                    b.ToTable("CallForQuotationMaster");
                 });
 
             modelBuilder.Entity("Domain.Entities.Campus", b =>
@@ -4256,6 +4256,55 @@ namespace Infrastructure.Migrations
                     b.ToTable("PurchaseOrderMaster");
                 });
 
+            modelBuilder.Entity("Domain.Entities.QuotationComparativeMaster", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DocNo")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("QuotationComparativeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("RequsisitionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequsisitionId");
+
+                    b.ToTable("QuotationComparativeMaster");
+                });
+
             modelBuilder.Entity("Domain.Entities.QuotationLines", b =>
                 {
                     b.Property<int>("Id")
@@ -4335,6 +4384,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("QuotationComparativeId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("QuotationDate")
                         .HasColumnType("datetime2");
 
@@ -4353,11 +4405,13 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("QuotationComparativeId");
+
                     b.HasIndex("StatusId");
 
                     b.HasIndex("VendorId");
 
-                    b.ToTable("QuotationMasters");
+                    b.ToTable("QuotationMaster");
                 });
 
             modelBuilder.Entity("Domain.Entities.RecordLedger", b =>
@@ -4495,15 +4549,12 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ItemDescription")
+                    b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<int>("ItemQuantity")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
 
                     b.Property<int>("MasterId")
                         .HasColumnType("int");
@@ -4514,6 +4565,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -4621,7 +4675,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("WarehouseId")
+                    b.Property<int>("WarehouseId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -6832,6 +6886,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("Vendor");
                 });
 
+            modelBuilder.Entity("Domain.Entities.QuotationComparativeMaster", b =>
+                {
+                    b.HasOne("Domain.Entities.RequisitionMaster", "Requisition")
+                        .WithMany()
+                        .HasForeignKey("RequsisitionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Requisition");
+                });
+
             modelBuilder.Entity("Domain.Entities.QuotationLines", b =>
                 {
                     b.HasOne("Domain.Entities.Product", "Item")
@@ -6852,6 +6917,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.QuotationMaster", b =>
                 {
+                    b.HasOne("Domain.Entities.QuotationComparativeMaster", "QuotationComparativeMaster")
+                        .WithMany("Quotations")
+                        .HasForeignKey("QuotationComparativeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
                         .WithMany()
                         .HasForeignKey("StatusId")
@@ -6863,6 +6933,8 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("VendorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("QuotationComparativeMaster");
 
                     b.Navigation("Status");
 
@@ -6974,7 +7046,8 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Warehouse", "Warehouse")
                         .WithMany()
                         .HasForeignKey("WarehouseId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Item");
 
@@ -7313,6 +7386,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.PurchaseOrderMaster", b =>
                 {
                     b.Navigation("PurchaseOrderLines");
+                });
+
+            modelBuilder.Entity("Domain.Entities.QuotationComparativeMaster", b =>
+                {
+                    b.Navigation("Quotations");
                 });
 
             modelBuilder.Entity("Domain.Entities.QuotationMaster", b =>
