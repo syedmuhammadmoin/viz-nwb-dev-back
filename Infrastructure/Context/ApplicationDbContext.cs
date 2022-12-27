@@ -90,7 +90,6 @@ namespace Infrastructure.Context
         public DbSet<CallForQuotationMaster> CallForQuotationMaster { get; set; }
         public DbSet<CallForQuotationLines> CallForQuotationLines { get; set; }
         public DbSet<QuotationComparativeMaster> QuotationComparativeMaster { get; set; }
-        public DbSet<QuotationComparativeLines> QuotationComparativeLines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
