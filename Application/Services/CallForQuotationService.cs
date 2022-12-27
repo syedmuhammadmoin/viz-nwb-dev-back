@@ -75,12 +75,16 @@ namespace Application.Services
                 return new Response<CallForQuotationDto>("Lines are Required");
 
             var callForQuotation = _mapper.Map<CallForQuotationMaster>(entity);
-
-            if ((bool)entity.isSubmit)
-                callForQuotation.setStatus(DocumentStatus.Submitted);
-
             
-            callForQuotation.setStatus(DocumentStatus.Draft);
+            if ((bool)entity.isSubmit)
+            {
+                callForQuotation.setStatus(DocumentStatus.Submitted);
+            }
+            else
+            {
+                callForQuotation.setStatus(DocumentStatus.Draft);
+            }
+            
             _unitOfWork.CreateTransaction();
 
             //Saving in table
@@ -109,9 +113,14 @@ namespace Application.Services
                 return new Response<CallForQuotationDto>("Only draft document can be edited");
 
             if ((bool)entity.isSubmit)
+            {
                 callForQuotation.setStatus(DocumentStatus.Submitted);
+            }
+            else
+            {
+                callForQuotation.setStatus(DocumentStatus.Draft);
+            }
 
-            callForQuotation.setStatus(DocumentStatus.Draft);
             _mapper.Map<CreateCallForQuotationDto, CallForQuotationMaster>(entity, callForQuotation);
             
             _unitOfWork.CreateTransaction();

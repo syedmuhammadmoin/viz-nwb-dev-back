@@ -55,8 +55,7 @@ namespace Application.Services
 
         public async Task<Response<BidEvaluationDto>> GetByIdAsync(int id)
         {
-            var specification = new BidEvaluationSpecs(false);
-            var bidEvaluation = await _unitOfWork.BidEvaluation.GetById(id, specification);
+            var bidEvaluation = await _unitOfWork.BidEvaluation.GetById(id, new BidEvaluationSpecs());
             if (bidEvaluation == null)
                 return new Response<BidEvaluationDto>("Not found");
 

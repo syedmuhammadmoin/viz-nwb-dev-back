@@ -30,23 +30,6 @@ namespace Application.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<Response<RequestDto>> CreateAsync(CreateRequestDto entity)
-        {
-            if ((bool)entity.isSubmit)
-            {
-                return await this.SubmitRequest(entity);
-            }
-            else
-            {
-                return await this.SaveRequest(entity, 1);
-            }
-        }
-
-        public Task<Response<int>> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<PaginationResponse<List<RequestDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var docDate = new List<DateTime?>();
@@ -85,8 +68,8 @@ namespace Application.Services
 
             if ((requestDto.State == DocumentStatus.Partial || requestDto.State == DocumentStatus.Paid))
                 return new Response<RequestDto>(requestDto, "Returning value");
-            
-            
+
+
             requestDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Request)).FirstOrDefault();
             if (workflow != null)
@@ -110,6 +93,18 @@ namespace Application.Services
             return new Response<RequestDto>(requestDto, "Returning value");
         }
 
+        public async Task<Response<RequestDto>> CreateAsync(CreateRequestDto entity)
+        {
+            if ((bool)entity.isSubmit)
+            {
+                return await this.SubmitRequest(entity);
+            }
+            else
+            {
+                return await this.SaveRequest(entity, 1);
+            }
+        }
+        
         public async Task<Response<RequestDto>> UpdateAsync(CreateRequestDto entity)
         {
             if ((bool)entity.isSubmit)
@@ -127,25 +122,25 @@ namespace Application.Services
             var getRequest = await _unitOfWork.Request.GetById(data.DocId, new RequestSpecs(true));
             if (getRequest == null)
                 return new Response<bool>("Request with the input id not found");
-            
+
             if (getRequest.Status.State == DocumentStatus.Unpaid || getRequest.Status.State == DocumentStatus.Partial || getRequest.Status.State == DocumentStatus.Paid)
                 return new Response<bool>("Request already approved");
-            
+
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Request)).FirstOrDefault();
 
             if (workflow == null)
                 return new Response<bool>("No activated workflow found for this document");
-            
+
             var transition = workflow.WorkflowTransitions
                   .FirstOrDefault(x => (x.CurrentStatusId == getRequest.StatusId && x.Action == data.Action));
 
             if (transition == null)
                 return new Response<bool>("No transition found");
-            
+
             var getUser = new GetUser(this._httpContextAccessor);
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
-            
+
             _unitOfWork.CreateTransaction();
             foreach (var role in currentUserRoles)
             {
@@ -182,7 +177,13 @@ namespace Application.Services
             }
             return new Response<bool>("User does not have allowed role");
         }
+        
+        public Task<Response<int>> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
 
+        
         private async Task<Response<RequestDto>> SubmitRequest(CreateRequestDto entity)
         {
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Request)).FirstOrDefault();
@@ -268,6 +269,5 @@ namespace Application.Services
             
             return remarks;
         }
-
     }
 }

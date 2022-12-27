@@ -124,98 +124,89 @@ namespace Application.Services
 
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
+            var getIssuance = await _unitOfWork.Issuance.GetById(data.DocId, new IssuanceSpecs(true));
+            if (getIssuance == null)
+                return new Response<bool>("Issuance with the input id not found");
+            
+            if (getIssuance.Status.State == DocumentStatus.Unpaid || getIssuance.Status.State == DocumentStatus.Partial || getIssuance.Status.State == DocumentStatus.Paid)
+                return new Response<bool>("Issuance already approved");
+            
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Issuance)).FirstOrDefault();
+            if (workflow == null)
+                return new Response<bool>("No activated workflow found for this document");
+            
+            var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == getIssuance.StatusId && x.Action == data.Action));
+            if (transition == null)
+                return new Response<bool>("No transition found");
+            
+            var getUser = new GetUser(this._httpContextAccessor);
+            var userId = getUser.GetCurrentUserId();
+            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles(); _unitOfWork.CreateTransaction();
+
+            foreach (var role in currentUserRoles)
             {
-                var getIssuance = await _unitOfWork.Issuance.GetById(data.DocId, new IssuanceSpecs(true));
-
-                if (getIssuance == null)
+                if (transition.AllowedRole.Name == role)
                 {
-                    return new Response<bool>("Issuance with the input id not found");
-                }
-                if (getIssuance.Status.State == DocumentStatus.Unpaid || getIssuance.Status.State == DocumentStatus.Partial || getIssuance.Status.State == DocumentStatus.Paid)
-                {
-                    return new Response<bool>("Issuance already approved");
-                }
-                var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Issuance)).FirstOrDefault();
-
-                if (workflow == null)
-                {
-                    return new Response<bool>("No activated workflow found for this document");
-                }
-                var transition = workflow.WorkflowTransitions
-                        .FirstOrDefault(x => (x.CurrentStatusId == getIssuance.StatusId && x.Action == data.Action));
-
-                if (transition == null)
-                {
-                    return new Response<bool>("No transition found");
-                }
-                var getUser = new GetUser(this._httpContextAccessor);
-                var userId = getUser.GetCurrentUserId();
-                var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles(); _unitOfWork.CreateTransaction();
-              
-                    foreach (var role in currentUserRoles)
+                    getIssuance.setStatus(transition.NextStatusId);
+                    if (!String.IsNullOrEmpty(data.Remarks))
                     {
-                        if (transition.AllowedRole.Name == role)
+                        var addRemarks = new Remark()
                         {
-                            getIssuance.setStatus(transition.NextStatusId);
-                            if (!String.IsNullOrEmpty(data.Remarks))
+                            DocId = getIssuance.Id,
+                            DocType = DocType.Issuance,
+                            Remarks = data.Remarks,
+                            UserId = userId
+                        };
+                        await _unitOfWork.Remarks.Add(addRemarks);
+                    }
+
+                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                    {
+                        foreach (var line in getIssuance.IssuanceLines)
+                        {
+                            line.setStatus(DocumentStatus.Unreconciled);
+                        }
+
+                        if (getIssuance.RequisitionId != null)
+                        {
+                            var reconciled = await ReconcileReqLines(getIssuance.Id, (int)getIssuance.RequisitionId, getIssuance.IssuanceLines);
+                            if (!reconciled.IsSuccess)
                             {
-                                var addRemarks = new Remark()
-                                {
-                                    DocId = getIssuance.Id,
-                                    DocType = DocType.Issuance,
-                                    Remarks = data.Remarks,
-                                    UserId = userId
-                                };
-                                await _unitOfWork.Remarks.Add(addRemarks);
-                            }
-
-                            if (transition.NextStatus.State == DocumentStatus.Unpaid)
-                            {
-                                foreach (var line in getIssuance.IssuanceLines)
-                                {
-                                    line.setStatus(DocumentStatus.Unreconciled);
-                                }
-
-                                if (getIssuance.RequisitionId != null)
-                                {
-                                    var reconciled = await ReconcileReqLines(getIssuance.Id, (int)getIssuance.RequisitionId, getIssuance.IssuanceLines);
-                                    if (!reconciled.IsSuccess)
-                                    {
-                                        _unitOfWork.Rollback();
-                                        return new Response<bool>(reconciled.Message);
-                                    }
-                                    await _unitOfWork.SaveAsync();
-                                }
-
-                                //updating reserved quantity in stock
-                                var updateStockOnApproveOrReject = await UpdateStockOnApproveOrReject(getIssuance);
-                                if (!updateStockOnApproveOrReject.IsSuccess)
-                                    return new Response<bool>(updateStockOnApproveOrReject.Message);
-
-
-                                await _unitOfWork.SaveAsync();
-                                _unitOfWork.Commit();
-                                return new Response<bool>(true, "Issuance Approved");
-                            }
-                            if (transition.NextStatus.State == DocumentStatus.Rejected)
-                            {
-                                //updating reserved quantity in stock
-                                var updateStockOnApproveOrReject = await UpdateStockOnApproveOrReject(getIssuance);
-                                if (!updateStockOnApproveOrReject.IsSuccess)
-                                    return new Response<bool>(updateStockOnApproveOrReject.Message);
-
-                                await _unitOfWork.SaveAsync();
-                                _unitOfWork.Commit();
-                                return new Response<bool>(true, "Issuance Rejected");
+                                _unitOfWork.Rollback();
+                                return new Response<bool>(reconciled.Message);
                             }
                             await _unitOfWork.SaveAsync();
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "Issuance Reviewed");
                         }
+
+                        //updating reserved quantity in stock
+                        var updateStockOnApproveOrReject = await UpdateStockOnApproveOrReject(getIssuance);
+                        if (!updateStockOnApproveOrReject.IsSuccess)
+                            return new Response<bool>(updateStockOnApproveOrReject.Message);
+
+
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Issuance Approved");
                     }
-                    return new Response<bool>("User does not have allowed role");
-                
+                    if (transition.NextStatus.State == DocumentStatus.Rejected)
+                    {
+                        //updating reserved quantity in stock
+                        var updateStockOnApproveOrReject = await UpdateStockOnApproveOrReject(getIssuance);
+                        if (!updateStockOnApproveOrReject.IsSuccess)
+                            return new Response<bool>(updateStockOnApproveOrReject.Message);
+
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Issuance Rejected");
+                    }
+                    await _unitOfWork.SaveAsync();
+                    _unitOfWork.Commit();
+                    return new Response<bool>(true, "Issuance Reviewed");
+                }
             }
+            return new Response<bool>("User does not have allowed role");
+
         }
 
         //Private Methods for saving and updating Issuance
@@ -224,18 +215,18 @@ namespace Application.Services
             if (entity.IssuanceLines.Count() == 0)
                 return new Response<IssuanceDto>("Lines are required");
 
-            if (entity.RequisitionId!= null)
+            if (entity.RequisitionId != null)
             {
                 foreach (var issuanceLine in entity.IssuanceLines)
                 {
                     //Getting Unreconciled Requisition lines
                     var getrequisitionLine = _unitOfWork.Requisition
-                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId,  (int)entity.RequisitionId))
+                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, (int)entity.RequisitionId))
                         .FirstOrDefault();
 
                     if (getrequisitionLine == null)
                         return new Response<IssuanceDto>("Selected item is not in requisition");
-                    
+
                     var checkValidation = CheckValidation((int)entity.RequisitionId, getrequisitionLine, _mapper.Map<IssuanceLines>(issuanceLine));
                     if (!checkValidation.IsSuccess)
                         return new Response<IssuanceDto>(checkValidation.Message);
@@ -249,7 +240,7 @@ namespace Application.Services
                     return new Response<IssuanceDto>(checkOrUpdateQty.Message);
             }
 
-            
+
 
             //Checking duplicate Lines if any
             var duplicates = entity.IssuanceLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
@@ -266,21 +257,21 @@ namespace Application.Services
             issuance.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-           
-                //Saving in table
-                var result = await _unitOfWork.Issuance.Add(issuance);
-                await _unitOfWork.SaveAsync();
 
-                //For creating docNo
-                issuance.CreateDocNo();
-                await _unitOfWork.SaveAsync();
+            //Saving in table
+            var result = await _unitOfWork.Issuance.Add(issuance);
+            await _unitOfWork.SaveAsync();
 
-                //Commiting the transaction 
-                _unitOfWork.Commit();
+            //For creating docNo
+            issuance.CreateDocNo();
+            await _unitOfWork.SaveAsync();
 
-                //returning response
-                return new Response<IssuanceDto>(_mapper.Map<IssuanceDto>(result), "Created successfully");
-          
+            //Commiting the transaction 
+            _unitOfWork.Commit();
+
+            //returning response
+            return new Response<IssuanceDto>(_mapper.Map<IssuanceDto>(result), "Created successfully");
+
         }
 
         private async Task<Response<IssuanceDto>> SubmitIssuance(CreateIssuanceDto entity)
@@ -351,25 +342,25 @@ namespace Application.Services
             issuance.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-     
-                //For updating data
-                _mapper.Map<CreateIssuanceDto, IssuanceMaster>(entity, issuance);
 
-                await _unitOfWork.SaveAsync();
+            //For updating data
+            _mapper.Map<CreateIssuanceDto, IssuanceMaster>(entity, issuance);
 
-                //Commiting the transaction
-                _unitOfWork.Commit();
+            await _unitOfWork.SaveAsync();
 
-                //returning response
-                return new Response<IssuanceDto>(_mapper.Map<IssuanceDto>(issuance), "Updated successfully");
-           
+            //Commiting the transaction
+            _unitOfWork.Commit();
+
+            //returning response
+            return new Response<IssuanceDto>(_mapper.Map<IssuanceDto>(issuance), "Updated successfully");
+
         }
 
         private Response<bool> CheckOrUpdateQty(CreateIssuanceDto issuance)
         {
             foreach (var line in issuance.IssuanceLines)
             {
-                var getStockRecord =  _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
+                var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
 
                 if (getStockRecord == null)
                     return new Response<bool>("Item not found in stock");
@@ -381,7 +372,7 @@ namespace Application.Services
                 if (line.Quantity > getStockRecord.AvailableQuantity)
                     return new Response<bool>("Selected item quantity is exceeding available quantity");
 
-                getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity  + (int)line.Quantity);
+                getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity + (int)line.Quantity);
                 getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - (int)line.Quantity);
 
             }
@@ -391,17 +382,17 @@ namespace Application.Services
         private async Task<Response<bool>> UpdateStockOnApproveOrReject(IssuanceMaster issuance)
         {
             var getState = await _unitOfWork.WorkFlowStatus.GetById(issuance.StatusId);
-            Task<RequisitionMaster> getRequisition = null;
+            RequisitionMaster getRequisition = null;
 
             if (issuance.RequisitionId != null)
             {
-                getRequisition =  _unitOfWork.Requisition.GetById((int)issuance.RequisitionId);
+                getRequisition = await _unitOfWork.Requisition.GetById((int)issuance.RequisitionId);
             }
 
-            
-            if (getState == null) 
+
+            if (getState == null)
                 return new Response<bool>("Invalid Status");
-            
+
             foreach (var line in issuance.IssuanceLines)
             {
                 var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs(line.ItemId, line.WarehouseId)).FirstOrDefault();
@@ -426,10 +417,9 @@ namespace Application.Services
                 }
                 else
                 {
+                    var reserveQty = getRequisition.RequisitionLines.Where(i => i.ItemId == line.ItemId && i.WarehouseId == line.WarehouseId).Sum(i => i.ReserveQuantity);
 
-                    var reserveQty = getRequisition.Result.RequisitionLines.Where(i => i.ItemId == line.ItemId && (int)i.WarehouseId == line.WarehouseId).Sum(i => i.ReserveQuantity);
-
-                    if (line.Quantity> reserveQty)
+                    if (line.Quantity > reserveQty)
                         return new Response<bool>("Issuance quantity must not be greater than requested quantity");
 
                     // updating reserved quantity for APPROVED Issuance
@@ -474,7 +464,7 @@ namespace Application.Services
             {
                 //Getting Unreconciled Requisition lines
                 var getRequisitionLine = _unitOfWork.Requisition
-                    .FindLines(new RequisitionLinesSpecs(IssuanceLine.ItemId,  requisitionId))
+                    .FindLines(new RequisitionLinesSpecs(IssuanceLine.ItemId, requisitionId))
                     .FirstOrDefault();
                 if (getRequisitionLine == null)
                     return new Response<bool>("No Requisition line found for reconciliaiton");
