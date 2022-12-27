@@ -22,7 +22,7 @@ namespace Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal PurchasePrice { get; private set; }
 
-        public int? WarehouseId { get; private set; }
+        public int WarehouseId { get; private set; }
         [ForeignKey("WarehouseId")]
         public Warehouse Warehouse { get; private set; }
         public DocumentStatus Status { get; private set; }
