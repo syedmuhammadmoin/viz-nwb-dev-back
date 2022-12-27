@@ -9,7 +9,7 @@ namespace Application.Contracts.DTOs
     public class RequestLinesDto
     {
         public int Id { get; set; }
-        public string ItemDescription { get; set; }
-        public int ItemQuantity { get; set; }
+        public string Description { get; set; }
+        public int Quantity { get; set; }
     }
 }

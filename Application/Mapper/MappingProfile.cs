@@ -492,12 +492,11 @@ namespace Application.Mapper
             //Request 
             CreateMap<RequestMaster, RequestDto>()
                 .ForMember(dto => dto.EmployeeName, core => core.MapFrom(a => a.Employee.Name))
-               .ForMember(dto => dto.Campus, core => core.MapFrom(a => a.Campus.Name))
-               .ForMember(dto => dto.Status, core => core.MapFrom(
-                    a => a.Status.State == DocumentStatus.Unpaid ? "Open" :
-                    a.Status.State == DocumentStatus.Partial ? "Open" :
-                    a.Status.State == DocumentStatus.Paid ? "Closed" : a.Status.Status))
-              .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+                .ForMember(dto => dto.Campus, core => core.MapFrom(a => a.Campus.Name))
+                .ForMember(dto => dto.Status, core => core.MapFrom(
+                    a => a.Status.State == DocumentStatus.Unpaid ? "Approved" : a.Status.Status))
+                .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+
             CreateMap<RequestLines, RequestLinesDto>();
             CreateMap<CreateRequestDto, RequestMaster>();
             CreateMap<CreateRequestLinesDto, RequestLines>();
@@ -511,39 +510,41 @@ namespace Application.Mapper
             CreateMap<BidEvaluationLines, BidEvaluationLinesDto>();
             CreateMap<CreateBidEvaluationLinesDto, BidEvaluationLines>();
             CreateMap<CreateBidEvaluationDto, BidEvaluationMaster>();
+            
             //Quotation 
             CreateMap<QuotationMaster, QuotationDto>()
-          .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
-         .ForMember(dto => dto.Status, core => core.MapFrom(
-              a => a.Status.State == DocumentStatus.Unpaid ? "Open" :
-              a.Status.State == DocumentStatus.Partial ? "Open" :
-              a.Status.State == DocumentStatus.Paid ? "Closed" : a.Status.Status))
-        .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+                .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
+                .ForMember(dto => dto.Status, core => core.MapFrom(
+                    a => a.Status.State == DocumentStatus.Unpaid ? "Open" :
+                    a.Status.State == DocumentStatus.Partial ? "Open" :
+                    a.Status.State == DocumentStatus.Paid ? "Closed" : a.Status.Status))
+                .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<QuotationLines, QuotationLinesDto>()
-            .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId == null ? null : a.ItemId))
-             .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName));
+                .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId == null ? null : a.ItemId))
+                .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName));
             CreateMap<CreateQuotationDto, QuotationMaster>();
             CreateMap<CreateQuotationLinesDto, QuotationLines>();
 
             //CallForQuotation 
             CreateMap<CallForQuotationMaster, CallForQuotationDto>()
-          .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
-          .ForMember(dto => dto.Status, core => core.MapFrom(
-           a => a.State == DocumentStatus.Draft ? "Draft" :
-           a.State == DocumentStatus.Submitted ? "Submitted" : "N/A"));
+                .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))
+                .ForMember(dto => dto.Status, core => core.MapFrom(
+                    a => a.State == DocumentStatus.Draft ? "Draft" :
+                    a.State == DocumentStatus.Submitted ? "Submitted" : "N/A"));
+
             CreateMap<CallForQuotationLines, CallForQuotationLinesDto>()
-           .ForMember(dto => dto.ItemId, core => core.MapFrom(a => a.ItemId == null ? null : a.ItemId))
-             .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName));
+                .ForMember(dto => dto.ItemName, core => core.MapFrom(a => a.Item.ProductName));
             CreateMap<CreateCallForQuotationDto, CallForQuotationMaster>();
             CreateMap<CreateCallForQuotationLinesDto, CallForQuotationLines>();
 
             //QuotationComparative
             CreateMap<QuotationComparativeMaster, QuotationComparativeDto>()
                 .ForMember(dto => dto.RequsisitionId, core => core.MapFrom(a => a.Requisition))
-                 .ForMember(dto => dto.Status, core => core.MapFrom(
-           a => a.State == DocumentStatus.Draft ? "Draft" :
-           a.State == DocumentStatus.Submitted ? "Submitted" : "N/A"));
+                .ForMember(dto => dto.Status, core => core.MapFrom(
+                    a => a.State == DocumentStatus.Draft ? "Draft" :
+                    a.State == DocumentStatus.Submitted ? "Submitted" : "N/A"));
+            
             CreateMap<QuotationComparativeLines, QuotationDto>();
             CreateMap<CreateQuotationComparativeDto, QuotationComparativeMaster>();
             CreateMap<CreateQuotationComparativeLinesDto, QuotationComparativeLines>();

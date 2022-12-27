@@ -28,23 +28,6 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-     
-        public async Task<Response<BidEvaluationDto>> CreateAsync(CreateBidEvaluationDto entity)
-        {
-            if ((bool)entity.isSubmit)
-            {
-                return await this.SubmitBidEvaluation(entity);
-            }
-            else
-            {
-                return await this.SaveBidEvaluation(entity);
-            }
-        }
-        
-        public Task<Response<int>> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
         
         public async Task<PaginationResponse<List<BidEvaluationDto>>> GetAllAsync(TransactionFormFilter filter)
         {
@@ -69,7 +52,7 @@ namespace Application.Services
             return new PaginationResponse<List<BidEvaluationDto>>(_mapper.Map<List<BidEvaluationDto>>(bidEvaluation),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
-        
+
         public async Task<Response<BidEvaluationDto>> GetByIdAsync(int id)
         {
             var specification = new BidEvaluationSpecs(false);
@@ -82,94 +65,67 @@ namespace Application.Services
 
             return new Response<BidEvaluationDto>(bidEvaluationDto, "Returning value");
         }
-        
-        public async Task<Response<BidEvaluationDto>> UpdateAsync(CreateBidEvaluationDto entity)
-        {
-            if ((bool)entity.isSubmit)
-            {
-                return await this.SubmitBidEvaluation(entity);
-            }
-            else
-            {
-                return await this.UpdateBidEvaluation(entity);
-            }
-        }
-        
-        private async Task<Response<BidEvaluationDto>> SubmitBidEvaluation(CreateBidEvaluationDto entity)
-        {
-            if (entity.Id == null)
-            {
-                return await this.SaveBidEvaluation(entity);
-            }
-            else
-            {
-                return await this.UpdateBidEvaluation(entity);
-            }
-        }
-        
-        private async Task<Response<BidEvaluationDto>> SaveBidEvaluation(CreateBidEvaluationDto entity)
+
+        public async Task<Response<BidEvaluationDto>> CreateAsync(CreateBidEvaluationDto entity)
         {
             if (entity.BidEvaluationLines.Count() == 0)
                 return new Response<BidEvaluationDto>("Lines are required");
 
             var bidEvaluation = _mapper.Map<BidEvaluationMaster>(entity);
 
-            if (entity.isSubmit == true)
-            {
+            if ((bool)entity.isSubmit)
                 bidEvaluation.setStatus(DocumentStatus.Submitted);
-            }
-            else
-            {
-                bidEvaluation.setStatus(DocumentStatus.Draft);
-            }
+               
+            bidEvaluation.setStatus(DocumentStatus.Draft);
+            
             _unitOfWork.CreateTransaction();
             //Saving in table
             var result = await _unitOfWork.BidEvaluation.Add(bidEvaluation);
             await _unitOfWork.SaveAsync();
-
+            
             bidEvaluation.CreateDocNo();
             await _unitOfWork.SaveAsync();
+            
             //Commiting the transaction 
             _unitOfWork.Commit();
 
             //returning response
             return new Response<BidEvaluationDto>(_mapper.Map<BidEvaluationDto>(result), "Created successfully");
-
         }
-        
-        private async Task<Response<BidEvaluationDto>> UpdateBidEvaluation(CreateBidEvaluationDto entity)
+
+        public async Task<Response<BidEvaluationDto>> UpdateAsync(CreateBidEvaluationDto entity)
         {
             if (entity.BidEvaluationLines.Count() == 0)
                 return new Response<BidEvaluationDto>("Lines are required");
 
-            var specification = new BidEvaluationSpecs(true);
-            var bidEvaluation = await _unitOfWork.BidEvaluation.GetById((int)entity.Id, specification);
-
+            var bidEvaluation = await _unitOfWork.BidEvaluation.GetById((int)entity.Id, new BidEvaluationSpecs());
             if (bidEvaluation == null)
                 return new Response<BidEvaluationDto>("Not found");
+            
             if (bidEvaluation.State != DocumentStatus.Draft)
                 return new Response<BidEvaluationDto>("Only draft document can be edited");
-            if (entity.isSubmit == true)
-            {
+            
+            if ((bool)entity.isSubmit)
                 bidEvaluation.setStatus(DocumentStatus.Submitted);
-            }
-            else
-            {
-                bidEvaluation.setStatus(DocumentStatus.Draft);
-            }
-            _unitOfWork.CreateTransaction();
 
+            bidEvaluation.setStatus(DocumentStatus.Draft);
             //For updating data
             _mapper.Map<CreateBidEvaluationDto, BidEvaluationMaster>(entity, bidEvaluation);
-
+            
+            _unitOfWork.CreateTransaction();
+            
             await _unitOfWork.SaveAsync();
-
+            
             //Commiting the transaction
             _unitOfWork.Commit();
 
             //returning response
-            return new Response<BidEvaluationDto>(_mapper.Map<BidEvaluationDto>(bidEvaluation), "Created successfully");
+            return new Response<BidEvaluationDto>(_mapper.Map<BidEvaluationDto>(bidEvaluation), "Updated successfully");
+        }
 
+        public Task<Response<int>> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

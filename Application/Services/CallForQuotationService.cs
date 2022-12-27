@@ -28,24 +28,6 @@ namespace Application.Services
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
         }
-
-        public async Task<Response<CallForQuotationDto>> CreateAsync(CreateCallForQuotationDto entity)
-        {
-            if ((bool)entity.isSubmit)
-            {
-                return await this.SubmitCallForQuotation(entity);
-            }
-            else
-            {
-                return await this.SaveCallForQuotation(entity);
-            }
-        }
-
-        public Task<Response<int>> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<PaginationResponse<List<CallForQuotationDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var docDate = new List<DateTime?>();
@@ -79,51 +61,26 @@ namespace Application.Services
             if (callForQuotation == null)
 
                 return new Response<CallForQuotationDto>("Not found");
-            
+
             var callForQuotationDto = _mapper.Map<CallForQuotationDto>(callForQuotation);
 
-            ReturningFiles(callForQuotationDto,DocType.CallForQuotaion);
+            ReturningFiles(callForQuotationDto, DocType.CallForQuotaion);
 
             return new Response<CallForQuotationDto>(callForQuotationDto, "Returning value");
         }
 
-        public async Task<Response<CallForQuotationDto>> UpdateAsync(CreateCallForQuotationDto entity)
-        {
-            if ((bool)entity.isSubmit)
-            {
-                return await this.SubmitCallForQuotation(entity);
-            }
-            else
-            {
-                return await this.UpdateCallForQuotation(entity);
-            }
-        }
-        private async Task<Response<CallForQuotationDto>> SubmitCallForQuotation(CreateCallForQuotationDto entity)
-        {
-
-            if (entity.Id == null)
-            {
-                return await this.SaveCallForQuotation(entity);
-            }
-            else
-            {
-                return await this.UpdateCallForQuotation(entity);
-            }
-        }
-        private async Task<Response<CallForQuotationDto>> SaveCallForQuotation(CreateCallForQuotationDto entity)
+        public async Task<Response<CallForQuotationDto>> CreateAsync(CreateCallForQuotationDto entity)
         {
             if (entity.CallForQuotationLines.Count() == 0)
                 return new Response<CallForQuotationDto>("Lines are Required");
 
             var callForQuotation = _mapper.Map<CallForQuotationMaster>(entity);
-            if (entity.isSubmit == true)
-            {
+
+            if ((bool)entity.isSubmit)
                 callForQuotation.setStatus(DocumentStatus.Submitted);
-            }
-            else
-            {
-                callForQuotation.setStatus(DocumentStatus.Draft);
-            }
+
+            
+            callForQuotation.setStatus(DocumentStatus.Draft);
             _unitOfWork.CreateTransaction();
 
             //Saving in table
@@ -136,45 +93,42 @@ namespace Application.Services
 
             //Commiting the transaction 
             _unitOfWork.Commit();
-
             return new Response<CallForQuotationDto>(_mapper.Map<CallForQuotationDto>(result), "Created successfully");
         }
-        private async Task<Response<CallForQuotationDto>> UpdateCallForQuotation(CreateCallForQuotationDto entity)
+
+        public async Task<Response<CallForQuotationDto>> UpdateAsync(CreateCallForQuotationDto entity)
         {
             if (entity.CallForQuotationLines.Count() == 0)
                 return new Response<CallForQuotationDto>("Lines are required");
 
-            var specification = new CallForQuotationSpecs(true);
-            var callForQuotation = await _unitOfWork.CallForQuotation.GetById((int)entity.Id, specification);
-
+            var callForQuotation = await _unitOfWork.CallForQuotation.GetById((int)entity.Id, new CallForQuotationSpecs(true));
             if (callForQuotation == null)
                 return new Response<CallForQuotationDto>("Not found");
 
             if (callForQuotation.State != DocumentStatus.Draft)
                 return new Response<CallForQuotationDto>("Only draft document can be edited");
 
-            if (entity.isSubmit == true)
-            {
+            if ((bool)entity.isSubmit)
                 callForQuotation.setStatus(DocumentStatus.Submitted);
-            }
-            else
-            {
-                callForQuotation.setStatus(DocumentStatus.Draft);
-            }
 
+            callForQuotation.setStatus(DocumentStatus.Draft);
+            _mapper.Map<CreateCallForQuotationDto, CallForQuotationMaster>(entity, callForQuotation);
+            
             _unitOfWork.CreateTransaction();
 
-            //For updating data
-            _mapper.Map<CreateCallForQuotationDto, CallForQuotationMaster>(entity, callForQuotation);
-
             await _unitOfWork.SaveAsync();
-
             //Commiting the transaction
             _unitOfWork.Commit();
 
             //returning response
             return new Response<CallForQuotationDto>(_mapper.Map<CallForQuotationDto>(callForQuotation), "Updated successfully");
         }
+
+        public Task<Response<int>> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         private List<FileUploadDto> ReturningFiles(CallForQuotationDto data, DocType docType)
         {
 

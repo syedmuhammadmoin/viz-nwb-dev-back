@@ -26,16 +26,10 @@ namespace Infrastructure.Specifications
 
             }
         }
-        public BidEvaluationSpecs(bool forEdit)
+        
+        public BidEvaluationSpecs()
         {
-            if (forEdit)
-            {
-                AddInclude(i => i.BidEvaluationLines);
-            }
-            else
-            {
-                AddInclude(i => i.BidEvaluationLines);
-            }
+            AddInclude(i => i.BidEvaluationLines);
         }
     }
 }

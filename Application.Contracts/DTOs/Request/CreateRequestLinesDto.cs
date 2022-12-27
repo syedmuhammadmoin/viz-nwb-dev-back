@@ -12,9 +12,9 @@ namespace Application.Contracts.DTOs
         public int Id { get; set; }
         [Required]
         [MaxLength(500)]
-        public string ItemDescription { get; set; }
+        public string Description { get; set; }
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be greater than 0")]
-        public int? ItemQuantity { get; set; }
+        public int? Quantity { get; set; }
     }
 }

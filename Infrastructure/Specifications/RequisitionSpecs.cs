@@ -36,7 +36,6 @@ namespace Infrastructure.Specifications
             if (forEdit)
             {
                 AddInclude(i => i.RequisitionLines);
-                AddInclude(i => i.Status);
             }
             else
             {

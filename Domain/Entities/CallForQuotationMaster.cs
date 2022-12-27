@@ -12,14 +12,14 @@ namespace Domain.Entities
 {
     public class CallForQuotationMaster : BaseEntity<int>
     {
+        [MaxLength(100)]
+        public string DocNo { get; private set; }
+        public DateTime CallForQuotationDate { get; private set; }
         public int VendorId { get; private set; }
         [ForeignKey("VendorId")]
         public BusinessPartner Vendor { get; private set; }
-        [MaxLength(100)]
-        public string DocNo { get; private set; }
         [MaxLength(500)]
         public string Description { get; private set; }
-        public DateTime CallForQuotationDate { get; private set; }
         public DocumentStatus State { get; set; }
         public virtual List<CallForQuotationLines> CallForQuotationLines { get; private set; }
 
