@@ -83,13 +83,13 @@ namespace Infrastructure.Context
         public DbSet<LogItem> LogItems { get; set; }
         public DbSet<RequestMaster> RequestMaster { get; set; }
         public DbSet<RequestLines> RequestLines { get; set; }
-        public DbSet<BidEvaluationMaster> BidEvaluationMasters { get; set; }
+        public DbSet<BidEvaluationMaster> BidEvaluationMaster { get; set; }
         public DbSet<BidEvaluationLines> BidEvaluationLines { get; set; }
+        public DbSet<QuotationMaster> QuotationMaster { get; set; }
         public DbSet<QuotationLines> QuotationLines { get; set; }
-        public DbSet<QuotationMaster> QuotationMasters { get; set; }
+        public DbSet<CallForQuotationMaster> CallForQuotationMaster { get; set; }
         public DbSet<CallForQuotationLines> CallForQuotationLines { get; set; }
-        public DbSet<CallForQuotationMaster> CallForQuotationMasters { get; set; }
-        public DbSet<QuotationComparativeMaster> QuotationComparativeMasters { get; set; }
+        public DbSet<QuotationComparativeMaster> QuotationComparativeMaster { get; set; }
         public DbSet<QuotationComparativeLines> QuotationComparativeLines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

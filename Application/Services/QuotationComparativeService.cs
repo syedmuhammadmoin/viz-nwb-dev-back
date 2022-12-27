@@ -20,14 +20,13 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IQuotationService _quotationService;
 
-        public QuotationComparativeService(IUnitOfWork unitOfWork, IMapper mapper, IQuotationService quotationService)
+        public QuotationComparativeService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _quotationService = quotationService;
         }
+       
         public async Task<Response<QuotationComparativeDto>> CreateAsync(CreateQuotationComparativeDto entity)
         {
             if ((bool)entity.isSubmit)
@@ -39,10 +38,12 @@ namespace Application.Services
                 return await this.SaveQuotationComparative(entity);
             }
         }
+        
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
+        
         public async Task<PaginationResponse<List<QuotationComparativeDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var DocDate = new List<DateTime?>();
@@ -66,6 +67,7 @@ namespace Application.Services
             return new PaginationResponse<List<QuotationComparativeDto>>(_mapper.Map<List<QuotationComparativeDto>>(quotationComparative),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
+        
         public async Task<Response<QuotationComparativeDto>> GetByIdAsync(int id)
         {
             var specification = new QuotationComparativeSpecs(false);
@@ -77,6 +79,7 @@ namespace Application.Services
 
             return new Response<QuotationComparativeDto>(quotationComparativeDto, "Returning value");
         }
+        
         public async Task<Response<QuotationComparativeDto>> UpdateAsync(CreateQuotationComparativeDto entity)
         {
             if ((bool)entity.isSubmit)
@@ -88,6 +91,7 @@ namespace Application.Services
                 return await this.UpdateQuotationComparative(entity);
             }
         }
+        
         private async Task<Response<QuotationComparativeDto>> SubmitQuotationComparative(CreateQuotationComparativeDto entity)
         {
             if (entity.Id == null)
@@ -99,6 +103,7 @@ namespace Application.Services
                 return await this.UpdateQuotationComparative(entity);
             }
         }
+        
         private async Task<Response<QuotationComparativeDto>> UpdateQuotationComparative(CreateQuotationComparativeDto entity)
         {
             if (entity.QuotationComparativeLines.Count() == 0)
@@ -134,6 +139,7 @@ namespace Application.Services
             //returning response
             return new Response<QuotationComparativeDto>(_mapper.Map<QuotationComparativeDto>(quotationComparative), "Updated successfully");
         }
+        
         private async Task<Response<QuotationComparativeDto>> SaveQuotationComparative(CreateQuotationComparativeDto entity)
         {
 
@@ -168,18 +174,6 @@ namespace Application.Services
             //Commiting the transaction 
             _unitOfWork.Commit();
 
-           var QcbyId = GetByIdAsync(result.Id).Result;
-
-            foreach (var lines in entity.QuotationComparativeLines)
-            {
-                var quotation = new CreateQuotationDto
-                {
-                    Id = lines.QoutationId,
-                    QuotationComparativeId = QcbyId.Result.Id
-
-                };
-                await _quotationService.UpdateAsync(quotation);
-            }
             return new Response<QuotationComparativeDto>(_mapper.Map<QuotationComparativeDto>(result), "Created successfully");
         }
 

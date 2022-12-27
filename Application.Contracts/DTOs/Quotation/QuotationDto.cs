@@ -12,9 +12,9 @@ namespace Application.Contracts.DTOs
     public class QuotationDto
     {
         public int Id { get; set; }
+        public string DocNo { get; set; }
         public int VendorId { get; set; }
         public string VendorName { get; set; }
-        public string DocNo { get; set; }
         public DateTime QuotationDate { get; set; }
         public string Timeframe { get; set; }
         public int StatusId { get; set; }

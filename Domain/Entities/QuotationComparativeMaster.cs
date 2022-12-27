@@ -12,11 +12,11 @@ namespace Domain.Entities
 {
     public class QuotationComparativeMaster : BaseEntity<int>
     {
+        [MaxLength(30)]
+        public string DocNo { get; private set; }
         public int RequsisitionId { get; private set; }
         [ForeignKey("MasterId")]
         public RequisitionMaster Requisition { get; private set; }
-        [MaxLength(30)]
-        public string DocNo { get; private set; }
         public DateTime QuotationComparativeDate { get; private set; }
         public DocumentStatus State { get; private set; }
         public string Remarks { get; private set; }

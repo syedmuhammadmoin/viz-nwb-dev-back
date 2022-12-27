@@ -231,6 +231,11 @@ namespace Application.Services
 
             return new Response<List<RequisitionDropDownDto>>(_mapper.Map<List<RequisitionDropDownDto>>(requisition), "Returning List");
         }
+        
+        public Task<Response<int>> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
 
         private async Task<Response<RequisitionDto>> SubmitRequisition(CreateRequisitionDto entity)
         {
@@ -423,10 +428,6 @@ namespace Application.Services
 
         }
 
-        public Task<Response<int>> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
 
         private RequisitionDto MapToValue(RequisitionDto data)
         {
@@ -471,6 +472,7 @@ namespace Application.Services
 
             return data;
         }
+
         private List<RemarksDto> ReturningRemarks(RequisitionDto data, DocType docType)
         {
             var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Requisition))

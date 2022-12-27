@@ -28,6 +28,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+     
         public async Task<Response<BidEvaluationDto>> CreateAsync(CreateBidEvaluationDto entity)
         {
             if ((bool)entity.isSubmit)
@@ -39,10 +40,12 @@ namespace Application.Services
                 return await this.SaveBidEvaluation(entity);
             }
         }
+        
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
+        
         public async Task<PaginationResponse<List<BidEvaluationDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var OpeningDate = new List<DateTime?>();
@@ -66,6 +69,7 @@ namespace Application.Services
             return new PaginationResponse<List<BidEvaluationDto>>(_mapper.Map<List<BidEvaluationDto>>(bidEvaluation),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
+        
         public async Task<Response<BidEvaluationDto>> GetByIdAsync(int id)
         {
             var specification = new BidEvaluationSpecs(false);
@@ -78,6 +82,7 @@ namespace Application.Services
 
             return new Response<BidEvaluationDto>(bidEvaluationDto, "Returning value");
         }
+        
         public async Task<Response<BidEvaluationDto>> UpdateAsync(CreateBidEvaluationDto entity)
         {
             if ((bool)entity.isSubmit)
@@ -89,6 +94,7 @@ namespace Application.Services
                 return await this.UpdateBidEvaluation(entity);
             }
         }
+        
         private async Task<Response<BidEvaluationDto>> SubmitBidEvaluation(CreateBidEvaluationDto entity)
         {
             if (entity.Id == null)
@@ -100,6 +106,7 @@ namespace Application.Services
                 return await this.UpdateBidEvaluation(entity);
             }
         }
+        
         private async Task<Response<BidEvaluationDto>> SaveBidEvaluation(CreateBidEvaluationDto entity)
         {
             if (entity.BidEvaluationLines.Count() == 0)
@@ -129,6 +136,7 @@ namespace Application.Services
             return new Response<BidEvaluationDto>(_mapper.Map<BidEvaluationDto>(result), "Created successfully");
 
         }
+        
         private async Task<Response<BidEvaluationDto>> UpdateBidEvaluation(CreateBidEvaluationDto entity)
         {
             if (entity.BidEvaluationLines.Count() == 0)

@@ -10,6 +10,7 @@ namespace Application.Contracts.DTOs
     public class QuotationComparativeDto
     {
         public int Id { get; set; }
+        public string DocNo { get; set; }
         public int RequsisitionId { get; set; }
         public string Remarks { get; set; }
         public int StatusId { get; set; }

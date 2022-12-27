@@ -41,10 +41,12 @@ namespace Application.Services
                 return await this.SaveRequest(entity, 1);
             }
         }
+
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
+        
         public async Task<PaginationResponse<List<RequestDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var docDate = new List<DateTime?>();
@@ -70,6 +72,7 @@ namespace Application.Services
             return new PaginationResponse<List<RequestDto>>(_mapper.Map<List<RequestDto>>(request),
                     filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
+        
         public async Task<Response<RequestDto>> GetByIdAsync(int id)
         {
             var specification = new RequestSpecs(false);
@@ -108,6 +111,7 @@ namespace Application.Services
 
             return new Response<RequestDto>(requestDto, "Returning value");
         }
+        
         public async Task<Response<RequestDto>> UpdateAsync(CreateRequestDto entity)
         {
             if ((bool)entity.isSubmit)
@@ -119,6 +123,7 @@ namespace Application.Services
                 return await this.UpdateRequest(entity, 1);
             }
         }
+       
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
             var getRequest = await _unitOfWork.Request.GetById(data.DocId, new RequestSpecs(true));
@@ -185,7 +190,6 @@ namespace Application.Services
 
             return new Response<bool>("User does not have allowed role");
         }
-
         private async Task<Response<RequestDto>> SubmitRequest(CreateRequestDto entity)
         {
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Request)).FirstOrDefault();
@@ -204,6 +208,7 @@ namespace Application.Services
                 return await this.UpdateRequest(entity, 6);
             }
         }
+        
         private async Task<Response<RequestDto>> SaveRequest(CreateRequestDto entity, int status)
         {
             if (entity.RequestLines.Count() == 0)
@@ -229,6 +234,7 @@ namespace Application.Services
 
             return new Response<RequestDto>(_mapper.Map<RequestDto>(result), "Created successfully");
         }
+        
         private async Task<Response<RequestDto>> UpdateRequest(CreateRequestDto entity, int status)
         {
             if (entity.RequestLines.Count() == 0)
@@ -259,7 +265,7 @@ namespace Application.Services
             return new Response<RequestDto>(_mapper.Map<RequestDto>(request), "Updated successfully");
 
         }
-
+        
         private List<RemarksDto> ReturningRemarks(RequestDto data, DocType docType)
         {
             var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Request))

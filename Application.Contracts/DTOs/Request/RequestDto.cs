@@ -10,9 +10,9 @@ namespace Application.Contracts.DTOs
     public class RequestDto
     {
         public int Id { get; set; }
+        public string DocNo { get; set; }
         public int EmployeeId { get; set; }
         public string EmployeeName { get; set; }
-        public string DocNo { get; set; }
         public int StatusId { get; set; }
         public string Status { get; set; }
         public string Campus { get; set; }

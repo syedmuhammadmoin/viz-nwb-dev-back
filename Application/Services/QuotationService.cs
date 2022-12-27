@@ -29,6 +29,7 @@ namespace Application.Services
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
         }
+    
         public async Task<Response<QuotationDto>> CreateAsync(CreateQuotationDto entity)
         {
             if ((bool)entity.isSubmit)
@@ -40,10 +41,12 @@ namespace Application.Services
                 return await this.SaveQuotation(entity, 1);
             }
         }
+        
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
+        
         public async Task<PaginationResponse<List<QuotationDto>>> GetAllAsync(TransactionFormFilter filter)
         {
 
@@ -70,6 +73,7 @@ namespace Application.Services
             return new PaginationResponse<List<QuotationDto>>(_mapper.Map<List<QuotationDto>>(quotation),
                     filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
+        
         public async Task<Response<QuotationDto>> GetByIdAsync(int id)
         {
             var specification = new QuotationSpecs(false);
@@ -109,6 +113,7 @@ namespace Application.Services
 
             return new Response<QuotationDto>(quotationDto, "Returning value");
         }
+        
         public async Task<Response<QuotationDto>> UpdateAsync(CreateQuotationDto entity)
         {
             if ((bool)entity.isSubmit)
@@ -120,7 +125,7 @@ namespace Application.Services
                 return await this.UpdateQuotation(entity, 1);
             }
         }
-
+        
         public async Task<Response<List<QuotationDto>>> GetQoutationByRequisitionId(int requisitionId)
         {
             var specification = new QuotationSpecs(requisitionId);
@@ -133,6 +138,7 @@ namespace Application.Services
             
             return new Response<List<QuotationDto>>(quotationDto, "Returning value");
         }
+        
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
             var getQuottion = await _unitOfWork.Quotation.GetById(data.DocId, new QuotationSpecs(true));
@@ -199,7 +205,7 @@ namespace Application.Services
 
             return new Response<bool>("User does not have allowed role");
         }
-
+        
         private async Task<Response<QuotationDto>> SubmitQuotation(CreateQuotationDto entity)
         {
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Quotation)).FirstOrDefault();
@@ -218,6 +224,7 @@ namespace Application.Services
                 return await this.UpdateQuotation(entity, 6);
             }
         }
+        
         private async Task<Response<QuotationDto>> UpdateQuotation(CreateQuotationDto entity, int status)
         {
             if (entity.QuotationLines.Count() == 0)
@@ -247,6 +254,7 @@ namespace Application.Services
             //returning response
             return new Response<QuotationDto>(_mapper.Map<QuotationDto>(quotation), "Updated successfully");
         }
+        
         private async Task<Response<QuotationDto>> SaveQuotation(CreateQuotationDto entity, int status)
         {
             if (entity.QuotationLines.Count() == 0)
@@ -272,6 +280,7 @@ namespace Application.Services
 
             return new Response<QuotationDto>(_mapper.Map<QuotationDto>(result), "Created successfully");
         }
+        
         private List<RemarksDto> ReturningRemarks(QuotationDto data, DocType docType)
         {
             var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Quotation))
@@ -289,6 +298,7 @@ namespace Application.Services
 
             return remarks;
         }
+        
         private List<FileUploadDto> ReturningFiles(QuotationDto data, DocType docType)
         {
 
@@ -312,4 +322,5 @@ namespace Application.Services
 
         }
     }
+
 }
