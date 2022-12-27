@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Application.Contracts.DTOs.QuotationComparative;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -17,8 +18,7 @@ namespace Application.Contracts.DTOs
         public string Remarks { get;  set; }
         [Required]
         public bool? isSubmit { get; set; }
-        
         [Required]
-        public virtual List<CreateQuotationComparativeLinesDto> QuotationComparativeLines { get; set; }
+        public List<CreateQuotationComparativeLinesDto> QuotationComparativeLines { get; set; }
     }
 }

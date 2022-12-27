@@ -26,7 +26,7 @@ namespace Application.Contracts.DTOs
         [MaxLength(50)]
         public string TendorInquiryNumber { get;  set; }
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "NumberOfBids must be greater than 0")]
+        [Range(0, int.MaxValue, ErrorMessage = "Number cannot be negative")]
         public int? NumberOfBids { get;  set; }
         [Required]
         public DateTime? DateOfOpeningBid { get;  set; }

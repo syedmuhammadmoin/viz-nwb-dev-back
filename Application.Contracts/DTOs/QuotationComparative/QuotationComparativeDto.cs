@@ -13,10 +13,9 @@ namespace Application.Contracts.DTOs
         public string DocNo { get; set; }
         public int RequsisitionId { get; set; }
         public string Remarks { get; set; }
-        public int StatusId { get; set; }
         public string Status { get; set; }
         public DocumentStatus State { get; set; }
-        public virtual List<QuotationDto> QuotationComparativeLines { get; set; }
+        public virtual List<QuotationDto> Quotations { get; set; }
   
 
     }

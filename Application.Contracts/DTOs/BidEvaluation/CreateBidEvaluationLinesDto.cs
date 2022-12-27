@@ -15,19 +15,19 @@ namespace Application.Contracts.DTOs
         [Required]
         public string NameOfBider { get;  set; }
         [Required]
-        [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
+        [Range(0, double.MaxValue, ErrorMessage = "Value cannot be negative")]
         public decimal? TechnicalTotal { get;  set; }
         [Required]
-        [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
+        [Range(0, double.MaxValue, ErrorMessage = "Value cannot be negative")]
         public decimal? TechnicalObtain { get;  set; }
         [Required]
-        [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
+        [Range(0, double.MaxValue, ErrorMessage = "Value cannot be negative")]
         public decimal? FinancialTotal { get;  set; }
         [Required]
-        [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
+        [Range(0, double.MaxValue, ErrorMessage = "Value cannot be negative")]
         public decimal? FinancialObtain { get;  set; }
         [Required]
-        [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
+        [Range(0, double.MaxValue, ErrorMessage = "Value cannot be negative")]
         public decimal? EvaluatedCost { get;  set; }
         [Required]
         [MaxLength(500)]
