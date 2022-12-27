@@ -1,12 +1,7 @@
 ﻿using Domain.Base;
 using Domain.Constants;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
@@ -14,14 +9,17 @@ namespace Domain.Entities
     {
         [MaxLength(30)]
         public string DocNo { get; private set; }
-        public int RequsisitionId { get; private set; }
-        [ForeignKey("MasterId")]
-        public RequisitionMaster Requisition { get; private set; }
         public DateTime QuotationComparativeDate { get; private set; }
-        public DocumentStatus State { get; private set; }
-        public string Remarks { get; private set; }
 
-        public virtual List<QuotationComparativeLines> QuotationComparativeLines { get; private set; }
+        public int RequsisitionId { get; private set; }
+        [ForeignKey("RequsisitionId")]
+        public RequisitionMaster Requisition { get; private set; }
+        
+        [MaxLength(200)] 
+        public string Remarks { get; private set; }
+        public DocumentStatus State { get; private set; }
+        
+        public virtual List<QuotationMaster> Quotations { get; private set; }
 
         protected QuotationComparativeMaster()
         {
