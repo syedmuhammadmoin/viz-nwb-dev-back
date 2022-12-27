@@ -75,7 +75,7 @@ namespace Infrastructure.Context
             .HasOne(tc => tc.RequisitionMaster)
             .WithMany(c => c.RequisitionLines)
             .OnDelete(DeleteBehavior.Cascade);
-  
+
             //GRN
             modelBuilder.Entity<GRNLines>()
             .HasOne(tc => tc.GRNMaster)
@@ -129,6 +129,7 @@ namespace Infrastructure.Context
             .HasOne(tc => tc.CallForQuotation)
             .WithMany(c => c.CallForQuotationLines)
             .OnDelete(DeleteBehavior.Cascade);
+
             //Composite key for Same payroll
             modelBuilder.Entity<PayrollTransactionMaster>()
             .HasAlternateKey(p => new { p.Month, p.Year, p.EmployeeId });
