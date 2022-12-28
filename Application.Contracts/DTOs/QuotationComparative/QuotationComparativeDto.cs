@@ -11,6 +11,7 @@ namespace Application.Contracts.DTOs
     {
         public int Id { get; set; }
         public string DocNo { get; set; }
+        public DateTime QuotationComparativeDate { get;  set; }
         public int RequisitionId { get; set; }
         public string Remarks { get; set; }
         public string Status { get; set; }
