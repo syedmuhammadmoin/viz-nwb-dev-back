@@ -96,7 +96,7 @@ namespace Application.Services
         {
             var quotation = await _unitOfWork.Quotation.GetAll(new QuotationSpecs(requisitionId));
             if (quotation.Count() == 0)
-                return new Response<List<QuotationDto>>("Not found");
+                return new Response<List<QuotationDto>>(_mapper.Map<List<QuotationDto>>(quotation), "List is Empty");
 
             var quotationDto = _mapper.Map<List<QuotationDto>>(quotation);
             return new Response<List<QuotationDto>>(quotationDto, "Returning value");
