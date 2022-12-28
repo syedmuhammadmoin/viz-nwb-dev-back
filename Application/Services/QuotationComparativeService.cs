@@ -70,7 +70,7 @@ namespace Application.Services
 
             var quotationComparative = new QuotationComparativeMaster(
                 entity.QuotationComparativeDate,
-                (int)entity.RequsisitionId,
+                (int)entity.RequisitionId,
                 entity.Remarks,
                 entity.isSubmit == true ? DocumentStatus.Submitted : DocumentStatus.Draft);
 
@@ -113,7 +113,7 @@ namespace Application.Services
 
             quotationComparative.Update(
                 entity.QuotationComparativeDate,
-                (int)entity.RequsisitionId,
+                (int)entity.RequisitionId,
                 entity.Remarks,
                 entity.isSubmit == true ? DocumentStatus.Submitted : DocumentStatus.Draft);
 
