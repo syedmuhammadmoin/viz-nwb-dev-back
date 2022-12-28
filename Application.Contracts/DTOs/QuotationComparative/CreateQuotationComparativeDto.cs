@@ -13,7 +13,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public DateTime QuotationComparativeDate { get; set; }
         [Required]
-        public int? RequsisitionId { get; set; }
+        public int? RequisitionId { get; set; }
         [Required]
         public string Remarks { get;  set; }
         [Required]
