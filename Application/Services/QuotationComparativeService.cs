@@ -26,23 +26,6 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-       
-        public async Task<Response<QuotationComparativeDto>> CreateAsync(CreateQuotationComparativeDto entity)
-        {
-            if ((bool)entity.isSubmit)
-            {
-                return await this.SubmitQuotationComparative(entity);
-            }
-            else
-            {
-                return await this.SaveQuotationComparative(entity);
-            }
-        }
-        
-        public Task<Response<int>> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
         
         public async Task<PaginationResponse<List<QuotationComparativeDto>>> GetAllAsync(TransactionFormFilter filter)
         {
@@ -58,124 +41,108 @@ namespace Application.Services
             }
 
             var quotationComparative = await _unitOfWork.QuotationComparative.GetAll(new QuotationComparativeSpecs(DocDate, states, filter, false));
-
             if (quotationComparative.Count() == 0)
-                return new PaginationResponse<List<QuotationComparativeDto>>(_mapper.Map<List<QuotationComparativeDto>>(quotationComparative), "List is empty");
+                return new PaginationResponse<List<QuotationComparativeDto>>(null, "List is empty");
 
             var totalRecords = await _unitOfWork.QuotationComparative.TotalRecord(new QuotationComparativeSpecs(DocDate, states, filter, true));
 
             return new PaginationResponse<List<QuotationComparativeDto>>(_mapper.Map<List<QuotationComparativeDto>>(quotationComparative),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
-        
+
         public async Task<Response<QuotationComparativeDto>> GetByIdAsync(int id)
         {
-            var specification = new QuotationComparativeSpecs(false);
-            var quotationComparative = await _unitOfWork.QuotationComparative.GetById(id, specification);
+            var quotationComparative = await _unitOfWork.QuotationComparative.GetById(id, new QuotationComparativeSpecs());
             if (quotationComparative == null)
                 return new Response<QuotationComparativeDto>("Not found");
 
             var quotationComparativeDto = _mapper.Map<QuotationComparativeDto>(quotationComparative);
-
+            var getQuotations = await _unitOfWork.Quotation.GetAll(new QuotationSpecs(true, quotationComparativeDto.Id));
+            quotationComparativeDto.Quotations = _mapper.Map<List<QuotationDto>>(getQuotations);
+            
             return new Response<QuotationComparativeDto>(quotationComparativeDto, "Returning value");
+        }
+
+        public async Task<Response<QuotationComparativeDto>> CreateAsync(CreateQuotationComparativeDto entity)
+        {
+            if (entity.QuotationComparativeLines.Count() == 0)
+                return new Response<QuotationComparativeDto>("Lines are Required");
+
+            var quotationComparative = new QuotationComparativeMaster(
+                entity.QuotationComparativeDate,
+                (int)entity.RequsisitionId,
+                entity.Remarks,
+                entity.isSubmit == true ? DocumentStatus.Submitted : DocumentStatus.Draft);
+
+            _unitOfWork.CreateTransaction();
+
+            //Saving in table
+            var result = await _unitOfWork.QuotationComparative.Add(quotationComparative);
+            await _unitOfWork.SaveAsync();
+
+            //For creating docNo
+            quotationComparative.CreateDocNo();
+            await _unitOfWork.SaveAsync();
+
+            foreach (var line in entity.QuotationComparativeLines)
+            {
+                if (line.isSelected)
+                {
+                    var quotation = await _unitOfWork.Quotation.GetById(line.QuotationId);
+                    quotation.UpdateQuotationComparativeMasterId(quotationComparative.Id);
+                    await _unitOfWork.SaveAsync();
+                }
+            }
+
+            //Commiting the transaction 
+            _unitOfWork.Commit();
+            return new Response<QuotationComparativeDto>(_mapper.Map<QuotationComparativeDto>(result), "Created successfully");
         }
         
         public async Task<Response<QuotationComparativeDto>> UpdateAsync(CreateQuotationComparativeDto entity)
         {
-            if ((bool)entity.isSubmit)
-            {
-                return await this.SubmitQuotationComparative(entity);
-            }
-            else
-            {
-                return await this.UpdateQuotationComparative(entity);
-            }
-        }
-        
-        private async Task<Response<QuotationComparativeDto>> SubmitQuotationComparative(CreateQuotationComparativeDto entity)
-        {
-            if (entity.Id == null)
-            {
-                return await this.SaveQuotationComparative(entity);
-            }
-            else
-            {
-                return await this.UpdateQuotationComparative(entity);
-            }
-        }
-        
-        private async Task<Response<QuotationComparativeDto>> UpdateQuotationComparative(CreateQuotationComparativeDto entity)
-        {
             if (entity.QuotationComparativeLines.Count() == 0)
                 return new Response<QuotationComparativeDto>("Lines are required");
 
-            var specification = new QuotationComparativeSpecs(true);
-            var quotationComparative = await _unitOfWork.QuotationComparative.GetById((int)entity.Id, specification);
-
+            var quotationComparative = await _unitOfWork.QuotationComparative.GetById((int)entity.Id, new QuotationComparativeSpecs());
             if (quotationComparative == null)
                 return new Response<QuotationComparativeDto>("Not found");
 
-            if (quotationComparative.State == DocumentStatus.Submitted)
+            if (quotationComparative.Status == DocumentStatus.Submitted)
                 return new Response<QuotationComparativeDto>("Only draft document can be edited");
 
-            if (entity.isSubmit == true)
-            {
-                quotationComparative.setStatus(DocumentStatus.Submitted);
-            }
-            else
-            {
-                quotationComparative.setStatus(DocumentStatus.Draft);
-            }
+            quotationComparative.Update(
+                entity.QuotationComparativeDate,
+                (int)entity.RequsisitionId,
+                entity.Remarks,
+                entity.isSubmit == true ? DocumentStatus.Submitted : DocumentStatus.Draft);
+
             _unitOfWork.CreateTransaction();
-
-            //For updating data
-            _mapper.Map<CreateQuotationComparativeDto, QuotationComparativeMaster>(entity, quotationComparative);
-
             await _unitOfWork.SaveAsync();
-
+            foreach (var line in entity.QuotationComparativeLines)
+            {
+                var quotation = await _unitOfWork.Quotation.GetById(line.QuotationId);
+                if (line.isSelected)
+                {
+                    quotation.UpdateQuotationComparativeMasterId(quotationComparative.Id);
+                    await _unitOfWork.SaveAsync();
+                }
+                else
+                {
+                    quotation.UpdateQuotationComparativeMasterId(null);
+                    await _unitOfWork.SaveAsync();
+                }
+            }
             //Commiting the transaction
             _unitOfWork.Commit();
 
             //returning response
             return new Response<QuotationComparativeDto>(_mapper.Map<QuotationComparativeDto>(quotationComparative), "Updated successfully");
         }
-        
-        private async Task<Response<QuotationComparativeDto>> SaveQuotationComparative(CreateQuotationComparativeDto entity)
+
+        public Task<Response<int>> DeleteAsync(int id)
         {
-
-            if (entity.QuotationComparativeLines.Count() == 0)
-                return new Response<QuotationComparativeDto>("Lines are Required");
-
-
-            var quotationComparative = _mapper.Map<QuotationComparativeMaster>(entity);
-
-            //Setting status
-
-            if (entity.isSubmit == true)
-            {
-                quotationComparative.setStatus(DocumentStatus.Submitted);
-            }
-            else
-            {
-                quotationComparative.setStatus(DocumentStatus.Draft);
-            }
-           
-            _unitOfWork.CreateTransaction();
-
-            //Saving in table
-            var result = await _unitOfWork.QuotationComparative.Add(quotationComparative);
-           
-            await _unitOfWork.SaveAsync();
-           
-            //For creating docNo
-            quotationComparative.CreateDocNo();
-            await _unitOfWork.SaveAsync();
-
-            //Commiting the transaction 
-            _unitOfWork.Commit();
-
-            return new Response<QuotationComparativeDto>(_mapper.Map<QuotationComparativeDto>(result), "Created successfully");
+            throw new NotImplementedException();
         }
-
     }
 }
