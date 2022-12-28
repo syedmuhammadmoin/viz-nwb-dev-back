@@ -67,7 +67,8 @@ namespace Application.Services
             var stock = await _unitOfWork.Stock.GetAll(new StockSpecs(requisitionProductItemIds));
 
             var requisitionDto = _mapper.Map<RequisitionDto>(requisition);
-            List<int> reqQuantity  = new List<int>();
+            List<int> reqQuantity = new List<int>();
+            List<decimal> amounts = new List<decimal>();
             foreach (var line in requisitionDto.RequisitionLines)
             {
                 line.AvailableQuantity = stock
@@ -75,21 +76,27 @@ namespace Application.Services
                     .Sum(i => i.AvailableQuantity);
 
                 line.SubTotal = line.PurchasePrice * line.Quantity;
-               
-                if(line.AvailableQuantity >= 0)
+
+                if (line.AvailableQuantity >= 0)
                 {
-                    var requiredQuantity = line.AvailableQuantity - line.Quantity;  
-                    requisitionDto.IsShowIssuanceButton = true;
-                    reqQuantity.Add(requiredQuantity);
+                    if(line.AvailableQuantity >= 1)
+                    {
+                        requisitionDto.IsShowIssuanceButton = true;
+                    }
+                    if (line.Quantity >= line.AvailableQuantity)
+                    {
+                        var requiredQuantity = line.Quantity - line.AvailableQuantity;
+                        reqQuantity.Add(requiredQuantity);
+                        var calculateAmount = requiredQuantity * line.PurchasePrice;
+                        var amount = calculateAmount;
+                        amounts.Add(amount);
+                    }
                 }
-              
             }
-            
+
             ReturningRemarks(requisitionDto);
-           var validate =  ValidateProcurementProcess(requisitionDto);
-           var  totalAmount =validate.Sum( );
-            var quantity = reqQuantity;
-            if (quantity.Count() > 0)
+            var totalAmount = amounts.Sum();
+            if (reqQuantity.Count() > 0)
             {
                 if (totalAmount <= 100000)
                 {
@@ -399,26 +406,26 @@ namespace Application.Services
             return data;
         }
 
-        private List<decimal> ValidateProcurementProcess(RequisitionDto data )
-        {
-            List<decimal> decimals = new List<decimal>();
-            foreach (var line in data.RequisitionLines)
-            {
-                var getStock = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
-                if (getStock.AvailableQuantity > 0)
-                    data.IsShowIssuanceButton = true;
-                var reservedQuantity = line.Quantity - getStock.AvailableQuantity;
-                var  calculateAmount = reservedQuantity * line.PurchasePrice;
+        //private List<decimal> ValidateProcurementProcess(RequisitionDto data )
+        //{
+        //    List<decimal> decimals = new List<decimal>();
+        //    foreach (var line in data.RequisitionLines)
+        //    {
+        //        var getStock = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
+        //        if (getStock.AvailableQuantity > 0)
+        //            data.IsShowIssuanceButton = true;
+        //        var reservedQuantity = line.Quantity - getStock.AvailableQuantity;
+        //        var  calculateAmount = reservedQuantity * line.PurchasePrice;
                 
-                var amount = calculateAmount;
+        //        var amount = calculateAmount;
            
-                decimals.Add(amount);
-            }
+        //        decimals.Add(amount);
+        //    }
 
 
-            return decimals;
+        //    return decimals;
 
-        }
+        //}
        
         private List<RemarksDto> ReturningRemarks(RequisitionDto data)
         {
