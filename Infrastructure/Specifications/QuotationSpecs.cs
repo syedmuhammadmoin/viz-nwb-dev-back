@@ -29,6 +29,7 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Vendor);
             }
         }
+        
         public QuotationSpecs(bool forEdit)
         {
             if (forEdit)
@@ -44,7 +45,8 @@ namespace Infrastructure.Specifications
                 AddInclude("QuotationLines.Item");
             }
         }
-        public QuotationSpecs() : base(x => x.Status.State != DocumentStatus.Paid)
+        
+        public QuotationSpecs(bool abc, int quoatationCompId) : base(x => x.QuotationComparativeId == (int)quoatationCompId)
         {
             AddInclude(i => i.QuotationLines);
         }
@@ -62,5 +64,6 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.QuotationLines);
                 AddInclude(i => i.Status);
         }
+
     }
 }

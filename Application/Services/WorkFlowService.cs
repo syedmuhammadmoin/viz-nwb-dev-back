@@ -222,7 +222,7 @@ namespace Application.Services
             }
             if (entity.DocType == DocType.Quotation)
             {
-                var checkingQuotation = _unitOfWork.Quotation.Find(new QuotationSpecs()).ToList();
+                var checkingQuotation = _unitOfWork.Quotation.Find(new QuotationSpecs("")).ToList();
 
                 if (checkingQuotation.Count != 0)
                 {
