@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -66,7 +67,7 @@ namespace Application.Services
             var stock = await _unitOfWork.Stock.GetAll(new StockSpecs(requisitionProductItemIds));
 
             var requisitionDto = _mapper.Map<RequisitionDto>(requisition);
-
+            List<int> reqQuantity  = new List<int>();
             foreach (var line in requisitionDto.RequisitionLines)
             {
                 line.AvailableQuantity = stock
@@ -74,11 +75,35 @@ namespace Application.Services
                     .Sum(i => i.AvailableQuantity);
 
                 line.SubTotal = line.PurchasePrice * line.Quantity;
+               
+                if(line.AvailableQuantity >= 0)
+                {
+                    var requiredQuantity = line.AvailableQuantity - line.Quantity;  
+                    requisitionDto.IsShowIssuanceButton = true;
+                    reqQuantity.Add(requiredQuantity);
+                }
+              
             }
             
             ReturningRemarks(requisitionDto);
-            ValidateProcurementProcess(requisitionDto);
-
+           var validate =  ValidateProcurementProcess(requisitionDto);
+           var  totalAmount =validate.Sum( );
+            var quantity = reqQuantity;
+            if (quantity.Count() > 0)
+            {
+                if (totalAmount <= 100000)
+                {
+                    requisitionDto.IsShowPurchaseOrderButton = true;
+                }
+                else if (totalAmount > 100000 && totalAmount <= 300000)
+                {
+                    requisitionDto.IsShowCFQButton = true;
+                }
+                else if (totalAmount > 300000)
+                {
+                    requisitionDto.IsShowTenderButton = true;
+                }
+            }
             if ((requisitionDto.State == DocumentStatus.Unpaid || requisitionDto.State == DocumentStatus.Partial || requisitionDto.State == DocumentStatus.Paid))
                 return new Response<RequisitionDto>(MapToValue(requisitionDto), "Returning value");
 
@@ -374,33 +399,25 @@ namespace Application.Services
             return data;
         }
 
-        private void ValidateProcurementProcess(RequisitionDto data)
+        private List<decimal> ValidateProcurementProcess(RequisitionDto data )
         {
+            List<decimal> decimals = new List<decimal>();
             foreach (var line in data.RequisitionLines)
             {
                 var getStock = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
                 if (getStock.AvailableQuantity > 0)
                     data.IsShowIssuanceButton = true;
-
-                if (getStock.AvailableQuantity < line.Quantity)
-                {
-                    var reservedQuantity = line.Quantity - getStock.AvailableQuantity;
-                    var calculateAmount = reservedQuantity * line.PurchasePrice;
-
-                    if (calculateAmount <= 100000)
-                    {
-                        data.IsShowPurchaseOrderButton = true;
-                    }
-                    else if (calculateAmount > 100000 && calculateAmount <= 300000)
-                    {
-                        data.IsShowCFQButton = true;
-                    }
-                    else if (calculateAmount > 300000)
-                    {
-                        data.IsShowTenderButton = true;
-                    }
-                }
+                var reservedQuantity = line.Quantity - getStock.AvailableQuantity;
+                var  calculateAmount = reservedQuantity * line.PurchasePrice;
+                
+                var amount = calculateAmount;
+           
+                decimals.Add(amount);
             }
+
+
+            return decimals;
+
         }
        
         private List<RemarksDto> ReturningRemarks(RequisitionDto data)
