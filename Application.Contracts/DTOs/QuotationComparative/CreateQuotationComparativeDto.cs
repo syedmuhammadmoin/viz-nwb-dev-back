@@ -1,5 +1,4 @@
-﻿using Application.Contracts.DTOs.QuotationComparative;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,8 +11,9 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
+        public DateTime QuotationComparativeDate { get; set; }
+        [Required]
         public int? RequsisitionId { get; set; }
-     
         [Required]
         public string Remarks { get;  set; }
         [Required]

@@ -45,7 +45,11 @@ namespace Domain.Entities
 
         public void CreateDocNo()
         {
-           DocNo = "QUOTE-" + String.Format("{0:000}", Id);
+            DocNo = "QUOTE-" + String.Format("{0:000}", Id);
+        }
+        public void UpdateQuotationComparativeMasterId(int? id)
+        {
+            QuotationComparativeId = id;
         }
     }
 }
