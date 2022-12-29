@@ -79,11 +79,19 @@ namespace Application.Services
 
                 if (line.AvailableQuantity >= 0)
                 {
-                    if(line.AvailableQuantity >= 1)
+                    if(line.Quantity > line.ReserveQuantity )
                     {
                         requisitionDto.IsShowIssuanceButton = true;
                     }
-                    if (line.Quantity >= line.AvailableQuantity)
+                    if (line.Quantity > line.ReserveQuantity )
+                    {
+                        var requiredQuantity = line.Quantity - line.ReserveQuantity;
+                        reqQuantity.Add(requiredQuantity);
+                        var calculateAmount = requiredQuantity * line.PurchasePrice;
+                        var amount = calculateAmount;
+                        amounts.Add(amount);
+                    }
+                    else if(line.Quantity > line.AvailableQuantity)
                     {
                         var requiredQuantity = line.Quantity - line.AvailableQuantity;
                         reqQuantity.Add(requiredQuantity);
