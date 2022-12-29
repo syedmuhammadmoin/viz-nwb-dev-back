@@ -63,21 +63,34 @@ namespace Application.Services
                 return new Response<RequisitionDto>("Not found");
 
             var requisitionProductItemIds = requisition.RequisitionLines.Select(i => i.ItemId).ToList();
-            
+
             //Getting stock by items id
             var stock = await _unitOfWork.Stock.GetAll(new StockSpecs(requisitionProductItemIds));
 
             var requisitionDto = _mapper.Map<RequisitionDto>(requisition);
-            
+
+            //Add Reference
+            if (requisitionDto.RequestId != null)
+            {
+                requisitionDto.References = new List<ReferncesDto> {
+                    new ReferncesDto()
+                    {
+                        DocId = (int)requisitionDto.RequestId,
+                        DocNo = "REQUEST-" + String.Format("{0:000}", requisitionDto.RequestId),
+                        DocType = DocType.Request
+                    }
+                };
+            }
+
             bool isRequiredQty = false;
             List<decimal> purchaseAmounts = new List<decimal>();
-            
+
             foreach (var line in requisitionDto.RequisitionLines)
             {
                 //line.AvailableQuantity = stock
                 //    .Where(i => i.ItemId == line.ItemId && i.WarehouseId == line.WarehouseId)
                 //    .Sum(i => i.AvailableQuantity);
-                
+
                 if (line.ReserveQuantity > 0)
                 {
                     requisitionDto.IsShowIssuanceButton = true;
@@ -119,7 +132,7 @@ namespace Application.Services
 
             if ((requisitionDto.State == DocumentStatus.Unpaid || requisitionDto.State == DocumentStatus.Partial || requisitionDto.State == DocumentStatus.Paid))
                 return new Response<RequisitionDto>(MapToValue(requisitionDto), "Returning value");
-            
+
             ReturningRemarks(requisitionDto);
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Requisition)).FirstOrDefault();
             if (workflow != null)
@@ -147,7 +160,7 @@ namespace Application.Services
 
             return new Response<List<RequisitionDropDownDto>>(_mapper.Map<List<RequisitionDropDownDto>>(requisition), "Returning List");
         }
-        
+
         public async Task<Response<RequisitionDto>> CreateAsync(CreateRequisitionDto entity)
         {
             if ((bool)entity.isSubmit)
@@ -161,7 +174,7 @@ namespace Application.Services
                 return await this.SaveRequisition(entity, 1);
             }
         }
-        
+
         public async Task<Response<RequisitionDto>> UpdateAsync(CreateRequisitionDto entity)
         {
             if ((bool)entity.isSubmit)
@@ -180,23 +193,23 @@ namespace Application.Services
             var getRequisition = await _unitOfWork.Requisition.GetById(data.DocId, new RequisitionSpecs(true));
             if (getRequisition == null)
                 return new Response<bool>("Requisition with the input id not found");
-            
+
             if (getRequisition.Status.State == DocumentStatus.Unpaid || getRequisition.Status.State == DocumentStatus.Partial || getRequisition.Status.State == DocumentStatus.Paid)
                 return new Response<bool>("Requisition already approved");
-            
+
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Requisition)).FirstOrDefault();
             if (workflow == null)
                 return new Response<bool>("No activated workflow found for this document");
-            
+
             var transition = workflow.WorkflowTransitions
                     .FirstOrDefault(x => (x.CurrentStatusId == getRequisition.StatusId && x.Action == data.Action));
             if (transition == null)
                 return new Response<bool>("No transition found");
-            
+
             var getUser = new GetUser(this._httpContextAccessor);
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
-           
+
             _unitOfWork.CreateTransaction();
             foreach (var role in currentUserRoles)
             {
@@ -285,10 +298,10 @@ namespace Application.Services
                 if (getStockRecord.AvailableQuantity > 0)
                 {
                     int reserveableQuantity = (int)line.Quantity;
-                    
+
                     if (line.Quantity > getStockRecord.AvailableQuantity)
                         reserveableQuantity = getStockRecord.AvailableQuantity;
-                    
+
                     //Need to Save reserveable Quantity with Requesition
                     line.ReserveQuantity = reserveableQuantity;
                     getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity + reserveableQuantity);
@@ -313,7 +326,7 @@ namespace Application.Services
                 return new Response<RequisitionDto>("Duplicate Lines found");
 
             var requisition = _mapper.Map<RequisitionMaster>(entity);
-            
+
             //Setting status
             requisition.setStatus(status);
 
@@ -337,7 +350,7 @@ namespace Application.Services
         {
             if (entity.RequisitionLines.Count() == 0)
                 return new Response<RequisitionDto>("Lines are required");
-            
+
             //Checking duplicate Lines if any
             var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
              .Where(g => g.Count() > 1)
@@ -423,9 +436,9 @@ namespace Application.Services
         //            data.IsShowIssuanceButton = true;
         //        var reservedQuantity = line.Quantity - getStock.AvailableQuantity;
         //        var  calculateAmount = reservedQuantity * line.PurchasePrice;
-                
+
         //        var amount = calculateAmount;
-           
+
         //        decimals.Add(amount);
         //    }
 
@@ -433,7 +446,7 @@ namespace Application.Services
         //    return decimals;
 
         //}
-       
+
         private List<RemarksDto> ReturningRemarks(RequisitionDto data)
         {
             var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Requisition))
