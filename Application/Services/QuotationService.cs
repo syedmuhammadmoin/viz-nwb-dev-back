@@ -72,7 +72,7 @@ namespace Application.Services
                     new ReferncesDto()
                     {
                         DocId = (int)quotationDto.RequisitionId,
-                        DocNo = "REQUEST-" + String.Format("{0:000}", quotationDto.RequisitionId),
+                        DocNo = "REQ-" + String.Format("{0:000}", quotationDto.RequisitionId),
                         DocType = DocType.Requisition
                     }
                 };
