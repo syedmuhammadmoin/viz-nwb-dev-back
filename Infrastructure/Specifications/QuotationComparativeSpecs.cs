@@ -29,6 +29,7 @@ namespace Infrastructure.Specifications
         public QuotationComparativeSpecs() 
         {
             AddInclude(i => i.Quotations);
+            AddInclude(i => i.Requisition);
         }
     
     }
