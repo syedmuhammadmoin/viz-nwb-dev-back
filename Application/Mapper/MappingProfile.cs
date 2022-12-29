@@ -334,7 +334,8 @@ namespace Application.Mapper
             CreateMap<RequisitionLines, RequisitionLinesDto>()
               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
               .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName))
-              .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity));
+              .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity))
+              .ForMember(dto => dto.SubTotal, core => core.MapFrom(a => a.Quantity * a.PurchasePrice));
 
             CreateMap<RequisitionMaster, RequisitionDropDownDto>();
 
