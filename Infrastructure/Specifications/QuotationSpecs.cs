@@ -62,7 +62,9 @@ namespace Infrastructure.Specifications
         {
                 ApplyOrderByDescending(i => i.Id);
                 AddInclude(i => i.QuotationLines);
-                AddInclude(i => i.Status);
+            AddInclude(i => i.Vendor);
+            AddInclude(i => i.Status);
+            AddInclude("QuotationLines.Item");
         }
 
     }
