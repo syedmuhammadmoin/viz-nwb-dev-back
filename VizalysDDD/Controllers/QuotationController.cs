@@ -82,8 +82,8 @@ namespace Vizalys.Api.Controllers
         }
         
         [ClaimRequirement("Permission", new string[] { Permissions.QuotationClaims.View, Permissions.QuotationComparativeClaims.View, Permissions.QuotationComparativeClaims.Create, Permissions.QuotationComparativeClaims.Edit })]
-        [HttpGet("GetQouteByReqId")]
-        public async Task<ActionResult<Response<List<QuotationDto>>>> GetQoutationByRequisitionId(GetQouteByReqDto data)
+        [HttpGet("GetQuoteByReqId")]
+        public async Task<ActionResult<Response<List<QuotationDto>>>> GetQoutationByRequisitionId([FromQuery] GetQouteByReqDto data)
         {
             var result = await _quotationService.GetQoutationByRequisitionId(data);
             if (result.IsSuccess)
