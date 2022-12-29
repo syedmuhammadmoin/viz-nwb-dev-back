@@ -65,7 +65,18 @@ namespace Application.Services
                 return new Response<QuotationDto>("Not found");
 
             var quotationDto = _mapper.Map<QuotationDto>(quotation);
-
+            //Add Reference
+            if (quotationDto.RequisitionId != null)
+            {
+                quotationDto.References = new List<ReferncesDto> {
+                    new ReferncesDto()
+                    {
+                        DocId = (int)quotationDto.RequisitionId,
+                        DocNo = "REQUEST-" + String.Format("{0:000}", quotationDto.RequisitionId),
+                        DocType = DocType.Requisition
+                    }
+                };
+            }
             ReturningRemarks(quotationDto, DocType.Quotation);
             ReturningFiles(quotationDto, DocType.Quotation);
 

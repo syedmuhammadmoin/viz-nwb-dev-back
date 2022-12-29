@@ -87,10 +87,6 @@ namespace Application.Services
 
             foreach (var line in requisitionDto.RequisitionLines)
             {
-                //line.AvailableQuantity = stock
-                //    .Where(i => i.ItemId == line.ItemId && i.WarehouseId == line.WarehouseId)
-                //    .Sum(i => i.AvailableQuantity);
-
                 if (line.ReserveQuantity > 0)
                 {
                     requisitionDto.IsShowIssuanceButton = true;
@@ -102,14 +98,6 @@ namespace Application.Services
                     isRequiredQty = true;
                     purchaseAmounts.Add(requiredQuantity * line.PurchasePrice);
                 }
-                //else if (line.Quantity > line.AvailableQuantity)
-                //{
-                //    var requiredQuantity = line.Quantity - line.AvailableQuantity;
-                //    reqQuantity.Add(requiredQuantity);
-                //    var calculateAmount = requiredQuantity * line.PurchasePrice;
-                //    var amount = calculateAmount;
-                //    amounts.Add(amount);
-                //}
             }
 
             var totalAmount = purchaseAmounts.Sum();
