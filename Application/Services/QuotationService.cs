@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.Quotation;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -92,7 +93,7 @@ namespace Application.Services
             return new Response<QuotationDto>(quotationDto, "Returning value");
         }
 
-        public async Task<Response<List<QuotationDto>>> GetQoutationByRequisitionId(int requisitionId)
+        public async Task<Response<List<QuotationDto>>> GetQoutationByRequisitionId(GetQouteByReqDto data)
         {
             var quotation = await _unitOfWork.Quotation.GetAll(new QuotationSpecs(requisitionId));
             if (quotation.Count() == 0)

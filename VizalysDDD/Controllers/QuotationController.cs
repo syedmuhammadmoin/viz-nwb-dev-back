@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.Quotation;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -81,10 +82,10 @@ namespace Vizalys.Api.Controllers
         }
         
         [ClaimRequirement("Permission", new string[] { Permissions.QuotationClaims.View, Permissions.QuotationComparativeClaims.View, Permissions.QuotationComparativeClaims.Create, Permissions.QuotationComparativeClaims.Edit })]
-        [HttpGet("GetQouteByReqId/{id:int}")]
-        public async Task<ActionResult<Response<List<QuotationDto>>>> GetQoutationByRequisitionId(int id)
+        [HttpGet("GetQouteByReqId")]
+        public async Task<ActionResult<Response<List<QuotationDto>>>> GetQoutationByRequisitionId(GetQouteByReqDto data)
         {
-            var result = await _quotationService.GetQoutationByRequisitionId(id);
+            var result = await _quotationService.GetQoutationByRequisitionId(data);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 
