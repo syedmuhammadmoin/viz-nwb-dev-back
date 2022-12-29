@@ -95,7 +95,7 @@ namespace Application.Services
 
         public async Task<Response<List<QuotationDto>>> GetQoutationByRequisitionId(GetQouteByReqDto data)
         {
-            var quotation = await _unitOfWork.Quotation.GetAll(new QuotationSpecs(requisitionId));
+            var quotation = await _unitOfWork.Quotation.GetAll(new QuotationSpecs(data.RequisitionId, data.QuotationCompId));
             if (quotation.Count() == 0)
                 return new Response<List<QuotationDto>>(_mapper.Map<List<QuotationDto>>(quotation), "List is Empty");
 
