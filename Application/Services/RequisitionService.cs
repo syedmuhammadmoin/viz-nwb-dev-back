@@ -63,48 +63,44 @@ namespace Application.Services
                 return new Response<RequisitionDto>("Not found");
 
             var requisitionProductItemIds = requisition.RequisitionLines.Select(i => i.ItemId).ToList();
+            
             //Getting stock by items id
             var stock = await _unitOfWork.Stock.GetAll(new StockSpecs(requisitionProductItemIds));
 
             var requisitionDto = _mapper.Map<RequisitionDto>(requisition);
-            List<int> reqQuantity = new List<int>();
-            List<decimal> amounts = new List<decimal>();
+            
+            bool isRequiredQty = false;
+            List<decimal> purchaseAmounts = new List<decimal>();
+            
             foreach (var line in requisitionDto.RequisitionLines)
             {
-                line.AvailableQuantity = stock
-                    .Where(i => i.ItemId == line.ItemId && i.WarehouseId == line.WarehouseId)
-                    .Sum(i => i.AvailableQuantity);
-
-                line.SubTotal = line.PurchasePrice * line.Quantity;
-
-                if (line.AvailableQuantity >= 0)
+                //line.AvailableQuantity = stock
+                //    .Where(i => i.ItemId == line.ItemId && i.WarehouseId == line.WarehouseId)
+                //    .Sum(i => i.AvailableQuantity);
+                
+                if (line.ReserveQuantity > 0)
                 {
-                    if(line.Quantity > line.ReserveQuantity )
-                    {
-                        requisitionDto.IsShowIssuanceButton = true;
-                    }
-                    if (line.Quantity > line.ReserveQuantity )
-                    {
-                        var requiredQuantity = line.Quantity - line.ReserveQuantity;
-                        reqQuantity.Add(requiredQuantity);
-                        var calculateAmount = requiredQuantity * line.PurchasePrice;
-                        var amount = calculateAmount;
-                        amounts.Add(amount);
-                    }
-                    else if(line.Quantity > line.AvailableQuantity)
-                    {
-                        var requiredQuantity = line.Quantity - line.AvailableQuantity;
-                        reqQuantity.Add(requiredQuantity);
-                        var calculateAmount = requiredQuantity * line.PurchasePrice;
-                        var amount = calculateAmount;
-                        amounts.Add(amount);
-                    }
+                    requisitionDto.IsShowIssuanceButton = true;
                 }
+
+                if (line.Quantity > line.ReserveQuantity)
+                {
+                    var requiredQuantity = line.Quantity - line.ReserveQuantity;
+                    isRequiredQty = true;
+                    purchaseAmounts.Add(requiredQuantity * line.PurchasePrice);
+                }
+                //else if (line.Quantity > line.AvailableQuantity)
+                //{
+                //    var requiredQuantity = line.Quantity - line.AvailableQuantity;
+                //    reqQuantity.Add(requiredQuantity);
+                //    var calculateAmount = requiredQuantity * line.PurchasePrice;
+                //    var amount = calculateAmount;
+                //    amounts.Add(amount);
+                //}
             }
 
-            ReturningRemarks(requisitionDto);
-            var totalAmount = amounts.Sum();
-            if (reqQuantity.Count() > 0)
+            var totalAmount = purchaseAmounts.Sum();
+            if (isRequiredQty)
             {
                 if (totalAmount <= 100000)
                 {
@@ -113,15 +109,18 @@ namespace Application.Services
                 else if (totalAmount > 100000 && totalAmount <= 300000)
                 {
                     requisitionDto.IsShowCFQButton = true;
+                    requisitionDto.IsShowQuotationButton = true;
                 }
                 else if (totalAmount > 300000)
                 {
                     requisitionDto.IsShowTenderButton = true;
                 }
             }
+
             if ((requisitionDto.State == DocumentStatus.Unpaid || requisitionDto.State == DocumentStatus.Partial || requisitionDto.State == DocumentStatus.Paid))
                 return new Response<RequisitionDto>(MapToValue(requisitionDto), "Returning value");
-
+            
+            ReturningRemarks(requisitionDto);
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Requisition)).FirstOrDefault();
             if (workflow != null)
             {

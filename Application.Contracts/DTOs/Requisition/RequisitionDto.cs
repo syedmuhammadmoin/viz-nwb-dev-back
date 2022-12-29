@@ -33,6 +33,7 @@ namespace Application.Contracts.DTOs
         public bool IsShowIssuanceButton { get; set; } = false;
         public bool IsShowPurchaseOrderButton { get; set; } = false;
         public bool IsShowCFQButton { get; set; } = false;
+        public bool IsShowQuotationButton { get; set; } = false;
         public bool IsShowTenderButton { get; set; } = false;
     }
 }
