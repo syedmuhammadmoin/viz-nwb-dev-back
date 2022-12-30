@@ -62,5 +62,10 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.Status);
         }
+        public RequisitionSpecs(int requestId , bool isReff) 
+            : base (x => x.RequestId == requestId)
+        {
+
+        }
     }
 }
