@@ -79,8 +79,8 @@ namespace Application.Services
                     DocNo = "REQUEST-" + String.Format("{0:000}", requisitionDto.RequestId),
                     DocType = DocType.Request
                 });
-   
-                var quotations = await _unitOfWork.Quotation.GetAll(new QuotationSpecs(id , true));
+
+                var quotations = await _unitOfWork.Quotation.GetAll(new QuotationSpecs(id, true));
 
                 foreach (var quote in quotations)
                 {
@@ -297,17 +297,20 @@ namespace Application.Services
             foreach (var line in entity.RequisitionLines)
             {
                 var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
-                if (getStockRecord.AvailableQuantity > 0)
+                if (getStockRecord != null)
                 {
-                    int reserveableQuantity = (int)line.Quantity;
+                    if (getStockRecord.AvailableQuantity > 0)
+                    {
+                        int reserveableQuantity = (int)line.Quantity;
 
-                    if (line.Quantity > getStockRecord.AvailableQuantity)
-                        reserveableQuantity = getStockRecord.AvailableQuantity;
+                        if (line.Quantity > getStockRecord.AvailableQuantity)
+                            reserveableQuantity = getStockRecord.AvailableQuantity;
 
-                    //Need to Save reserveable Quantity with Requesition
-                    line.ReserveQuantity = reserveableQuantity;
-                    getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity + reserveableQuantity);
-                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - reserveableQuantity);
+                        //Need to Save reserveable Quantity with Requesition
+                        line.ReserveQuantity = reserveableQuantity;
+                        getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity + reserveableQuantity);
+                        getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - reserveableQuantity);
+                    }
                 }
             }
             return entity;
@@ -409,7 +412,7 @@ namespace Application.Services
                     DocType = DocType.Request
                 });
 
-                var quotations =  _unitOfWork.Quotation.Find(new QuotationSpecs(data.Id, true));
+                var quotations = _unitOfWork.Quotation.Find(new QuotationSpecs(data.Id, true));
 
                 foreach (var quote in quotations)
                 {
