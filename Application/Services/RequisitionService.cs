@@ -397,14 +397,40 @@ namespace Application.Services
                     DocNo = y.Key.DocNo,
                 })
                 .ToList();
+            List<ReferncesDto> references = new List<ReferncesDto>();
+            //Add Reference
+            if (data.RequestId != null)
+            {
 
+                references.Add(new ReferncesDto()
+                {
+                    DocId = (int)data.RequestId,
+                    DocNo = "REQUEST-" + String.Format("{0:000}", data.RequestId),
+                    DocType = DocType.Request
+                });
+
+                var quotations =  _unitOfWork.Quotation.Find(new QuotationSpecs(data.Id, true));
+
+                foreach (var quote in quotations)
+                {
+                    references.Add(
+                        new ReferncesDto()
+                        {
+                            DocId = quote.Id,
+                            DocNo = quote.DocNo,
+                            DocType = DocType.Quotation
+                        }
+                     );
+                }
+                data.References = references;
+            }
             // Adding in issuances in references list
-            var getReference = new List<ReferncesDto>();
             if (grnLineReconcileRecord.Any())
             {
+
                 foreach (var line in grnLineReconcileRecord)
                 {
-                    getReference.Add(new ReferncesDto
+                    references.Add(new ReferncesDto
                     {
                         DocId = line.IssuanceId,
                         DocNo = line.DocNo,
@@ -412,7 +438,7 @@ namespace Application.Services
                     });
                 }
             }
-            data.References = getReference;
+            data.References = references;
 
             // Get pending & received quantity...
             foreach (var line in data.RequisitionLines)
