@@ -63,6 +63,19 @@ namespace Application.Services
                 return new Response<RequestDto>("Not found");
 
             var requestDto = _mapper.Map<RequestDto>(request);
+            if (requestDto.Id != 0)
+            {
+                var requisitions = await _unitOfWork.Requisition.GetAll();
+                var req = requisitions.Where(a => a.RequestId == id).FirstOrDefault();
+                requestDto.References = new List<ReferncesDto> {
+                    new ReferncesDto()
+                    {
+                        DocId = (int)req.Id,
+                        DocNo = "REQ-" + String.Format("{0:000}", req.Id),
+                        DocType = DocType.Request
+                    }
+                };
+            }
             ReturningRemarks(requestDto);
 
 

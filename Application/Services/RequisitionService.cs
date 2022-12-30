@@ -80,6 +80,17 @@ namespace Application.Services
                         DocType = DocType.Request
                     }
                 };
+
+                var quotations = await _unitOfWork.Quotation.GetAll();
+                var quote = quotations.Where(a => a.RequisitionId == id).FirstOrDefault();
+                requisitionDto.References = new List<ReferncesDto> {
+                    new ReferncesDto()
+                    {
+                        DocId = (int)quote.Id,
+                        DocNo = "QUOTE-" + String.Format("{0:000}", quote.Id),
+                        DocType = DocType.Quotation
+                    }
+                };
             }
 
             bool isRequiredQty = false;
