@@ -60,8 +60,8 @@ namespace Infrastructure.Specifications
         public QuotationSpecs(int requisitionId, int? quotationCompId)
             : base(x => x.RequisitionId == requisitionId 
             && x.Status.State == DocumentStatus.Unpaid 
-            && x.QuotationComparativeId == null
-            && x.QuotationComparativeId == quotationCompId)
+            && (x.QuotationComparativeId == null
+            || x.QuotationComparativeId == quotationCompId))
         {
                 ApplyOrderByDescending(i => i.Id);
                 AddInclude(i => i.QuotationLines);
