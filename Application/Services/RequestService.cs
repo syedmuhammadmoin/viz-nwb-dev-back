@@ -72,7 +72,7 @@ namespace Application.Services
                     {
                         DocId = (int)req.Id,
                         DocNo = "REQ-" + String.Format("{0:000}", req.Id),
-                        DocType = DocType.Request
+                        DocType = DocType.Requisition
                     }
                 };
             }
