@@ -65,16 +65,21 @@ namespace Application.Services
             var requestDto = _mapper.Map<RequestDto>(request);
             if (requestDto.Id != 0)
             {
-                var requisitions = await _unitOfWork.Requisition.GetAll();
-                var req = requisitions.Where(a => a.RequestId == id).FirstOrDefault();
-                requestDto.References = new List<ReferncesDto> {
-                    new ReferncesDto()
-                    {
-                        DocId = (int)req.Id,
-                        DocNo = "REQ-" + String.Format("{0:000}", req.Id),
-                        DocType = DocType.Requisition
-                    }
-                };
+                var requisitions = await _unitOfWork.Requisition.GetAll(new RequisitionSpecs(id, true));
+                List<ReferncesDto> references = new List<ReferncesDto>();
+
+                foreach (var req in requisitions)
+                {
+                    references.Add(
+                        new ReferncesDto()
+                        {
+                            DocId = req.Id,
+                            DocNo = req.DocNo,
+                            DocType = DocType.Requisition
+                        }
+                     );
+                }
+                requestDto.References = references;
             }
             ReturningRemarks(requestDto);
 
@@ -117,7 +122,7 @@ namespace Application.Services
                 return await this.SaveRequest(entity, 1);
             }
         }
-        
+
         public async Task<Response<RequestDto>> UpdateAsync(CreateRequestDto entity)
         {
             if ((bool)entity.isSubmit)
@@ -190,13 +195,13 @@ namespace Application.Services
             }
             return new Response<bool>("User does not have allowed role");
         }
-        
+
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        
+
         private async Task<Response<RequestDto>> SubmitRequest(CreateRequestDto entity)
         {
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Request)).FirstOrDefault();
@@ -279,7 +284,7 @@ namespace Application.Services
 
             if (remarks.Count() > 0)
                 data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
-            
+
             return remarks;
         }
     }
