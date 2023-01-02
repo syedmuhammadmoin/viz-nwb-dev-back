@@ -68,34 +68,7 @@ namespace Application.Services
             var stock = await _unitOfWork.Stock.GetAll(new StockSpecs(requisitionProductItemIds));
 
             var requisitionDto = _mapper.Map<RequisitionDto>(requisition);
-            List<ReferncesDto> references = new List<ReferncesDto>();
-            //Add Reference
-            if (requisitionDto.RequestId != null)
-            {
-
-                references.Add(new ReferncesDto()
-                {
-                    DocId = (int)requisitionDto.RequestId,
-                    DocNo = "REQUEST-" + String.Format("{0:000}", requisitionDto.RequestId),
-                    DocType = DocType.Request
-                });
-
-                var quotations = await _unitOfWork.Quotation.GetAll(new QuotationSpecs(id, true));
-
-                foreach (var quote in quotations)
-                {
-                    references.Add(
-                        new ReferncesDto()
-                        {
-                            DocId = quote.Id,
-                            DocNo = quote.DocNo,
-                            DocType = DocType.Quotation
-                        }
-                     );
-                }
-                requisitionDto.References = references;
-            }
-
+            
             bool isRequiredQty = false;
             List<decimal> purchaseAmounts = new List<decimal>();
 
