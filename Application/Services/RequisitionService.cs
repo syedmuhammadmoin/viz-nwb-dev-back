@@ -68,7 +68,7 @@ namespace Application.Services
             var stock = await _unitOfWork.Stock.GetAll(new StockSpecs(requisitionProductItemIds));
 
             var requisitionDto = _mapper.Map<RequisitionDto>(requisition);
-            
+
             bool isRequiredQty = false;
             List<decimal> purchaseAmounts = new List<decimal>();
 
@@ -385,8 +385,14 @@ namespace Application.Services
                     DocType = DocType.Request
                 });
 
-                var quotations = _unitOfWork.Quotation.Find(new QuotationSpecs(data.Id, true));
 
+                data.References = references;
+            }
+            
+            var quotations = _unitOfWork.Quotation.Find(new QuotationSpecs(data.Id, true));
+          
+            if (quotations != null)
+            {
                 foreach (var quote in quotations)
                 {
                     references.Add(
