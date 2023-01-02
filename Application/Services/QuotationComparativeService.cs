@@ -83,7 +83,7 @@ namespace Application.Services
                 entity.QuotationComparativeDate,
                 (int)entity.RequisitionId,
                 entity.Remarks,
-                entity.isSubmit == true ? DocumentStatus.Draft : DocumentStatus.Submitted);
+                entity.isSubmit == true ? DocumentStatus.Submitted : DocumentStatus.Draft);
 
             _unitOfWork.CreateTransaction();
 
@@ -126,7 +126,7 @@ namespace Application.Services
                 entity.QuotationComparativeDate,
                 (int)entity.RequisitionId,
                 entity.Remarks,
-                entity.isSubmit == true ? DocumentStatus.Draft : DocumentStatus.Submitted);
+                entity.isSubmit == true ? DocumentStatus.Submitted : DocumentStatus.Draft);
 
             _unitOfWork.CreateTransaction();
             await _unitOfWork.SaveAsync();
