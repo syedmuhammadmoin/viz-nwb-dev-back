@@ -42,6 +42,7 @@ namespace Application.Contracts.Response
         {
             IsSuccess = false;
             Message = message;
+            StatusCode = 400;
         }
         public Response(string message, int statusCode, string traceId) : this(message)
         {
