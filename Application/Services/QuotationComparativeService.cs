@@ -68,11 +68,22 @@ namespace Application.Services
             if (entity.QuotationComparativeLines.Count() == 0)
                 return new Response<QuotationComparativeDto>("Lines are Required");
 
+            if(entity.QuotationComparativeLines.Count() < 3)
+                return new Response<QuotationComparativeDto>("Minimum 3 lines are Required");
+
+            var duplicates = entity.QuotationComparativeLines.GroupBy(x => new { x.QuotationId })
+            .Where(g => g.Count() > 1)
+            .Select(y => y.Key)
+            .ToList();
+
+            if (duplicates.Any())
+                return new Response<QuotationComparativeDto>("Duplicate Lines found");
+
             var quotationComparative = new QuotationComparativeMaster(
                 entity.QuotationComparativeDate,
                 (int)entity.RequisitionId,
                 entity.Remarks,
-                entity.isSubmit == true ? DocumentStatus.Submitted : DocumentStatus.Draft);
+                entity.isSubmit == true ? DocumentStatus.Draft : DocumentStatus.Submitted);
 
             _unitOfWork.CreateTransaction();
 
@@ -115,7 +126,7 @@ namespace Application.Services
                 entity.QuotationComparativeDate,
                 (int)entity.RequisitionId,
                 entity.Remarks,
-                entity.isSubmit == true ? DocumentStatus.Submitted : DocumentStatus.Draft);
+                entity.isSubmit == true ? DocumentStatus.Draft : DocumentStatus.Submitted);
 
             _unitOfWork.CreateTransaction();
             await _unitOfWork.SaveAsync();
