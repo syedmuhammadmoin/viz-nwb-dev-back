@@ -27,6 +27,7 @@ namespace Infrastructure.Specifications
                 ApplyOrderByDescending(i => i.Id);
                 AddInclude(i => i.Status);
                 AddInclude(i => i.Vendor);
+                AddInclude("QuotationLines.Item");
             }
         }
         
@@ -49,6 +50,9 @@ namespace Infrastructure.Specifications
         public QuotationSpecs(bool abc, int quoatationCompId) : base(x => x.QuotationComparativeId == (int)quoatationCompId)
         {
             AddInclude(i => i.QuotationLines);
+            AddInclude(i => i.Vendor);
+            AddInclude(i => i.Status);
+            AddInclude("QuotationLines.Item");
         }
 
         public QuotationSpecs(string workflow)
@@ -63,8 +67,8 @@ namespace Infrastructure.Specifications
             && (x.QuotationComparativeId == null
             || x.QuotationComparativeId == quotationCompId))
         {
-                ApplyOrderByDescending(i => i.Id);
-                AddInclude(i => i.QuotationLines);
+            ApplyOrderByDescending(i => i.Id);
+            AddInclude(i => i.QuotationLines);
             AddInclude(i => i.Vendor);
             AddInclude(i => i.Status);
             AddInclude("QuotationLines.Item");
