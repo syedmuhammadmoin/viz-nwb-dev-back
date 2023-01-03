@@ -14,8 +14,7 @@ namespace Application.Contracts.DTOs
         public DateTime QuotationComparativeDate { get; set; }
         [Required]
         public int? RequisitionId { get; set; }
-        [Required]
-        public string Remarks { get;  set; }
+
         [Required]
         public bool? isSubmit { get; set; }
         [Required]
