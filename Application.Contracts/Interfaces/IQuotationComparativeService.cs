@@ -11,5 +11,6 @@ namespace Application.Contracts.Interfaces
 {
     public interface IQuotationComparativeService : ICrudService<CreateQuotationComparativeDto, QuotationComparativeDto, int, TransactionFormFilter>
     {
+        Task<Response<AwardedVendorDto>> AwardedVendorQuotation(int quotationCompId, AwardedVendorDto entity);
     }
 }
