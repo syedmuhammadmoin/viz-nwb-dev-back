@@ -469,11 +469,11 @@ namespace Application.Services
                     }
 
                     // updating reserved quantity for REJECTED Issuance
-                    if (getState.State == DocumentStatus.Rejected)
-                    {
-                        getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity - line.Quantity);
-                        getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
-                    }
+                    //if (getState.State == DocumentStatus.Rejected)
+                    //{
+                    //    getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity - line.Quantity);
+                    //    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
+                    //}
 
                 }
             }
