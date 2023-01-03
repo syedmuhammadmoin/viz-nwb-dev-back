@@ -82,7 +82,10 @@ namespace Application.Services
 
             if ((quotationDto.State == DocumentStatus.Unpaid || quotationDto.State == DocumentStatus.Partial || quotationDto.State == DocumentStatus.Paid))
                 return new Response<QuotationDto>(quotationDto, "Returning value");
-            
+            if(quotation.AwardedVendor == true)
+            {
+                quotationDto.IsAwarded = true ;
+            }
             quotationDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Quotation)).FirstOrDefault();
             if (workflow != null)
