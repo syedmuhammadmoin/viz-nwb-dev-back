@@ -18,27 +18,33 @@ namespace Domain.Entities
         [MaxLength(200)] 
         public string Remarks { get; private set; }
         public DocumentStatus Status { get; private set; }
-        
+
+        public string AwardedVendor {get; private set; }
+
         public virtual List<QuotationMaster> Quotations { get; private set; }
 
         protected QuotationComparativeMaster()
         {
         }
 
-        public QuotationComparativeMaster(DateTime quotationComparativeDate, int requsisitionId, string remarks, DocumentStatus status)
+        public QuotationComparativeMaster(DateTime quotationComparativeDate, int requsisitionId, DocumentStatus status)
         {
             QuotationComparativeDate = quotationComparativeDate;
             RequsisitionId = requsisitionId;
-            Remarks = remarks;
             Status = status;
         }
 
-        public void Update(DateTime quotationComparativeDate, int requsisitionId, string remarks, DocumentStatus status)
+        public void Update(DateTime quotationComparativeDate, int requsisitionId, DocumentStatus status)
         {
             QuotationComparativeDate = quotationComparativeDate;
             RequsisitionId = requsisitionId;
-            Remarks = remarks;
             Status = status;
+        }
+
+        public void UpdateAwardedVendor(string remarks, string awardedVendor )
+        {
+            Remarks = remarks;
+            AwardedVendor = awardedVendor;
         }
 
         public void CreateDocNo()

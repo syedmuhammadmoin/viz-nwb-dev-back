@@ -27,6 +27,8 @@ namespace Domain.Entities
         public int? QuotationComparativeId { get; private set; }
         [ForeignKey("QuotationComparativeId")]
         public QuotationComparativeMaster QuotationComparativeMaster { get; private set; }
+
+        public bool AwardedVendor { get; private set; } = false;
         
         public int StatusId { get; private set; }
         [ForeignKey("StatusId")]
@@ -50,6 +52,10 @@ namespace Domain.Entities
         public void UpdateQuotationComparativeMasterId(int? id)
         {
             QuotationComparativeId = id;
+        }
+        public void UpdateAwardedVendor(int? id)
+        {
+            AwardedVendor = true;
         }
     }
 }
