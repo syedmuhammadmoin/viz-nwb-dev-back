@@ -127,19 +127,19 @@ namespace Application.Services
             var getIssuance = await _unitOfWork.Issuance.GetById(data.DocId, new IssuanceSpecs(true));
             if (getIssuance == null)
                 return new Response<bool>("Issuance with the input id not found");
-            
+
             if (getIssuance.Status.State == DocumentStatus.Unpaid || getIssuance.Status.State == DocumentStatus.Partial || getIssuance.Status.State == DocumentStatus.Paid)
                 return new Response<bool>("Issuance already approved");
-            
+
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Issuance)).FirstOrDefault();
             if (workflow == null)
                 return new Response<bool>("No activated workflow found for this document");
-            
+
             var transition = workflow.WorkflowTransitions
                     .FirstOrDefault(x => (x.CurrentStatusId == getIssuance.StatusId && x.Action == data.Action));
             if (transition == null)
                 return new Response<bool>("No transition found");
-            
+
             var getUser = new GetUser(this._httpContextAccessor);
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles(); _unitOfWork.CreateTransaction();
@@ -232,12 +232,21 @@ namespace Application.Services
                         return new Response<IssuanceDto>(checkValidation.Message);
                 }
             }
-           
-                //Checking available quantity in stock
+
+            if (entity.RequisitionId == null)
+            {  //Checking available quantity in stock
                 var checkOrUpdateQty = CheckOrUpdateQty(entity);
                 if (!checkOrUpdateQty.IsSuccess)
                     return new Response<IssuanceDto>(checkOrUpdateQty.Message);
-           
+            }
+            else
+            {//Checking available quantity in stock
+                var checkOrUpdateQty = CheckOrUpdateQtyforRequisition(entity);
+                if (!checkOrUpdateQty.IsSuccess)
+                    return new Response<IssuanceDto>(checkOrUpdateQty.Message);
+            }
+
+
 
 
 
@@ -315,10 +324,19 @@ namespace Application.Services
                 }
             }
 
-            //Checking available quantity in stock
-            var checkOrUpdateQty = CheckOrUpdateQty(entity);
-            if (!checkOrUpdateQty.IsSuccess)
-                return new Response<IssuanceDto>(checkOrUpdateQty.Message);
+            if (entity.RequisitionId == null)
+            {  //Checking available quantity in stock
+                var checkOrUpdateQty = CheckOrUpdateQty(entity);
+                if (!checkOrUpdateQty.IsSuccess)
+                    return new Response<IssuanceDto>(checkOrUpdateQty.Message);
+            }
+            else
+            {//Checking available quantity in stock
+                var checkOrUpdateQty = CheckOrUpdateQtyforRequisition(entity);
+                if (!checkOrUpdateQty.IsSuccess)
+                    return new Response<IssuanceDto>(checkOrUpdateQty.Message);
+            }
+
 
             //Checking duplicate Lines if any
             var duplicates = entity.IssuanceLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
@@ -371,18 +389,37 @@ namespace Application.Services
                 if (line.Quantity > getStockRecord.AvailableQuantity)
                     return new Response<bool>("Selected item quantity is exceeding available quantity");
 
-                //In case of Requisition, stock is already reserved 
-                if (issuance.RequisitionId==null)
-                {
-                    getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity + (int)line.Quantity);
-                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - (int)line.Quantity);
-                }
-                
+
+                getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity + (int)line.Quantity);
+                getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - (int)line.Quantity);
+
+
 
             }
             return new Response<bool>(true, "");
         }
+        private Response<bool> CheckOrUpdateQtyforRequisition(CreateIssuanceDto issuance)
+        {
+            foreach (var line in issuance.IssuanceLines)
+            {
+                var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
 
+                if (getStockRecord == null)
+                    return new Response<bool>("Item not found in stock");
+
+                if (getStockRecord.ReservedRequisitionQuantity == 0)
+                    return new Response<bool>("Selected item is out of stock");
+
+
+                if (line.Quantity > getStockRecord.ReservedRequisitionQuantity)
+                    return new Response<bool>("Selected item quantity is exceeding available quantity");
+
+
+
+
+            }
+            return new Response<bool>(true, "");
+        }
 
         private async Task<Response<bool>> UpdateStockOnApproveOrReject(IssuanceMaster issuance)
         {
