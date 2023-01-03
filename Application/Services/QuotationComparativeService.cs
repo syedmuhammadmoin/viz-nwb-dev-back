@@ -62,7 +62,13 @@ namespace Application.Services
 
             quotationComparativeDto.Quotations = _mapper.Map<List<QuotationDto>>(getQuotations);
             
-            quotationComparativeDto.checkBoxSelection = false;
+            foreach(var line in quotationComparative.Quotations)
+            {
+                if(line.IsAwarded == true)
+                {
+                    quotationComparativeDto.checkBoxSelection = false;
+                }
+            }
 
             return new Response<QuotationComparativeDto>(quotationComparativeDto, "Returning value");
         }
