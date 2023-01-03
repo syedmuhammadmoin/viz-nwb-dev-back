@@ -21,6 +21,7 @@ namespace Application.Contracts.DTOs
         public string Status { get; set; }
         public DocumentStatus State { get; set; }
         public bool IsAllowedRole { get; set; }
+        public bool IsAwarded { get; set; }
         public int? RequisitionId { get; set; }
         public virtual List<QuotationLinesDto> QuotationLines { get; set; }
 
