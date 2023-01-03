@@ -8,6 +8,7 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
 using Microsoft.Extensions.Options;
+using OfficeOpenXml.FormulaParsing.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        
+
         public async Task<PaginationResponse<List<QuotationComparativeDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var DocDate = new List<DateTime?>();
@@ -57,10 +58,21 @@ namespace Application.Services
                 return new Response<QuotationComparativeDto>("Not found");
 
             var quotationComparativeDto = _mapper.Map<QuotationComparativeDto>(quotationComparative);
+
             var getQuotations = await _unitOfWork.Quotation.GetAll(new QuotationSpecs(true, quotationComparativeDto.Id));
+
             quotationComparativeDto.Quotations = _mapper.Map<List<QuotationDto>>(getQuotations);
-            if(quotationComparative.AwardedVendor != null)
-                quotationComparativeDto.checkBoxSelection = false;
+            
+            quotationComparativeDto.checkBoxSelection = false;
+
+            //if (getQuotations != null)
+            //{
+            //    foreach (var line in quotationComparativeDto.Quotations)
+            //    {
+            //        line.IsAwarded = getQuotations()
+            //    } 
+            //}
+
             return new Response<QuotationComparativeDto>(quotationComparativeDto, "Returning value");
         }
 
@@ -69,7 +81,7 @@ namespace Application.Services
             if (entity.QuotationComparativeLines.Count() == 0)
                 return new Response<QuotationComparativeDto>("Lines are Required");
 
-            if(entity.QuotationComparativeLines.Count() < 3)
+            if (entity.QuotationComparativeLines.Count() < 3)
                 return new Response<QuotationComparativeDto>("Minimum 3 lines are Required");
 
             var duplicates = entity.QuotationComparativeLines.GroupBy(x => new { x.QuotationId })
@@ -109,7 +121,7 @@ namespace Application.Services
             _unitOfWork.Commit();
             return new Response<QuotationComparativeDto>(_mapper.Map<QuotationComparativeDto>(result), "Created successfully");
         }
-        
+
         public async Task<Response<QuotationComparativeDto>> UpdateAsync(CreateQuotationComparativeDto entity)
         {
             if (entity.QuotationComparativeLines.Count() == 0)
@@ -163,9 +175,9 @@ namespace Application.Services
 
             if (quotationComparative.Status == DocumentStatus.Draft)
                 return new Response<AwardedVendorDto>("Only Submitted document can be Awarded");
-            
-            var quotations = await _unitOfWork.Quotation.GetById(entity.QuotationId, new QuotationSpecs(false)); 
-          
+
+            var quotations = await _unitOfWork.Quotation.GetById(entity.QuotationId, new QuotationSpecs(false));
+
             if (quotations == null)
                 return new Response<AwardedVendorDto>("Not found");
             if (quotationComparative.AwardedVendor != null)
@@ -173,11 +185,11 @@ namespace Application.Services
 
             var awardedVendorDto = _mapper.Map<AwardedVendorDto>(quotationComparative);
 
-           
+
             quotations.UpdateAwardedVendor(
                 quotations.Id
                 );
-            
+
             quotationComparative.UpdateAwardedVendor(
              entity.Remarks,
              entity.AwardedVendor

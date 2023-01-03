@@ -81,11 +81,7 @@ namespace Application.Services
             ReturningFiles(quotationDto, DocType.Quotation);
 
             if ((quotationDto.State == DocumentStatus.Unpaid || quotationDto.State == DocumentStatus.Partial || quotationDto.State == DocumentStatus.Paid))
-                return new Response<QuotationDto>(quotationDto, "Returning value");
-            if(quotation.AwardedVendor == true)
-            {
-                quotationDto.IsAwarded = true ;
-            }
+                return new Response<QuotationDto>(quotationDto, "Returning value");           
             quotationDto.IsAllowedRole = false;
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Quotation)).FirstOrDefault();
             if (workflow != null)
