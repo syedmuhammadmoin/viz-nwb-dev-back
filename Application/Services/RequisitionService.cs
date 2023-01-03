@@ -74,6 +74,11 @@ namespace Application.Services
 
             foreach (var line in requisitionDto.RequisitionLines)
             {
+                if (stock!=null)
+                {
+                    line.AvailableQuantity = stock.Where(x => x.ItemId == line.ItemId && x.WarehouseId == line.WarehouseId).FirstOrDefault().AvailableQuantity;
+                }
+                
                 if (line.ReserveQuantity > 0)
                 {
                     requisitionDto.IsShowIssuanceButton = true;
