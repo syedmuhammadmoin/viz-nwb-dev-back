@@ -39,5 +39,10 @@ namespace Domain.Entities
         {
             Status = status;
         }
+
+        public void setReserveQuantity(int reserveQuantity )
+        {
+            ReserveQuantity = reserveQuantity;
+        }
     }
 }

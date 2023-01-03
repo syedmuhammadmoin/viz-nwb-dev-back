@@ -221,9 +221,12 @@ namespace Application.Services
                     {
                         foreach (var line in getRequisition.RequisitionLines)
                         {
+                            line.setReserveQuantity(0);
+
                             var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs(line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
                             getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity - line.ReserveQuantity);
                             getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.ReserveQuantity);
+                            
                         }
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
