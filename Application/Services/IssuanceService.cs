@@ -424,12 +424,8 @@ namespace Application.Services
         private async Task<Response<bool>> UpdateStockOnApproveOrReject(IssuanceMaster issuance)
         {
             var getState = await _unitOfWork.WorkFlowStatus.GetById(issuance.StatusId);
-            RequisitionMaster getRequisition = null;
 
-            if (issuance.RequisitionId != null)
-            {
-                getRequisition = await _unitOfWork.Requisition.GetById((int)issuance.RequisitionId);
-            }
+        
 
 
             if (getState == null)
@@ -459,9 +455,11 @@ namespace Application.Services
                 }
                 else
                 {
+                    RequisitionMaster getRequisition = await _unitOfWork.Requisition.GetById((int)issuance.RequisitionId , new RequisitionSpecs(false));
+
                     var reserveQty = getRequisition.RequisitionLines.Where(i => i.ItemId == line.ItemId && i.WarehouseId == line.WarehouseId).Sum(i => i.ReserveQuantity);
 
-                    if (line.Quantity >= reserveQty)
+                    if (line.Quantity > reserveQty)
                         return new Response<bool>("Issuance quantity must not be greater than requested quantity");
 
                     // updating reserved quantity for APPROVED Issuance
