@@ -545,6 +545,7 @@ namespace Application.Mapper
                 .ForMember(dto => dto.State, core => core.MapFrom(
                     a => a.Status == DocumentStatus.Draft ? "Draft" :
                     a.Status == DocumentStatus.Submitted ? "Submitted" : "N/A"));
+            CreateMap<QuotationComparativeMaster, AwardedVendorDto>();
         }
     }
 }
