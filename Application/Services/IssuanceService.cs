@@ -461,7 +461,7 @@ namespace Application.Services
                 {
                     var reserveQty = getRequisition.RequisitionLines.Where(i => i.ItemId == line.ItemId && i.WarehouseId == line.WarehouseId).Sum(i => i.ReserveQuantity);
 
-                    if (line.Quantity > reserveQty)
+                    if (line.Quantity >= reserveQty)
                         return new Response<bool>("Issuance quantity must not be greater than requested quantity");
 
                     // updating reserved quantity for APPROVED Issuance
