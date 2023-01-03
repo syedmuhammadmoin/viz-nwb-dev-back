@@ -232,13 +232,12 @@ namespace Application.Services
                         return new Response<IssuanceDto>(checkValidation.Message);
                 }
             }
-            else
-            {
+           
                 //Checking available quantity in stock
                 var checkOrUpdateQty = CheckOrUpdateQty(entity);
                 if (!checkOrUpdateQty.IsSuccess)
                     return new Response<IssuanceDto>(checkOrUpdateQty.Message);
-            }
+           
 
 
 
@@ -372,12 +371,18 @@ namespace Application.Services
                 if (line.Quantity > getStockRecord.AvailableQuantity)
                     return new Response<bool>("Selected item quantity is exceeding available quantity");
 
-                getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity + (int)line.Quantity);
-                getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - (int)line.Quantity);
+                //In case of Requisition, stock is already reserved 
+                if (issuance.RequisitionId==null)
+                {
+                    getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity + (int)line.Quantity);
+                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - (int)line.Quantity);
+                }
+                
 
             }
             return new Response<bool>(true, "");
         }
+
 
         private async Task<Response<bool>> UpdateStockOnApproveOrReject(IssuanceMaster issuance)
         {
