@@ -8,7 +8,6 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
 using Microsoft.Extensions.Options;
-using OfficeOpenXml.FormulaParsing.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,14 +63,6 @@ namespace Application.Services
             quotationComparativeDto.Quotations = _mapper.Map<List<QuotationDto>>(getQuotations);
             
             quotationComparativeDto.checkBoxSelection = false;
-
-            //if (getQuotations != null)
-            //{
-            //    foreach (var line in quotationComparativeDto.Quotations)
-            //    {
-            //        line.IsAwarded = getQuotations()
-            //    } 
-            //}
 
             return new Response<QuotationComparativeDto>(quotationComparativeDto, "Returning value");
         }
