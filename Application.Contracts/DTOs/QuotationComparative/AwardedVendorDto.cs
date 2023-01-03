@@ -17,6 +17,6 @@ namespace Application.Contracts.DTOs
         public string  AwardedVendor { get; set; }
         [Required]
         public int QuotationId { get; set; }
-        public bool checkBoxSelection { get; set; } = true;
+     
     }
 }

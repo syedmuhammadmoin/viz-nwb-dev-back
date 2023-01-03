@@ -14,9 +14,12 @@ namespace Application.Contracts.DTOs
         public DateTime QuotationComparativeDate { get;  set; }
         public int RequisitionId { get; set; }
         public string Remarks { get; set; }
+        public string AwardedVendor { get; set; }
         public string Status { get; set; }
         public DocumentStatus State { get; set; }
+        public bool checkBoxSelection { get; set; } = true;
         public virtual List<QuotationDto> Quotations { get; set; }
+
   
 
     }

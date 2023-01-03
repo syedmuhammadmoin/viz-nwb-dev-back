@@ -59,7 +59,8 @@ namespace Application.Services
             var quotationComparativeDto = _mapper.Map<QuotationComparativeDto>(quotationComparative);
             var getQuotations = await _unitOfWork.Quotation.GetAll(new QuotationSpecs(true, quotationComparativeDto.Id));
             quotationComparativeDto.Quotations = _mapper.Map<List<QuotationDto>>(getQuotations);
-            
+            if(quotationComparative.AwardedVendor != null)
+                quotationComparativeDto.checkBoxSelection = false;
             return new Response<QuotationComparativeDto>(quotationComparativeDto, "Returning value");
         }
 
@@ -172,7 +173,6 @@ namespace Application.Services
 
             var awardedVendorDto = _mapper.Map<AwardedVendorDto>(quotationComparative);
 
-            awardedVendorDto.checkBoxSelection = false;
            
             quotations.UpdateAwardedVendor(
                 quotations.Id
