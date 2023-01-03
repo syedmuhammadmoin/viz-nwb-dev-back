@@ -158,8 +158,7 @@ namespace Application.Services
             }
             else
             {
-                return new Response<RequisitionDto>("Not allow to edit");
-                //return await this.UpdateRequisition(entity, 1);
+                return await this.UpdateRequisition(entity, 1);
             }
         }
 
