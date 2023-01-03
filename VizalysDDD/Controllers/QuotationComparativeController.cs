@@ -63,6 +63,18 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
-        
+        [ClaimRequirement("Permission", new string[] { Permissions.QuotationComparativeClaims.Edit })]
+        [HttpPut("QuotationCompId/{id}")]
+        public async Task<ActionResult<Response<AwardedVendorDto>>> AwardedVendorQuotation(int quotationCompId, AwardedVendorDto entity)
+        {
+
+            var result = await _quotationComparativeService.AwardedVendorQuotation
+                (quotationCompId, entity);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
+
     }
 }
