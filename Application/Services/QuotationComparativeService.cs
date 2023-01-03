@@ -179,8 +179,8 @@ namespace Application.Services
                 );
             
             quotationComparative.UpdateAwardedVendor(
-             entity.AwardedVendor,
-             entity.Remarks
+             entity.Remarks,
+             entity.AwardedVendor
                 );
 
             _unitOfWork.CreateTransaction();
