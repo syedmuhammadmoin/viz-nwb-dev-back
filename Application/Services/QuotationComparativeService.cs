@@ -82,7 +82,6 @@ namespace Application.Services
             var quotationComparative = new QuotationComparativeMaster(
                 entity.QuotationComparativeDate,
                 (int)entity.RequisitionId,
-                entity.Remarks,
                 entity.isSubmit == true ? DocumentStatus.Submitted : DocumentStatus.Draft);
 
             _unitOfWork.CreateTransaction();
@@ -125,7 +124,6 @@ namespace Application.Services
             quotationComparative.Update(
                 entity.QuotationComparativeDate,
                 (int)entity.RequisitionId,
-                entity.Remarks,
                 entity.isSubmit == true ? DocumentStatus.Submitted : DocumentStatus.Draft);
 
             _unitOfWork.CreateTransaction();
@@ -154,6 +152,44 @@ namespace Application.Services
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<Response<AwardedVendorDto>> AwardedVendorQuotation(int quotationCompId, AwardedVendorDto entity)
+        {
+            var quotationComparative = await _unitOfWork.QuotationComparative.GetById(quotationCompId, new QuotationComparativeSpecs());
+            if (quotationComparative == null)
+                return new Response<AwardedVendorDto>("Not found");
+
+            if (quotationComparative.Status == DocumentStatus.Draft)
+                return new Response<AwardedVendorDto>("Only Submitted document can be Awarded");
+            
+            var quotations = await _unitOfWork.Quotation.GetById(entity.QuotationId, new QuotationSpecs(false)); 
+          
+            if (quotations == null)
+                return new Response<AwardedVendorDto>("Not found");
+            if (quotationComparative.AwardedVendor != null)
+                return new Response<AwardedVendorDto>("This Vendor is already Awarded");
+
+            var awardedVendorDto = _mapper.Map<AwardedVendorDto>(quotationComparative);
+
+            awardedVendorDto.checkBoxSelection = false;
+           
+            quotations.UpdateAwardedVendor(
+                quotations.Id
+                );
+            
+            quotationComparative.UpdateAwardedVendor(
+             entity.AwardedVendor,
+             entity.Remarks
+                );
+
+            _unitOfWork.CreateTransaction();
+            await _unitOfWork.SaveAsync();
+            _unitOfWork.Commit();
+            awardedVendorDto.AwardedVendor = quotationComparative.AwardedVendor;
+            awardedVendorDto.Remarks = quotationComparative.Remarks;
+            awardedVendorDto.QuotationId = quotations.Id;
+            return new Response<AwardedVendorDto>(_mapper.Map<AwardedVendorDto>(awardedVendorDto), "Updated successfully");
         }
     }
 }
