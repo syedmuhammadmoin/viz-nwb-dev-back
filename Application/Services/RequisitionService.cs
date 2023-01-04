@@ -74,11 +74,11 @@ namespace Application.Services
 
             foreach (var line in requisitionDto.RequisitionLines)
             {
-                if (stock!=null)
+                if (stock.Count() > 0)
                 {
                     line.AvailableQuantity = stock.Where(x => x.ItemId == line.ItemId && x.WarehouseId == line.WarehouseId).FirstOrDefault().AvailableQuantity;
                 }
-                
+
                 if (line.ReserveQuantity > 0)
                 {
                     requisitionDto.IsShowIssuanceButton = true;
@@ -221,13 +221,13 @@ namespace Application.Services
                     {
                         foreach (var line in getRequisition.RequisitionLines)
                         {
-                            
-
                             var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs(line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
-                            getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity - line.ReserveQuantity);
-                            getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.ReserveQuantity);
-                            
-                            line.setReserveQuantity(0);
+                            if (getStockRecord != null)
+                            {
+                                getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity - line.ReserveQuantity);
+                                getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.ReserveQuantity);
+                                line.setReserveQuantity(0);
+                            }
                         }
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
@@ -396,9 +396,9 @@ namespace Application.Services
 
                 data.References = references;
             }
-            
+
             var quotations = _unitOfWork.Quotation.Find(new QuotationSpecs(data.Id, true));
-          
+
             if (quotations != null)
             {
                 foreach (var quote in quotations)
