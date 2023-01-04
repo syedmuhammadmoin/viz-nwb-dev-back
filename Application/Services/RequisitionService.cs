@@ -76,7 +76,7 @@ namespace Application.Services
             {
                 if (stock.Count() > 0)
                 {
-                    line.AvailableQuantity = stock.Where(x => x.ItemId == line.ItemId && x.WarehouseId == line.WarehouseId).FirstOrDefault().AvailableQuantity;
+                    line.AvailableQuantity = stock.Where(x => x.ItemId == line.ItemId && x.WarehouseId == line.WarehouseId).Select(i => i.AvailableQuantity).FirstOrDefault();
                 }
 
                 if (line.ReserveQuantity > 0)
