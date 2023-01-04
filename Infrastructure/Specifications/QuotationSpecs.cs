@@ -76,7 +76,8 @@ namespace Infrastructure.Specifications
         public QuotationSpecs(int requisitionId ,bool isReff)
            : base(x => x.RequisitionId == requisitionId )
         {
-
+            AddInclude(i => i.QuotationLines);
+            AddInclude("QuotationLines.Item");
         }
     }
 }
