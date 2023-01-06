@@ -64,51 +64,9 @@ namespace Application.Services
 
             var requisitionProductItemIds = requisition.RequisitionLines.Select(i => i.ItemId).ToList();
 
-            //Getting stock by items id
-            var stock = await _unitOfWork.Stock.GetAll(new StockSpecs(requisitionProductItemIds));
-
             var requisitionDto = _mapper.Map<RequisitionDto>(requisition);
 
-            bool isRequiredQty = false;
-            List<decimal> purchaseAmounts = new List<decimal>();
-
-            foreach (var line in requisitionDto.RequisitionLines)
-            {
-                if (stock.Count() > 0)
-                {
-                    line.AvailableQuantity = stock.Where(x => x.ItemId == line.ItemId && x.WarehouseId == line.WarehouseId).Select(i => i.AvailableQuantity).FirstOrDefault();
-                }
-
-                if (line.ReserveQuantity > 0)
-                {
-                    requisitionDto.IsShowIssuanceButton = true;
-                }
-
-                if (line.Quantity > line.ReserveQuantity)
-                {
-                    var requiredQuantity = line.Quantity - line.ReserveQuantity;
-                    isRequiredQty = true;
-                    purchaseAmounts.Add(requiredQuantity * line.PurchasePrice);
-                }
-            }
-
-            var totalAmount = purchaseAmounts.Sum();
-            if (isRequiredQty)
-            {
-                if (totalAmount <= 100000)
-                {
-                    requisitionDto.IsShowPurchaseOrderButton = true;
-                }
-                else if (totalAmount > 100000 && totalAmount <= 300000)
-                {
-                    requisitionDto.IsShowCFQButton = true;
-                    requisitionDto.IsShowQuotationButton = true;
-                }
-                else if (totalAmount > 300000)
-                {
-                    requisitionDto.IsShowTenderButton = true;
-                }
-            }
+            CheckingConditions(requisitionDto, requisitionProductItemIds);
 
             if ((requisitionDto.State == DocumentStatus.Unpaid || requisitionDto.State == DocumentStatus.Partial || requisitionDto.State == DocumentStatus.Paid))
                 return new Response<RequisitionDto>(MapToValue(requisitionDto), "Returning value");
@@ -444,26 +402,55 @@ namespace Application.Services
             return data;
         }
 
-        //private List<decimal> ValidateProcurementProcess(RequisitionDto data )
-        //{
-        //    List<decimal> decimals = new List<decimal>();
-        //    foreach (var line in data.RequisitionLines)
-        //    {
-        //        var getStock = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
-        //        if (getStock.AvailableQuantity > 0)
-        //            data.IsShowIssuanceButton = true;
-        //        var reservedQuantity = line.Quantity - getStock.AvailableQuantity;
-        //        var  calculateAmount = reservedQuantity * line.PurchasePrice;
+        private  RequisitionDto CheckingConditions(RequisitionDto requisitionDto, List<int> requisitionProductItemIds)
+        {
+            var stock =  _unitOfWork.Stock.GetAll(new StockSpecs(requisitionProductItemIds)).Result;
 
-        //        var amount = calculateAmount;
+            bool isRequiredQty = false;
+            List<decimal> purchaseAmounts = new List<decimal>();
 
-        //        decimals.Add(amount);
-        //    }
+            foreach (var line in requisitionDto.RequisitionLines)
+            {
+                if (stock.Count() > 0)
+                {
+                    line.AvailableQuantity = stock.Where(x => x.ItemId == line.ItemId && x.WarehouseId == line.WarehouseId).Select(i => i.AvailableQuantity).FirstOrDefault();
+                }
 
+                if (line.ReserveQuantity > 0)
+                {
+                    requisitionDto.IsShowIssuanceButton = true;
+                }
 
-        //    return decimals;
+                if (line.Quantity > line.ReserveQuantity)
+                {
+                    var requiredQuantity = line.Quantity - line.ReserveQuantity;
+                    isRequiredQty = true;
+                    purchaseAmounts.Add(requiredQuantity * line.PurchasePrice);
+                }
+            }
 
-        //}
+            var totalAmount = purchaseAmounts.Sum();
+            if (isRequiredQty)
+            {
+                if (totalAmount <= 100000)
+                {
+                    requisitionDto.IsShowPurchaseOrderButton = true;
+                }
+                else if (totalAmount > 100000 && totalAmount <= 300000)
+                {
+                    requisitionDto.IsShowCFQButton = true;
+                    requisitionDto.IsShowQuotationButton = true;
+                }
+                else if (totalAmount > 300000)
+                {
+                    requisitionDto.IsShowTenderButton = true;
+                }
+             
+            }
+
+            return requisitionDto;
+
+        }
 
         private List<RemarksDto> ReturningRemarks(RequisitionDto data)
         {
