@@ -14,8 +14,6 @@ namespace Application.Contracts.DTOs
         [Required]
         public string Remarks { get; set; }
         [Required]
-        public string  AwardedVendor { get; set; }
-        [Required]
         public int QuotationId { get; set; }
      
     }
