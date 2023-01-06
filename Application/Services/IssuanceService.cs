@@ -9,6 +9,7 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
 using Microsoft.AspNetCore.Http;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -285,7 +286,7 @@ namespace Application.Services
         private async Task<Response<IssuanceDto>> SubmitIssuance(CreateIssuanceDto entity)
         {
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Issuance)).FirstOrDefault();
-
+            
             if (checkingActiveWorkFlows == null)
             {
                 return new Response<IssuanceDto>("No workflow found for Issuance");
@@ -305,9 +306,17 @@ namespace Application.Services
         {
             if (entity.IssuanceLines.Count() == 0)
                 return new Response<IssuanceDto>("Lines are required");
-
+            var getIssuance = await _unitOfWork.Issuance.GetById((int)entity.Id, new IssuanceSpecs(true));
             if (entity.RequisitionId != null)
             {
+                var reconciled = await ReconcileReqLines(getIssuance.Id, (int)getIssuance.RequisitionId, getIssuance.IssuanceLines);
+                
+                if (!reconciled.IsSuccess)
+                {
+                    _unitOfWork.Rollback();
+                    return new Response<IssuanceDto>(reconciled.Message);
+                }
+                await _unitOfWork.SaveAsync();
                 foreach (var issuanceLine in entity.IssuanceLines)
                 {
                     //Getting Unreconciled Requisition lines
@@ -336,7 +345,10 @@ namespace Application.Services
                 if (!checkOrUpdateQty.IsSuccess)
                     return new Response<IssuanceDto>(checkOrUpdateQty.Message);
             }
-
+            if (entity.RequisitionId != null)
+            {
+                
+            }
 
             //Checking duplicate Lines if any
             var duplicates = entity.IssuanceLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
