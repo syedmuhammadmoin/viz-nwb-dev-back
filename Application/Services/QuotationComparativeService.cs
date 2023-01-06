@@ -53,22 +53,23 @@ namespace Application.Services
         public async Task<Response<QuotationComparativeDto>> GetByIdAsync(int id)
         {
             var quotationComparative = await _unitOfWork.QuotationComparative.GetById(id, new QuotationComparativeSpecs());
+            
             if (quotationComparative == null)
                 return new Response<QuotationComparativeDto>("Not found");
 
             var quotationComparativeDto = _mapper.Map<QuotationComparativeDto>(quotationComparative);
 
-            var getQuotations = await _unitOfWork.Quotation.GetAll(new QuotationSpecs(true, quotationComparativeDto.Id));
+            //var getQuotations = await _unitOfWork.Quotation.GetAll(new QuotationSpecs(true, quotationComparativeDto.Id));
 
-            quotationComparativeDto.Quotations = _mapper.Map<List<QuotationDto>>(getQuotations);
-            
-            foreach(var line in quotationComparative.Quotations)
-            {
-                if(line.IsAwarded == true)
-                {
-                    quotationComparativeDto.checkBoxSelection = false;
-                }
-            }
+            //quotationComparativeDto.Quotations = _mapper.Map<List<QuotationDto>>(getQuotations);
+
+            //foreach (var line in quotationComparative.Quotations)
+            //{
+            //    if (line.IsAwarded == true)
+            //    {
+            //        quotationComparativeDto.checkBoxSelection = false;
+            //    }
+            //}
 
             return new Response<QuotationComparativeDto>(quotationComparativeDto, "Returning value");
         }
@@ -122,9 +123,20 @@ namespace Application.Services
         public async Task<Response<QuotationComparativeDto>> UpdateAsync(CreateQuotationComparativeDto entity)
         {
             if (entity.QuotationComparativeLines.Count() == 0)
-                return new Response<QuotationComparativeDto>("Lines are required");
+                return new Response<QuotationComparativeDto>("Lines are Required");
 
-            var quotationComparative = await _unitOfWork.QuotationComparative.GetById((int)entity.Id, new QuotationComparativeSpecs());
+            if (entity.QuotationComparativeLines.Count() < 3)
+                return new Response<QuotationComparativeDto>("Minimum 3 lines are Required");
+
+            var duplicates = entity.QuotationComparativeLines.GroupBy(x => new { x.QuotationId })
+            .Where(g => g.Count() > 1)
+            .Select(y => y.Key)
+            .ToList();
+
+            if (duplicates.Any())
+                return new Response<QuotationComparativeDto>("Duplicate Lines found");
+            var quotationComparative = await _unitOfWork.QuotationComparative.GetById((int)entity.Id);
+            
             if (quotationComparative == null)
                 return new Response<QuotationComparativeDto>("Not found");
 
@@ -164,41 +176,37 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public async Task<Response<AwardedVendorDto>> AwardedVendorQuotation(int quotationCompId, AwardedVendorDto entity)
+        public async Task<Response<int>> AwardedVendorQuotation(AwardedVendorDto entity)
         {
-            var quotationComparative = await _unitOfWork.QuotationComparative.GetById(quotationCompId, new QuotationComparativeSpecs());
+            var quotationComparative = await _unitOfWork.QuotationComparative.GetById(entity.Id,
+                new QuotationComparativeSpecs());
+
             if (quotationComparative == null)
-                return new Response<AwardedVendorDto>("Not found");
+                return new Response<int>("Not found");
 
             if (quotationComparative.Status == DocumentStatus.Draft)
-                return new Response<AwardedVendorDto>("Only Submitted document can be Awarded");
+                return new Response<int>("Only Submitted document can be Awarded");
 
-            var quotations = await _unitOfWork.Quotation.GetById(entity.QuotationId, new QuotationSpecs(false));
+            if (quotationComparative.Status == DocumentStatus.Paid)
+                return new Response<int>("This Vendor is already Awarded");
 
-            if (quotations == null)
-                return new Response<AwardedVendorDto>("Not found");
-            if (quotationComparative.AwardedVendor != null)
-                return new Response<AwardedVendorDto>("This Vendor is already Awarded");
+           //Getting quotation
+            var quotation = await _unitOfWork.Quotation.GetById(entity.QuotationId,
+                new QuotationSpecs(true));
 
-            var awardedVendorDto = _mapper.Map<AwardedVendorDto>(quotationComparative);
+            if (quotation == null)
+                return new Response<int>("Not found");
 
+            //updating quotation status to awarded
+            quotation.SetStatus(5); // 5 = unpaid
 
-            quotations.UpdateAwardedVendor(
-                quotations.Id
-                );
-
-            quotationComparative.UpdateAwardedVendor(
-             entity.Remarks,
-             entity.AwardedVendor
-                );
+            //update quotation comparative remarks and status to awarded
+            quotationComparative.UpdateAwardedVendor(entity.Remarks, DocumentStatus.Paid);
 
             _unitOfWork.CreateTransaction();
             await _unitOfWork.SaveAsync();
             _unitOfWork.Commit();
-            awardedVendorDto.AwardedVendor = quotationComparative.AwardedVendor;
-            awardedVendorDto.Remarks = quotationComparative.Remarks;
-            awardedVendorDto.QuotationId = quotations.Id;
-            return new Response<AwardedVendorDto>(_mapper.Map<AwardedVendorDto>(awardedVendorDto), "Updated successfully");
+            return new Response<int>(1, "Updated successfully");
         }
     }
 }
