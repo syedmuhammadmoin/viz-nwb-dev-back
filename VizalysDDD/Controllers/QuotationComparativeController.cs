@@ -20,6 +20,7 @@ namespace Vizalys.Api.Controllers
         {
             _quotationComparativeService = quotationComparativeService;
         }
+        
         [ClaimRequirement("Permission", new string[] { Permissions.QuotationComparativeClaims.Create })]
         [HttpPost]
         public async Task<ActionResult<Response<QuotationComparativeDto>>> CreateAsync(CreateQuotationComparativeDto entity)
@@ -30,7 +31,9 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
+        
         [ClaimRequirement("Permission", new string[] { Permissions.QuotationComparativeClaims.Create, Permissions.QuotationComparativeClaims.View, Permissions.QuotationComparativeClaims.Delete, Permissions.QuotationComparativeClaims.Edit })]
+        
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<QuotationComparativeDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
@@ -40,6 +43,7 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(results); // Status code : 400
         }
+        
         [ClaimRequirement("Permission", new string[] { Permissions.QuotationComparativeClaims.Create, Permissions.QuotationComparativeClaims.View, Permissions.QuotationComparativeClaims.Delete, Permissions.QuotationComparativeClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<QuotationComparativeDto>>> GetByIdAsync(int id)
@@ -50,6 +54,7 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
+        
         [ClaimRequirement("Permission", new string[] { Permissions.QuotationComparativeClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<QuotationComparativeDto>>> UpdateAsync(int id, CreateQuotationComparativeDto entity)
@@ -63,13 +68,12 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
+        
         [ClaimRequirement("Permission", new string[] { Permissions.QuotationComparativeClaims.Edit })]
-        [HttpPut("AwardedVendor/{Id}")]
-        public async Task<ActionResult<Response<AwardedVendorDto>>> AwardedVendorQuotation(int Id, AwardedVendorDto entity)
+        [HttpPut("AwardedVendor")]
+        public async Task<ActionResult<Response<int>>> AwardedVendorQuotatio(AwardedVendorDto entity)
         {
-
-            var result = await _quotationComparativeService.AwardedVendorQuotation
-                (Id, entity);
+            var result = await _quotationComparativeService.AwardedVendorQuotation(entity);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 
