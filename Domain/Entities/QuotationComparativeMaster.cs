@@ -19,8 +19,6 @@ namespace Domain.Entities
         public string Remarks { get; private set; }
         public DocumentStatus Status { get; private set; }
 
-        public string AwardedVendor {get; private set; }
-
         public virtual List<QuotationMaster> Quotations { get; private set; }
 
         protected QuotationComparativeMaster()
@@ -41,10 +39,10 @@ namespace Domain.Entities
             Status = status;
         }
 
-        public void UpdateAwardedVendor(string remarks, string awardedVendor )
+        public void UpdateAwardedVendor(string remarks, DocumentStatus status)
         {
             Remarks = remarks;
-            AwardedVendor = awardedVendor;
+            Status = status;
         }
 
         public void CreateDocNo()
