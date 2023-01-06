@@ -309,20 +309,21 @@ namespace Application.Services
             var getIssuance = await _unitOfWork.Issuance.GetById((int)entity.Id, new IssuanceSpecs(true));
             if (entity.RequisitionId != null)
             {
-                var reconciled = await ReconcileReqLines(getIssuance.Id, (int)getIssuance.RequisitionId, getIssuance.IssuanceLines);
-
-                if (!reconciled.IsSuccess)
-                {
-                    _unitOfWork.Rollback();
-                    return new Response<IssuanceDto>(reconciled.Message);
-                }
-                await _unitOfWork.SaveAsync();
+               
                 foreach (var issuanceLine in entity.IssuanceLines)
                 {
                     //Getting Unreconciled Requisition lines
                     var getrequisitionLine = _unitOfWork.Requisition
                         .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, (int)entity.RequisitionId))
                         .FirstOrDefault();
+                    var reconciled = await ReconcileReqLines(getIssuance.Id, (int)getIssuance.RequisitionId, getIssuance.IssuanceLines);
+
+                    if (!reconciled.IsSuccess)
+                    {
+                        _unitOfWork.Rollback();
+                        return new Response<IssuanceDto>(reconciled.Message);
+                    }
+                    await _unitOfWork.SaveAsync();
 
                     if (getrequisitionLine == null)
                         return new Response<IssuanceDto>("Selected item is not in requisition");
@@ -467,22 +468,22 @@ namespace Application.Services
                 {
 
                     RequisitionMaster getRequisition = await _unitOfWork.Requisition.GetById((int)issuance.RequisitionId, new RequisitionSpecs(false));
+                   
+                    var reserveQty = getRequisition.RequisitionLines.Where(i => i.ItemId == line.ItemId && i.WarehouseId == line.WarehouseId).Sum(i => i.ReserveQuantity);
+
+                    if (line.Quantity > reserveQty)
+                        return new Response<bool>("Issuance quantity must not be greater than requested quantity");
                     if (getState.State == DocumentStatus.Unpaid)
                     {
 
                         foreach (var Reqlines in getRequisition.RequisitionLines)
                         {
-                            if(Reqlines.Quantity > 0)
-                            { 
-                            Reqlines.setReserveQuantity(Reqlines.ReserveQuantity - line.Quantity);
+                            if (Reqlines.Quantity > 0)
+                            {
+                                Reqlines.setReserveQuantity(Reqlines.ReserveQuantity - line.Quantity);
                             }
                         }
                     }
-
-                    var reserveQty = getRequisition.RequisitionLines.Where(i => i.ItemId == line.ItemId && i.WarehouseId == line.WarehouseId).Sum(i => i.ReserveQuantity);
-
-                    if (line.Quantity > reserveQty)
-                        return new Response<bool>("Issuance quantity must not be greater than requested quantity");
 
                     // updating reserved quantity for APPROVED Issuance
                     if (getState.State == DocumentStatus.Unpaid)
