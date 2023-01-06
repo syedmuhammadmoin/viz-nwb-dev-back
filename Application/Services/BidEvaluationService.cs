@@ -73,10 +73,13 @@ namespace Application.Services
             var bidEvaluation = _mapper.Map<BidEvaluationMaster>(entity);
 
             if ((bool)entity.isSubmit)
+            {
                 bidEvaluation.setStatus(DocumentStatus.Submitted);
-               
-            bidEvaluation.setStatus(DocumentStatus.Draft);
-            
+            }
+            else
+            {
+                bidEvaluation.setStatus(DocumentStatus.Draft);
+            }
             _unitOfWork.CreateTransaction();
             //Saving in table
             var result = await _unitOfWork.BidEvaluation.Add(bidEvaluation);
@@ -103,11 +106,15 @@ namespace Application.Services
             
             if (bidEvaluation.State != DocumentStatus.Draft)
                 return new Response<BidEvaluationDto>("Only draft document can be edited");
-            
-            if ((bool)entity.isSubmit)
-                bidEvaluation.setStatus(DocumentStatus.Submitted);
 
-            bidEvaluation.setStatus(DocumentStatus.Draft);
+            if ((bool)entity.isSubmit)
+            {
+                bidEvaluation.setStatus(DocumentStatus.Submitted);
+            }
+            else
+            {
+                bidEvaluation.setStatus(DocumentStatus.Draft);
+            }
             //For updating data
             _mapper.Map<CreateBidEvaluationDto, BidEvaluationMaster>(entity, bidEvaluation);
             
