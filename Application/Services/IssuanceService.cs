@@ -286,7 +286,7 @@ namespace Application.Services
         private async Task<Response<IssuanceDto>> SubmitIssuance(CreateIssuanceDto entity)
         {
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Issuance)).FirstOrDefault();
-            
+
             if (checkingActiveWorkFlows == null)
             {
                 return new Response<IssuanceDto>("No workflow found for Issuance");
@@ -310,7 +310,7 @@ namespace Application.Services
             if (entity.RequisitionId != null)
             {
                 var reconciled = await ReconcileReqLines(getIssuance.Id, (int)getIssuance.RequisitionId, getIssuance.IssuanceLines);
-                
+
                 if (!reconciled.IsSuccess)
                 {
                     _unitOfWork.Rollback();
@@ -347,7 +347,7 @@ namespace Application.Services
             }
             if (entity.RequisitionId != null)
             {
-                
+
             }
 
             //Checking duplicate Lines if any
@@ -437,9 +437,6 @@ namespace Application.Services
         {
             var getState = await _unitOfWork.WorkFlowStatus.GetById(issuance.StatusId);
 
-        
-
-
             if (getState == null)
                 return new Response<bool>("Invalid Status");
 
@@ -455,6 +452,7 @@ namespace Application.Services
                     // updating reserved quantity for APPROVED Issuance
                     if (getState.State == DocumentStatus.Unpaid)
                     {
+
                         getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity - line.Quantity);
                     }
 
@@ -467,7 +465,19 @@ namespace Application.Services
                 }
                 else
                 {
-                    RequisitionMaster getRequisition = await _unitOfWork.Requisition.GetById((int)issuance.RequisitionId , new RequisitionSpecs(false));
+
+                    RequisitionMaster getRequisition = await _unitOfWork.Requisition.GetById((int)issuance.RequisitionId, new RequisitionSpecs(false));
+                    if (getState.State == DocumentStatus.Unpaid)
+                    {
+
+                        foreach (var Reqlines in getRequisition.RequisitionLines)
+                        {
+                            if(Reqlines.Quantity > 0)
+                            { 
+                            Reqlines.setReserveQuantity(Reqlines.ReserveQuantity - line.Quantity);
+                            }
+                        }
+                    }
 
                     var reserveQty = getRequisition.RequisitionLines.Where(i => i.ItemId == line.ItemId && i.WarehouseId == line.WarehouseId).Sum(i => i.ReserveQuantity);
 
@@ -478,6 +488,7 @@ namespace Application.Services
                     if (getState.State == DocumentStatus.Unpaid)
                     {
                         getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity - line.Quantity);
+
                     }
 
                     // updating reserved quantity for REJECTED Issuance
