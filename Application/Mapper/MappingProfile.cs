@@ -540,7 +540,8 @@ namespace Application.Mapper
             //QuotationComparative
             CreateMap<QuotationComparativeMaster, QuotationComparativeDto>()
                 .ForMember(dto => dto.Quotations, core => core.MapFrom(a => a.Quotations))
-                .ForMember(dto => dto.State, core => core.MapFrom(
+                .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status))
+                .ForMember(dto => dto.Status, core => core.MapFrom(
                     a => a.Status == DocumentStatus.Draft ? "Draft" :
                     a.Status == DocumentStatus.Submitted ? "Submitted" :
                     a.Status == DocumentStatus.Paid ? "Awarded" : "N/A"));
