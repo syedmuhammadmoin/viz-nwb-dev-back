@@ -164,7 +164,7 @@ namespace Application.Services
             {
                 if (transition.AllowedRole.Name == role)
                 {
-                    getQuottion.setStatus(transition.NextStatusId);
+                    getQuottion.SetStatus(transition.NextStatusId);
                     if (!String.IsNullOrEmpty(data.Remarks))
                     {
                         var addRemarks = new Remark()
@@ -230,7 +230,7 @@ namespace Application.Services
             if (quotation.StatusId != 1 && quotation.StatusId != 2)
                 return new Response<QuotationDto>("Only draft document can be edited");
 
-            quotation.setStatus(status);
+            quotation.SetStatus(status);
 
             //For updating data
             _mapper.Map<CreateQuotationDto, QuotationMaster>(entity, quotation);
@@ -253,7 +253,7 @@ namespace Application.Services
             var quotation = _mapper.Map<QuotationMaster>(entity);
 
             //Setting status
-            quotation.setStatus(status);
+            quotation.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
             
