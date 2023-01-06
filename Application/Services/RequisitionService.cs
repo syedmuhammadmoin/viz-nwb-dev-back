@@ -261,7 +261,7 @@ namespace Application.Services
                 return new Response<RequisitionDto>("Lines are required");
 
             //Checking duplicate Lines if any
-            var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId })
+            var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId , x.WarehouseId })
              .Where(g => g.Count() > 1)
              .Select(y => y.Key)
              .ToList();
@@ -409,7 +409,9 @@ namespace Application.Services
             bool isRequiredQty = false;
             List<decimal> purchaseAmounts = new List<decimal>();
 
-            foreach (var line in requisitionDto.RequisitionLines)
+            if(requisitionDto.State != DocumentStatus.Paid) { 
+        
+                foreach (var line in requisitionDto.RequisitionLines)
             {
                 if (stock.Count() > 0)
                 {
@@ -447,7 +449,7 @@ namespace Application.Services
                 }
              
             }
-
+            }
             return requisitionDto;
 
         }
