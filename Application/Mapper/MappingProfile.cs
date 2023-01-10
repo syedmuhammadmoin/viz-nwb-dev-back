@@ -326,9 +326,9 @@ namespace Application.Mapper
               .ForMember(dto => dto.EmployeeName, core => core.MapFrom(a => a.Employee.Name))
                .ForMember(dto => dto.Campus, core => core.MapFrom(a => a.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(
-                    a => a.Status.State == DocumentStatus.Unpaid ? "Approved" :
-                    a.Status.State == DocumentStatus.Partial ? "Approved" :
-                    a.Status.State == DocumentStatus.Paid ? "Approved" : a.Status.Status))
+                    a => a.Status.State == DocumentStatus.Unpaid ? "Open" :
+                    a.Status.State == DocumentStatus.Partial ? "Open" :
+                    a.Status.State == DocumentStatus.Paid ? "Closed" : a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<RequisitionLines, RequisitionLinesDto>()
