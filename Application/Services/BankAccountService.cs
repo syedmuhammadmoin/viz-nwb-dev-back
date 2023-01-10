@@ -92,7 +92,7 @@ namespace Application.Services
         public async Task<PaginationResponse<List<BankAccountDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var backAccount = await _unitOfWork.BankAccount.GetAll(new BankAccountSpecs(filter, false));
-
+             
             if (!backAccount.Any())
                 return new PaginationResponse<List<BankAccountDto>>(_mapper.Map<List<BankAccountDto>>(backAccount), "List is empty");
 

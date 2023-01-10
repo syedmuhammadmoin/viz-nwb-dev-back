@@ -155,7 +155,7 @@ namespace Application.Services
                 {
                     if (transition.AllowedRole.Name == role)
                     {
-                        getPurchaseOrder.setStatus(transition.NextStatusId);
+                        getPurchaseOrder.SetStatus(transition.NextStatusId);
                         if (!String.IsNullOrEmpty(data.Remarks))
                         {
                             var addRemarks = new Remark()
@@ -232,7 +232,7 @@ namespace Application.Services
             var po = _mapper.Map<PurchaseOrderMaster>(entity);
 
             //Setting status
-            po.setStatus(status);
+            po.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
 
@@ -275,7 +275,7 @@ namespace Application.Services
             if (duplicates.Any())
                 return new Response<PurchaseOrderDto>("Duplicate Lines found");
 
-            po.setStatus(status);
+            po.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
           
