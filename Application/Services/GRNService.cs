@@ -76,51 +76,47 @@ namespace Application.Services
                         };
                         await _unitOfWork.Remarks.Add(addRemarks);
                     }
+                    bool isRequisition = false;
                     if (transition.NextStatus.State == DocumentStatus.Unpaid)
                     {
                         foreach (var grnline in getGRN.GRNLines)
                         {
                             grnline.setStatus(DocumentStatus.Unreconciled);
-                            var purchseOrder = await _unitOfWork.PurchaseOrder.GetById(getGRN.PurchaseOrderId, new PurchaseOrderSpecs((int)getGRN.PurchaseOrderId, true));
 
-                            if (purchseOrder.RequisitionId != null)
+                            var purchseOrder = await _unitOfWork.PurchaseOrder.GetById(getGRN.PurchaseOrderId, new PurchaseOrderSpecs((int)getGRN.PurchaseOrderId));
+                            if (purchseOrder != null)
                             {
-                                var requisition = await _unitOfWork.Requisition
-                                    .GetById((int)purchseOrder.RequisitionId, new RequisitionSpecs());
-                                
-                                foreach (var reqLine in requisition.RequisitionLines)
+                                if (purchseOrder.RequisitionId != null)
                                 {
-                                    if (reqLine.Status != DocumentStatus.Reconciled)
+                                    var requisition = await _unitOfWork.Requisition.GetById((int)purchseOrder.RequisitionId, new RequisitionSpecs((int)purchseOrder.RequisitionId));
+                                    if (requisition != null)
                                     {
+                                        isRequisition = true;
+                                        var reqLine = _unitOfWork.Requisition.FindLines(new RequisitionLinesSpecs(grnline.ItemId, grnline.WarehouseId, (int)purchseOrder.RequisitionId)).FirstOrDefault();
                                         var IssuedQuantity = _unitOfWork.RequisitionToIssuanceLineReconcile
-                                             .Find(new RequisitionToIssuanceLineReconcileSpecs(reqLine.MasterId,
-                                             reqLine.Id, reqLine.ItemId)).Sum(p => p.Quantity);
-
+                                                    .Find(new RequisitionToIssuanceLineReconcileSpecs(reqLine.MasterId,
+                                                    reqLine.Id, reqLine.ItemId)).Sum(p => p.Quantity);
                                         var reqRemainingQty = reqLine.Quantity - reqLine.ReserveQuantity - IssuedQuantity;
-
                                         var stock = _unitOfWork.Stock
-                                            .Find(new StockSpecs(reqLine.ItemId, reqLine.WarehouseId))
-                                            .FirstOrDefault();
+                                                   .Find(new StockSpecs(reqLine.ItemId, reqLine.WarehouseId))
+                                                   .FirstOrDefault();
                                         if (grnline.Quantity <= reqRemainingQty)
                                         {
                                             reqLine.setReserveQuantity(reqLine.ReserveQuantity + grnline.Quantity);
                                             stock.updateRequisitionReservedQuantity(stock.ReservedRequisitionQuantity + grnline.Quantity);
-
                                         }
                                         else
                                         {
                                             reqLine.setReserveQuantity(reqLine.ReserveQuantity + reqRemainingQty);
                                             stock.updateRequisitionReservedQuantity(stock.ReservedRequisitionQuantity + reqRemainingQty);
+                                            stock.updateAvailableQuantity(grnline.Quantity - reqRemainingQty);
+
                                         }
 
                                     }
                                 }
-
-
-
                             }
                         }
-
 
                         var reconciled = await ReconcilePOLines(getGRN.Id, (int)getGRN.PurchaseOrderId, getGRN.GRNLines);
                         if (!reconciled.IsSuccess)
@@ -132,8 +128,10 @@ namespace Application.Services
                         await _unitOfWork.SaveAsync();
 
                         //Adding GRN Line in Stock
-                        await AddandUpdateStock(getGRN);
-
+                        if (isRequisition == false)
+                        {
+                            await AddandUpdateStock(getGRN);
+                        }
 
                         _unitOfWork.Commit();
                         return new Response<bool>(true, "GRN Approved");
