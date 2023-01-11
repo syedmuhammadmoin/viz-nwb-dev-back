@@ -425,9 +425,17 @@ namespace Application.Services
 
                 if (line.Quantity > line.ReserveQuantity)
                 {
-                    var requiredQuantity = line.Quantity - line.ReserveQuantity;
-                    isRequiredQty = true;
-                    purchaseAmounts.Add(requiredQuantity * line.PurchasePrice);
+                        var IssuedQuantity = _unitOfWork.RequisitionToIssuanceLineReconcile
+                                                  .Find(new RequisitionToIssuanceLineReconcileSpecs(line.MasterId,
+                                                  line.Id, line.ItemId)).Sum(p => p.Quantity);
+                        var requiredQuantity = line.Quantity - (line.ReserveQuantity + IssuedQuantity);
+                        if (line.Quantity > (line.ReserveQuantity + IssuedQuantity))
+                        {
+                            isRequiredQty = true;
+
+                        }
+
+                        purchaseAmounts.Add(requiredQuantity * line.PurchasePrice);
                 }
             }
 
