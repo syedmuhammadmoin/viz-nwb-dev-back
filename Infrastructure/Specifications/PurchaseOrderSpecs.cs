@@ -66,10 +66,5 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.Status);
         }
-
-        public PurchaseOrderSpecs(int id , bool IsRequisition) : base(x => x.Id == id && x.RequisitionId != null)
-        {
-            AddInclude(i => i.PurchaseOrderLines);
-        }
     }
 }
