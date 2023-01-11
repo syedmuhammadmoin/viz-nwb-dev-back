@@ -222,7 +222,7 @@ namespace Application.Services
                 {
                     //Getting Unreconciled Requisition lines
                     var getrequisitionLine = _unitOfWork.Requisition
-                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, (int)entity.RequisitionId))
+                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, (int)issuanceLine.WarehouseId, (int)entity.RequisitionId))
                         .FirstOrDefault();
 
                     if (getrequisitionLine == null)
@@ -309,12 +309,12 @@ namespace Application.Services
             var getIssuance = await _unitOfWork.Issuance.GetById((int)entity.Id, new IssuanceSpecs(true));
             if (entity.RequisitionId != null)
             {
-               
+
                 foreach (var issuanceLine in entity.IssuanceLines)
                 {
                     //Getting Unreconciled Requisition lines
                     var getrequisitionLine = _unitOfWork.Requisition
-                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, (int)entity.RequisitionId))
+                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, (int)issuanceLine.WarehouseId, (int)entity.RequisitionId))
                         .FirstOrDefault();
                     var reconciled = await ReconcileReqLines(getIssuance.Id, (int)getIssuance.RequisitionId, getIssuance.IssuanceLines);
 
@@ -468,10 +468,11 @@ namespace Application.Services
                 {
 
                     RequisitionMaster getRequisition = await _unitOfWork.Requisition.GetById((int)issuance.RequisitionId, new RequisitionSpecs(false));
-                   
+
+                    // Todo: Either first or Default should be used or replace where clause
                     var reserveQty = getRequisition.RequisitionLines.Where(i => i.ItemId == line.ItemId && i.WarehouseId == line.WarehouseId).Sum(i => i.ReserveQuantity);
 
-                    //must be not checked on Rejection issuance but in approval
+                    //must be not checked on Rejection issuance
                     if (getState.State == DocumentStatus.Unpaid)
                     {
                         if (line.Quantity > reserveQty)
@@ -479,13 +480,22 @@ namespace Application.Services
                     }
                     if (getState.State == DocumentStatus.Unpaid)
                     {
+                        //
+                        //TODO: Loop shouldn't be executed here!
+                        // Issue Found: Loop shouldn't be executed here!
+                        //foreach (var Reqlines in getRequisition.RequisitionLines)
+                        //{
+                        //    if (Reqlines.Quantity > 0)
+                        //    {
+                        //        Reqlines.setReserveQuantity(Reqlines.ReserveQuantity - line.Quantity);
+                        //    }
+                        //}
 
-                        foreach (var Reqlines in getRequisition.RequisitionLines)
+                        // TODO: Resolved Issue Temporary
+                        var reqLine = getRequisition.RequisitionLines.Where(i => i.ItemId == line.ItemId && i.WarehouseId == line.WarehouseId).FirstOrDefault();
+                        if (reqLine.Quantity > 0)
                         {
-                            if (Reqlines.Quantity > 0)
-                            {
-                                Reqlines.setReserveQuantity(Reqlines.ReserveQuantity - line.Quantity);
-                            }
+                            reqLine.setReserveQuantity(reqLine.ReserveQuantity - line.Quantity);
                         }
                     }
 
@@ -532,7 +542,7 @@ namespace Application.Services
             {
                 //Getting Unreconciled Requisition lines
                 var getRequisitionLine = _unitOfWork.Requisition
-                    .FindLines(new RequisitionLinesSpecs(IssuanceLine.ItemId, requisitionId))
+                    .FindLines(new RequisitionLinesSpecs(IssuanceLine.ItemId, IssuanceLine.WarehouseId, requisitionId, true))
                     .FirstOrDefault();
                 if (getRequisitionLine == null)
                     return new Response<bool>("No Requisition line found for reconciliaiton");
