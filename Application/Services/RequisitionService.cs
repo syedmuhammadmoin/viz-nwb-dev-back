@@ -351,10 +351,23 @@ namespace Application.Services
                     DocType = DocType.Request
                 });
 
-
                 data.References = references;
             }
+            var purchaseOrder = _unitOfWork.PurchaseOrder.Find(new PurchaseOrderSpecs(data.Id , true));
+            if (purchaseOrder != null)
+            {
+                foreach (var po in purchaseOrder)
+                {
+                    references.Add(new
+                        ReferncesDto()
+                    {
+                        DocId = po.Id,
+                        DocNo = po.DocNo,
+                        DocType = DocType.PurchaseOrder
+                    });
 
+                }
+            }
             var quotations = _unitOfWork.Quotation.Find(new QuotationSpecs(data.Id, true));
 
             if (quotations != null)
