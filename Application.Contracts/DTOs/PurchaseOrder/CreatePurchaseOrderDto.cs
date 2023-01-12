@@ -20,10 +20,11 @@ namespace Application.Contracts.DTOs
         public string Contact { get; set; }
         [Required]
         public int? CampusId { get; set; }
+        public int? RequisitionId { get; private set; }
         [Required]
         public bool? isSubmit { get; set; }
         public virtual List<CreatePurchaseOrderLinesDto> PurchaseOrderLines { get; set; }
-        public int? RequisitionId { get; private set; }
+
 
     }
 }
