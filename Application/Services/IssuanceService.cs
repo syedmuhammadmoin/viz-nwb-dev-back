@@ -164,10 +164,10 @@ namespace Application.Services
 
                     if (transition.NextStatus.State == DocumentStatus.Unpaid)
                     {
-                        //foreach (var line in getIssuance.IssuanceLines)
-                        //{
-                        //    line.setStatus(DocumentStatus.Unreconciled);
-                        //}
+                        foreach (var line in getIssuance.IssuanceLines)
+                        {
+                            line.setStatus(DocumentStatus.Unreconciled);
+                        }
 
                         if (getIssuance.RequisitionId != null)
                         {
@@ -316,6 +316,10 @@ namespace Application.Services
                     var getrequisitionLine = _unitOfWork.Requisition
                         .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, (int)issuanceLine.WarehouseId, (int)entity.RequisitionId))
                         .FirstOrDefault();
+
+
+                    if (getrequisitionLine == null)
+                        return new Response<IssuanceDto>("Selected item is not in requisition");
                     var reconciled = await ReconcileReqLines(getIssuance.Id, (int)getIssuance.RequisitionId, getIssuance.IssuanceLines);
 
                     if (!reconciled.IsSuccess)
@@ -324,10 +328,6 @@ namespace Application.Services
                         return new Response<IssuanceDto>(reconciled.Message);
                     }
                     await _unitOfWork.SaveAsync();
-
-                    if (getrequisitionLine == null)
-                        return new Response<IssuanceDto>("Selected item is not in requisition");
-
                     var checkValidation = CheckValidation((int)entity.RequisitionId, getrequisitionLine, _mapper.Map<IssuanceLines>(issuanceLine));
                     if (!checkValidation.IsSuccess)
                         return new Response<IssuanceDto>(checkValidation.Message);
@@ -480,18 +480,8 @@ namespace Application.Services
                     }
                     if (getState.State == DocumentStatus.Unpaid)
                     {
-                        //
-                        //TODO: Loop shouldn't be executed here!
-                        // Issue Found: Loop shouldn't be executed here!
-                        //foreach (var Reqlines in getRequisition.RequisitionLines)
-                        //{
-                        //    if (Reqlines.Quantity > 0)
-                        //    {
-                        //        Reqlines.setReserveQuantity(Reqlines.ReserveQuantity - line.Quantity);
-                        //    }
-                        //}
 
-                        // TODO: Resolved Issue Temporary
+                        // Deducting Reserve Quantity
                         var reqLine = getRequisition.RequisitionLines.Where(i => i.ItemId == line.ItemId && i.WarehouseId == line.WarehouseId).FirstOrDefault();
                         if (reqLine.Quantity > 0)
                         {
@@ -542,7 +532,7 @@ namespace Application.Services
             {
                 //Getting Unreconciled Requisition lines
                 var getRequisitionLine = _unitOfWork.Requisition
-                    .FindLines(new RequisitionLinesSpecs(IssuanceLine.ItemId, IssuanceLine.WarehouseId, requisitionId))
+                    .FindLines(new RequisitionLinesSpecs(IssuanceLine.ItemId, requisitionId, IssuanceLine.WarehouseId))
                     .FirstOrDefault();
                 if (getRequisitionLine == null)
                     return new Response<bool>("No Requisition line found for reconciliaiton");
