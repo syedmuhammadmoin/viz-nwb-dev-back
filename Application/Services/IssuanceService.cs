@@ -164,10 +164,10 @@ namespace Application.Services
 
                     if (transition.NextStatus.State == DocumentStatus.Unpaid)
                     {
-                        foreach (var line in getIssuance.IssuanceLines)
-                        {
-                            line.setStatus(DocumentStatus.Unreconciled);
-                        }
+                        //foreach (var line in getIssuance.IssuanceLines)
+                        //{
+                        //    line.setStatus(DocumentStatus.Unreconciled);
+                        //}
 
                         if (getIssuance.RequisitionId != null)
                         {
@@ -542,7 +542,7 @@ namespace Application.Services
             {
                 //Getting Unreconciled Requisition lines
                 var getRequisitionLine = _unitOfWork.Requisition
-                    .FindLines(new RequisitionLinesSpecs(IssuanceLine.ItemId, IssuanceLine.WarehouseId, requisitionId, true))
+                    .FindLines(new RequisitionLinesSpecs(IssuanceLine.ItemId, IssuanceLine.WarehouseId, requisitionId))
                     .FirstOrDefault();
                 if (getRequisitionLine == null)
                     return new Response<bool>("No Requisition line found for reconciliaiton");
