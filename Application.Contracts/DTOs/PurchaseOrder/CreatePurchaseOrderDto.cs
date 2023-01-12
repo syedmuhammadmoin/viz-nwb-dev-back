@@ -23,7 +23,6 @@ namespace Application.Contracts.DTOs
         [Required]
         public bool? isSubmit { get; set; }
         public virtual List<CreatePurchaseOrderLinesDto> PurchaseOrderLines { get; set; }
-        [Required]
         public int? RequisitionId { get; private set; }
 
     }
