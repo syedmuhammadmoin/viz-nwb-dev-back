@@ -327,14 +327,12 @@ namespace Application.Services
             }
             if (data.RequisitionId != null)
             {
-                data.References = new List<ReferncesDto> {
-                    new ReferncesDto()
-                    {
-                        DocId = (int)data.RequisitionId,
-                        DocNo = "REQ-" + String.Format("{0:000}", data.RequisitionId),
-                        DocType = DocType.Requisition
-                    }
-                };
+                getReference.Add(new ReferncesDto
+                {
+                    DocId = (int)data.RequisitionId,
+                    DocNo = "REQ-" + String.Format("{0:000}", data.RequisitionId),
+                    DocType = DocType.Requisition
+                });
             }
             data.References = getReference;
 
