@@ -320,14 +320,15 @@ namespace Application.Services
 
                     if (getrequisitionLine == null)
                         return new Response<IssuanceDto>("Selected item is not in requisition");
-                    var reconciled = await ReconcileReqLines(getIssuance.Id, (int)getIssuance.RequisitionId, getIssuance.IssuanceLines);
 
-                    if (!reconciled.IsSuccess)
-                    {
-                        _unitOfWork.Rollback();
-                        return new Response<IssuanceDto>(reconciled.Message);
-                    }
-                    await _unitOfWork.SaveAsync();
+                    //var reconciled = await ReconcileReqLines(getIssuance.Id, (int)getIssuance.RequisitionId, getIssuance.IssuanceLines);
+
+                    //if (!reconciled.IsSuccess)
+                    //{
+                    //    _unitOfWork.Rollback();
+                    //    return new Response<IssuanceDto>(reconciled.Message);
+                    //}
+                    //await _unitOfWork.SaveAsync();
                     var checkValidation = CheckValidation((int)entity.RequisitionId, getrequisitionLine, _mapper.Map<IssuanceLines>(issuanceLine));
                     if (!checkValidation.IsSuccess)
                         return new Response<IssuanceDto>(checkValidation.Message);
@@ -346,10 +347,10 @@ namespace Application.Services
                 if (!checkOrUpdateQty.IsSuccess)
                     return new Response<IssuanceDto>(checkOrUpdateQty.Message);
             }
-            if (entity.RequisitionId != null)
-            {
+            //if (entity.RequisitionId != null)
+            //{
 
-            }
+            //}
 
             //Checking duplicate Lines if any
             var duplicates = entity.IssuanceLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
@@ -532,7 +533,7 @@ namespace Application.Services
             {
                 //Getting Unreconciled Requisition lines
                 var getRequisitionLine = _unitOfWork.Requisition
-                    .FindLines(new RequisitionLinesSpecs(IssuanceLine.ItemId, requisitionId, IssuanceLine.WarehouseId))
+                    .FindLines(new RequisitionLinesSpecs(IssuanceLine.ItemId, requisitionId, IssuanceLine.WarehouseId ,true))
                     .FirstOrDefault();
                 if (getRequisitionLine == null)
                     return new Response<bool>("No Requisition line found for reconciliaiton");

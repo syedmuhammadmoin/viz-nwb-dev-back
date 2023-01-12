@@ -366,6 +366,7 @@ namespace Application.Services
                         line.ItemId,
                         line.Quantity,
                         0,
+                        0,
                         line.WarehouseId
                     );
 

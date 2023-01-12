@@ -100,16 +100,84 @@ namespace Application.Services
                                         var stock = _unitOfWork.Stock
                                                    .Find(new StockSpecs(reqLine.ItemId, reqLine.WarehouseId))
                                                    .FirstOrDefault();
-                                        if (grnline.Quantity <= reqRemainingQty)
+                                        if (stock != null)
                                         {
-                                            reqLine.setReserveQuantity(reqLine.ReserveQuantity + grnline.Quantity);
-                                            stock.updateRequisitionReservedQuantity(stock.ReservedRequisitionQuantity + grnline.Quantity);
+                                            if (grnline.Quantity <= reqRemainingQty)
+                                            {
+                                                reqLine.setReserveQuantity(reqLine.ReserveQuantity + grnline.Quantity);
+                                                stock.updateRequisitionReservedQuantity(stock.ReservedRequisitionQuantity + grnline.Quantity);
+                                            }
+                                            else
+                                            {
+                                                reqLine.setReserveQuantity(reqLine.ReserveQuantity + reqRemainingQty);
+                                                stock.updateRequisitionReservedQuantity(stock.ReservedRequisitionQuantity + reqRemainingQty);
+                                                stock.updateAvailableQuantity(grnline.Quantity - reqRemainingQty);
+
+                                            }
                                         }
                                         else
                                         {
-                                            reqLine.setReserveQuantity(reqLine.ReserveQuantity + reqRemainingQty);
-                                            stock.updateRequisitionReservedQuantity(stock.ReservedRequisitionQuantity + reqRemainingQty);
-                                            stock.updateAvailableQuantity(grnline.Quantity - reqRemainingQty);
+                                            if (grnline.Quantity <= reqRemainingQty)
+                                            {
+                                                reqLine.setReserveQuantity(reqLine.ReserveQuantity + grnline.Quantity);
+
+                                                var addStock = new Stock
+                                                    (
+                                                   grnline.ItemId,
+                                                   0,
+                                                   0,   
+                                                   grnline.Quantity,
+                                                   grnline.WarehouseId
+                                                    );
+
+                                                await _unitOfWork.Stock.Add(addStock);
+                                            }
+                                            else
+                                            {
+                                                reqLine.setReserveQuantity(reqLine.ReserveQuantity + reqRemainingQty);
+                                                var addStock = new Stock
+                                                    (
+                                                   grnline.ItemId,
+                                                   (grnline.Quantity - reqRemainingQty),
+                                                     0,
+                                                    reqRemainingQty,
+                                                   grnline.WarehouseId
+                                                    );
+
+                                                await _unitOfWork.Stock.Add(addStock);
+                                            }
+                                           
+
+
+                                            //if (grnline.Quantity <= reqRemainingQty)
+                                            //{
+                                            //    reqLine.setReserveQuantity(grnline.Quantity);
+                                            //    stock.updateRequisitionReservedQuantity(grnline.Quantity);
+                                            //}
+                                            //else
+                                            //{
+                                            //    reqLine.setReserveQuantity(reqLine.ReserveQuantity + reqRemainingQty);
+                                            //    stock.updateRequisitionReservedQuantity( reqRemainingQty);
+                                            //    stock.updateAvailableQuantity(grnline.Quantity - reqRemainingQty);
+
+                                            //}
+                                            //if (grnline.Quantity >= reqLine.Quantity)
+                                            //{
+                                            //    var resrveQty = grnline.Quantity - reqLine.Quantity;
+                                            //    var remainingResrveQty = grnline.Quantity - resrveQty;
+                                            //    reqLine.setReserveQuantity(resrveQty);
+                                            //    stock.updateRequisitionReservedQuantity(resrveQty);
+                                            //    stock.updateAvailableQuantity(resrveQty);
+                                            //}
+                                            //else
+                                            //{
+                                            //    var resrveQty = reqLine.Quantity - grnline.Quantity  ;
+                                            //    var remainingResrveQty = grnline.Quantity - resrveQty;
+                                            //    reqLine.setReserveQuantity(resrveQty);
+                                            //    stock.updateRequisitionReservedQuantity(resrveQty);
+                                            //}
+
+
 
                                         }
 
@@ -450,6 +518,7 @@ namespace Application.Services
                     var addStock = new Stock(
                         line.ItemId,
                         line.Quantity,
+                        0,
                         0,
                         line.WarehouseId
                     );
