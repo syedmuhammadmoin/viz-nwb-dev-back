@@ -222,7 +222,7 @@ namespace Application.Services
                 {
                     //Getting Unreconciled Requisition lines
                     var getrequisitionLine = _unitOfWork.Requisition
-                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, (int)issuanceLine.WarehouseId, (int)entity.RequisitionId))
+                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, (int)entity.RequisitionId ,(int)issuanceLine.WarehouseId, true))
                         .FirstOrDefault();
 
                     if (getrequisitionLine == null)
@@ -314,8 +314,8 @@ namespace Application.Services
                 {
                     //Getting Unreconciled Requisition lines
                     var getrequisitionLine = _unitOfWork.Requisition
-                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, (int)issuanceLine.WarehouseId, (int)entity.RequisitionId))
-                        .FirstOrDefault();
+                         .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, (int)entity.RequisitionId, (int)issuanceLine.WarehouseId, true))
+                         .FirstOrDefault();
 
 
                     if (getrequisitionLine == null)
