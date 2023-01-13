@@ -92,7 +92,7 @@ namespace Application.Services
                                     if (requisition != null)
                                     {
                                         isRequisition = true;
-                                        var reqLine = _unitOfWork.Requisition.FindLines(new RequisitionLinesSpecs(grnline.ItemId, grnline.WarehouseId, (int)purchseOrder.RequisitionId)).FirstOrDefault();
+                                        var reqLine = _unitOfWork.Requisition.FindLines(new RequisitionLinesSpecs(grnline.ItemId, (int)purchseOrder.RequisitionId, grnline.WarehouseId , true)).FirstOrDefault();
                                         var IssuedQuantity = _unitOfWork.RequisitionToIssuanceLineReconcile
                                                     .Find(new RequisitionToIssuanceLineReconcileSpecs(reqLine.MasterId,
                                                     reqLine.Id, reqLine.ItemId)).Sum(p => p.Quantity);
@@ -125,7 +125,7 @@ namespace Application.Services
                                                     (
                                                    grnline.ItemId,
                                                    0,
-                                                   0,   
+                                                   0,
                                                    grnline.Quantity,
                                                    grnline.WarehouseId
                                                     );
@@ -146,8 +146,6 @@ namespace Application.Services
 
                                                 await _unitOfWork.Stock.Add(addStock);
                                             }
-                                           
-
 
                                             //if (grnline.Quantity <= reqRemainingQty)
                                             //{
@@ -176,8 +174,6 @@ namespace Application.Services
                                             //    reqLine.setReserveQuantity(resrveQty);
                                             //    stock.updateRequisitionReservedQuantity(resrveQty);
                                             //}
-
-
 
                                         }
 

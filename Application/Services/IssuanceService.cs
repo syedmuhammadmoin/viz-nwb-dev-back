@@ -347,10 +347,6 @@ namespace Application.Services
                 if (!checkOrUpdateQty.IsSuccess)
                     return new Response<IssuanceDto>(checkOrUpdateQty.Message);
             }
-            //if (entity.RequisitionId != null)
-            //{
-
-            //}
 
             //Checking duplicate Lines if any
             var duplicates = entity.IssuanceLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
@@ -427,10 +423,6 @@ namespace Application.Services
 
                 if (line.Quantity > getStockRecord.ReservedRequisitionQuantity)
                     return new Response<bool>("Selected item quantity is exceeding available quantity");
-
-
-
-
             }
             return new Response<bool>(true, "");
         }
@@ -467,7 +459,6 @@ namespace Application.Services
                 }
                 else
                 {
-
                     RequisitionMaster getRequisition = await _unitOfWork.Requisition.GetById((int)issuance.RequisitionId, new RequisitionSpecs(false));
 
                     // Todo: Either first or Default should be used or replace where clause
@@ -503,7 +494,6 @@ namespace Application.Services
                     //    getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity - line.Quantity);
                     //    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
                     //}
-
                 }
             }
             return new Response<bool>(true, "");

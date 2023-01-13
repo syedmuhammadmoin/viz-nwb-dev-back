@@ -103,12 +103,10 @@ namespace Application.Services
         {
             if ((bool)entity.isSubmit)
             {
-
                 return await this.SubmitRequisition(entity);
             }
             else
             {
-
                 return await this.SaveRequisition(entity, 1);
             }
         }

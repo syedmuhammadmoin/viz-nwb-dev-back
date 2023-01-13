@@ -84,7 +84,6 @@ namespace Application.Services
             if ((poDto.State == DocumentStatus.Partial || poDto.State == DocumentStatus.Paid))
             {
                 return new Response<PurchaseOrderDto>(MapToValue(poDto), "Returning value");
-
             }
 
             poDto.IsAllowedRole = false;
