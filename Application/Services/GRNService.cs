@@ -92,7 +92,7 @@ namespace Application.Services
                                     if (requisition != null)
                                     {
                                         isRequisition = true;
-                                        var reqLine = _unitOfWork.Requisition.FindLines(new RequisitionLinesSpecs(grnline.ItemId, (int)purchseOrder.RequisitionId, grnline.WarehouseId , true)).FirstOrDefault();
+                                        var reqLine = _unitOfWork.Requisition.FindLines(new RequisitionLinesSpecs(grnline.ItemId, (int)purchseOrder.RequisitionId, grnline.WarehouseId, true)).FirstOrDefault();
                                         var IssuedQuantity = _unitOfWork.RequisitionToIssuanceLineReconcile
                                                     .Find(new RequisitionToIssuanceLineReconcileSpecs(reqLine.MasterId,
                                                     reqLine.Id, reqLine.ItemId)).Sum(p => p.Quantity);
