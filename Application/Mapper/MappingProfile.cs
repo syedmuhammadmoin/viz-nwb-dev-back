@@ -80,7 +80,8 @@ namespace Application.Mapper
             CreateMap<Category, CategoryDto>()
                 .ForMember(dto => dto.InventoryAccount, core => core.MapFrom(a => a.InventoryAccount.Name))
                 .ForMember(dto => dto.RevenueAccount, core => core.MapFrom(a => a.RevenueAccount.Name))
-                .ForMember(dto => dto.CostAccount, core => core.MapFrom(a => a.CostAccount.Name));
+                .ForMember(dto => dto.CostAccount, core => core.MapFrom(a => a.CostAccount.Name))
+                .ForMember(dto => dto.Depreciation , core => core.MapFrom(a => a.Depreciation.ModelName));
             CreateMap<CreateCategoryDto, Category>();
 
             // BusinessPartner Mapping
