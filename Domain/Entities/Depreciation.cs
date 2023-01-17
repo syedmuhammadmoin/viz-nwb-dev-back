@@ -30,6 +30,10 @@ namespace Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal DecliningRate { get; private set; }
 
+        protected Depreciation()
+        {
+        }
+
         public void CreateDocNo()
         {
             //Creating doc no..

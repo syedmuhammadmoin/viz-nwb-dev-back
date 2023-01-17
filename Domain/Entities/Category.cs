@@ -25,10 +25,17 @@ namespace Domain.Entities
         public Level4 RevenueAccount { get; private set; }
         [ForeignKey("CostAccountId")]
         public Level4 CostAccount { get; private set; }
-        
+        public bool IsFixedAsset { get; private set; }
+        public int? DepreciationId { get; private set; }
+        [ForeignKey("DepreciationId")]
+        public Depreciation Depreciation { get; private set; }
         protected Category()
         {
 
+        }
+        public void DepreciationIdnull()
+        {
+            DepreciationId = null;
         }
     }
 }
