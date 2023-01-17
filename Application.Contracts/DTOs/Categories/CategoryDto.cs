@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,5 +17,8 @@ namespace Application.Contracts.DTOs
         public string InventoryAccount { get; set; }
         public string RevenueAccount { get; set; }
         public string CostAccount { get; set; }
+        public bool IsFixedAsset { get; set; }
+        public int? DepreciationId { get; set; }
+        public string Depreciation { get; set; }
     }
 }
