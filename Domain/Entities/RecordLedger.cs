@@ -62,11 +62,11 @@ namespace Domain.Entities
             ReconStatus = DocumentStatus.Unreconciled;
         }
 
-        public void setIsReconcilable(bool value)
+        public void SetIsReconcilable(bool value)
         {
             IsReconcilable = value;
         }
-        public void setStatus(DocumentStatus status)
+        public void SetStatus(DocumentStatus status)
         {
             ReconStatus = status;
         }

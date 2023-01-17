@@ -63,22 +63,22 @@ namespace Domain.Entities
         {
 
         }
-        public void setStatus(int statusId)
+        public void SetStatus(int statusId)
         {
             StatusId = statusId;
         }
 
-        public void setReconStatus(DocumentStatus status)
+        public void SetReconStatus(DocumentStatus status)
         {
             BankReconStatus = status;
         }
 
-        public void setTransactionId(int transactionId)
+        public void SetTransactionId(int transactionId)
         {
             TransactionId = transactionId;
         }
 
-        public void setLedgerId(int ledgerId)
+        public void SetLedgerId(int ledgerId)
         {
             LedgerId = ledgerId;
         }

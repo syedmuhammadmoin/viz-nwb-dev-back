@@ -53,21 +53,21 @@ namespace Domain.Entities
         {
 
         }
-        public void setStatus(int statusId)
+        public void SetStatus(int statusId)
         {
             StatusId = statusId;
         }
 
-        public void setLedgerId(int ledgerId)
+        public void SetLedgerId(int ledgerId)
         {
             LedgerId = ledgerId;
         }
 
-        public void setTransactionId(int transactionId)
+        public void SetTransactionId(int transactionId)
         {
             TransactionId = transactionId;
         }
-        public void setPayableAccountId(Guid payableAccountId)
+        public void SetPayableAccountId(Guid payableAccountId)
         {
             PayableAccountId = payableAccountId;
         }

@@ -169,7 +169,7 @@ namespace Application.Services
             {
                 if (transition.AllowedRole.Name == role)
                 {
-                    getInvoice.setStatus(transition.NextStatusId);
+                    getInvoice.SetStatus(transition.NextStatusId);
 
                     if (!String.IsNullOrEmpty(data.Remarks))
                     {
@@ -265,10 +265,10 @@ namespace Application.Services
                 }
                 
             }
-            inv.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
+            inv.SetReceivableAccount((Guid)businessPartner.AccountReceivableId);
 
             //Setting status
-            inv.setStatus(status);
+            inv.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
 
@@ -304,7 +304,7 @@ namespace Application.Services
 
 
 
-            inv.setStatus(status);
+            inv.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
 
@@ -328,8 +328,8 @@ namespace Application.Services
 
             }
             
-            inv.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
-            inv.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
+            inv.SetReceivableAccount((Guid)businessPartner.AccountReceivableId);
+            inv.SetReceivableAccount((Guid)businessPartner.AccountReceivableId);
             await _unitOfWork.SaveAsync();
 
             //Commiting the transaction
@@ -346,7 +346,7 @@ namespace Application.Services
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
-            inv.setTransactionId(transaction.Id);
+            inv.SetTransactionId(transaction.Id);
             await _unitOfWork.SaveAsync();
 
 
@@ -406,7 +406,7 @@ namespace Application.Services
             //Getting transaction with Payment Transaction Id
             var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(transaction.Id, true)).FirstOrDefault();
 
-            inv.setLedgerId(getUnreconciledDocumentAmount.Id);
+            inv.SetLedgerId(getUnreconciledDocumentAmount.Id);
             await _unitOfWork.SaveAsync();
         }
 

@@ -164,7 +164,7 @@ namespace Application.Services
 
 
             //Setting status
-            jv.setStatus(status);
+            jv.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
 
@@ -229,7 +229,7 @@ namespace Application.Services
             if (jv.StatusId != 1 && jv.StatusId != 2)
                 return new Response<JournalEntryDto>("Journal voucher already submitted");
 
-            jv.setStatus(status);
+            jv.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
             //For updating data
@@ -250,7 +250,7 @@ namespace Application.Services
             var addTransaction = await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
-            jv.setTransactionId(transaction.Id);
+            jv.SetTransactionId(transaction.Id);
             await _unitOfWork.SaveAsync();
 
             //Inserting data into recordledger table
@@ -308,7 +308,7 @@ namespace Application.Services
             {
                 if (transition.AllowedRole.Name == role)
                 {
-                    getJournalEntry.setStatus(transition.NextStatusId);
+                    getJournalEntry.SetStatus(transition.NextStatusId);
                     if (!String.IsNullOrEmpty(data.Remarks))
                     {
                         var addRemarks = new Remark()

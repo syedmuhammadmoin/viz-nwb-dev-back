@@ -26,7 +26,7 @@ namespace Domain.Entities
         [ForeignKey("MasterId")]
         public IssuanceReturnMaster IssuanceReturnMaster { get; private set; }
 
-        public void setStatus(DocumentStatus status)
+        public void SetStatus(DocumentStatus status)
         {
             Status = status;
         }

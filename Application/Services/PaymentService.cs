@@ -205,7 +205,7 @@ namespace Application.Services
             }
 
             //Setting status
-            payment.setStatus(status);
+            payment.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
           
@@ -275,7 +275,7 @@ namespace Application.Services
             //    return new Response<PaymentDto>("Deduction account Invalid");
             //}
 
-            payment.setStatus(status);
+            payment.SetStatus(status);
 
             if (payment.DocumentLedgerId != null)
                 entity.DocumentLedgerId = payment.DocumentLedgerId;
@@ -306,7 +306,7 @@ namespace Application.Services
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
-            payment.setTransactionId(transaction.Id);
+            payment.SetTransactionId(transaction.Id);
             await _unitOfWork.SaveAsync();
 
             if (payment.PaymentType == PaymentType.Inflow)
@@ -536,7 +536,7 @@ namespace Application.Services
             var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(transaction.Id, true)).FirstOrDefault();
 
             if (getUnreconciledDocumentAmount != null)
-                payment.setLedgerId(getUnreconciledDocumentAmount.Id);
+                payment.SetLedgerId(getUnreconciledDocumentAmount.Id);
 
             await _unitOfWork.SaveAsync();
 
@@ -581,7 +581,7 @@ namespace Application.Services
                 {
                     if (transition.AllowedRole.Name == role)
                     {
-                        getPayment.setStatus(transition.NextStatusId);
+                        getPayment.SetStatus(transition.NextStatusId);
                         if (!String.IsNullOrEmpty(data.Remarks))
                         {
                             var addRemarks = new Remark()
@@ -597,7 +597,7 @@ namespace Application.Services
 
                         {
                             var totalAddedTax = (getPayment.IncomeTax + getPayment.SalesTax + getPayment.SRBTax);
-                            getPayment.setReconStatus(DocumentStatus.Unreconciled);
+                            getPayment.SetReconStatus(DocumentStatus.Unreconciled);
                             var res = await AddToLedger(getPayment);
                             if (!res.IsSuccess)
                             {
@@ -844,7 +844,7 @@ namespace Application.Services
                     if (getPayment.BusinessPartner.BusinessPartnerType != BusinessPartnerType.Employee)
                         return new Response<bool>($"Payroll Payment with the id = {id[i]} business partner is not employee");
 
-                    getPayment.setStatus(6);
+                    getPayment.SetStatus(6);
                     await _unitOfWork.SaveAsync();
                 }
                 _unitOfWork.Commit();

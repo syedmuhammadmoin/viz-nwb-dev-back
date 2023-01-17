@@ -30,7 +30,7 @@ namespace Domain.Entities
 
         }
 
-        public void setStatus(int statusId)
+        public void SetStatus(int statusId)
         {
             StatusId = statusId;
         }

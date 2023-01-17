@@ -21,9 +21,9 @@ namespace Application.Contracts.DTOs
         [Required]
         public Guid AssetAccountId { get; set; }
         [Required]
-        public Guid DepricationExpenseId { get; set; }
+        public Guid DepreciationExpenseId { get; set; }
         [Required]
-        public Guid AccumulatedDepriciationId { get; set; }
+        public Guid AccumulatedDepreciationId { get; set; }
         [Required]
         public DepreciationMethod ModelType { get; set; }
         [Required]

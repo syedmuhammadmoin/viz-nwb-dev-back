@@ -47,11 +47,11 @@ namespace Domain.Entities
         {
 
         }
-        public void setChAccountId(Guid chAccountId)
+        public void SetChAccountId(Guid chAccountId)
         {
             ChAccountId = chAccountId;
         }
-        public void setClAccountId(Guid clAccountId)
+        public void SetClAccountId(Guid clAccountId)
         {
             ClearingAccountId = clAccountId;
         }
@@ -60,7 +60,7 @@ namespace Domain.Entities
         {
             TransactionId = transactionId;
         }
-        public void createDocNo()
+        public void CreateDocNo()
         {
             //Creating doc no..
             DocNo = "BNK-" + String.Format("{0:000}", Id);

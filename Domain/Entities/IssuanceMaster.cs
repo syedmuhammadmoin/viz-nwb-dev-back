@@ -28,7 +28,7 @@ namespace Domain.Entities
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get; private set; }
         public virtual List<IssuanceLines> IssuanceLines { get; private set; }
-        public void setStatus(int statusId)
+        public void SetStatus(int statusId)
         {
             StatusId = statusId;
         }

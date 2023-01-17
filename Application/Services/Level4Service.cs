@@ -37,7 +37,7 @@ namespace Application.Services
             }
 
             var level4 = _mapper.Map<Level4>(entity);
-            level4.setLevel1Id(level3.Level2.Level1_id);
+            level4.SetLevel1Id(level3.Level2.Level1_id);
             var result = await _unitOfWork.Level4.Add(level4);
             await _unitOfWork.SaveAsync();
             return new Response<Level4Dto>(_mapper.Map<Level4Dto>(result), "Created successfully");

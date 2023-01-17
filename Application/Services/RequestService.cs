@@ -164,7 +164,7 @@ namespace Application.Services
             {
                 if (transition.AllowedRole.Name == role)
                 {
-                    getRequest.setStatus(transition.NextStatusId);
+                    getRequest.SetStatus(transition.NextStatusId);
                     if (!String.IsNullOrEmpty(data.Remarks))
                     {
                         var addRemarks = new Remark()
@@ -227,7 +227,7 @@ namespace Application.Services
             var request = _mapper.Map<RequestMaster>(entity);
 
             //Setting status
-            request.setStatus(status);
+            request.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
 
@@ -258,7 +258,7 @@ namespace Application.Services
                 return new Response<RequestDto>("Only draft document can be edited");
 
             //For updating data
-            request.setStatus(status);
+            request.SetStatus(status);
             _mapper.Map<CreateRequestDto, RequestMaster>(entity, request);
 
             _unitOfWork.CreateTransaction();

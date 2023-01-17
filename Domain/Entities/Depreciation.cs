@@ -20,12 +20,12 @@ namespace Domain.Entities
         public Guid AssetAccountId { get; private set; }
         [ForeignKey("AssetAccountId")]
         public Level4 AssetAccount { get; private set; }
-        public Guid DepricationExpenseId { get; private set; }
-        [ForeignKey("DepricationExpenseId")]
-        public Level4 DepricationExpense { get; private set; }
-        public Guid AccumulatedDepriciationId { get; private set; }
-        [ForeignKey("AccumulatedDepriciationId")]
-        public Level4 AccumulatedDepriciation { get; private set; }
+        public Guid DepreciationExpenseId { get; private set; }
+        [ForeignKey("DeprecationExpenseId")]
+        public Level4 DepreciationExpense { get; private set; }
+        public Guid AccumulatedDepreciationId { get; private set; }
+        [ForeignKey("AccumulatedDepreciationId")]
+        public Level4 AccumulatedDepreciation { get; private set; }
         public DepreciationMethod ModelType { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal DecliningRate { get; private set; }

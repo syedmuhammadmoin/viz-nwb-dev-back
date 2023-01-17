@@ -40,12 +40,12 @@ namespace Domain.Entities
         {
 
         }
-        public void setStatus(int statusId)
+        public void SetStatus(int statusId)
         {
             StatusId = statusId;
         }
 
-        public void setGRNId(int grnId)
+        public void SetGRNId(int grnId)
         {
             GRNId = grnId;
         }

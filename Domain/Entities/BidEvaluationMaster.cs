@@ -37,7 +37,7 @@ namespace Domain.Entities
         protected BidEvaluationMaster()
         {
         }
-        public void setStatus(DocumentStatus status)
+        public void SetStatus(DocumentStatus status)
         {
             State = status;
         }

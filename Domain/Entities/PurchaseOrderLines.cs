@@ -35,7 +35,7 @@ namespace Domain.Entities
         public int MasterId { get; private set;  }
         [ForeignKey("MasterId")]
         public PurchaseOrderMaster PurchaseOrderMaster { get; private set; }
-        public void setStatus(DocumentStatus status)
+        public void SetStatus(DocumentStatus status)
         {
             Status = status;
         }

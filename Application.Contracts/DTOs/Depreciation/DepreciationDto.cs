@@ -18,10 +18,10 @@ namespace Application.Contracts.DTOs
         public int UseFullLife { get; set; }
         public Guid AssetAccountId { get; set; }
         public string AssetAccount { get; set; }
-        public Guid DepricationExpenseId { get; set; }
-        public string DepricationExpense { get; set; }
-        public Guid AccumulatedDepriciationId { get; set; }
-        public string AccumulatedDepriciation { get; set; }
+        public Guid DeprecationExpenseId { get; set; }
+        public string DepreciationExpense { get; set; }
+        public Guid AccumulatedDepreciationId { get; set; }
+        public string AccumulatedDepreciation { get; set; }
         public string ModelType { get; set; }
         public decimal? DecliningRate { get; set; }
     }

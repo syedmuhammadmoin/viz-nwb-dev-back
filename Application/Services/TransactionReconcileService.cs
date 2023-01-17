@@ -116,79 +116,79 @@ namespace Application.Services
             //FOR UPDATE STATUS
             if (updateLedger.Amount == reconciledTotalDocument)
             {
-                updateLedger.setStatus(DocumentStatus.Reconciled);
+                updateLedger.SetStatus(DocumentStatus.Reconciled);
                 switch (updateLedger.Transactions.DocType)
                 {
                     case DocType.Payment:
                         var payment = _unitOfWork.Payment.Find(new PaymentSpecs(updateLedger.TransactionId)).FirstOrDefault();
-                        payment.setStatus(5); // Paid
+                        payment.SetStatus(5); // Paid
                         break;
                     case DocType.Receipt:
                         var receipt = _unitOfWork.Payment.Find(new PaymentSpecs(updateLedger.TransactionId)).FirstOrDefault();
-                        receipt.setStatus(5); // Paid
+                        receipt.SetStatus(5); // Paid
                         break;
                     case DocType.PayrollPayment:
                         var payrollPayment = _unitOfWork.Payment.Find(new PaymentSpecs(updateLedger.TransactionId)).FirstOrDefault();
-                        payrollPayment.setStatus(5); // Paid
+                        payrollPayment.SetStatus(5); // Paid
                         break;
                     case DocType.CreditNote:
                         var creaditNote = _unitOfWork.CreditNote.Find(new CreditNoteSpecs(updateLedger.TransactionId)).FirstOrDefault();
-                        creaditNote.setStatus(5); // Paid
+                        creaditNote.SetStatus(5); // Paid
                         break;
                     case DocType.DebitNote:
                         var debitNote = _unitOfWork.DebitNote.Find(new DebitNoteSpecs(updateLedger.TransactionId)).FirstOrDefault();
-                        debitNote.setStatus(5); // Paid
+                        debitNote.SetStatus(5); // Paid
                         break;
                     case DocType.Invoice:
                         var invoice = _unitOfWork.Invoice.Find(new InvoiceSpecs(updateLedger.TransactionId)).FirstOrDefault();
-                        invoice.setStatus(5); // Paid
+                        invoice.SetStatus(5); // Paid
                         break;
                     case DocType.Bill:
                         var bill = _unitOfWork.Bill.Find(new BillSpecs(updateLedger.TransactionId)).FirstOrDefault();
-                        bill.setStatus(5); // Paid
+                        bill.SetStatus(5); // Paid
                         break;
                     case DocType.PayrollTransaction:
                         var payrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(updateLedger.TransactionId)).FirstOrDefault();
-                        payrollTransaction.setStatus(5); // Paid
+                        payrollTransaction.SetStatus(5); // Paid
                         break;
                 }
             }
             else
             {
-                updateLedger.setStatus(DocumentStatus.Partial);
+                updateLedger.SetStatus(DocumentStatus.Partial);
                 switch (updateLedger.Transactions.DocType)
                 {
                     case DocType.Payment:
                         var payment = _unitOfWork.Payment.Find(new PaymentSpecs(updateLedger.TransactionId)).FirstOrDefault();
-                        payment.setStatus(4); // Partial
+                        payment.SetStatus(4); // Partial
                         break;
                     case DocType.Receipt:
                         var receipt = _unitOfWork.Payment.Find(new PaymentSpecs(updateLedger.TransactionId)).FirstOrDefault();
-                        receipt.setStatus(4); // Partial
+                        receipt.SetStatus(4); // Partial
                         break;
                     case DocType.PayrollPayment:
                         var payrollPayment = _unitOfWork.Payment.Find(new PaymentSpecs(updateLedger.TransactionId)).FirstOrDefault();
-                        payrollPayment.setStatus(4); // Partial
+                        payrollPayment.SetStatus(4); // Partial
                         break;
                     case DocType.CreditNote:
                         var creaditNote = _unitOfWork.CreditNote.Find(new CreditNoteSpecs(updateLedger.TransactionId)).FirstOrDefault();
-                        creaditNote.setStatus(4); // Partial
+                        creaditNote.SetStatus(4); // Partial
                         break;
                     case DocType.DebitNote:
                         var debitNote = _unitOfWork.DebitNote.Find(new DebitNoteSpecs(updateLedger.TransactionId)).FirstOrDefault();
-                        debitNote.setStatus(4); // Partial
+                        debitNote.SetStatus(4); // Partial
                         break;
                     case DocType.Invoice:
                         var invoice = _unitOfWork.Invoice.Find(new InvoiceSpecs(updateLedger.TransactionId)).FirstOrDefault();
-                        invoice.setStatus(4); // Partial
+                        invoice.SetStatus(4); // Partial
                         break;
                     case DocType.Bill:
                         var bill = _unitOfWork.Bill.Find(new BillSpecs(updateLedger.TransactionId)).FirstOrDefault();
-                        bill.setStatus(4); // Partial
+                        bill.SetStatus(4); // Partial
                         break;
                     case DocType.PayrollTransaction:
                         var payrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(updateLedger.TransactionId)).FirstOrDefault();
-                        payrollTransaction.setStatus(4); // Partial
+                        payrollTransaction.SetStatus(4); // Partial
                         break;
                 }
             }

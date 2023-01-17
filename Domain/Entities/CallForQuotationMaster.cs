@@ -26,7 +26,7 @@ namespace Domain.Entities
         protected CallForQuotationMaster()
         {
         }
-        public void setStatus(DocumentStatus status)
+        public void SetStatus(DocumentStatus status)
         {
             State = status;
         }

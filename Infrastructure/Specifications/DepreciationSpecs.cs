@@ -18,16 +18,16 @@ namespace Infrastructure.Specifications
                 var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
                 AddInclude(i => i.AssetAccount);
-                AddInclude(i => i.DepricationExpense);
-                AddInclude(i => i.AccumulatedDepriciation);
+                AddInclude(i => i.DepreciationExpense);
+                AddInclude(i => i.AccumulatedDepreciation);
                 ApplyOrderByDescending(i => i.Id);
             }
         }
         public DepreciationSpecs()
         {
             AddInclude(i => i.AssetAccount);
-            AddInclude(i => i.AccumulatedDepriciation);
-            AddInclude(i => i.DepricationExpense);
+            AddInclude(i => i.AccumulatedDepreciation);
+            AddInclude(i => i.DepreciationExpense);
         }
     }
 }
