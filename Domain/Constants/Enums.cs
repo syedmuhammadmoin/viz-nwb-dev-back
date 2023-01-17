@@ -121,4 +121,9 @@ namespace Domain.Constants
         SystemDefined = 0,
         UserDefined = 1
     }
+    public enum DepreciationMethod 
+    {
+        StraightLine = 0,
+        Declining = 1 
+    }
 }
