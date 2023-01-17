@@ -549,7 +549,7 @@ namespace Application.Mapper
                 .ForMember(dto => dto.AssetAccount ,core => core.MapFrom(a => a.AssetAccount.Name))
                 .ForMember(dto => dto.DepricationExpense ,core => core.MapFrom(d => d.DepricationExpense.Name))
                 .ForMember(dto => dto.AccumulatedDepriciation ,core => core.MapFrom(a => a.AccumulatedDepriciation.Name))
-                .ForMember(dto => dto.ModelType ,core => core.MapFrom(a => a.ModelType));
+                .ForMember(dto => dto.ModelType ,core => core.MapFrom(a => a.ModelType == DepreciationMethod.Declining ? "Declining":a.ModelType == DepreciationMethod.StraightLine ? "Straight Line" : "N/A"));
             CreateMap<CreateDepreciationDto, Depreciation>();
         }
     }
