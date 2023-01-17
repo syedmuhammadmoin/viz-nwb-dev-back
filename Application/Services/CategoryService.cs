@@ -34,7 +34,7 @@ namespace Application.Services
             {
                 return new Response<CategoryDto>("Account Cannot Be Same");
             }
-
+            
             //Validation for Payable and Receivable
             var Inventorylevel4 = await _unitOfWork.Level4.GetById((Guid)entity.InventoryAccountId);
 
@@ -61,7 +61,15 @@ namespace Application.Services
             {
                 return new Response<CategoryDto>("Cost account Invalid");
             }
-            
+
+            if ((bool)entity.IsFixedAsset && (entity.DepreciationId == null || entity.DepreciationId == 0))
+            {
+                return new Response<CategoryDto>("Depreciation is Required");
+            }
+            if ((bool)!entity.IsFixedAsset)
+            {
+                category.DepreciationIdnull();
+            }
             var result = await _unitOfWork.Category.Add(category);
             await _unitOfWork.SaveAsync();
 
@@ -131,6 +139,14 @@ namespace Application.Services
                 return new Response<CategoryDto>("Cost account Invalid");
             }
 
+            if ((bool)entity.IsFixedAsset && (entity.DepreciationId == null || entity.DepreciationId == 0))
+            {
+                return new Response<CategoryDto>("Depreciation is Required");
+            }
+            if ((bool)!entity.IsFixedAsset)
+            {
+                category.DepreciationIdnull();
+            }
             //For updating data
             _mapper.Map<CreateCategoryDto, Category>(entity, category);
             await _unitOfWork.SaveAsync();
