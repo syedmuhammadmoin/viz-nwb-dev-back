@@ -363,6 +363,13 @@ namespace Domain.Constants
             public const string Edit = "Permissions.Procurement.QuotationComparativeClaims.Edit";
             public const string Delete = "Permissions.Procurement.QuotationComparativeClaims.Delete";
         }
+        public static class DepreciationClaims
+        {
+            public const string View = "Permissions.FixedAsset.DepreciationClaims.View";
+            public const string Create = "Permissions.FixedAsset.DepreciationClaims.Create";
+            public const string Edit = "Permissions.FixedAsset.DepreciationClaims.Edit";
+            public const string Delete = "Permissions.FixedAsset.DepreciationClaims.Delete";
+        }
         //Reporting Form
         public static class ChartOfAccountClaims
         {
