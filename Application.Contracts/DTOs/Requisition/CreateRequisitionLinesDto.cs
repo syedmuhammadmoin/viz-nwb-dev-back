@@ -15,7 +15,6 @@ namespace Application.Contracts.DTOs
         [Required]
         [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
         public decimal PurchasePrice { get;  set; }
-
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be greater than 0")]
         public int? Quantity { get; set; }
@@ -24,5 +23,6 @@ namespace Application.Contracts.DTOs
         public string Description { get; set; }
         [Required]
         public int? WarehouseId { get; set; }
+        public int? ReserveQuantity { get; set; }
     }
 }

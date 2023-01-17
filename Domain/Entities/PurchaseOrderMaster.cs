@@ -26,6 +26,7 @@ namespace Domain.Entities
         public decimal TotalTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; private set; }
+        public int? RequisitionId{ get; private set; }
         public int StatusId { get; private set; }
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get; private set; }
@@ -38,7 +39,7 @@ namespace Domain.Entities
         {
 
         }
-        public void setStatus(int statusId)
+        public void SetStatus(int statusId)
         {
             StatusId = statusId;
         }

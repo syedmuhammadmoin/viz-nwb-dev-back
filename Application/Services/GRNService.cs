@@ -59,61 +59,162 @@ namespace Application.Services
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-            
-                foreach (var role in currentUserRoles)
+
+            foreach (var role in currentUserRoles)
+            {
+                if (transition.AllowedRole.Name == role)
                 {
-                    if (transition.AllowedRole.Name == role)
+                    getGRN.setStatus(transition.NextStatusId);
+                    if (!String.IsNullOrEmpty(data.Remarks))
                     {
-                        getGRN.setStatus(transition.NextStatusId);
-                        if (!String.IsNullOrEmpty(data.Remarks))
+                        var addRemarks = new Remark()
                         {
-                            var addRemarks = new Remark()
-                            {
-                                DocId = getGRN.Id,
-                                DocType = DocType.GRN,
-                                Remarks = data.Remarks,
-                                UserId = userId
-                            };
-                            await _unitOfWork.Remarks.Add(addRemarks);
-                        }
-                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                            DocId = getGRN.Id,
+                            DocType = DocType.GRN,
+                            Remarks = data.Remarks,
+                            UserId = userId
+                        };
+                        await _unitOfWork.Remarks.Add(addRemarks);
+                    }
+                    bool isRequisition = false;
+                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                    {
+                        foreach (var grnline in getGRN.GRNLines)
                         {
-                            foreach (var line in getGRN.GRNLines)
-                            {
-                                line.setStatus(DocumentStatus.Unreconciled);
-                            }
+                            grnline.setStatus(DocumentStatus.Unreconciled);
 
-                                var reconciled = await ReconcilePOLines(getGRN.Id, (int)getGRN.PurchaseOrderId, getGRN.GRNLines);
-                                if (!reconciled.IsSuccess)
+                            var purchseOrder = await _unitOfWork.PurchaseOrder.GetById(getGRN.PurchaseOrderId, new PurchaseOrderSpecs((int)getGRN.PurchaseOrderId));
+                            if (purchseOrder != null)
+                            {
+                                if (purchseOrder.RequisitionId != null)
                                 {
-                                    _unitOfWork.Rollback();
-                                    return new Response<bool>(reconciled.Message);
+                                    var requisition = await _unitOfWork.Requisition.GetById((int)purchseOrder.RequisitionId, new RequisitionSpecs((int)purchseOrder.RequisitionId));
+                                    if (requisition != null)
+                                    {
+                                        isRequisition = true;
+                                        var reqLine = _unitOfWork.Requisition.FindLines(new RequisitionLinesSpecs(grnline.ItemId, (int)purchseOrder.RequisitionId, grnline.WarehouseId, true)).FirstOrDefault();
+                                        var IssuedQuantity = _unitOfWork.RequisitionToIssuanceLineReconcile
+                                                    .Find(new RequisitionToIssuanceLineReconcileSpecs(reqLine.MasterId,
+                                                    reqLine.Id, reqLine.ItemId)).Sum(p => p.Quantity);
+                                        var reqRemainingQty = reqLine.Quantity - reqLine.ReserveQuantity - IssuedQuantity;
+                                        var stock = _unitOfWork.Stock
+                                                   .Find(new StockSpecs(reqLine.ItemId, reqLine.WarehouseId))
+                                                   .FirstOrDefault();
+                                        if (stock != null)
+                                        {
+                                            if (grnline.Quantity <= reqRemainingQty)
+                                            {
+                                                reqLine.setReserveQuantity(reqLine.ReserveQuantity + grnline.Quantity);
+                                                stock.updateRequisitionReservedQuantity(stock.ReservedRequisitionQuantity + grnline.Quantity);
+                                            }
+                                            else
+                                            {
+                                                reqLine.setReserveQuantity(reqLine.ReserveQuantity + reqRemainingQty);
+                                                stock.updateRequisitionReservedQuantity(stock.ReservedRequisitionQuantity + reqRemainingQty);
+                                                stock.updateAvailableQuantity(grnline.Quantity - reqRemainingQty);
+
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (grnline.Quantity <= reqRemainingQty)
+                                            {
+                                                reqLine.setReserveQuantity(reqLine.ReserveQuantity + grnline.Quantity);
+
+                                                var addStock = new Stock
+                                                    (
+                                                   grnline.ItemId,
+                                                   0,
+                                                   0,
+                                                   grnline.Quantity,
+                                                   grnline.WarehouseId
+                                                    );
+
+                                                await _unitOfWork.Stock.Add(addStock);
+                                            }
+                                            else
+                                            {
+                                                reqLine.setReserveQuantity(reqLine.ReserveQuantity + reqRemainingQty);
+                                                var addStock = new Stock
+                                                    (
+                                                   grnline.ItemId,
+                                                   (grnline.Quantity - reqRemainingQty),
+                                                     0,
+                                                    reqRemainingQty,
+                                                   grnline.WarehouseId
+                                                    );
+
+                                                await _unitOfWork.Stock.Add(addStock);
+                                            }
+
+                                            //if (grnline.Quantity <= reqRemainingQty)
+                                            //{
+                                            //    reqLine.setReserveQuantity(grnline.Quantity);
+                                            //    stock.updateRequisitionReservedQuantity(grnline.Quantity);
+                                            //}
+                                            //else
+                                            //{
+                                            //    reqLine.setReserveQuantity(reqLine.ReserveQuantity + reqRemainingQty);
+                                            //    stock.updateRequisitionReservedQuantity( reqRemainingQty);
+                                            //    stock.updateAvailableQuantity(grnline.Quantity - reqRemainingQty);
+
+                                            //}
+                                            //if (grnline.Quantity >= reqLine.Quantity)
+                                            //{
+                                            //    var resrveQty = grnline.Quantity - reqLine.Quantity;
+                                            //    var remainingResrveQty = grnline.Quantity - resrveQty;
+                                            //    reqLine.setReserveQuantity(resrveQty);
+                                            //    stock.updateRequisitionReservedQuantity(resrveQty);
+                                            //    stock.updateAvailableQuantity(resrveQty);
+                                            //}
+                                            //else
+                                            //{
+                                            //    var resrveQty = reqLine.Quantity - grnline.Quantity  ;
+                                            //    var remainingResrveQty = grnline.Quantity - resrveQty;
+                                            //    reqLine.setReserveQuantity(resrveQty);
+                                            //    stock.updateRequisitionReservedQuantity(resrveQty);
+                                            //}
+
+                                        }
+
+                                    }
                                 }
-
-                            await _unitOfWork.SaveAsync();
-
-                            //Adding GRN Line in Stock
-                            await AddandUpdateStock(getGRN);
-
-
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "GRN Approved");
+                            }
                         }
-                        if (transition.NextStatus.State == DocumentStatus.Rejected)
+
+                        var reconciled = await ReconcilePOLines(getGRN.Id, (int)getGRN.PurchaseOrderId, getGRN.GRNLines);
+                        if (!reconciled.IsSuccess)
                         {
-                            await _unitOfWork.SaveAsync();
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "GRN Rejected");
+                            _unitOfWork.Rollback();
+                            return new Response<bool>(reconciled.Message);
                         }
+
+                        await _unitOfWork.SaveAsync();
+
+                        //Adding GRN Line in Stock
+                        if (isRequisition == false)
+                        {
+                            await AddandUpdateStock(getGRN);
+                        }
+
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "GRN Approved");
+                    }
+                    if (transition.NextStatus.State == DocumentStatus.Rejected)
+                    {
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
-                        return new Response<bool>(true, "GRN Reviewed");
+                        return new Response<bool>(true, "GRN Rejected");
                     }
+                    await _unitOfWork.SaveAsync();
+                    _unitOfWork.Commit();
+                    return new Response<bool>(true, "GRN Reviewed");
                 }
+            }
 
-                return new Response<bool>("User does not have allowed role");
+            return new Response<bool>("User does not have allowed role");
 
-          
+
         }
 
         public async Task<Response<GRNDto>> CreateAsync(CreateGRNDto entity)
@@ -160,7 +261,7 @@ namespace Application.Services
                 return new Response<GRNDto>("Not found");
 
             var grnDto = _mapper.Map<GRNDto>(gRN);
-            ReturningRemarks(grnDto,DocType.GRN);
+            ReturningRemarks(grnDto, DocType.GRN);
             ReturningFiles(grnDto, DocType.GRN);
             var mappingValue = new Response<GRNDto>(MapToValue(grnDto), "Returning value");
 
@@ -229,17 +330,17 @@ namespace Application.Services
 
             foreach (var grnLine in entity.GRNLines)
             {
-                    //Getting Unreconciled Purchase Order lines
-                    var getpurchaseOrderLine = _unitOfWork.PurchaseOrder
-                    .FindLines(new PurchaseOrderLinesSpecs((int)grnLine.ItemId, (int)grnLine.WarehouseId, (int)entity.PurchaseOrderId))
-                    .FirstOrDefault();
-                    if (getpurchaseOrderLine == null)
-                        return new Response<GRNDto>("No Purchase order line found for reconciliaiton");
+                //Getting Unreconciled Purchase Order lines
+                var getpurchaseOrderLine = _unitOfWork.PurchaseOrder
+                .FindLines(new PurchaseOrderLinesSpecs((int)grnLine.ItemId, (int)grnLine.WarehouseId, (int)entity.PurchaseOrderId))
+                .FirstOrDefault();
+                if (getpurchaseOrderLine == null)
+                    return new Response<GRNDto>("No Purchase order line found for reconciliaiton");
 
-                    var checkValidation = CheckValidationForPO((int)entity.PurchaseOrderId, getpurchaseOrderLine, _mapper.Map<GRNLines>(grnLine));
-                    if (!checkValidation.IsSuccess)
-                        return new Response<GRNDto>(checkValidation.Message);
-               
+                var checkValidation = CheckValidationForPO((int)entity.PurchaseOrderId, getpurchaseOrderLine, _mapper.Map<GRNLines>(grnLine));
+                if (!checkValidation.IsSuccess)
+                    return new Response<GRNDto>(checkValidation.Message);
+
             }
 
             //Checking duplicate Lines if any
@@ -257,21 +358,21 @@ namespace Application.Services
             grn.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-      
-                //Saving in table
-                var result = await _unitOfWork.GRN.Add(grn);
-                await _unitOfWork.SaveAsync();
 
-                //For creating docNo
-                grn.CreateDocNo();
-                await _unitOfWork.SaveAsync();
+            //Saving in table
+            var result = await _unitOfWork.GRN.Add(grn);
+            await _unitOfWork.SaveAsync();
 
-                //Commiting the transaction 
-                _unitOfWork.Commit();
+            //For creating docNo
+            grn.CreateDocNo();
+            await _unitOfWork.SaveAsync();
 
-                //returning response
-                return new Response<GRNDto>(_mapper.Map<GRNDto>(result), "Created successfully");
-          
+            //Commiting the transaction 
+            _unitOfWork.Commit();
+
+            //returning response
+            return new Response<GRNDto>(_mapper.Map<GRNDto>(result), "Created successfully");
+
         }
 
         private async Task<Response<GRNDto>> UpdateGRN(CreateGRNDto entity, int status)
@@ -287,17 +388,17 @@ namespace Application.Services
 
             foreach (var grnLine in entity.GRNLines)
             {
-             
-                    var getpurchaseOrderLine = _unitOfWork.PurchaseOrder
-                        .FindLines(new PurchaseOrderLinesSpecs((int)grnLine.ItemId, (int)grnLine.WarehouseId, (int)entity.PurchaseOrderId))
-                        .FirstOrDefault();
-                    if (getpurchaseOrderLine == null)
-                        return new Response<GRNDto>("No Purchase order line found for reconciliaiton");
 
-                    var checkValidation = CheckValidationForPO((int)entity.PurchaseOrderId, getpurchaseOrderLine, _mapper.Map<GRNLines>(grnLine));
-                    if (!checkValidation.IsSuccess)
-                        return new Response<GRNDto>(checkValidation.Message);
-               
+                var getpurchaseOrderLine = _unitOfWork.PurchaseOrder
+                    .FindLines(new PurchaseOrderLinesSpecs((int)grnLine.ItemId, (int)grnLine.WarehouseId, (int)entity.PurchaseOrderId))
+                    .FirstOrDefault();
+                if (getpurchaseOrderLine == null)
+                    return new Response<GRNDto>("No Purchase order line found for reconciliaiton");
+
+                var checkValidation = CheckValidationForPO((int)entity.PurchaseOrderId, getpurchaseOrderLine, _mapper.Map<GRNLines>(grnLine));
+                if (!checkValidation.IsSuccess)
+                    return new Response<GRNDto>(checkValidation.Message);
+
             }
 
             //Checking duplicate Lines if any
@@ -324,17 +425,17 @@ namespace Application.Services
             gRN.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-              //For updating data
-                _mapper.Map<CreateGRNDto, GRNMaster>(entity, gRN);
+            //For updating data
+            _mapper.Map<CreateGRNDto, GRNMaster>(entity, gRN);
 
-                await _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveAsync();
 
-                //Commiting the transaction
-                _unitOfWork.Commit();
+            //Commiting the transaction
+            _unitOfWork.Commit();
 
-                //returning response
-                return new Response<GRNDto>(_mapper.Map<GRNDto>(gRN), "Updated successfully");
-           
+            //returning response
+            return new Response<GRNDto>(_mapper.Map<GRNDto>(gRN), "Updated successfully");
+
         }
 
         public Task<Response<int>> DeleteAsync(int id)
@@ -390,11 +491,11 @@ namespace Application.Services
 
             if (isPOLinesReconciled == null)
             {
-                getpurchaseOrder.setStatus(5);
+                getpurchaseOrder.SetStatus(5);
             }
             else
             {
-                getpurchaseOrder.setStatus(4);
+                getpurchaseOrder.SetStatus(4);
             }
 
             await _unitOfWork.SaveAsync();
@@ -413,6 +514,7 @@ namespace Application.Services
                     var addStock = new Stock(
                         line.ItemId,
                         line.Quantity,
+                        0,
                         0,
                         line.WarehouseId
                     );
@@ -474,7 +576,7 @@ namespace Application.Services
                     }
                 }
             }
-            
+
 
             //Get bill reference in GRN
             var getBillForGRNReference = _unitOfWork.Bill

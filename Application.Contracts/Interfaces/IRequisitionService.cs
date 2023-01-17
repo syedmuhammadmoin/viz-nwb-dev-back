@@ -11,6 +11,7 @@ namespace Application.Contracts.Interfaces
 {
     public interface IRequisitionService : ICrudService<CreateRequisitionDto, RequisitionDto, int, TransactionFormFilter>
     {
+        Task<Response<List<RequisitionDropDownDto>>> GetRequisitionDropDown();
         Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
     }
 }

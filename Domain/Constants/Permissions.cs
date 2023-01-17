@@ -335,6 +335,34 @@ namespace Domain.Constants
             public const string Edit = "Permissions.Procurement.RequestClaims.Edit";
             public const string Delete = "Permissions.Procurement.RequestClaims.Delete";
         }
+        public static class BidEvaluationClaims
+        {
+            public const string View = "Permissions.Procurement.BidEvaluationClaims.View";
+            public const string Create = "Permissions.Procurement.BidEvaluationClaims.Create";
+            public const string Edit = "Permissions.Procurement.BidEvaluationClaims.Edit";
+            public const string Delete = "Permissions.Procurement.BidEvaluationClaims.Delete";
+        }
+        public static class QuotationClaims
+        {
+            public const string View = "Permissions.Procurement.QuotationClaims.View";
+            public const string Create = "Permissions.Procurement.QuotationClaims.Create";
+            public const string Edit = "Permissions.Procurement.QuotationClaims.Edit";
+            public const string Delete = "Permissions.Procurement.QuotationClaims.Delete";
+        }
+        public static class CallForQuotationClaims
+        {
+            public const string View = "Permissions.Procurement.CallForQuotationClaims.View";
+            public const string Create = "Permissions.Procurement.CallForQuotationClaims.Create";
+            public const string Edit = "Permissions.Procurement.CallForQuotationClaims.Edit";
+            public const string Delete = "Permissions.Procurement.CallForQuotationClaims.Delete";
+        }
+        public static class QuotationComparativeClaims
+        {
+            public const string View = "Permissions.Procurement.QuotationComparativeClaims.View";
+            public const string Create = "Permissions.Procurement.QuotationComparativeClaims.Create";
+            public const string Edit = "Permissions.Procurement.QuotationComparativeClaims.Edit";
+            public const string Delete = "Permissions.Procurement.QuotationComparativeClaims.Delete";
+        }
         //Reporting Form
         public static class ChartOfAccountClaims
         {

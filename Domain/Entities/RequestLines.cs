@@ -12,11 +12,12 @@ namespace Domain.Entities
     public class RequestLines : BaseEntity<int>
     {
         [MaxLength(500)]
-        public string ItemDescription { get; private set; }
-        public int ItemQuantity { get; private set; }
+        public string Description { get; private set; }
+        public int Quantity { get; private set; }
         public int MasterId { get; private set; }
         [ForeignKey("MasterId")]
         public RequestMaster RequestMaster { get; private set; }
+        
         protected RequestLines()
         {
         }

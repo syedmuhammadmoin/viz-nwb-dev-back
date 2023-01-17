@@ -252,6 +252,137 @@ namespace Infrastructure.Migrations
                     b.ToTable("BankStmtMaster");
                 });
 
+            modelBuilder.Entity("Domain.Entities.BidEvaluationLines", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("EvaluatedCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("FinancialObtain")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("FinancialTotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MasterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NameOfBider")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Rule")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<decimal>("TechnicalObtain")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TechnicalTotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MasterId");
+
+                    b.ToTable("BidEvaluationLines");
+                });
+
+            modelBuilder.Entity("Domain.Entities.BidEvaluationMaster", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("BidEvaluationCriteria")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfClosingBid")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfOpeningBid")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DocNo")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LowestEvaluatedBidder")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("MethodOfProcurement")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("NumberOfBids")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RefNo")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TendorInquiryNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BidEvaluationMaster");
+                });
+
             modelBuilder.Entity("Domain.Entities.BillLines", b =>
                 {
                     b.Property<int>("Id")
@@ -594,6 +725,102 @@ namespace Infrastructure.Migrations
                     b.HasIndex("AccountReceivableId");
 
                     b.ToTable("BusinessPartners");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CallForQuotationLines", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MasterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("MasterId");
+
+                    b.ToTable("CallForQuotationLines");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CallForQuotationMaster", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CallForQuotationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("DocNo")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VendorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VendorId");
+
+                    b.ToTable("CallForQuotationMaster");
                 });
 
             modelBuilder.Entity("Domain.Entities.Campus", b =>
@@ -4001,6 +4228,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("PODate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("RequisitionId")
+                        .HasColumnType("int");
+
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
 
@@ -4025,6 +4255,164 @@ namespace Infrastructure.Migrations
                     b.HasIndex("VendorId");
 
                     b.ToTable("PurchaseOrderMaster");
+                });
+
+            modelBuilder.Entity("Domain.Entities.QuotationComparativeMaster", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DocNo")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("QuotationComparativeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("RequsisitionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequsisitionId");
+
+                    b.ToTable("QuotationComparativeMaster");
+                });
+
+            modelBuilder.Entity("Domain.Entities.QuotationLines", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MasterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("MasterId");
+
+                    b.ToTable("QuotationLines");
+                });
+
+            modelBuilder.Entity("Domain.Entities.QuotationMaster", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DocNo")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("QuotationComparativeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("QuotationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("RequisitionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Timeframe")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("VendorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuotationComparativeId");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("VendorId");
+
+                    b.ToTable("QuotationMaster");
                 });
 
             modelBuilder.Entity("Domain.Entities.RecordLedger", b =>
@@ -4162,15 +4550,12 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ItemDescription")
+                    b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<int>("ItemQuantity")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
 
                     b.Property<int>("MasterId")
                         .HasColumnType("int");
@@ -4181,6 +4566,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -4288,7 +4676,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("WarehouseId")
+                    b.Property<int>("WarehouseId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -5188,6 +5576,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("BankAccount");
                 });
 
+            modelBuilder.Entity("Domain.Entities.BidEvaluationLines", b =>
+                {
+                    b.HasOne("Domain.Entities.BidEvaluationMaster", "BidEvaluationMaster")
+                        .WithMany("BidEvaluationLines")
+                        .HasForeignKey("MasterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BidEvaluationMaster");
+                });
+
             modelBuilder.Entity("Domain.Entities.BillLines", b =>
                 {
                     b.HasOne("Domain.Entities.Level4", "Account")
@@ -5315,6 +5714,35 @@ namespace Infrastructure.Migrations
                     b.Navigation("AccountPayable");
 
                     b.Navigation("AccountReceivable");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CallForQuotationLines", b =>
+                {
+                    b.HasOne("Domain.Entities.Product", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.Entities.CallForQuotationMaster", "CallForQuotation")
+                        .WithMany("CallForQuotationLines")
+                        .HasForeignKey("MasterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CallForQuotation");
+
+                    b.Navigation("Item");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CallForQuotationMaster", b =>
+                {
+                    b.HasOne("Domain.Entities.BusinessPartner", "Vendor")
+                        .WithMany()
+                        .HasForeignKey("VendorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Vendor");
                 });
 
             modelBuilder.Entity("Domain.Entities.Campus", b =>
@@ -6459,6 +6887,61 @@ namespace Infrastructure.Migrations
                     b.Navigation("Vendor");
                 });
 
+            modelBuilder.Entity("Domain.Entities.QuotationComparativeMaster", b =>
+                {
+                    b.HasOne("Domain.Entities.RequisitionMaster", "Requisition")
+                        .WithMany()
+                        .HasForeignKey("RequsisitionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Requisition");
+                });
+
+            modelBuilder.Entity("Domain.Entities.QuotationLines", b =>
+                {
+                    b.HasOne("Domain.Entities.Product", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.Entities.QuotationMaster", "QuotationMaster")
+                        .WithMany("QuotationLines")
+                        .HasForeignKey("MasterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("QuotationMaster");
+                });
+
+            modelBuilder.Entity("Domain.Entities.QuotationMaster", b =>
+                {
+                    b.HasOne("Domain.Entities.QuotationComparativeMaster", "QuotationComparativeMaster")
+                        .WithMany("Quotations")
+                        .HasForeignKey("QuotationComparativeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.BusinessPartner", "Vendor")
+                        .WithMany()
+                        .HasForeignKey("VendorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("QuotationComparativeMaster");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("Vendor");
+                });
+
             modelBuilder.Entity("Domain.Entities.RecordLedger", b =>
                 {
                     b.HasOne("Domain.Entities.BusinessPartner", "BusinessPartner")
@@ -6564,7 +7047,8 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Warehouse", "Warehouse")
                         .WithMany()
                         .HasForeignKey("WarehouseId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Item");
 
@@ -6810,6 +7294,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("BankStmtLines");
                 });
 
+            modelBuilder.Entity("Domain.Entities.BidEvaluationMaster", b =>
+                {
+                    b.Navigation("BidEvaluationLines");
+                });
+
             modelBuilder.Entity("Domain.Entities.BillMaster", b =>
                 {
                     b.Navigation("BillLines");
@@ -6823,6 +7312,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.BusinessPartner", b =>
                 {
                     b.Navigation("EmployeesList");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CallForQuotationMaster", b =>
+                {
+                    b.Navigation("CallForQuotationLines");
                 });
 
             modelBuilder.Entity("Domain.Entities.CreditNoteMaster", b =>
@@ -6893,6 +7387,16 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.PurchaseOrderMaster", b =>
                 {
                     b.Navigation("PurchaseOrderLines");
+                });
+
+            modelBuilder.Entity("Domain.Entities.QuotationComparativeMaster", b =>
+                {
+                    b.Navigation("Quotations");
+                });
+
+            modelBuilder.Entity("Domain.Entities.QuotationMaster", b =>
+                {
+                    b.Navigation("QuotationLines");
                 });
 
             modelBuilder.Entity("Domain.Entities.RequestMaster", b =>

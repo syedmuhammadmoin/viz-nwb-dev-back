@@ -213,14 +213,22 @@ namespace Application.Services
 
             if (entity.DocType == DocType.IssuanceReturn)
             {
-                var checkingIssuance = _unitOfWork.IssuanceReturn.Find(new IssuanceReturnSpecs()).ToList();
+                var checkingIssuanceReturn = _unitOfWork.IssuanceReturn.Find(new IssuanceReturnSpecs()).ToList();
 
-                if (checkingIssuance.Count != 0)
+                if (checkingIssuanceReturn.Count != 0)
                 {
                     return new Response<WorkFlowDto>("Issuance Return is pending for this workflow");
                 }
             }
+            if (entity.DocType == DocType.Quotation)
+            {
+                var checkingQuotation = _unitOfWork.Quotation.Find(new QuotationSpecs("")).ToList();
 
+                if (checkingQuotation.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Quotation is pending for this workflow");
+                }
+            }
             //For updating data
             _mapper.Map<CreateWorkFlowDto, WorkFlowMaster>(entity, workFlow);
             await _unitOfWork.SaveAsync();

@@ -26,7 +26,7 @@ namespace Infrastructure.GlobalExceptionFilter
 
         }
         public override void OnException(ExceptionContext context)
-            {
+        {
 
             //RollBack Previous Transaction from Service
             _unitOfWork.Rollback();

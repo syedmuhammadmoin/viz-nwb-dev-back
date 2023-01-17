@@ -57,5 +57,16 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.Status);
         }
+
+        public RequisitionSpecs(int isApproved) : base(x => x.Status.State == DocumentStatus.Unpaid || x.Status.State == DocumentStatus.Partial) 
+        {
+            ApplyOrderByDescending(i => i.Id);
+            AddInclude(i => i.Status);
+        }
+        public RequisitionSpecs(int requestId , bool isReff) 
+            : base (x => x.RequestId == requestId)
+        {
+
+        }
     }
 }

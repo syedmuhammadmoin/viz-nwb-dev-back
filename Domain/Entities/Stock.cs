@@ -20,11 +20,12 @@ namespace Domain.Entities
         [ForeignKey("WarehouseId")]
         public Warehouse Warehouse { get; private set; }
 
-        public Stock(int itemId, int availableQuantity, int reservedQuantity, int warehouseId)
+        public Stock(int itemId, int availableQuantity, int reservedQuantity, int requisitionReservedQuantity, int warehouseId)
         {
             ItemId = itemId;
             AvailableQuantity = availableQuantity;
             ReservedQuantity = reservedQuantity;
+            ReservedRequisitionQuantity = requisitionReservedQuantity;
             WarehouseId = warehouseId;
         }
         public void updateAvailableQuantity(int availableQuantity)

@@ -58,5 +58,11 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.Status);
         }
+
+        public IssuanceSpecs(int requisitionId ,bool isRequisition) 
+           : base(e => e.RequisitionId == requisitionId )
+        {
+            AddInclude(i => i.IssuanceLines);
+        } 
     }
 }

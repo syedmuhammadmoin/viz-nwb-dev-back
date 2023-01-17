@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,21 +29,6 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
-        }
-
-        public async Task<Response<RequisitionDto>> CreateAsync(CreateRequisitionDto entity)
-        {
-           
-            if ((bool)entity.isSubmit)
-            {
-                
-                return await this.SubmitRequisition(entity);
-            }
-            else
-            {
-                
-                return await this.SaveRequisition(entity, 1);
-            }
         }
 
         public async Task<PaginationResponse<List<RequisitionDto>>> GetAllAsync(TransactionFormFilter filter)
@@ -77,60 +63,58 @@ namespace Application.Services
                 return new Response<RequisitionDto>("Not found");
 
             var requisitionProductItemIds = requisition.RequisitionLines.Select(i => i.ItemId).ToList();
-            //Getting stock by items id
-            var stock = await _unitOfWork.Stock.GetAll(new StockSpecs(requisitionProductItemIds));
-            
+
             var requisitionDto = _mapper.Map<RequisitionDto>(requisition);
 
-            foreach (var line in requisitionDto.RequisitionLines)
-            {
-                line.AvailableQuantity = stock
-                    .Where(i => i.ItemId == line.ItemId && i.WarehouseId==line.WarehouseId)
-                    .Sum(i => i.AvailableQuantity);
+            CheckingConditions(requisitionDto, requisitionProductItemIds);
 
-                line.SubTotal = line.PurchasePrice * line.Quantity;
-            }
-
-            ReturningRemarks(requisitionDto, DocType.Requisition);
-
-            if ((requisitionDto.State == DocumentStatus.Partial || requisitionDto.State == DocumentStatus.Paid))
-            {
+            if ((requisitionDto.State == DocumentStatus.Unpaid || requisitionDto.State == DocumentStatus.Partial || requisitionDto.State == DocumentStatus.Paid))
                 return new Response<RequisitionDto>(MapToValue(requisitionDto), "Returning value");
-            }
 
-            requisitionDto.IsAllowedRole = false;
+            ReturningRemarks(requisitionDto);
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Requisition)).FirstOrDefault();
-
-
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
                     .FirstOrDefault(x => (x.CurrentStatusId == requisitionDto.StatusId));
-
                 if (transition != null)
                 {
                     var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
                     foreach (var role in currentUserRoles)
                     {
                         if (transition.AllowedRole.Name == role)
-                        {
                             requisitionDto.IsAllowedRole = true;
-                        }
                     }
                 }
             }
             return new Response<RequisitionDto>(requisitionDto, "Returning value");
         }
 
+        public async Task<Response<List<RequisitionDropDownDto>>> GetRequisitionDropDown()
+        {
+            var requisition = await _unitOfWork.Requisition.GetAll(new RequisitionSpecs(0));
+            if (!requisition.Any())
+                return new Response<List<RequisitionDropDownDto>>("List is empty");
+
+            return new Response<List<RequisitionDropDownDto>>(_mapper.Map<List<RequisitionDropDownDto>>(requisition), "Returning List");
+        }
+
+        public async Task<Response<RequisitionDto>> CreateAsync(CreateRequisitionDto entity)
+        {
+            if ((bool)entity.isSubmit)
+            {
+                return await this.SubmitRequisition(entity);
+            }
+            else
+            {
+                return await this.SaveRequisition(entity, 1);
+            }
+        }
+
         public async Task<Response<RequisitionDto>> UpdateAsync(CreateRequisitionDto entity)
         {
             if ((bool)entity.isSubmit)
             {
-                if ((bool)entity.IsWithoutWorkflow)
-                {
-                    return await this.SaveRequisition(entity, 1);
-                }
-
                 return await this.SubmitRequisition(entity);
             }
             else
@@ -142,127 +126,131 @@ namespace Application.Services
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
             var getRequisition = await _unitOfWork.Requisition.GetById(data.DocId, new RequisitionSpecs(true));
-
             if (getRequisition == null)
-            {
                 return new Response<bool>("Requisition with the input id not found");
-            }
-            if (getRequisition.Status.State == DocumentStatus.Unpaid || getRequisition.Status.State == DocumentStatus.Partial || getRequisition.Status.State == DocumentStatus.Paid)
-            {
-                return new Response<bool>("Requisition already approved");
-            }
-            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Requisition)).FirstOrDefault();
 
+            if (getRequisition.Status.State == DocumentStatus.Unpaid || getRequisition.Status.State == DocumentStatus.Partial || getRequisition.Status.State == DocumentStatus.Paid)
+                return new Response<bool>("Requisition already approved");
+
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Requisition)).FirstOrDefault();
             if (workflow == null)
-            {
                 return new Response<bool>("No activated workflow found for this document");
-            }
+
             var transition = workflow.WorkflowTransitions
                     .FirstOrDefault(x => (x.CurrentStatusId == getRequisition.StatusId && x.Action == data.Action));
-
             if (transition == null)
-            {
                 return new Response<bool>("No transition found");
-            }
+
             var getUser = new GetUser(this._httpContextAccessor);
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
-            _unitOfWork.CreateTransaction();
-          
-                foreach (var role in currentUserRoles)
-                {
-                    if (transition.AllowedRole.Name == role)
-                    {
-                        getRequisition.setStatus(transition.NextStatusId);
-                        if (!String.IsNullOrEmpty(data.Remarks))
-                        {
-                            var addRemarks = new Remark()
-                            {
-                                DocId = getRequisition.Id,
-                                DocType = DocType.Requisition,
-                                Remarks = data.Remarks,
-                                UserId = userId
-                            };
-                            await _unitOfWork.Remarks.Add(addRemarks);
-                        }
-                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
-                        {
-                            foreach (var line in getRequisition.RequisitionLines)
-                            {
-                                line.setStatus(DocumentStatus.Unreconciled);
-                            }
 
-                            await _unitOfWork.SaveAsync();
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "Requisition Approved");
-                        }
-                        if (transition.NextStatus.State == DocumentStatus.Rejected)
+            _unitOfWork.CreateTransaction();
+            foreach (var role in currentUserRoles)
+            {
+                if (transition.AllowedRole.Name == role)
+                {
+                    getRequisition.setStatus(transition.NextStatusId);
+                    if (!String.IsNullOrEmpty(data.Remarks))
+                    {
+                        var addRemarks = new Remark()
                         {
-                       
+                            DocId = getRequisition.Id,
+                            DocType = DocType.Requisition,
+                            Remarks = data.Remarks,
+                            UserId = userId
+                        };
+                        await _unitOfWork.Remarks.Add(addRemarks);
+                    }
+                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                    {
+                        foreach (var line in getRequisition.RequisitionLines)
+                        {
+                            line.setStatus(DocumentStatus.Unreconciled);
+                        }
+
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Requisition Approved");
+                    }
+                    if (transition.NextStatus.State == DocumentStatus.Rejected)
+                    {
                         foreach (var line in getRequisition.RequisitionLines)
                         {
                             var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs(line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
-                            getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity - line.Quantity);
-                            getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
-                        }
-                        await _unitOfWork.SaveAsync();
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "Requisition Rejected");
+                            if (getStockRecord != null)
+                            {
+                                getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity - line.ReserveQuantity);
+                                getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.ReserveQuantity);
+                                line.setReserveQuantity(0);
+                            }
                         }
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
-                        return new Response<bool>(true, "Requisition Reviewed");
+                        return new Response<bool>(true, "Requisition Rejected");
                     }
+                    await _unitOfWork.SaveAsync();
+                    _unitOfWork.Commit();
+                    return new Response<bool>(true, "Requisition Reviewed");
                 }
+            }
 
-                return new Response<bool>("User does not have allowed role");
+            return new Response<bool>("User does not have allowed role");
 
-           
+
+        }
+
+        public Task<Response<int>> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
         }
 
         private async Task<Response<RequisitionDto>> SubmitRequisition(CreateRequisitionDto entity)
         {
-            int statusId = (bool)entity.IsWithoutWorkflow ?3:6;
+            int statusId = (bool)entity.IsWithoutWorkflow ? 3 : 6;
             if (!(bool)entity.IsWithoutWorkflow)
             {
                 var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Requisition)).FirstOrDefault();
-
                 if (checkingActiveWorkFlows == null)
-                {
                     return new Response<RequisitionDto>("No workflow found for Requisition");
-                } 
             }
+            //this code is not support for editable Requisition
+            //Checking available quantity in stock
+            var requisition = CheckOrUpdateQty(entity);
 
+            //this code is not support for editable Requisition
             if (entity.Id == null)
             {
-                return await this.SaveRequisition(entity, statusId);
+                return await this.SaveRequisition(requisition, statusId);
             }
             else
             {
-                return await this.UpdateRequisition(entity, statusId);
+                return await this.UpdateRequisition(requisition, statusId);
             }
         }
 
-        private Response<bool> CheckOrUpdateQty(CreateRequisitionDto requisition)
+        private CreateRequisitionDto CheckOrUpdateQty(CreateRequisitionDto entity)
         {
-            foreach (var line in requisition.RequisitionLines)
+            foreach (var line in entity.RequisitionLines)
             {
-                var getStockRecord= _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
-                
-
-                if (getStockRecord.AvailableQuantity>0)
+                var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
+                if (getStockRecord != null)
                 {
-                    int reservebableQuantity = (int)line.Quantity;
-                    if (line.Quantity> getStockRecord.AvailableQuantity)
+                    if (getStockRecord.AvailableQuantity > 0)
                     {
-                        reservebableQuantity = getStockRecord.AvailableQuantity;
-                    }
-                    getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity + reservebableQuantity);
-                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - reservebableQuantity);
+                        int reserveableQuantity = (int)line.Quantity;
 
+                        if (line.Quantity > getStockRecord.AvailableQuantity)
+                            reserveableQuantity = getStockRecord.AvailableQuantity;
+
+                        //Need to Save reserveable Quantity with Requesition
+                        line.ReserveQuantity = reserveableQuantity;
+                        getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity + reserveableQuantity);
+                        getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - reserveableQuantity);
+                    }
                 }
             }
-            return new Response<bool>(true, "Requisition Save Successfully");
+            return entity;
         }
 
         private async Task<Response<RequisitionDto>> SaveRequisition(CreateRequisitionDto entity, int status)
@@ -270,19 +258,8 @@ namespace Application.Services
             if (entity.RequisitionLines.Count() == 0)
                 return new Response<RequisitionDto>("Lines are required");
 
-            //this code is not support for editable Requisition
-           
-                //Checking available quantity in stock
-                var checkOrUpdateQty = CheckOrUpdateQty(entity);
-                if (!checkOrUpdateQty.IsSuccess)
-                    return new Response<RequisitionDto>(checkOrUpdateQty.Message);
-           
-            //this code is not support for editable Requisition
-
-
-
             //Checking duplicate Lines if any
-            var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId})
+            var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId , x.WarehouseId })
              .Where(g => g.Count() > 1)
              .Select(y => y.Key)
              .ToList();
@@ -296,40 +273,25 @@ namespace Application.Services
             requisition.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-           
-                //Saving in table
-                var result = await _unitOfWork.Requisition.Add(requisition);
-                await _unitOfWork.SaveAsync();
+            //Saving in table
+            var result = await _unitOfWork.Requisition.Add(requisition);
+            await _unitOfWork.SaveAsync();
 
-                //For creating docNo
-                requisition.CreateDocNo();
-                await _unitOfWork.SaveAsync();
+            //For creating docNo
+            requisition.CreateDocNo();
+            await _unitOfWork.SaveAsync();
 
-                //Commiting the transaction 
-                _unitOfWork.Commit();
+            //Commiting the transaction 
+            _unitOfWork.Commit();
 
-                //returning response
-                return new Response<RequisitionDto>(_mapper.Map<RequisitionDto>(result), "Created successfully");
-         
+            //returning response
+            return new Response<RequisitionDto>(_mapper.Map<RequisitionDto>(result), "Created successfully");
         }
 
         private async Task<Response<RequisitionDto>> UpdateRequisition(CreateRequisitionDto entity, int status)
         {
             if (entity.RequisitionLines.Count() == 0)
                 return new Response<RequisitionDto>("Lines are required");
-
-            var specification = new RequisitionSpecs(true);
-            var requisition = await _unitOfWork.Requisition.GetById((int)entity.Id, specification);
-
-            if (requisition == null)
-                return new Response<RequisitionDto>("Not found");
-
-            if (requisition.StatusId != 1 && requisition.StatusId != 2)
-                return new Response<RequisitionDto>("Only draft document can be edited");
-
-
-          
-
 
             //Checking duplicate Lines if any
             var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
@@ -340,30 +302,26 @@ namespace Application.Services
             if (duplicates.Any())
                 return new Response<RequisitionDto>("Duplicate Lines found");
 
-          
+            var requisition = await _unitOfWork.Requisition.GetById((int)entity.Id, new RequisitionSpecs(true));
+            if (requisition == null)
+                return new Response<RequisitionDto>("Not found");
 
+            if (requisition.StatusId != 1 && requisition.StatusId != 2)
+                return new Response<RequisitionDto>("Only draft document can be edited");
 
             //Setting status
             requisition.setStatus(status);
 
             _unitOfWork.CreateTransaction();
-          
-                //For updating data
-                _mapper.Map<CreateRequisitionDto, RequisitionMaster>(entity, requisition);
+            //For updating data
+            _mapper.Map<CreateRequisitionDto, RequisitionMaster>(entity, requisition);
+            await _unitOfWork.SaveAsync();
 
-                await _unitOfWork.SaveAsync();
+            //Commiting the transaction
+            _unitOfWork.Commit();
 
-                //Commiting the transaction
-                _unitOfWork.Commit();
-
-                //returning response
-                return new Response<RequisitionDto>(_mapper.Map<RequisitionDto>(requisition), "Updated successfully");
-            
-        }
-      
-        public Task<Response<int>> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
+            //returning response
+            return new Response<RequisitionDto>(_mapper.Map<RequisitionDto>(requisition), "Updated successfully");
         }
 
         private RequisitionDto MapToValue(RequisitionDto data)
@@ -379,14 +337,59 @@ namespace Application.Services
                     DocNo = y.Key.DocNo,
                 })
                 .ToList();
+            List<ReferncesDto> references = new List<ReferncesDto>();
+            //Add Reference
+            if (data.RequestId != null)
+            {
 
+                references.Add(new ReferncesDto()
+                {
+                    DocId = (int)data.RequestId,
+                    DocNo = "REQUEST-" + String.Format("{0:000}", data.RequestId),
+                    DocType = DocType.Request
+                });
+
+                data.References = references;
+            }
+            var purchaseOrder = _unitOfWork.PurchaseOrder.Find(new PurchaseOrderSpecs(data.Id , true));
+            if (purchaseOrder != null)
+            {
+                foreach (var po in purchaseOrder)
+                {
+                    references.Add(new
+                        ReferncesDto()
+                    {
+                        DocId = po.Id,
+                        DocNo = po.DocNo,
+                        DocType = DocType.PurchaseOrder
+                    });
+
+                }
+            }
+            var quotations = _unitOfWork.Quotation.Find(new QuotationSpecs(data.Id, true));
+
+            if (quotations != null)
+            {
+                foreach (var quote in quotations)
+                {
+                    references.Add(
+                        new ReferncesDto()
+                        {
+                            DocId = quote.Id,
+                            DocNo = quote.DocNo,
+                            DocType = DocType.Quotation
+                        }
+                     );
+                }
+                data.References = references;
+            }
             // Adding in issuances in references list
-            var getReference = new List<ReferncesDto>();
             if (grnLineReconcileRecord.Any())
             {
+
                 foreach (var line in grnLineReconcileRecord)
                 {
-                    getReference.Add(new ReferncesDto
+                    references.Add(new ReferncesDto
                     {
                         DocId = line.IssuanceId,
                         DocNo = line.DocNo,
@@ -394,7 +397,7 @@ namespace Application.Services
                     });
                 }
             }
-            data.References = getReference;
+            data.References = references;
 
             // Get pending & received quantity...
             foreach (var line in data.RequisitionLines)
@@ -409,7 +412,68 @@ namespace Application.Services
 
             return data;
         }
-        private List<RemarksDto> ReturningRemarks(RequisitionDto data, DocType docType)
+
+        private  RequisitionDto CheckingConditions(RequisitionDto requisitionDto, List<int> requisitionProductItemIds)
+        {
+            var stock =  _unitOfWork.Stock.GetAll(new StockSpecs(requisitionProductItemIds)).Result;
+
+            bool isRequiredQty = false;
+            List<decimal> purchaseAmounts = new List<decimal>();
+
+            if(requisitionDto.State != DocumentStatus.Paid) { 
+        
+                foreach (var line in requisitionDto.RequisitionLines)
+            {
+                if (stock.Count() > 0)
+                {
+                    line.AvailableQuantity = stock.Where(x => x.ItemId == line.ItemId && x.WarehouseId == line.WarehouseId).Select(i => i.AvailableQuantity).FirstOrDefault();
+                }
+
+                if (line.ReserveQuantity > 0)
+                {
+                    requisitionDto.IsShowIssuanceButton = true;
+                }
+
+                if (line.Quantity > line.ReserveQuantity)
+                {
+                        var IssuedQuantity = _unitOfWork.RequisitionToIssuanceLineReconcile
+                                                  .Find(new RequisitionToIssuanceLineReconcileSpecs(line.MasterId,
+                                                  line.Id, line.ItemId)).Sum(p => p.Quantity);
+                        var requiredQuantity = line.Quantity - (line.ReserveQuantity + IssuedQuantity);
+                        if (line.Quantity > (line.ReserveQuantity + IssuedQuantity))
+                        {
+                            isRequiredQty = true;
+
+                        }
+
+                        purchaseAmounts.Add(requiredQuantity * line.PurchasePrice);
+                }
+            }
+
+            var totalAmount = purchaseAmounts.Sum();
+            if (isRequiredQty)
+            {
+                if (totalAmount <= 100000)
+                {
+                    requisitionDto.IsShowPurchaseOrderButton = true;
+                }
+                else if (totalAmount > 100000 && totalAmount <= 300000)
+                {
+                    requisitionDto.IsShowCFQButton = true;
+                    requisitionDto.IsShowQuotationButton = true;
+                }
+                else if (totalAmount > 300000)
+                {
+                    requisitionDto.IsShowTenderButton = true;
+                }
+             
+            }
+            }
+            return requisitionDto;
+
+        }
+
+        private List<RemarksDto> ReturningRemarks(RequisitionDto data)
         {
             var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Requisition))
                     .Select(e => new RemarksDto()
@@ -426,6 +490,5 @@ namespace Application.Services
 
             return remarks;
         }
-
     }
 }

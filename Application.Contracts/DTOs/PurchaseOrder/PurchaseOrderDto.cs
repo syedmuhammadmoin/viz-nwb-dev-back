@@ -29,5 +29,7 @@ namespace Application.Contracts.DTOs
         public IEnumerable <RemarksDto> RemarksList { get; set; }
         public IEnumerable <FileUploadDto> FileUploadList { get; set; }
         public bool IsAllowedRole { get; set; }
+        public int? RequisitionId { get; private set; }
+
     }
 }

@@ -22,20 +22,27 @@ namespace Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal PurchasePrice { get; private set; }
 
-        public int? WarehouseId { get; private set; }
+        public int WarehouseId { get; private set; }
         [ForeignKey("WarehouseId")]
         public Warehouse Warehouse { get; private set; }
         public DocumentStatus Status { get; private set; }
         public int MasterId { get; private set; }
         [ForeignKey("MasterId")]
         public RequisitionMaster RequisitionMaster { get; private set; }
+        
+        protected RequisitionLines()
+        {
+
+        }
+
         public void setStatus(DocumentStatus status)
         {
             Status = status;
         }
-        protected RequisitionLines()
-        {
 
+        public void setReserveQuantity(int reserveQuantity )
+        {
+            ReserveQuantity = reserveQuantity;
         }
     }
 }

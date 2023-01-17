@@ -11,9 +11,9 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public int? EmployeeId { get; set; }
-        [Required]
         public DateTime? RequestDate { get; set; }
+        [Required]
+        public int? EmployeeId { get; set; }
         [Required]
         public int? CampusId { get; set; }
         [Required]

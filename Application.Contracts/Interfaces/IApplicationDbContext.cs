@@ -73,11 +73,17 @@ namespace Application.Interfaces
         public DbSet<IssuanceToIssuanceReturnLineReconcile> IssuanceToIssuanceReturnLineReconcile { get; set; }
         public DbSet<IssuanceReturnMaster> IssuanceReturnMaster { get; set; }
         public DbSet<IssuanceReturnLines> IssuanceReturnLines { get; set; }
-
         public DbSet<Remark> Remarks { get; set; }
         public DbSet<LogItem> LogItems { get; set; }
         public DbSet<RequestMaster> RequestMaster { get; set; }
         public DbSet<RequestLines> RequestLines { get; set; }
+        public DbSet<BidEvaluationMaster> BidEvaluationMaster { get; set; }
+        public DbSet<BidEvaluationLines> BidEvaluationLines { get; set; }
+        public DbSet<QuotationMaster> QuotationMaster { get; set; }
+        public DbSet<QuotationLines> QuotationLines { get; set; }
+        public DbSet<CallForQuotationMaster> CallForQuotationMaster { get; set; }
+        public DbSet<CallForQuotationLines> CallForQuotationLines { get; set; }
+        public DbSet<QuotationComparativeMaster> QuotationComparativeMaster { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

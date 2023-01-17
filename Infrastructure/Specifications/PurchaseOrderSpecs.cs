@@ -67,5 +67,11 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Status);
         }
 
+        public PurchaseOrderSpecs(int requisitionId, bool isReff)
+         : base(x => x.RequisitionId == requisitionId)
+        {
+            AddInclude(i => i.PurchaseOrderLines);
+            AddInclude("PurchaseOrderLines.Item");
+        }
     }
 }
