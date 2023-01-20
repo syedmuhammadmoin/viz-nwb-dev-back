@@ -546,11 +546,10 @@ namespace Application.Mapper
                     a => a.Status == DocumentStatus.Draft ? "Draft" :
                     a.Status == DocumentStatus.Submitted ? "Submitted" :
                     a.Status == DocumentStatus.Paid ? "Awarded" : "N/A"));
-            CreateMap<Depreciation,DepreciationDto>()
-                .ForMember(dto => dto.AssetAccount ,core => core.MapFrom(a => a.AssetAccount.Name))
-                .ForMember(dto => dto.DepreciationExpense ,core => core.MapFrom(d => d.DepreciationExpense.Name))
-                .ForMember(dto => dto.AccumulatedDepreciation ,core => core.MapFrom(a => a.AccumulatedDepreciation.Name))
-                .ForMember(dto => dto.ModelType ,core => core.MapFrom(a => a.ModelType == DepreciationMethod.Declining ? "Declining":a.ModelType == DepreciationMethod.StraightLine ? "Straight Line" : "N/A"));
+            CreateMap<Depreciation, DepreciationDto>()
+                .ForMember(dto => dto.AssetAccount, core => core.MapFrom(a => a.AssetAccount.Name))
+                .ForMember(dto => dto.DepreciationExpense, core => core.MapFrom(d => d.DepreciationExpense.Name))
+                .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(a => a.AccumulatedDepreciation.Name));
             CreateMap<CreateDepreciationDto, Depreciation>();
         }
     }
