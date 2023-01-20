@@ -22,7 +22,7 @@ namespace Application.Contracts.DTOs
         public string DepreciationExpense { get; set; }
         public Guid AccumulatedDepreciationId { get; set; }
         public string AccumulatedDepreciation { get; set; }
-        public string ModelType { get; set; }
+        public DepreciationMethod ModelType { get; set; }
         public decimal? DecliningRate { get; set; }
     }
 }
