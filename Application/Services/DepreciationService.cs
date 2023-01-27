@@ -35,9 +35,6 @@ namespace Application.Services
             var result = await _unitOfWork.Depreciation.Add(depreciation);
             await _unitOfWork.SaveAsync();
 
-            depreciation.CreateDocNo();
-            await _unitOfWork.SaveAsync();
-
             //Commiting the transaction 
             _unitOfWork.Commit();
 
@@ -52,11 +49,6 @@ namespace Application.Services
 
         public async Task<PaginationResponse<List<DepreciationDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var OpeningDate = new List<DateTime?>();
-            if (filter.DocDate != null)
-            {
-                OpeningDate.Add(filter.DocDate);
-            }
 
             var depreciation = await _unitOfWork.Depreciation.GetAll(new DepreciationSpecs(filter, false));
 
@@ -75,7 +67,7 @@ namespace Application.Services
             if (depreciation == null)
                 return new Response<DepreciationDto>("Not found");
             var depreciationDto = _mapper.Map<DepreciationDto>(depreciation);
-            return new Response<DepreciationDto>(depreciationDto, "Returning value"); throw new NotImplementedException();
+            return new Response<DepreciationDto>(depreciationDto, "Returning value"); 
         }
 
         public async Task<Response<List<DepreciationDto>>> GetDepreciationDown()
