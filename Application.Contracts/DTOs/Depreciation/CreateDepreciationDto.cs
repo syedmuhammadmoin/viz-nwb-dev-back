@@ -26,7 +26,6 @@ namespace Application.Contracts.DTOs
         public Guid AccumulatedDepreciationId { get; set; }
         [Required]
         public DepreciationMethod ModelType { get; set; }
-        
         [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 0 and 100")]
         public decimal? DecliningRate { get; set; }
     }
