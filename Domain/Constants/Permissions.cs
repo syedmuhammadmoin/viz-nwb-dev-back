@@ -370,6 +370,13 @@ namespace Domain.Constants
             public const string Edit = "Permissions.FixedAsset.DepreciationClaims.Edit";
             public const string Delete = "Permissions.FixedAsset.DepreciationClaims.Delete";
         }
+        public static class FixedAssetClaims
+        {
+            public const string View = "Permissions.FixedAsset.FixedAssetClaims.View";
+            public const string Create = "Permissions.FixedAsset.FixedAssetClaims.Create";
+            public const string Edit = "Permissions.FixedAsset.FixedAssetClaims.Edit";
+            public const string Delete = "Permissions.FixedAsset.FixedAssetClaims.Delete";
+        }
         //Reporting Form
         public static class ChartOfAccountClaims
         {
