@@ -91,6 +91,7 @@ namespace Infrastructure.Context
         public DbSet<CallForQuotationLines> CallForQuotationLines { get; set; }
         public DbSet<QuotationComparativeMaster> QuotationComparativeMaster { get; set; }
         public DbSet<Depreciation> Depreciations { get; set; }
+        public DbSet<FixedAsset> FixedAssets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
