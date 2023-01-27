@@ -33,11 +33,5 @@ namespace Domain.Entities
         protected Depreciation()
         {
         }
-
-        public void CreateDocNo()
-        {
-            //Creating doc no..
-            DocNo = "DEP-" + String.Format("{0:000}", Id);
-        }
     }
 }
