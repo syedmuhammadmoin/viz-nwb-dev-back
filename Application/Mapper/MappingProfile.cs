@@ -559,6 +559,17 @@ namespace Application.Mapper
                 .ForMember(dto => dto.DepreciationExpense ,core => core.MapFrom(d => d.DepreciationExpense.Name))
                 .ForMember(dto => dto.CategoryName  , core => core.MapFrom(c => c.Category.Name));
             CreateMap<CreateFixedAssetDto, FixedAsset>();
+
+            CreateMap<CWIP, CWIPDto>()
+                .ForMember(dto => dto.CWIPAccount, core => core.MapFrom(d => d.CWIPAccount.Name))
+                .ForMember(dto => dto.AssetAccount, core => core.MapFrom(d => d.AssetAccount.Name))
+                .ForMember(dto => dto.Depreciation, core => core.MapFrom(d => d.Depreciation.ModelName))
+                .ForMember(dto => dto.DepreciationExpense, core => core.MapFrom(d => d.DepreciationExpense.Name))
+                .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(d => d.AccumulatedDepreciation.Name));
+                
+
+                
+            CreateMap<CreateCWIPDto, CWIP>();
         }
     }
 }
