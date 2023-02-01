@@ -23,12 +23,12 @@ namespace Application.Contracts.DTOs
         public bool DepreciationApplicability { get; set; }
         public int? DepreciationId { get; set; }
         public string Depreciation { get; set; }
-        public string ModelType { get; set; }
+        public DepreciationMethod ModelType { get; set; }
         public Guid? DepreciationExpenseId { get; set; }
         public string DepreciationExpense { get; set; }
         public Guid? AccumulatedDepreciationId { get; set; }
         public string AccumulatedDepreciation { get; set; }
-        public int? UseFullLife { get; set; }
+        public int UseFullLife { get; set; }
         public int Quantinty { get; set; }
         public decimal? DecLiningRate { get; set; }
         public bool ProrataBasis { get; set; }
