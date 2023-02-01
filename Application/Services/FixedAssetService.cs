@@ -48,6 +48,12 @@ namespace Application.Services
             }
             var fixedAsset = _mapper.Map<FixedAsset>(entity);
             _unitOfWork.CreateTransaction();
+
+            var category = await _unitOfWork.Category.GetById(entity.Id, new CategorySpecs());
+            if (category.IsFixedAsset == false) 
+            {
+                return new Response<FixedAssetDto>("Category should be Fixed ASset");
+            }
             //Saving in table
             var result = await _unitOfWork.FixedAsset.Add(fixedAsset);
             await _unitOfWork.SaveAsync();
