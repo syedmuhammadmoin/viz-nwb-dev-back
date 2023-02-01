@@ -51,7 +51,11 @@ namespace Application.Services
             //Saving in table
             var result = await _unitOfWork.FixedAsset.Add(fixedAsset);
             await _unitOfWork.SaveAsync();
-
+            //For creating docNo
+            
+            fixedAsset.CreateAssetCode();
+            await _unitOfWork.SaveAsync();
+  
             //Commiting the transaction 
             _unitOfWork.Commit();
 
