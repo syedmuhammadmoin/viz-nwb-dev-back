@@ -74,5 +74,11 @@ namespace Vizalys.Api.Controllers
         {
             return Ok(await _categoryService.GetCategoryDropDown()); // Status Code : 200
         }
+
+        [HttpGet("AssetDropdown")]
+        public async Task<ActionResult<Response<List<CategoryDto>>>> GetCategoryDropDownByAsset()
+        {
+            return Ok(await _categoryService.GetCategoryDropDownByAsset()); // Status Code : 200
+        }
     }
 }
