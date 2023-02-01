@@ -554,7 +554,7 @@ namespace Application.Mapper
 
             CreateMap<FixedAsset, FixedAssetDto>()
                 .ForMember(dto => dto.AssetAccount, core => core.MapFrom(a => a.AssetAccount.Name))
-                .ForMember(dto => dto.DepreciationExpense, core => core.MapFrom(d => d.DepreciationExpense.Name))
+                .ForMember(dto => dto.Depreciation, core => core.MapFrom(d => d.Depreciation.ModelName))
                 .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(a => a.AccumulatedDepreciation.Name))
                 .ForMember(dto => dto.DepreciationExpense ,core => core.MapFrom(d => d.DepreciationExpense.Name))
                 .ForMember(dto => dto.CategoryName  , core => core.MapFrom(c => c.Category.Name));
