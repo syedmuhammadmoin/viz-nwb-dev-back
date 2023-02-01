@@ -12,5 +12,7 @@ namespace Application.Contracts.Interfaces
     public interface ICategoryService : ICrudService<CreateCategoryDto, CategoryDto, int, TransactionFormFilter>
     {
         Task<Response<List<CategoryDto>>> GetCategoryDropDown();
+
+        Task<Response<List<CategoryDto>>> GetCategoryDropDownByAsset();
     }
 }
