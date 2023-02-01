@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Constants;
 
 namespace Application.Contracts.DTOs
 {
@@ -21,6 +22,7 @@ namespace Application.Contracts.DTOs
         public bool DepreciationApplicability { get; set; }
         public int DepreciationId { get; set; }
         public string Depreciation { get; set; }
+        public DepreciationMethod ModelType { get; set; }
         public Guid AssetAccountId { get; set; }
         public string AssetAccount { get; set; }
         public Guid DepreciationExpenseId { get; set; }

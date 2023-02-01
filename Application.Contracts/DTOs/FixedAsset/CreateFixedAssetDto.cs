@@ -28,15 +28,16 @@ namespace Application.Contracts.DTOs
         [Required]
         public bool DepreciationApplicability { get; set; }
         public int? DepreciationId { get; set; }
-        [MaxLength(100)]
-        public string ModelType { get; set; }
+        public DepreciationMethod ModelType { get; set; }
         public Guid? AssetAccountId { get; set; }
         public Guid? DepreciationExpenseId { get; set; }
         public Guid? AccumulatedDepreciationId { get; set; }
         public int? UseFullLife { get; set; }
         [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 0 and 100")]
         public decimal? DecLiningRate { get; set; }
+        [Required]
         public bool ProrataBasis { get; set; }
+        [Required]
         public bool Active { get;  set; }
     }
 }
