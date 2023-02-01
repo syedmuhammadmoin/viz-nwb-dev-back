@@ -34,8 +34,8 @@ namespace Domain.Entities
         public Level4 AccumulatedDepreciation { get; private set; }
         public int? UseFullLife { get; private set; }
         public int Quantinty { get; private set; }
-        [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 0 and 100")]
-        public decimal? DecLiningRate { get; private set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal DecLiningRate { get; private set; }
         public bool ProrataBasis { get; private set; }
         public bool Active { get; private set; }
 

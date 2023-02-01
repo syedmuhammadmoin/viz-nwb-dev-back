@@ -12,6 +12,8 @@ namespace Domain.Entities
 {
     public class FixedAsset : BaseEntity<int>
     {
+        [MaxLength(20)]
+        public string AssetCode { get; private set; }
         public DateTime DateofAcquisition { get; private set; }
         [MaxLength(100)]
         public string Name { get; private set; }
@@ -35,11 +37,18 @@ namespace Domain.Entities
         [ForeignKey("AccumulatedDepreciationId")]
         public Level4 AccumulatedDepreciation { get; private set; }
         public int? UseFullLife { get; private set; }
-        public decimal? DecLiningRate { get; private set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal DecLiningRate { get; private set; }
         public bool ProrataBasis { get; private set; }
         public bool Active { get; private set; }
         protected FixedAsset()
         {
+        }
+
+        public void CreateAssetCode()
+        {
+            //Creating doc no..
+            AssetCode = "FXA-" + String.Format("{0:000}", Id);
         }
     }
 }
