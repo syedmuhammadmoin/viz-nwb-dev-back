@@ -13,6 +13,7 @@ namespace Application.Contracts.DTOs
     public class FixedAssetDto
     {
         public int Id { get; set; }
+        public string AssetCode { get; set; }
         public DateTime DateofAcquisition { get; set; }
         public string Name { get; set; }
         public int PurchaseCost { get; set; }
