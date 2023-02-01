@@ -3,6 +3,7 @@ using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
+using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
@@ -25,33 +26,29 @@ namespace Application.Services
         }
         public async Task<Response<FixedAssetDto>> CreateAsync(CreateFixedAssetDto entity)
         {
-            var fixedAsset = _mapper.Map<FixedAsset>(entity);
-
-            _unitOfWork.CreateTransaction();
-            //Saving in table
             if (entity.DepreciationApplicability)
             {
-                if(entity.DepreciationId == null && entity.DepreciationId == 0 || entity.ModelType == null || entity.AssetAccountId == null
-                    || entity.DepreciationExpenseId  == null || entity.AccumulatedDepreciationId == null || 
+                if (entity.DepreciationId == null && entity.DepreciationId == 0 || entity.AssetAccountId == null
+                    || entity.DepreciationExpenseId == null || entity.AccumulatedDepreciationId == null ||
                     entity.UseFullLife == null)
                 {
                     return new Response<FixedAssetDto>("Depreciation Model Fields are Required");
-                    
                 }
-                   
-                if( entity.ModelType == "Declining")
+
+                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
                 {
                     return new Response<FixedAssetDto>("Declining Rate is Required");
                 }
             }
             else
             {
-                entity.DepreciationId= null;
-                entity.ModelType= null;
-                entity.AssetAccountId= null;
-                entity.UseFullLife= null;
+                entity.DepreciationId = null;
+                entity.AssetAccountId = null;
+                entity.UseFullLife = null;
             }
-           
+            var fixedAsset = _mapper.Map<FixedAsset>(entity);
+            _unitOfWork.CreateTransaction();
+            //Saving in table
             var result = await _unitOfWork.FixedAsset.Add(fixedAsset);
             await _unitOfWork.SaveAsync();
 
@@ -85,8 +82,8 @@ namespace Application.Services
             var fixedAsset = await _unitOfWork.FixedAsset.GetById(id, new FixedAssetSpecs());
             if (fixedAsset == null)
                 return new Response<FixedAssetDto>("Not found");
-            var depreciationDto = _mapper.Map<FixedAssetDto>(fixedAsset);
-            return new Response<FixedAssetDto>(depreciationDto, "Returning value");
+            var fixedAssetDto = _mapper.Map<FixedAssetDto>(fixedAsset);
+            return new Response<FixedAssetDto>(fixedAssetDto, "Returning value");
         }
 
         public async Task<Response<FixedAssetDto>> UpdateAsync(CreateFixedAssetDto entity)
@@ -97,14 +94,14 @@ namespace Application.Services
 
             if (entity.DepreciationApplicability)
             {
-                if (entity.DepreciationId == null || entity.ModelType == null || entity.AssetAccountId == null
+                if (entity.DepreciationId == null || entity.AssetAccountId == null
                     || entity.DepreciationExpenseId == null || entity.AccumulatedDepreciationId == null ||
                     entity.UseFullLife == null)
                 {
                     return new Response<FixedAssetDto>("Depreciation Model Fields are Required");
 
                 }
-                if (entity.ModelType == "Declining")
+                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
                 {
                     return new Response<FixedAssetDto>("Declining Rate is Required");
                 }
