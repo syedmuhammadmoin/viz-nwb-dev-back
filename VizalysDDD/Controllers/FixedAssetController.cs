@@ -3,6 +3,7 @@ using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Application.Services;
 using Domain.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +42,7 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(results); // Status code : 400
         }
+       
         [ClaimRequirement("Permission", new string[] { Permissions.FixedAssetClaims.Create, Permissions.FixedAssetClaims.View, Permissions.FixedAssetClaims.Delete, Permissions.FixedAssetClaims.Edit })]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Response<FixedAssetDto>>> GetByIdAsync(int id)
@@ -51,6 +53,7 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
+        
         [ClaimRequirement("Permission", new string[] { Permissions.FixedAssetClaims.Edit })]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Response<FixedAssetDto>>> UpdateAsync(int id, CreateFixedAssetDto entity)
@@ -63,6 +66,16 @@ namespace Vizalys.Api.Controllers
                 return Ok(result); // Status Code : 200
 
             return BadRequest(result); // Status code : 400
+        }
+
+        [HttpPost("workflow")]
+        public async Task<ActionResult<Response<bool>>> CheckWorkFlow([FromBody] ApprovalDto data)
+        {
+            var result = await _fixedAssetService.CheckWorkFlow(data);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status Code : 400
         }
     }
 }
