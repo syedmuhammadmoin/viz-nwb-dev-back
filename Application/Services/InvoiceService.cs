@@ -142,7 +142,7 @@ namespace Application.Services
             }
             if (getInvoice.Status.State == DocumentStatus.Unpaid || getInvoice.Status.State == DocumentStatus.Partial || getInvoice.Status.State == DocumentStatus.Paid)
             {
-                return new Response<bool>("Invoice already approved");
+                return new Response<bool>(true,"Invoice already approved");
             }
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Invoice)).FirstOrDefault();
 
@@ -328,7 +328,6 @@ namespace Application.Services
 
             }
             
-            inv.SetReceivableAccount((Guid)businessPartner.AccountReceivableId);
             inv.SetReceivableAccount((Guid)businessPartner.AccountReceivableId);
             await _unitOfWork.SaveAsync();
 
