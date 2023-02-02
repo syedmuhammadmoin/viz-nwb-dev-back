@@ -68,6 +68,25 @@ namespace Application.Services
                 fixedAssetDto.AssetAccountId = null;
                 fixedAssetDto.DepreciationExpenseId = null;
             }
+            fixedAssetDto.IsAllowedRole = false;
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Invoice)).FirstOrDefault();
+            if (workflow != null)
+            {
+                var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == fixedAssetDto.StatusId));
+
+                if (transition != null)
+                {
+                    var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+                    foreach (var role in currentUserRoles)
+                    {
+                        if (transition.AllowedRole.Name == role)
+                        {
+                            fixedAssetDto.IsAllowedRole = true;
+                        }
+                    }
+                }
+            }
             return new Response<FixedAssetDto>(fixedAssetDto, "Returning value");
         }
 
@@ -88,73 +107,73 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        //public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
-        //{
-        //    var getFixedAsset = await _unitOfWork.FixedAsset.GetById(data.DocId, new FixedAssetSpecs());
+        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
+        {
+            var getFixedAsset = await _unitOfWork.FixedAsset.GetById(data.DocId, new FixedAssetSpecs());
 
-        //    if (getFixedAsset == null)
-        //    {
-        //        return new Response<bool>("Fixed Asset with the input id not found");
-        //    }
-        //    if (getFixedAsset.Status.State == DocumentStatus.Unpaid || getFixedAsset.Status.State == DocumentStatus.Partial || getFixedAsset.Status.State == DocumentStatus.Paid)
-        //    {
-        //        return new Response<bool>("Fixed Asset already approved");
-        //    }
-        //    var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.FixedAsset)).FirstOrDefault();
+            if (getFixedAsset == null)
+            {
+                return new Response<bool>("Fixed Asset with the input id not found");
+            }
+            if (getFixedAsset.Status.State == DocumentStatus.Unpaid || getFixedAsset.Status.State == DocumentStatus.Partial || getFixedAsset.Status.State == DocumentStatus.Paid)
+            {
+                return new Response<bool>("Fixed Asset already approved");
+            }
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.FixedAsset)).FirstOrDefault();
 
-        //    if (workflow == null)
-        //    {
-        //        return new Response<bool>("No activated workflow found for this document");
-        //    }
-        //    var transition = workflow.WorkflowTransitions
-        //            .FirstOrDefault(x => (x.CurrentStatusId == getFixedAsset.StatusId && x.Action == data.Action));
+            if (workflow == null)
+            {
+                return new Response<bool>("No activated workflow found for this document");
+            }
+            var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == getFixedAsset.StatusId && x.Action == data.Action));
 
-        //    if (transition == null)
-        //    {
-        //        return new Response<bool>("No transition found");
-        //    }
+            if (transition == null)
+            {
+                return new Response<bool>("No transition found");
+            }
 
-        //    // Creating object of getUSer class
-        //    var getUser = new GetUser(this._httpContextAccessor);
+            // Creating object of getUSer class
+            var getUser = new GetUser(this._httpContextAccessor);
 
-        //    var userId = getUser.GetCurrentUserId();
-        //    var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
-        //    _unitOfWork.CreateTransaction();
+            var userId = getUser.GetCurrentUserId();
+            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+            _unitOfWork.CreateTransaction();
 
-        //    foreach (var role in currentUserRoles)
-        //    {
-        //        if (transition.AllowedRole.Name == role)
-        //        {
-        //            getFixedAsset.SetStatus(transition.NextStatusId);
+            foreach (var role in currentUserRoles)
+            {
+                if (transition.AllowedRole.Name == role)
+                {
+                    getFixedAsset.SetStatus(transition.NextStatusId);
 
-        //            if (!String.IsNullOrEmpty(data.Remarks))
-        //            {
-        //                var addRemarks = new Remark()
-        //                {
-        //                    DocId = getFixedAsset.Id,
-        //                    DocType = DocType.FixedAsset,
-        //                    Remarks = data.Remarks,
-        //                    UserId = userId
-        //                };
-        //                await _unitOfWork.Remarks.Add(addRemarks);
-        //            }
+                    if (!String.IsNullOrEmpty(data.Remarks))
+                    {
+                        var addRemarks = new Remark()
+                        {
+                            DocId = getFixedAsset.Id,
+                            DocType = DocType.CWIP,
+                            Remarks = data.Remarks,
+                            UserId = userId
+                        };
+                        await _unitOfWork.Remarks.Add(addRemarks);
+                    }
 
-        //            if (transition.NextStatus.State == DocumentStatus.Rejected)
-        //            {
-        //                await _unitOfWork.SaveAsync();
-        //                _unitOfWork.Commit();
-        //                return new Response<bool>(true, "Fixed Asset Rejected");
-        //            }
-        //            await _unitOfWork.SaveAsync();
-        //            _unitOfWork.Commit();
-        //            return new Response<bool>(true, "Fixed Asset Reviewed");
-        //        }
-        //    }
+                    if (transition.NextStatus.State == DocumentStatus.Rejected)
+                    {
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "CWIP Rejected");
+                    }
+                    await _unitOfWork.SaveAsync();
+                    _unitOfWork.Commit();
+                    return new Response<bool>(true, "CWIP Reviewed");
+                }
+            }
 
-        //    return new Response<bool>("User does not have allowed role");
+            return new Response<bool>("User does not have allowed role");
 
 
-        //}
+        }
 
         private async Task<Response<FixedAssetDto>> Submit(CreateFixedAssetDto entity)
         {
@@ -204,7 +223,7 @@ namespace Application.Services
             var fix = _mapper.Map<FixedAsset>(entity);
 
             //Setting status
-            //fix.SetStatus(status);
+            fix.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
 
@@ -213,7 +232,7 @@ namespace Application.Services
             await _unitOfWork.SaveAsync();
 
             //For creating docNo
-            fix.CreateAssetCode();
+            fix.CreateCode();
             await _unitOfWork.SaveAsync();
 
             //Commiting the transaction 
@@ -256,12 +275,12 @@ namespace Application.Services
             if (fix == null)
                 return new Response<FixedAssetDto>("Not found");
 
-            //if (fix.StatusId != 1 && fix.StatusId != 2)
-            //    return new Response<FixedAssetDto>("Only draft document can be edited");
+            if (fix.StatusId != 1 && fix.StatusId != 2)
+                return new Response<FixedAssetDto>("Only draft document can be edited");
 
 
 
-            //fix.SetStatus(status);
+            fix.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
 
