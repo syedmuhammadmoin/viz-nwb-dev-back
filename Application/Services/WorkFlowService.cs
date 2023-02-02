@@ -229,6 +229,24 @@ namespace Application.Services
                     return new Response<WorkFlowDto>("Quotation is pending for this workflow");
                 }
             }
+            if (entity.DocType == DocType.FixedAsset)
+            {
+                var checking = _unitOfWork.FixedAsset.Find(new FixedAssetSpecs("")).ToList();
+
+                if (checking.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Fixed Asset is pending for this workflow");
+                }
+            }
+            if (entity.DocType == DocType.CWIP)
+            {
+                var checking = _unitOfWork.CWIP.Find(new CWIPSpecs("")).ToList();
+
+                if (checking.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Fixed Asset is pending for this workflow");
+                }
+            }
             //For updating data
             _mapper.Map<CreateWorkFlowDto, WorkFlowMaster>(entity, workFlow);
             await _unitOfWork.SaveAsync();
