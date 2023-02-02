@@ -12,6 +12,8 @@ namespace Domain.Entities
 {
     public class CWIP : BaseEntity<int>
     {
+        [MaxLength(20)]
+        public string CwipCode { get; private set; }
         public DateTime DateOfAcquisition { get; private set; }
         public Guid CWIPAccountId { get; private set; }
         [ForeignKey("CWIPAccountId")]
@@ -36,6 +38,9 @@ namespace Domain.Entities
         public int Quantinty { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal DecLiningRate { get; private set; }
+        public int StatusId { get; private set; }
+        [ForeignKey("StatusId")]
+        public WorkFlowStatus Status { get; private set; }
         public bool ProrataBasis { get; private set; }
         public bool Active { get; private set; }
 
@@ -43,5 +48,15 @@ namespace Domain.Entities
         {
 
         }
+        public void SetStatus(int statusId)
+        {
+            StatusId = statusId;
+        }
+        public void CreateCode()
+        {
+            //Creating doc no..
+            CwipCode = "CWIP-" + String.Format("{0:000}", Id);
+        }
+
     }
 }
