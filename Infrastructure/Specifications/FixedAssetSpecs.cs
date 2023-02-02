@@ -23,16 +23,24 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.DepreciationExpense);
                 AddInclude(i => i.AccumulatedDepreciation);
                 AddInclude(i => i.Depreciation);
+                AddInclude(i => i.Status);
                 ApplyOrderByDescending(i => i.Id);
+
             }
         }
         public FixedAssetSpecs()
         {
+            AddInclude(i => i.Status);
             AddInclude(i => i.Category);
             AddInclude(i => i.AssetAccount);
             AddInclude(i => i.DepreciationExpense);
             AddInclude(i => i.AccumulatedDepreciation);
             AddInclude(i => i.Depreciation);
+        }
+        public FixedAssetSpecs(string workflow)
+        : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
+        {
+            AddInclude(i => i.Status);
         }
     }
 }

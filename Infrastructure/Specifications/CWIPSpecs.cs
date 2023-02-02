@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Filters;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.DepreciationExpense);
                 AddInclude(i => i.AccumulatedDepreciation);
                 AddInclude(i => i.Depreciation);
+                AddInclude(i => i.Status);
                 ApplyOrderByDescending(i => i.Id);
             }
         }
@@ -31,9 +33,14 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.AssetAccount);
             AddInclude(i => i.DepreciationExpense);
             AddInclude(i => i.AccumulatedDepreciation);
+            AddInclude(i => i.Status);
             AddInclude(i => i.Depreciation);
         }
-
+        public CWIPSpecs(string workflow)
+        : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
+        {
+            AddInclude(i => i.Status);
+        }
     }
 
 }
