@@ -28,10 +28,14 @@ namespace Application.Contracts.DTOs
         public string DepreciationExpense { get; set; }
         public Guid? AccumulatedDepreciationId { get; set; }
         public string AccumulatedDepreciation { get; set; }
-        public int UseFullLife { get; set; }
+        public int? UseFullLife { get; set; }
         public int Quantinty { get; set; }
         public decimal? DecLiningRate { get; set; }
+        public int StatusId { get; set; }
+        public string Status { get; set; }
+        public DocumentStatus State { get; set; }
         public bool ProrataBasis { get; set; }
         public bool Active { get; set; }
+        public bool IsAllowedRole { get; set; }
     }
 }

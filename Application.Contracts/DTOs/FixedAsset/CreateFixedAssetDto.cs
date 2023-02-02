@@ -13,7 +13,7 @@ namespace Application.Contracts.DTOs
 {
     public class CreateFixedAssetDto
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         [Required]
         public DateTime DateofAcquisition { get; set; }
         [Required]
@@ -35,6 +35,8 @@ namespace Application.Contracts.DTOs
         public int? UseFullLife { get; set; }
         [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 0 and 100")]
         public decimal? DecLiningRate { get; set; }
+        [Required]
+        public bool? isSubmit { get; set; }
         [Required]
         public bool ProrataBasis { get; set; }
         [Required]

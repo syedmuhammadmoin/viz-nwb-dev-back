@@ -12,7 +12,7 @@ namespace Application.Contracts.DTOs
 {
     public class CreateCWIPDto
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         [Required]
         public DateTime DateOfAcquisition { get; set; }
         [Required]
@@ -36,5 +36,8 @@ namespace Application.Contracts.DTOs
         public bool ProrataBasis { get; set; }
         [Required]
         public bool Active { get; set; }
+        [Required]
+        public bool? isSubmit { get; set; }
+
     }
 }
