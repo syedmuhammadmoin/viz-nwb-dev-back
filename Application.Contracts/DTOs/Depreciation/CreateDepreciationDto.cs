@@ -17,6 +17,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public string ModelName { get; set; }
         [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "UseFullLife must be greater than 0")]
         public int UseFullLife { get; set; }
         [Required]
         public Guid AssetAccountId { get; set; }
