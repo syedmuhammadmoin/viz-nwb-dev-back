@@ -69,7 +69,7 @@ namespace Application.Services
                 fixedAssetDto.DepreciationExpenseId = null;
             }
             fixedAssetDto.IsAllowedRole = false;
-            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Invoice)).FirstOrDefault();
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.FixedAsset)).FirstOrDefault();
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
