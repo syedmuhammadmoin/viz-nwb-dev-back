@@ -151,7 +151,7 @@ namespace Application.Services
                         var addRemarks = new Remark()
                         {
                             DocId = getFixedAsset.Id,
-                            DocType = DocType.CWIP,
+                            DocType = DocType.FixedAsset,
                             Remarks = data.Remarks,
                             UserId = userId
                         };
@@ -162,11 +162,11 @@ namespace Application.Services
                     {
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
-                        return new Response<bool>(true, "CWIP Rejected");
+                        return new Response<bool>(true, "FixedAsset Rejected");
                     }
                     await _unitOfWork.SaveAsync();
                     _unitOfWork.Commit();
-                    return new Response<bool>(true, "CWIP Reviewed");
+                    return new Response<bool>(true, "FixedAsset Reviewed");
                 }
             }
 
