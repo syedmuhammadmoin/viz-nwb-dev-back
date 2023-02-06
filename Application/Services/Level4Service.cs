@@ -151,7 +151,7 @@ namespace Application.Services
             return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
         }
 
-        public async Task<Response<List<Level4Dto>>> GetNonLibilatyAssetAccounts()
+        public async Task<Response<List<Level4Dto>>> GetNonCurrentLiabilitiesAccounts()
         {
             var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs("", "" , 1));
             if (!level4.Any())

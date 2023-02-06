@@ -105,9 +105,9 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpGet("nonLibilatyAsset")]
-        public async Task<ActionResult<Response<List<Level4Dto>>>> GetNonLibilatyAssetAccounts()
+        public async Task<ActionResult<Response<List<Level4Dto>>>> GetNonCurrentLiabilitiesAccounts()
         {
-            return Ok(await _level4Service.GetNonLibilatyAssetAccounts()); // Status Code : 200
+            return Ok(await _level4Service.GetNonCurrentLiabilitiesAccounts()); // Status Code : 200
         }
     }
 }
