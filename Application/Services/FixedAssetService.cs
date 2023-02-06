@@ -60,6 +60,7 @@ namespace Application.Services
             if (fixedAsset == null)
                 return new Response<FixedAssetDto>("Not found");
             var fixedAssetDto = _mapper.Map<FixedAssetDto>(fixedAsset);
+            ReturningRemarks(fixedAssetDto, DocType.FixedAsset);
 
             if (fixedAssetDto.DepreciationApplicability == false)
             {
@@ -295,6 +296,24 @@ namespace Application.Services
             //returning response
             return new Response<FixedAssetDto>(_mapper.Map<FixedAssetDto>(fix), "Updated successfully");
 
+        }
+
+        private List<RemarksDto> ReturningRemarks(FixedAssetDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.FixedAsset))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
         }
     }
 }
