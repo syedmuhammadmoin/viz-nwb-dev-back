@@ -36,6 +36,7 @@ namespace Application.Contracts.DTOs
         public DocumentStatus State { get; set; }
         public bool ProrataBasis { get; set; }
         public bool Active { get; set; }
+        public IEnumerable<RemarksDto> RemarksList { get; set; }
         public bool IsAllowedRole { get; set; }
     }
 }
