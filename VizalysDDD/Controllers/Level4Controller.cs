@@ -104,10 +104,17 @@ namespace Vizalys.Api.Controllers
             return Ok(await _level4Service.GetNonCurrentAssetAccounts()); // Status Code : 200
         }
 
-        [HttpGet("nonLibilatyAsset")]
+        [HttpGet("nonCurrentLiabilities")]
         public async Task<ActionResult<Response<List<Level4Dto>>>> GetNonCurrentLiabilitiesAccounts()
         {
             return Ok(await _level4Service.GetNonCurrentLiabilitiesAccounts()); // Status Code : 200
         }
+
+        [HttpGet("expenseAccounts")]
+        public async Task<ActionResult<Response<List<Level4Dto>>>> GetExpenseAccounts()
+        {
+            return Ok(await _level4Service.GetExpenseAccounts()); // Status Code : 200
+        }
+
     }
 }

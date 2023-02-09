@@ -128,7 +128,7 @@ namespace Application.Services
             {
                 return new Response<bool>("CWIP already approved");
             }
-            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.FixedAsset)).FirstOrDefault();
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.CWIP)).FirstOrDefault();
 
             if (workflow == null)
             {

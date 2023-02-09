@@ -244,7 +244,7 @@ namespace Application.Services
 
                 if (checking.Count != 0)
                 {
-                    return new Response<WorkFlowDto>("Fixed Asset is pending for this workflow");
+                    return new Response<WorkFlowDto>("CWIP is pending for this workflow");
                 }
             }
             //For updating data
