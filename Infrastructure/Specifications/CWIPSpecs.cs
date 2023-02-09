@@ -23,6 +23,7 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.AccumulatedDepreciation);
                 AddInclude(i => i.Depreciation);
                 AddInclude(i => i.Status);
+                AddInclude(i => i.Campus);
                 AddInclude(i => i.Warehouse);
                 ApplyOrderByDescending(i => i.Id);
             }
@@ -33,6 +34,7 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.CWIPAccount);
             AddInclude(i => i.AssetAccount);
             AddInclude(i => i.DepreciationExpense);
+            AddInclude(i => i.Campus);
             AddInclude(i => i.AccumulatedDepreciation);
             AddInclude(i => i.Status);
             AddInclude(i => i.Depreciation);
