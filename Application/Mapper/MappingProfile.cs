@@ -566,8 +566,10 @@ namespace Application.Mapper
                 .ForMember(dto => dto.CWIPAccount, core => core.MapFrom(d => d.CWIPAccount.Name))
                 .ForMember(dto => dto.AssetAccount, core => core.MapFrom(d => d.AssetAccount.Name))
                 .ForMember(dto => dto.Depreciation, core => core.MapFrom(d => d.Depreciation.ModelName))
+                .ForMember(dto => dto.Campus , core => core.MapFrom(a => a.Campus.Name))
                 .ForMember(dto => dto.DepreciationExpense, core => core.MapFrom(d => d.DepreciationExpense.Name))
                 .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(d => d.AccumulatedDepreciation.Name))
+                .ForMember(dto => dto.WarehouseName, core => core.MapFrom(a => a.Warehouse.Name))
                 .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State))
                 .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 

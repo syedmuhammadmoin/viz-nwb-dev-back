@@ -18,6 +18,13 @@ namespace Domain.Entities
         public Guid CWIPAccountId { get; private set; }
         [ForeignKey("CWIPAccountId")]
         public Level4 CWIPAccount { get; private set; }
+        public int CampusId { get; private set; }
+        [ForeignKey("CampusId")]
+        public Campus Campus { get; private set; }
+        public WorkFlowStatus Status { get; private set; }
+        public int WarehouseId { get; private set; }
+        [ForeignKey("WarehouseId")]
+        public Warehouse Warehouse { get; private set; }
         public int CostOfAsset { get; private set; }
         public Guid AssetAccountId { get; private set; }
         [ForeignKey("AssetAccountId")]
@@ -40,7 +47,7 @@ namespace Domain.Entities
         public decimal DecLiningRate { get; private set; }
         public int StatusId { get; private set; }
         [ForeignKey("StatusId")]
-        public WorkFlowStatus Status { get; private set; }
+
         public bool ProrataBasis { get; private set; }
         public bool Active { get; private set; }
 

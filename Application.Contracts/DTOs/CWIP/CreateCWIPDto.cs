@@ -23,6 +23,10 @@ namespace Application.Contracts.DTOs
         public Guid AssetAccountId { get; set; }
         public int? SalvageValue { get; set; }
         [Required]
+        public int? CampusId { get; set; }
+        [Required]
+        public int? WareHouseId { get; set; }
+        [Required]
         public bool DepreciationApplicability { get; set; }
         public int? DepreciationId { get; set; }
         public DepreciationMethod ModelType { get; set; }

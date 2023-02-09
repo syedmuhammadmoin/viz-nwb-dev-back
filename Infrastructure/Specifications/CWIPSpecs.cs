@@ -23,6 +23,7 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.AccumulatedDepreciation);
                 AddInclude(i => i.Depreciation);
                 AddInclude(i => i.Status);
+                AddInclude(i => i.Warehouse);
                 ApplyOrderByDescending(i => i.Id);
             }
         }
@@ -35,6 +36,7 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.AccumulatedDepreciation);
             AddInclude(i => i.Status);
             AddInclude(i => i.Depreciation);
+            AddInclude(i => i.Warehouse);
         }
         public CWIPSpecs(string workflow)
         : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))

@@ -19,6 +19,8 @@ namespace Application.Contracts.DTOs
         public string CWIPAccount { get; set; }
         public int CostOfAsset { get; set; }
         public Guid AssetAccountId { get; set; }
+        public int CampusId { get; set; }
+        public string Campus { get; set; }
         public string AssetAccount { get; set; }
         public int? SalvageValue { get; set; }
         public bool DepreciationApplicability { get; set; }
@@ -34,6 +36,8 @@ namespace Application.Contracts.DTOs
         public decimal? DecLiningRate { get; set; }
         public int StatusId { get; set; }
         public string Status { get; set; }
+        public int WarehouseId { get; set; }
+        public string WarehouseName { get; set; }
         public DocumentStatus State { get; set; }
         public bool ProrataBasis { get; set; }
         public bool Active { get; set; }
