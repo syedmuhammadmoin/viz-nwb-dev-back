@@ -78,7 +78,7 @@ namespace Application.Services
 
             }
             cwipDto.IsAllowedRole = false;
-            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Invoice)).FirstOrDefault();
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.CWIP)).FirstOrDefault();
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
