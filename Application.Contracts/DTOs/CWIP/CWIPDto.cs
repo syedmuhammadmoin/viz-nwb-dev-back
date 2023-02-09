@@ -13,6 +13,7 @@ namespace Application.Contracts.DTOs
     public class CWIPDto
     {
         public int Id { get; set; }
+        public string CWIPCode { get; set; }
         public DateTime DateOfAcquisition { get; set; }
         public Guid CWIPAccountId { get; set; }
         public string CWIPAccount { get; set; }
