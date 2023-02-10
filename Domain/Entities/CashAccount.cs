@@ -33,16 +33,16 @@ namespace Domain.Entities
         {
 
         }
-        public void setChAccountId(Guid chAccountId)
+        public void SetChAccountId(Guid chAccountId)
         {
             ChAccountId = chAccountId;
         }
 
-        public void setTransactionId(int transactionId)
+        public void SetTransactionId(int transactionId)
         {
             TransactionId = transactionId;
         }
-        public void createDocNo()
+        public void CreateDocNo()
         {
             //Creating doc no..
             DocNo = "CASH-" + String.Format("{0:000}", Id);

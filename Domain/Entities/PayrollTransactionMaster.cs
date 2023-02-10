@@ -229,7 +229,7 @@ namespace Domain.Entities
         //    PayrollTransactionLines = payrollTransactionLines;
         //}
 
-        public void updatePayrollTransaction(Guid bPSAccountId, string bPSName,
+        public void UpdatePayrollTransaction(Guid bPSAccountId, string bPSName,
             int campusId, int workingDays, int presentDays, int leaveDays,
             DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId,
             string name, string fatherName, string employeeType,
@@ -285,7 +285,7 @@ namespace Domain.Entities
             PayrollTransactionLines = payrollTransactionLines;
         }
 
-        public void updateAccountPayableId(Guid accountPayableId,int statusId)
+        public void UpdateAccountPayableId(Guid accountPayableId,int statusId)
         {
             AccountPayableId = accountPayableId;
             StatusId = statusId;
@@ -296,15 +296,15 @@ namespace Domain.Entities
 
         }
 
-        public void setStatus(int statusId)
+        public void SetStatus(int statusId)
         {
             StatusId = statusId;
         }
-        public void setTransactionId(int transactionId)
+        public void SetTransactionId(int transactionId)
         {
             TransactionId = transactionId;
         }
-        public void setLedgerId(int ledgerId)
+        public void SetLedgerId(int ledgerId)
         {
             LedgerId = ledgerId;
         }

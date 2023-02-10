@@ -363,6 +363,27 @@ namespace Domain.Constants
             public const string Edit = "Permissions.Procurement.QuotationComparativeClaims.Edit";
             public const string Delete = "Permissions.Procurement.QuotationComparativeClaims.Delete";
         }
+        public static class DepreciationClaims
+        {
+            public const string View = "Permissions.FixedAsset.DepreciationClaims.View";
+            public const string Create = "Permissions.FixedAsset.DepreciationClaims.Create";
+            public const string Edit = "Permissions.FixedAsset.DepreciationClaims.Edit";
+            public const string Delete = "Permissions.FixedAsset.DepreciationClaims.Delete";
+        }
+        public static class FixedAssetClaims
+        {
+            public const string View = "Permissions.FixedAsset.FixedAssetClaims.View";
+            public const string Create = "Permissions.FixedAsset.FixedAssetClaims.Create";
+            public const string Edit = "Permissions.FixedAsset.FixedAssetClaims.Edit";
+            public const string Delete = "Permissions.FixedAsset.FixedAssetClaims.Delete";
+        }
+        public static class CWIPClaims
+        {
+            public const string View = "Permissions.FixedAsset.CWIPClaims.View";
+            public const string Create = "Permissions.FixedAsset.CWIPClaims.Create";
+            public const string Edit = "Permissions.FixedAsset.CWIPClaims.Edit";
+            public const string Delete = "Permissions.FixedAsset.CWIPClaims.Delete";
+        }
         //Reporting Form
         public static class ChartOfAccountClaims
         {

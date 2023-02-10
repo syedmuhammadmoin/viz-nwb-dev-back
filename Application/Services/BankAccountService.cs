@@ -66,15 +66,15 @@ namespace Application.Services
 
                 var bankAccount = _mapper.Map<BankAccount>(entity);
 
-                bankAccount.setChAccountId(ChAccount.Id);
-                bankAccount.setClAccountId(ClAccount.Id);
+                bankAccount.SetChAccountId(ChAccount.Id);
+                bankAccount.SetClAccountId(ClAccount.Id);
                 bankAccount.setTransactionId(transaction.Id);
 
                 await _unitOfWork.BankAccount.Add(bankAccount);
                 await _unitOfWork.SaveAsync();
 
-                bankAccount.createDocNo();
-                transaction.updateDocNo(bankAccount.Id, bankAccount.DocNo);
+                bankAccount.CreateDocNo();
+                transaction.UpdateDocNo(bankAccount.Id, bankAccount.DocNo);
                 await _unitOfWork.SaveAsync();
 
                 //Adding BankAccount to Ledger
@@ -138,7 +138,7 @@ namespace Application.Services
                     return new Response<BankAccountDto>("Account not found in Chart Of Account");
 
                 //Updating account name in chart of account
-                account.setAccountName(entity.AccountTitle, entity.AccountCode);
+                account.SetAccountName(entity.AccountTitle, entity.AccountCode);
 
                 // Getting clearing account detail in COA
                 var clearingAccount = await _unitOfWork.Level4.GetById(bankAccount.ClearingAccountId);
@@ -146,7 +146,7 @@ namespace Application.Services
                     return new Response<BankAccountDto>("Clearing account not found in Chart Of Account");
 
                 //Updating clearing account name in chart of account
-                clearingAccount.setAccountName($"{entity.AccountTitle} Clearing Account", $"{entity.AccountCode}C");
+                clearingAccount.SetAccountName($"{entity.AccountTitle} Clearing Account", $"{entity.AccountCode}C");
 
                 await _unitOfWork.SaveAsync();
                 _unitOfWork.Commit();

@@ -309,7 +309,7 @@ namespace Application.Services
             if (getPayrollTransaction == null)
                 return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
 
-            getPayrollTransaction.updatePayrollTransaction(
+            getPayrollTransaction.UpdatePayrollTransaction(
                     empDetails.BPSAccountId,
                     empDetails.BPS,
                     empDetails.CampusId,
@@ -369,7 +369,7 @@ namespace Application.Services
                 return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
 
             // updating data in payroll transaction master table
-            getPayrollTransaction.updateAccountPayableId((Guid)entity.AccountPayableId, status);
+            getPayrollTransaction.UpdateAccountPayableId((Guid)entity.AccountPayableId, status);
             await _unitOfWork.SaveAsync();
 
             //returning response
@@ -415,7 +415,7 @@ namespace Application.Services
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
-            payrollTransaction.setTransactionId(transaction.Id);
+            payrollTransaction.SetTransactionId(transaction.Id);
             await _unitOfWork.SaveAsync();
 
             var addBasicPayInLedger = new RecordLedger(
@@ -494,7 +494,7 @@ namespace Application.Services
 
             //Getting transaction with Payment Transaction Id
             var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(transaction.Id, true)).FirstOrDefault();
-            payrollTransaction.setLedgerId(getUnreconciledDocumentAmount.Id);
+            payrollTransaction.SetLedgerId(getUnreconciledDocumentAmount.Id);
             await _unitOfWork.SaveAsync();
 
         }
@@ -546,7 +546,7 @@ namespace Application.Services
                         await _unitOfWork.Remarks.Add(addRemarks);
                     }
 
-                    getPayrollTransaction.setStatus(transition.NextStatusId);
+                    getPayrollTransaction.SetStatus(transition.NextStatusId);
                     if (transition.NextStatus.State == DocumentStatus.Unpaid)
                     {
                         await AddToLedger(getPayrollTransaction);
@@ -703,7 +703,7 @@ namespace Application.Services
                     return new Response<bool>($"Payroll Transaction with the id = {id[i]} not found");
                 }
 
-                getPayrollTransaction.setStatus(6);
+                getPayrollTransaction.SetStatus(6);
 
                 await _unitOfWork.SaveAsync();
             }

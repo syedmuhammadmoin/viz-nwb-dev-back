@@ -38,7 +38,7 @@ namespace Application.Services
                 if (checkCNIC != null)
                 {
                     var businessPartner = await _unitOfWork.BusinessPartner.GetById(checkCNIC.BusinessPartnerId);
-                    businessPartner.updateName(item.Name);
+                    businessPartner.UpdateName(item.Name);
                     _mapper.Map<CreateEmployeeDto, Employee>(item, checkCNIC);
                     await _unitOfWork.SaveAsync();
                 }
@@ -64,7 +64,7 @@ namespace Application.Services
 
                     var employee = _mapper.Map<Employee>(item);
 
-                    employee.setBusinessPartnerId(savingBP.Id);
+                    employee.SetBusinessPartnerId(savingBP.Id);
 
                     employeetList.Add(employee);
                 }
@@ -241,8 +241,8 @@ namespace Application.Services
             if (getEmployee == null)
                 return new Response<EmployeeDto>("Not found");
 
-            getEmployee.updateEmployee(entity.NoOfIncrements);
-            getEmployee.BusinessPartner.updateAccountPayableId((Guid)entity.AccountPayableId);
+            getEmployee.UpdateEmployee(entity.NoOfIncrements);
+            getEmployee.BusinessPartner.UpdateAccountPayableId((Guid)entity.AccountPayableId);
             await _unitOfWork.SaveAsync();
 
             return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(getEmployee), "Updated successfully");

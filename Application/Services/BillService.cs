@@ -168,7 +168,7 @@ namespace Application.Services
             {
                 if (transition.AllowedRole.Name == role)
                 {
-                    getBill.setStatus(transition.NextStatusId);
+                    getBill.SetStatus(transition.NextStatusId);
                     if (!String.IsNullOrEmpty(data.Remarks))
                     {
                         var addRemarks = new Remark()
@@ -254,10 +254,10 @@ namespace Application.Services
                 if (level3 == false)
                     return new Response<BillDto>("Account Invalid");
             }
-            bill.setPayableAccountId((Guid)businessPartner.AccountPayableId);
+            bill.SetPayableAccountId((Guid)businessPartner.AccountPayableId);
 
             //Setting status
-            bill.setStatus(status);
+            bill.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
 
@@ -312,10 +312,10 @@ namespace Application.Services
                     return new Response<BillDto>("Account Invalid");
             }
 
-            bill.setPayableAccountId((Guid)businessPartner.AccountPayableId);
+            bill.SetPayableAccountId((Guid)businessPartner.AccountPayableId);
 
 
-            bill.setStatus(status);
+            bill.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
 
@@ -338,7 +338,7 @@ namespace Application.Services
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
-            bill.setTransactionId(transaction.Id);
+            bill.SetTransactionId(transaction.Id);
             await _unitOfWork.SaveAsync();
 
             //Inserting line amount into recordledger table
@@ -383,7 +383,7 @@ namespace Application.Services
             //Getting transaction with Payment Transaction Id
             var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(transaction.Id, true)).FirstOrDefault();
 
-            bill.setLedgerId(getUnreconciledDocumentAmount.Id);
+            bill.SetLedgerId(getUnreconciledDocumentAmount.Id);
             await _unitOfWork.SaveAsync();
         }
 

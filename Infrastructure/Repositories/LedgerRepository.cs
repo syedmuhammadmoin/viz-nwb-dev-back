@@ -37,11 +37,11 @@ namespace Infrastructure.Repositories
                 || getLevel3 == new Guid("12120000-5566-7788-99AA-BBCCDDEEFF00")
                 || getLevel3 == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00"))
             {
-                entity.setIsReconcilable(true);
+                entity.SetIsReconcilable(true);
             }
             else
             {
-                entity.setIsReconcilable(false);
+                entity.SetIsReconcilable(false);
             }
             //Adding in recordLedger
             var result = await _context.RecordLedger.AddAsync(entity);
@@ -67,11 +67,11 @@ namespace Infrastructure.Repositories
                 || getLevel3 == new Guid("12120000-5566-7788-99AA-BBCCDDEEFF00")
                 || getLevel3 == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00"))
                 {
-                    item.setIsReconcilable(true);
+                    item.SetIsReconcilable(true);
                 }
                 else
                 {
-                    item.setIsReconcilable(false);
+                    item.SetIsReconcilable(false);
                 }
             }
             await _context.RecordLedger.AddRangeAsync(list);

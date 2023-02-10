@@ -64,7 +64,7 @@ namespace Application.Services
                 {
                     if (transition.AllowedRole.Name == role)
                     {
-                        getGRN.setStatus(transition.NextStatusId);
+                        getGRN.SetStatus(transition.NextStatusId);
                         if (!String.IsNullOrEmpty(data.Remarks))
                         {
                             var addRemarks = new Remark()
@@ -248,7 +248,7 @@ namespace Application.Services
             var goodsReturnNote = _mapper.Map<GoodsReturnNoteMaster>(entity);
 
             //Setting status
-            goodsReturnNote.setStatus(status);
+            goodsReturnNote.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
            
@@ -311,10 +311,10 @@ namespace Application.Services
             if (gRN.StatusId != 1 && gRN.StatusId != 2)
                 return new Response<GoodsReturnNoteDto>("Only draft document can be edited");
             //Setting GoodsReturnNoteId
-            gRN.setGRNId(getGRN.Id);
+            gRN.SetGRNId(getGRN.Id);
 
             //Setting status
-            gRN.setStatus(status);
+            gRN.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
            
@@ -380,11 +380,11 @@ namespace Application.Services
                 // Updationg PO line status
                 if (getGRNLine.Quantity == reconciledTotalGRNQty)
                 {
-                    getGRNLine.setStatus(DocumentStatus.Reconciled);
+                    getGRNLine.SetStatus(DocumentStatus.Reconciled);
                 }
                 else
                 {
-                    getGRNLine.setStatus(DocumentStatus.Partial);
+                    getGRNLine.SetStatus(DocumentStatus.Partial);
                 }
                 await _unitOfWork.SaveAsync();
             }
@@ -399,11 +399,11 @@ namespace Application.Services
 
             if (isGRNLinesReconciled == null)
             {
-                getGRN.setStatus(5);
+                getGRN.SetStatus(5);
             }
             else
             {
-                getGRN.setStatus(4);
+                getGRN.SetStatus(4);
             }
 
             await _unitOfWork.SaveAsync();
@@ -424,7 +424,7 @@ namespace Application.Services
 
                 if (getStockRecord.AvailableQuantity >= line.Quantity)
                 {
-                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - line.Quantity);
+                    getStockRecord.UpdateAvailableQuantity(getStockRecord.AvailableQuantity - line.Quantity);
 
                 }
                 else

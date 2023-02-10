@@ -170,7 +170,7 @@ namespace Application.Services
                         {
                             foreach (var line in getPurchaseOrder.PurchaseOrderLines)
                             {
-                                line.setStatus(DocumentStatus.Unreconciled);
+                                line.SetStatus(DocumentStatus.Unreconciled);
                             }
 
                             await _unitOfWork.SaveAsync();

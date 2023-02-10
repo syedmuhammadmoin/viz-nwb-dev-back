@@ -78,11 +78,11 @@ namespace Application.Services
             
             if ((bool)entity.isSubmit)
             {
-                callForQuotation.setStatus(DocumentStatus.Submitted);
+                callForQuotation.SetStatus(DocumentStatus.Submitted);
             }
             else
             {
-                callForQuotation.setStatus(DocumentStatus.Draft);
+                callForQuotation.SetStatus(DocumentStatus.Draft);
             }
             
             _unitOfWork.CreateTransaction();
@@ -114,11 +114,11 @@ namespace Application.Services
 
             if ((bool)entity.isSubmit)
             {
-                callForQuotation.setStatus(DocumentStatus.Submitted);
+                callForQuotation.SetStatus(DocumentStatus.Submitted);
             }
             else
             {
-                callForQuotation.setStatus(DocumentStatus.Draft);
+                callForQuotation.SetStatus(DocumentStatus.Draft);
             }
 
             _mapper.Map<CreateCallForQuotationDto, CallForQuotationMaster>(entity, callForQuotation);

@@ -64,7 +64,7 @@ namespace Application.Services
                 {
                     if (transition.AllowedRole.Name == role)
                     {
-                        getIssuanceReturn.setStatus(transition.NextStatusId);
+                        getIssuanceReturn.SetStatus(transition.NextStatusId);
                         if (!String.IsNullOrEmpty(data.Remarks))
                         {
                             var addRemarks = new Remark()
@@ -80,7 +80,7 @@ namespace Application.Services
                         {
                             foreach (var line in getIssuanceReturn.IssuanceReturnLines)
                             {
-                                line.setStatus(DocumentStatus.Unreconciled);
+                                line.SetStatus(DocumentStatus.Unreconciled);
                             }
 
                             var reconciled = await ReconcileIssuanceLines(getIssuanceReturn.Id, (int)getIssuanceReturn.IssuanceId, getIssuanceReturn.IssuanceReturnLines);
@@ -256,7 +256,7 @@ namespace Application.Services
             var issuanceReturn = _mapper.Map<IssuanceReturnMaster>(entity);
 
             //Setting status
-            issuanceReturn.setStatus(status);
+            issuanceReturn.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
           
@@ -319,10 +319,10 @@ namespace Application.Services
             if (gRN.StatusId != 1 && gRN.StatusId != 2)
                 return new Response<IssuanceReturnDto>("Only draft document can be edited");
             //Setting IssuanceReturnId
-            gRN.setIssuanceId(getIssuance.Id);
+            gRN.SetIssuanceId(getIssuance.Id);
 
             //Setting status
-            gRN.setStatus(status);
+            gRN.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
          
@@ -374,7 +374,7 @@ namespace Application.Services
                 }
                 else
                 {
-                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
+                    getStockRecord.UpdateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
                 }
 
                 await _unitOfWork.SaveAsync();
@@ -411,11 +411,11 @@ namespace Application.Services
                 // Updationg PO line status
                 if (getIssuanceLine.Quantity == reconciledTotalPOQty)
                 {
-                    getIssuanceLine.setStatus(DocumentStatus.Reconciled);
+                    getIssuanceLine.SetStatus(DocumentStatus.Reconciled);
                 }
                 else
                 {
-                    getIssuanceLine.setStatus(DocumentStatus.Partial);
+                    getIssuanceLine.SetStatus(DocumentStatus.Partial);
                 }
                 await _unitOfWork.SaveAsync();
             }
@@ -430,11 +430,11 @@ namespace Application.Services
 
             if (isIssuanceLinesReconciled == null)
             {
-                getissuance.setStatus(5);
+                getissuance.SetStatus(5);
             }
             else
             {
-                getissuance.setStatus(4);
+                getissuance.SetStatus(4);
             }
 
             await _unitOfWork.SaveAsync();

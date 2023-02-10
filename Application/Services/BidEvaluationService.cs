@@ -74,11 +74,11 @@ namespace Application.Services
 
             if ((bool)entity.isSubmit)
             {
-                bidEvaluation.setStatus(DocumentStatus.Submitted);
+                bidEvaluation.SetStatus(DocumentStatus.Submitted);
             }
             else
             {
-                bidEvaluation.setStatus(DocumentStatus.Draft);
+                bidEvaluation.SetStatus(DocumentStatus.Draft);
             }
             _unitOfWork.CreateTransaction();
             //Saving in table
@@ -109,11 +109,11 @@ namespace Application.Services
 
             if ((bool)entity.isSubmit)
             {
-                bidEvaluation.setStatus(DocumentStatus.Submitted);
+                bidEvaluation.SetStatus(DocumentStatus.Submitted);
             }
             else
             {
-                bidEvaluation.setStatus(DocumentStatus.Draft);
+                bidEvaluation.SetStatus(DocumentStatus.Draft);
             }
             //For updating data
             _mapper.Map<CreateBidEvaluationDto, BidEvaluationMaster>(entity, bidEvaluation);

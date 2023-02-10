@@ -39,7 +39,7 @@ namespace Domain.Entities
             Debit = debit;
             Credit = credit;
         }
-        public void updateStatus(DocumentStatus status)
+        public void UpdateStatus(DocumentStatus status)
         {
             BankReconStatus = status;
         }

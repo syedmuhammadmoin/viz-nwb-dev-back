@@ -68,16 +68,16 @@ namespace Domain.Entities
         public string Email { get; private set; }
         public bool isActive { get; private set; }
 
-        public void setBusinessPartnerId(int businessPartnerId) 
+        public void SetBusinessPartnerId(int businessPartnerId) 
         {
             BusinessPartnerId = businessPartnerId;
         }
-        public void setEmployeeEmail(string email)
+        public void SetEmployeeEmail(string email)
         {
             Email = email;
         }
         
-        public void updateEmployee(int? noOfIncrements)
+        public void UpdateEmployee(int? noOfIncrements)
         {
             NoOfIncrements = noOfIncrements;
         }

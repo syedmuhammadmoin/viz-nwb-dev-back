@@ -195,10 +195,10 @@ namespace Application.Services
                 if (level3 == false)
                     return new Response<DebitNoteDto>("Account Invalid");
             }
-            dbn.setPayableAccountId((Guid)businessPartner.AccountPayableId);
+            dbn.SetPayableAccountId((Guid)businessPartner.AccountPayableId);
 
             //Setting status
-            dbn.setStatus(status);
+            dbn.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
 
@@ -253,9 +253,9 @@ namespace Application.Services
                     return new Response<DebitNoteDto>("Account Invalid");
             }
 
-            dbn.setPayableAccountId((Guid)businessPartner.AccountPayableId);
+            dbn.SetPayableAccountId((Guid)businessPartner.AccountPayableId);
 
-            dbn.setStatus(status);
+            dbn.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
 
@@ -279,7 +279,7 @@ namespace Application.Services
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
-            dbn.setTransactionId(transaction.Id);
+            dbn.SetTransactionId(transaction.Id);
             await _unitOfWork.SaveAsync();
 
             //Inserting line amount into recordledger table
@@ -322,7 +322,7 @@ namespace Application.Services
             //Getting transaction with Payment Transaction Id
             var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(transaction.Id, true)).FirstOrDefault();
 
-            dbn.setLedgerId(getUnreconciledDocumentAmount.Id);
+            dbn.SetLedgerId(getUnreconciledDocumentAmount.Id);
             await _unitOfWork.SaveAsync();
         }
 
@@ -363,7 +363,7 @@ namespace Application.Services
             {
                 if (transition.AllowedRole.Name == role)
                 {
-                    getDebitNote.setStatus(transition.NextStatusId);
+                    getDebitNote.SetStatus(transition.NextStatusId);
                     if (!String.IsNullOrEmpty(data.Remarks))
                     {
                         var addRemarks = new Remark()

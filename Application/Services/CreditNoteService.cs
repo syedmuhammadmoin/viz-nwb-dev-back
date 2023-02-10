@@ -183,10 +183,10 @@ namespace Application.Services
                 }
 
             }
-            crn.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
+            crn.SetReceivableAccount((Guid)businessPartner.AccountReceivableId);
 
             //Setting status
-            crn.setStatus(status);
+            crn.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
           
@@ -237,9 +237,9 @@ namespace Application.Services
                 }
 
             }
-            crn.setReceivableAccount((Guid)businessPartner.AccountReceivableId);
+            crn.SetReceivableAccount((Guid)businessPartner.AccountReceivableId);
 
-            crn.setStatus(status);
+            crn.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
             
@@ -263,7 +263,7 @@ namespace Application.Services
             await _unitOfWork.Transaction.Add(transaction);
             await _unitOfWork.SaveAsync();
 
-            crn.setTransactionId(transaction.Id);
+            crn.SetTransactionId(transaction.Id);
             await _unitOfWork.SaveAsync();
 
             //Inserting line amount into recordledger table
@@ -322,7 +322,7 @@ namespace Application.Services
             //Getting transaction with Payment Transaction Id
             var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(transaction.Id, true)).FirstOrDefault();
             
-            crn.setLedgerId(getUnreconciledDocumentAmount.Id);
+            crn.SetLedgerId(getUnreconciledDocumentAmount.Id);
             await _unitOfWork.SaveAsync();
         }
 
@@ -364,7 +364,7 @@ namespace Application.Services
                 {
                     if (transition.AllowedRole.Name == role)
                     {
-                        getCreditNote.setStatus(transition.NextStatusId);
+                        getCreditNote.SetStatus(transition.NextStatusId);
 
                         if (!String.IsNullOrEmpty(data.Remarks))
                         {

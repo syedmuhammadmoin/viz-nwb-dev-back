@@ -37,7 +37,7 @@ namespace Application.Services
             }
 
             var level4 = _mapper.Map<Level4>(entity);
-            level4.setLevel1Id(level3.Level2.Level1_id);
+            level4.SetLevel1Id(level3.Level2.Level1_id);
             var result = await _unitOfWork.Level4.Add(level4);
             await _unitOfWork.SaveAsync();
             return new Response<Level4Dto>(_mapper.Map<Level4Dto>(result), "Created successfully");
@@ -97,7 +97,7 @@ namespace Application.Services
         {
             var level4 = await _unitOfWork.Level4.GetAll();
             if (!level4.Any())
-                return new Response<List<Level4Dto>>("List is empty");
+                return new Response<List<Level4Dto>>(null, "List is empty");
 
             return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
 
@@ -107,7 +107,7 @@ namespace Application.Services
         {
             var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs(0));
             if (!level4.Any())
-                return new Response<List<Level4Dto>>("List is empty");
+                return new Response<List<Level4Dto>>(null, "List is empty");
 
             return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
 
@@ -117,7 +117,7 @@ namespace Application.Services
         {
             var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs(true));
             if (!level4.Any())
-                return new Response<List<Level4Dto>>("List is empty");
+                return new Response<List<Level4Dto>>(null, "List is empty");
 
             return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
 
@@ -127,7 +127,7 @@ namespace Application.Services
         {
             var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs(1, false));
             if (!level4.Any())
-                return new Response<List<Level4Dto>>("List is empty");
+                return new Response<List<Level4Dto>>(null, "List is empty");
 
             return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
 
@@ -137,7 +137,33 @@ namespace Application.Services
         {
             var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs(2, true));
             if (!level4.Any())
-                return new Response<List<Level4Dto>>("List is empty");
+                return new Response<List<Level4Dto>>(null, "List is empty");
+
+            return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
+        }
+
+        public async Task<Response<List<Level4Dto>>> GetNonCurrentAssetAccounts()
+        {
+            var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs("", ""));
+            if (!level4.Any())
+                return new Response<List<Level4Dto>>(null,"List is empty");
+
+            return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
+        }
+
+        public async Task<Response<List<Level4Dto>>> GetNonCurrentLiabilitiesAccounts()
+        {
+            var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs("", "" , 1));
+            if (!level4.Any())
+                return new Response<List<Level4Dto>>(null, "List is empty");
+
+            return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
+        }
+        public async Task<Response<List<Level4Dto>>> GetExpenseAccounts()
+        {
+            var level4 = await _unitOfWork.Level4.GetAll(new GetExpenseAccountsSpecs());
+            if (!level4.Any())
+                return new Response<List<Level4Dto>>(null, "List is empty");
 
             return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
         }

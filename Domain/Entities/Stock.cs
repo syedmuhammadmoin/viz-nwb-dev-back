@@ -28,15 +28,15 @@ namespace Domain.Entities
             ReservedRequisitionQuantity = requisitionReservedQuantity;
             WarehouseId = warehouseId;
         }
-        public void updateAvailableQuantity(int availableQuantity)
+        public void UpdateAvailableQuantity(int availableQuantity)
         {
             AvailableQuantity = availableQuantity;
         }
-        public void updateReservedQuantity(int reservedQuantity)
+        public void UpdateReservedQuantity(int reservedQuantity)
         {
             ReservedQuantity = reservedQuantity;
         }
-        public void updateRequisitionReservedQuantity(int reservedRequisitionQuantity)
+        public void UpdateRequisitionReservedQuantity(int reservedRequisitionQuantity)
         {
             ReservedRequisitionQuantity = reservedRequisitionQuantity;
         }

@@ -35,12 +35,12 @@ namespace Domain.Entities
 
         }
 
-        public void setStatus(DocumentStatus status)
+        public void SetStatus(DocumentStatus status)
         {
             Status = status;
         }
 
-        public void setReserveQuantity(int reserveQuantity )
+        public void SetReserveQuantity(int reserveQuantity )
         {
             ReserveQuantity = reserveQuantity;
         }

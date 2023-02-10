@@ -64,7 +64,7 @@ namespace Application.Services
             {
                 if (transition.AllowedRole.Name == role)
                 {
-                    getGRN.setStatus(transition.NextStatusId);
+                    getGRN.SetStatus(transition.NextStatusId);
                     if (!String.IsNullOrEmpty(data.Remarks))
                     {
                         var addRemarks = new Remark()
@@ -81,7 +81,7 @@ namespace Application.Services
                     {
                         foreach (var grnline in getGRN.GRNLines)
                         {
-                            grnline.setStatus(DocumentStatus.Unreconciled);
+                            grnline.SetStatus(DocumentStatus.Unreconciled);
 
                             var purchseOrder = await _unitOfWork.PurchaseOrder.GetById(getGRN.PurchaseOrderId, new PurchaseOrderSpecs((int)getGRN.PurchaseOrderId));
                             if (purchseOrder != null)
@@ -104,14 +104,14 @@ namespace Application.Services
                                         {
                                             if (grnline.Quantity <= reqRemainingQty)
                                             {
-                                                reqLine.setReserveQuantity(reqLine.ReserveQuantity + grnline.Quantity);
-                                                stock.updateRequisitionReservedQuantity(stock.ReservedRequisitionQuantity + grnline.Quantity);
+                                                reqLine.SetReserveQuantity(reqLine.ReserveQuantity + grnline.Quantity);
+                                                stock.UpdateRequisitionReservedQuantity(stock.ReservedRequisitionQuantity + grnline.Quantity);
                                             }
                                             else
                                             {
-                                                reqLine.setReserveQuantity(reqLine.ReserveQuantity + reqRemainingQty);
-                                                stock.updateRequisitionReservedQuantity(stock.ReservedRequisitionQuantity + reqRemainingQty);
-                                                stock.updateAvailableQuantity(grnline.Quantity - reqRemainingQty);
+                                                reqLine.SetReserveQuantity(reqLine.ReserveQuantity + reqRemainingQty);
+                                                stock.UpdateRequisitionReservedQuantity(stock.ReservedRequisitionQuantity + reqRemainingQty);
+                                                stock.UpdateAvailableQuantity(grnline.Quantity - reqRemainingQty);
 
                                             }
                                         }
@@ -119,7 +119,7 @@ namespace Application.Services
                                         {
                                             if (grnline.Quantity <= reqRemainingQty)
                                             {
-                                                reqLine.setReserveQuantity(reqLine.ReserveQuantity + grnline.Quantity);
+                                                reqLine.SetReserveQuantity(reqLine.ReserveQuantity + grnline.Quantity);
 
                                                 var addStock = new Stock
                                                     (
@@ -134,7 +134,7 @@ namespace Application.Services
                                             }
                                             else
                                             {
-                                                reqLine.setReserveQuantity(reqLine.ReserveQuantity + reqRemainingQty);
+                                                reqLine.SetReserveQuantity(reqLine.ReserveQuantity + reqRemainingQty);
                                                 var addStock = new Stock
                                                     (
                                                    grnline.ItemId,
@@ -355,7 +355,7 @@ namespace Application.Services
             var grn = _mapper.Map<GRNMaster>(entity);
 
             //Setting status
-            grn.setStatus(status);
+            grn.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
 
@@ -419,10 +419,10 @@ namespace Application.Services
             if (gRN.StatusId != 1 && gRN.StatusId != 2)
                 return new Response<GRNDto>("Only draft document can be edited");
             //Setting PurchaseId
-            gRN.setPurchaseOrderId(getPO.Id);
+            gRN.SetPurchaseOrderId(getPO.Id);
 
             //Setting status
-            gRN.setStatus(status);
+            gRN.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
             //For updating data
@@ -472,11 +472,11 @@ namespace Application.Services
                 // Updationg PO line status
                 if (getpurchaseOrderLine.Quantity == reconciledTotalPOQty)
                 {
-                    getpurchaseOrderLine.setStatus(DocumentStatus.Reconciled);
+                    getpurchaseOrderLine.SetStatus(DocumentStatus.Reconciled);
                 }
                 else
                 {
-                    getpurchaseOrderLine.setStatus(DocumentStatus.Partial);
+                    getpurchaseOrderLine.SetStatus(DocumentStatus.Partial);
                 }
                 await _unitOfWork.SaveAsync();
             }
@@ -523,7 +523,7 @@ namespace Application.Services
                 }
                 else
                 {
-                    getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
+                    getStockRecord.UpdateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
                 }
 
                 await _unitOfWork.SaveAsync();

@@ -149,7 +149,7 @@ namespace Application.Services
             {
                 if (transition.AllowedRole.Name == role)
                 {
-                    getIssuance.setStatus(transition.NextStatusId);
+                    getIssuance.SetStatus(transition.NextStatusId);
                     if (!String.IsNullOrEmpty(data.Remarks))
                     {
                         var addRemarks = new Remark()
@@ -166,7 +166,7 @@ namespace Application.Services
                     {
                         foreach (var line in getIssuance.IssuanceLines)
                         {
-                            line.setStatus(DocumentStatus.Unreconciled);
+                            line.SetStatus(DocumentStatus.Unreconciled);
                         }
 
                         if (getIssuance.RequisitionId != null)
@@ -263,7 +263,7 @@ namespace Application.Services
             var issuance = _mapper.Map<IssuanceMaster>(entity);
 
             //Setting status
-            issuance.setStatus(status);
+            issuance.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
 
@@ -366,7 +366,7 @@ namespace Application.Services
             if (issuance.StatusId != 1 && issuance.StatusId != 2)
                 return new Response<IssuanceDto>("Only draft document can be edited");
 
-            issuance.setStatus(status);
+            issuance.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
 
@@ -400,8 +400,8 @@ namespace Application.Services
                     return new Response<bool>("Selected item quantity is exceeding available quantity");
 
 
-                getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity + (int)line.Quantity);
-                getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - (int)line.Quantity);
+                getStockRecord.UpdateReservedQuantity(getStockRecord.ReservedQuantity + (int)line.Quantity);
+                getStockRecord.UpdateAvailableQuantity(getStockRecord.AvailableQuantity - (int)line.Quantity);
 
 
 
@@ -447,14 +447,14 @@ namespace Application.Services
                     if (getState.State == DocumentStatus.Unpaid)
                     {
 
-                        getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity - line.Quantity);
+                        getStockRecord.UpdateReservedQuantity(getStockRecord.ReservedQuantity - line.Quantity);
                     }
 
                     // updating reserved quantity for REJECTED Issuance
                     if (getState.State == DocumentStatus.Rejected)
                     {
-                        getStockRecord.updateReservedQuantity(getStockRecord.ReservedQuantity - line.Quantity);
-                        getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
+                        getStockRecord.UpdateReservedQuantity(getStockRecord.ReservedQuantity - line.Quantity);
+                        getStockRecord.UpdateAvailableQuantity(getStockRecord.AvailableQuantity + line.Quantity);
                     }
                 }
                 else
@@ -477,14 +477,14 @@ namespace Application.Services
                         var reqLine = getRequisition.RequisitionLines.Where(i => i.ItemId == line.ItemId && i.WarehouseId == line.WarehouseId).FirstOrDefault();
                         if (reqLine.Quantity > 0)
                         {
-                            reqLine.setReserveQuantity(reqLine.ReserveQuantity - line.Quantity);
+                            reqLine.SetReserveQuantity(reqLine.ReserveQuantity - line.Quantity);
                         }
                     }
 
                     // updating reserved quantity for APPROVED Issuance
                     if (getState.State == DocumentStatus.Unpaid)
                     {
-                        getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity - line.Quantity);
+                        getStockRecord.UpdateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity - line.Quantity);
 
                     }
 
@@ -546,11 +546,11 @@ namespace Application.Services
                 // Updationg Requisition line status
                 if (getRequisitionLine.Quantity == reconciledTotalReqQty)
                 {
-                    getRequisitionLine.setStatus(DocumentStatus.Reconciled);
+                    getRequisitionLine.SetStatus(DocumentStatus.Reconciled);
                 }
                 else
                 {
-                    getRequisitionLine.setStatus(DocumentStatus.Partial);
+                    getRequisitionLine.SetStatus(DocumentStatus.Partial);
                 }
                 await _unitOfWork.SaveAsync();
             }
@@ -565,11 +565,11 @@ namespace Application.Services
 
             if (isRequisitionLinesReconciled == null)
             {
-                getrequisition.setStatus(5);
+                getrequisition.SetStatus(5);
             }
             else
             {
-                getrequisition.setStatus(4);
+                getrequisition.SetStatus(4);
             }
 
             await _unitOfWork.SaveAsync();

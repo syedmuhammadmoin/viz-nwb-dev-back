@@ -21,13 +21,22 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.InventoryAccount);
                 AddInclude(i => i.CostAccount);
                 AddInclude(i => i.RevenueAccount);
-            }
+                AddInclude(i => i.Depreciation);
+            } 
         }
         public CategorySpecs()
         {
             AddInclude(i => i.InventoryAccount);
             AddInclude(i => i.CostAccount);
             AddInclude(i => i.RevenueAccount);
+            AddInclude(i => i.Depreciation);
+        }
+        public CategorySpecs(int Id) : base(c => c.IsFixedAsset == true)
+        {
+            AddInclude(i => i.InventoryAccount);
+            AddInclude(i => i.CostAccount);
+            AddInclude(i => i.RevenueAccount);
+            AddInclude(i => i.Depreciation);
         }
     }
 }

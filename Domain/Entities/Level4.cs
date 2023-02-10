@@ -36,13 +36,13 @@ namespace Domain.Entities
             AccountType = AccountType.SystemDefined;
         }
 
-        public void setAccountName(string name, string accountCode)
+        public void SetAccountName(string name, string accountCode)
         {
             Name = name;
             Code = accountCode;
         }
 
-        public void setLevel1Id(Guid level1Id) 
+        public void SetLevel1Id(Guid level1Id) 
         {
             Level1_id = level1Id;
         }

@@ -76,11 +76,11 @@ namespace Application.Services
                 {
                     if (stmtAmount == reconciledTotalStmtAmount)
                     {
-                        bankStmtLine.updateStatus(DocumentStatus.Reconciled);
+                        bankStmtLine.UpdateStatus(DocumentStatus.Reconciled);
                     }
                     else
                     {
-                        bankStmtLine.updateStatus(DocumentStatus.Partial);
+                        bankStmtLine.UpdateStatus(DocumentStatus.Partial);
                     }
                 }
 
@@ -89,7 +89,7 @@ namespace Application.Services
 
                 if (paymentTotalAmount == reconciledTotalPayment)
                 {
-                    payment.setReconStatus(DocumentStatus.Reconciled);
+                    payment.SetReconStatus(DocumentStatus.Reconciled);
 
                     var bankAccount = _unitOfWork.BankAccount.Find(new BankAccountSpecs(payment.PaymentRegisterId)).FirstOrDefault();
 
@@ -160,7 +160,7 @@ namespace Application.Services
                 }
                 else
                 {
-                    payment.setReconStatus(DocumentStatus.Partial);
+                    payment.SetReconStatus(DocumentStatus.Partial);
                 }
                 await _unitOfWork.SaveAsync();
                 _unitOfWork.Commit();

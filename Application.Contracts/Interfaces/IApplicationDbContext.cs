@@ -84,6 +84,9 @@ namespace Application.Interfaces
         public DbSet<CallForQuotationMaster> CallForQuotationMaster { get; set; }
         public DbSet<CallForQuotationLines> CallForQuotationLines { get; set; }
         public DbSet<QuotationComparativeMaster> QuotationComparativeMaster { get; set; }
+        public DbSet<Depreciation> Depreciations { get; set; }
+        public DbSet<FixedAsset> FixedAssets { get; set; }
+        public DbSet<CWIP> CWIPs { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

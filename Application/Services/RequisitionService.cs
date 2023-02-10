@@ -150,7 +150,7 @@ namespace Application.Services
             {
                 if (transition.AllowedRole.Name == role)
                 {
-                    getRequisition.setStatus(transition.NextStatusId);
+                    getRequisition.SetStatus(transition.NextStatusId);
                     if (!String.IsNullOrEmpty(data.Remarks))
                     {
                         var addRemarks = new Remark()
@@ -166,7 +166,7 @@ namespace Application.Services
                     {
                         foreach (var line in getRequisition.RequisitionLines)
                         {
-                            line.setStatus(DocumentStatus.Unreconciled);
+                            line.SetStatus(DocumentStatus.Unreconciled);
                         }
 
                         await _unitOfWork.SaveAsync();
@@ -180,9 +180,9 @@ namespace Application.Services
                             var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs(line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
                             if (getStockRecord != null)
                             {
-                                getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity - line.ReserveQuantity);
-                                getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity + line.ReserveQuantity);
-                                line.setReserveQuantity(0);
+                                getStockRecord.UpdateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity - line.ReserveQuantity);
+                                getStockRecord.UpdateAvailableQuantity(getStockRecord.AvailableQuantity + line.ReserveQuantity);
+                                line.SetReserveQuantity(0);
                             }
                         }
                         await _unitOfWork.SaveAsync();
@@ -245,8 +245,8 @@ namespace Application.Services
 
                         //Need to Save reserveable Quantity with Requesition
                         line.ReserveQuantity = reserveableQuantity;
-                        getStockRecord.updateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity + reserveableQuantity);
-                        getStockRecord.updateAvailableQuantity(getStockRecord.AvailableQuantity - reserveableQuantity);
+                        getStockRecord.UpdateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity + reserveableQuantity);
+                        getStockRecord.UpdateAvailableQuantity(getStockRecord.AvailableQuantity - reserveableQuantity);
                     }
                 }
             }
@@ -270,7 +270,7 @@ namespace Application.Services
             var requisition = _mapper.Map<RequisitionMaster>(entity);
 
             //Setting status
-            requisition.setStatus(status);
+            requisition.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
             //Saving in table
@@ -310,7 +310,7 @@ namespace Application.Services
                 return new Response<RequisitionDto>("Only draft document can be edited");
 
             //Setting status
-            requisition.setStatus(status);
+            requisition.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
             //For updating data

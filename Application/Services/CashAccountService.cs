@@ -49,14 +49,14 @@ namespace Application.Services
                 //Inserting into cashAccount table
                 var cashAccount = _mapper.Map<CashAccount>(entity);
 
-                cashAccount.setChAccountId(ChAccount.Id);
-                cashAccount.setTransactionId(transaction.Id);
+                cashAccount.SetChAccountId(ChAccount.Id);
+                cashAccount.SetTransactionId(transaction.Id);
 
                 await _unitOfWork.CashAccount.Add(cashAccount);
                 await _unitOfWork.SaveAsync();
 
-                cashAccount.createDocNo();
-                transaction.updateDocNo(cashAccount.Id, cashAccount.DocNo);
+                cashAccount.CreateDocNo();
+                transaction.UpdateDocNo(cashAccount.Id, cashAccount.DocNo);
                 await _unitOfWork.SaveAsync();
 
                 //Adding CashAccount to Ledger
@@ -120,7 +120,7 @@ namespace Application.Services
                     return new Response<CashAccountDto>("Account not found in Chart Of Account");
 
                 //Updating account name in chart of account
-                account.setAccountName(entity.CashAccountName, entity.AccountCode);
+                account.SetAccountName(entity.CashAccountName, entity.AccountCode);
 
 
                 await _unitOfWork.SaveAsync();
