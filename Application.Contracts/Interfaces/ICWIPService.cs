@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IFixedAssetService : ICrudService<CreateFixedAssetDto, FixedAssetDto, int, TransactionFormFilter>
+    public interface ICWIPService : ICrudService<CreateCWIPDto, CWIPDto, int, TransactionFormFilter>
     {
         Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
     }

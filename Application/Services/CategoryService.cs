@@ -161,9 +161,19 @@ namespace Application.Services
         {
             var categories = await _unitOfWork.Category.GetAll();
             if (!categories.Any())
-                return new Response<List<CategoryDto>>("List is empty");
+                return new Response<List<CategoryDto>>(null,"List is empty");
 
             return new Response<List<CategoryDto>>(_mapper.Map<List<CategoryDto>>(categories), "Returning List");
         }
+
+        public async Task<Response<List<CategoryDto>>> GetCategoryDropDownByAsset()
+        {
+            var categories = await _unitOfWork.Category.GetAll(new CategorySpecs(1));
+            if (!categories.Any())
+                return new Response<List<CategoryDto>>(null,"List is empty");
+
+            return new Response<List<CategoryDto>>(_mapper.Map<List<CategoryDto>>(categories), "Returning List");
+        }
+
     }
 }

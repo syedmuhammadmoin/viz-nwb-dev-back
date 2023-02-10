@@ -9,38 +9,42 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Specifications
 {
-    public class FixedAssetSpecs : BaseSpecification<FixedAsset>
+    public class CWIPSpecs : BaseSpecification<CWIP>
     {
-        public FixedAssetSpecs(TransactionFormFilter filter, bool isTotalRecord)
-           : base(c => c.Category.Name.Contains(filter.Name != null ? filter.Name : "") )
+        public CWIPSpecs(TransactionFormFilter filter, bool isTotalRecord)
         {
             if (!isTotalRecord)
             {
                 var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-                AddInclude(i => i.Category);
+                AddInclude(i => i.CWIPAccount);
                 AddInclude(i => i.AssetAccount);
                 AddInclude(i => i.DepreciationExpense);
                 AddInclude(i => i.AccumulatedDepreciation);
                 AddInclude(i => i.Depreciation);
                 AddInclude(i => i.Status);
+                AddInclude(i => i.Campus);
+                AddInclude(i => i.Warehouse);
                 ApplyOrderByDescending(i => i.Id);
-
             }
         }
-        public FixedAssetSpecs()
+
+        public CWIPSpecs()
         {
-            AddInclude(i => i.Status);
-            AddInclude(i => i.Category);
+            AddInclude(i => i.CWIPAccount);
             AddInclude(i => i.AssetAccount);
             AddInclude(i => i.DepreciationExpense);
+            AddInclude(i => i.Campus);
             AddInclude(i => i.AccumulatedDepreciation);
+            AddInclude(i => i.Status);
             AddInclude(i => i.Depreciation);
+            AddInclude(i => i.Warehouse);
         }
-        public FixedAssetSpecs(string workflow)
+        public CWIPSpecs(string workflow)
         : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
         {
             AddInclude(i => i.Status);
         }
     }
+
 }

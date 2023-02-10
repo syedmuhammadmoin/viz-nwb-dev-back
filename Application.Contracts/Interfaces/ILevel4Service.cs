@@ -17,5 +17,7 @@ namespace Application.Contracts.Interfaces
         Task<Response<List<Level4Dto>>> GetReceivableAccounts();
         Task<Response<List<Level4Dto>>> GetAllOtherAccounts();
         Task<Response<List<Level4Dto>>> GetNonCurrentAssetAccounts();
+        Task<Response<List<Level4Dto>>> GetNonCurrentLiabilitiesAccounts();
+        Task<Response<List<Level4Dto>>> GetExpenseAccounts();
     }
 }
