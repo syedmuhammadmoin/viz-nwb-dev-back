@@ -270,6 +270,8 @@ namespace Application.Services
                 entity.UseFullLife = null;
                 entity.DecLiningRate = 0;
             }
+            var warehouse = await _unitOfWork.Warehouse.GetById((int)entity.WarehouseId, new WarehouseSpecs());
+
 
             var specification = new FixedAssetSpecs();
             var fix = await _unitOfWork.FixedAsset.GetById((int)entity.Id, specification);
@@ -281,7 +283,7 @@ namespace Application.Services
                 return new Response<FixedAssetDto>("Only draft document can be edited");
 
 
-
+            fix.SetCampus(warehouse.CampusId);
             fix.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
