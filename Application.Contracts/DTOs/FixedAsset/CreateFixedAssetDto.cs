@@ -26,6 +26,10 @@ namespace Application.Contracts.DTOs
         [Required]    
         public int SalvageValue { get; set; }
         [Required]
+        public int? CampusId { get; set; }
+        [Required]
+        public int? WarehouseId { get; set; }
+        [Required]
         public bool DepreciationApplicability { get; set; }
         public int? DepreciationId { get; set; }
         public DepreciationMethod ModelType { get; set; }
