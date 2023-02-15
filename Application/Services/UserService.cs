@@ -474,6 +474,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.DepreciationClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.FixedAssetClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.CWIPClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DisposalClaims), id);
 
 
             //Getting all claims for this role
@@ -606,6 +607,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.DepreciationClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.FixedAssetClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.CWIPClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.DisposalClaims), "12");
 
             var allClaimValues = allPermissions.Select(a => a.Value).ToList();
             return new Response<List<string>>(allClaimValues, "Returning all claims");
