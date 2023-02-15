@@ -9,9 +9,8 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IFixedAssetService : ICrudService<CreateFixedAssetDto, FixedAssetDto, int, TransactionFormFilter>
+    public interface IDisposalService : ICrudService<CreateDisposalDto, DisposalDto, int, TransactionFormFilter>
     {
         Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
-        Task<Response<List<FixedAssetDto>>> GetAssetDropDown();
     }
 }
