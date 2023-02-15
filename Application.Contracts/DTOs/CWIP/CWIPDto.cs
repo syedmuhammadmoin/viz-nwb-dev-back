@@ -36,9 +36,9 @@ namespace Application.Contracts.DTOs
         public decimal? DecLiningRate { get; set; }
         public int StatusId { get; set; }
         public string Status { get; set; }
+        public DocumentStatus State { get; set; }
         public int WarehouseId { get; set; }
         public string WarehouseName { get; set; }
-        public DocumentStatus State { get; set; }
         public bool ProrataBasis { get; set; }
         public bool Active { get; set; }
         public IEnumerable<RemarksDto> RemarksList { get; set; }
