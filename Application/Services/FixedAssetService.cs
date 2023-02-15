@@ -220,12 +220,13 @@ namespace Application.Services
                 entity.DecLiningRate = 0;
                 entity.ModelType = 0 ;
             }
+            var warehouse = await _unitOfWork.Warehouse.GetById((int)entity.WarehouseId, new WarehouseSpecs());
 
             var fix = _mapper.Map<FixedAsset>(entity);
 
             //Setting status
             fix.SetStatus(status);
-
+            fix.SetCampus(warehouse.CampusId);
             _unitOfWork.CreateTransaction();
 
             //Saving in table
