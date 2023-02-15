@@ -58,7 +58,10 @@ namespace Domain.Entities
         {
             StatusId = statusId;
         }
-
+        public void SetCampus(int campus)
+        {
+            CampusId = campus;
+        }
         public void CreateCode()
         {
             //Creating doc no..
