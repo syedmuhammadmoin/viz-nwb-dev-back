@@ -572,9 +572,16 @@ namespace Application.Mapper
                 .ForMember(dto => dto.WarehouseName, core => core.MapFrom(a => a.Warehouse.Name))
                 .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State))
                 .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
-
-
             CreateMap<CreateCWIPDto, CWIP>();
+
+            CreateMap<Disposal, DisposalDto>()
+               .ForMember(dto => dto.Asset, core => core.MapFrom(d => d.Asset.AssetAccount.Name))
+               .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(d => d.AccumulatedDepreciation.Name))
+               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
+                .ForMember(dto => dto.Category, core => core.MapFrom(c => c.Category.Name))
+               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State))
+               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+            CreateMap<CreateDisposalDto, Disposal>();
         }
     }
 }
