@@ -315,5 +315,14 @@ namespace Application.Services
 
             return remarks;
         }
+        public async Task<Response<List<FixedAssetDto>>> GetAssetDropDown()
+        {
+            var fixedAsset = await _unitOfWork.FixedAsset.GetAll();
+            if (!fixedAsset.Any())
+                return new Response<List<FixedAssetDto>>(null, "List is empty");
+
+            return new Response<List<FixedAssetDto>>(_mapper.Map<List<FixedAssetDto>>(fixedAsset), "Returning List");
+
+        }
     }
 }
