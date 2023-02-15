@@ -70,6 +70,7 @@ builder.Services.AddScoped<IQuotationComparativeService, QuotationComparativeSer
 builder.Services.AddScoped<IDepreciationService, DepreciationService>();
 builder.Services.AddScoped<IFixedAssetService, FixedAssetService>();
 builder.Services.AddScoped<ICWIPService, CWIPService>();
+builder.Services.AddScoped<IDisposalService, DisposalService>();
 
 
 //Add auto mapper config
