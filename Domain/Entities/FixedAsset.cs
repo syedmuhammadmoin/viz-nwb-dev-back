@@ -17,10 +17,17 @@ namespace Domain.Entities
         public DateTime DateofAcquisition { get; private set; }
         [MaxLength(100)]
         public string Name { get; private set; }
-        public int PurchaseCost { get; private set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal PurchaseCost { get; private set; }
         public int CategoryId { get; private set; }
         [ForeignKey("CategoryId")]
         public Category Category { get; private set; }
+        public int CampusId { get; private set; }
+        [ForeignKey("CampusId")]
+        public Campus Campus { get; private set; }
+        public int WarehouseId { get; private set; }
+        [ForeignKey("WarehouseId")]
+        public Warehouse Warehouse { get; private set; }
         public int SalvageValue { get; private set; }
         public bool DepreciationApplicability { get; private set; }
         public int? DepreciationId { get; private set; }
