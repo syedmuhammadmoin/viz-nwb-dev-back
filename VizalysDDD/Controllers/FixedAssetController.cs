@@ -77,5 +77,11 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status Code : 400
         }
+        [HttpGet("Dropdown")]
+        public async Task<ActionResult<Response<List<Level4Dto>>>> GetFixedAssetDropDown()
+        {
+            return Ok(await _fixedAssetService.GetAssetDropDown()); // Status Code : 200
+        }
+
     }
 }
