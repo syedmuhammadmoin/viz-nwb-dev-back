@@ -77,7 +77,8 @@ namespace Domain.Constants
         CallForQuotaion = 23,
         QuotationComparative = 24,
         FixedAsset = 25,
-        CWIP = 26
+        CWIP = 26,
+        Disposal = 27
     }
     public enum ActionButton
     {
