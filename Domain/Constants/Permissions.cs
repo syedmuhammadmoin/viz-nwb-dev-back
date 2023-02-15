@@ -384,6 +384,13 @@ namespace Domain.Constants
             public const string Edit = "Permissions.FixedAsset.CWIPClaims.Edit";
             public const string Delete = "Permissions.FixedAsset.CWIPClaims.Delete";
         }
+        public static class DisposalClaims
+        {
+            public const string View = "Permissions.FixedAsset.DisposalClaims.View";
+            public const string Create = "Permissions.FixedAsset.DisposalClaims.Create";
+            public const string Edit = "Permissions.FixedAsset.DisposalClaims.Edit";
+            public const string Delete = "Permissions.FixedAsset.DisposalClaims.Delete";
+        }
         //Reporting Form
         public static class ChartOfAccountClaims
         {
