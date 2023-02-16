@@ -43,5 +43,8 @@ namespace Application.Contracts.DTOs
         public bool ProrataBasis { get; set; }
         [Required]
         public bool Active { get;  set; }
+        public bool IsHeldforSaleOrDisposal { get;  set; }
+
+        
     }
 }

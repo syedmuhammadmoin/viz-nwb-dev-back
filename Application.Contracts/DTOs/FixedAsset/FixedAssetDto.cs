@@ -43,5 +43,7 @@ namespace Application.Contracts.DTOs
         public bool Active { get; set; }
         public IEnumerable<RemarksDto> RemarksList { get; set; }
         public bool IsAllowedRole { get; set; }
+        public bool IsHeldforSaleOrDisposal { get; set; }
+        
     }
 }

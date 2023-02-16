@@ -44,5 +44,10 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.Status);
         }
+        public FixedAssetSpecs(bool IsDisposable)
+       : base(e => (e.IsHeldforSaleOrDisposal== IsDisposable))
+        {
+          
+        }
     }
 }

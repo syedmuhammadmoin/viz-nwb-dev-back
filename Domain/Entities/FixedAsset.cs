@@ -49,6 +49,8 @@ namespace Domain.Entities
         public bool ProrataBasis { get; private set; }
         public bool Active { get; private set; }
         public int StatusId { get; private set; }
+        public bool IsHeldforSaleOrDisposal { get; private set; }
+
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get; private set; }
         protected FixedAsset()

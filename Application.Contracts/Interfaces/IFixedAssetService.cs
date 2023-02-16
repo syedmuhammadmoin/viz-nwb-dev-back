@@ -13,5 +13,7 @@ namespace Application.Contracts.Interfaces
     {
         Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
         Task<Response<List<FixedAssetDto>>> GetAssetDropDown();
+        Task<Response<List<FixedAssetDto>>> GetDisposableAssetDropDown();
+        
     }
 }
