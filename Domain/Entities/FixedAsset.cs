@@ -53,6 +53,9 @@ namespace Domain.Entities
 
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get; private set; }
+        public int? GRNId { get; private set; }
+        [ForeignKey("GRNId")]
+        public GRNMaster GRN { get; private set; }
         protected FixedAsset()
         {
         }

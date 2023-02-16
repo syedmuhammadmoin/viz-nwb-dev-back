@@ -45,6 +45,8 @@ namespace Application.Contracts.DTOs
         public bool Active { get;  set; }
         public bool IsHeldforSaleOrDisposal { get;  set; }
         public int Quantinty { get; set; }
+        public int? GRNId { get; set; }
+        public string GRNDocNo { get; set; }
 
 
 
