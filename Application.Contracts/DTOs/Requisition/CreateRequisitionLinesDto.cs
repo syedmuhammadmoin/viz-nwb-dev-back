@@ -24,5 +24,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? WarehouseId { get; set; }
         public int? ReserveQuantity { get; set; }
+        public int? FixedAssetId { get;  set; }
+
     }
 }
