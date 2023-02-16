@@ -19,9 +19,9 @@ namespace Domain.Entities
         public string Name { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal PurchaseCost { get; private set; }
-        public int CategoryId { get; private set; }
-        [ForeignKey("CategoryId")]
-        public Category Category { get; private set; }
+        public int ProductId { get; private set; }
+        [ForeignKey("ProductId")]
+        public Product Product { get; private set; }
         public int CampusId { get; private set; }
         [ForeignKey("CampusId")]
         public Campus Campus { get; private set; }

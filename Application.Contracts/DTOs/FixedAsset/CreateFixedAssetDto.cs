@@ -22,7 +22,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public int PurchaseCost { get; set; }
         [Required]
-        public int? CategoryId { get; set; }
+        public int? ProductId { get; set; }
         [Required]    
         public int SalvageValue { get; set; }
         [Required]
@@ -44,7 +44,9 @@ namespace Application.Contracts.DTOs
         [Required]
         public bool Active { get;  set; }
         public bool IsHeldforSaleOrDisposal { get;  set; }
+        public int Quantinty { get; set; }
 
-        
+
+
     }
 }

@@ -12,13 +12,13 @@ namespace Infrastructure.Specifications
     public class FixedAssetSpecs : BaseSpecification<FixedAsset>
     {
         public FixedAssetSpecs(TransactionFormFilter filter, bool isTotalRecord)
-           : base(c => c.Category.Name.Contains(filter.Name != null ? filter.Name : "") )
+           : base(c => c.Product.ProductName.Contains(filter.Name != null ? filter.Name : "") )
         {
             if (!isTotalRecord)
             {
                 var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-                AddInclude(i => i.Category);
+                AddInclude(i => i.Product);
                 AddInclude(i => i.AssetAccount);
                 AddInclude(i => i.DepreciationExpense);
                 AddInclude(i => i.AccumulatedDepreciation);
@@ -32,7 +32,7 @@ namespace Infrastructure.Specifications
         public FixedAssetSpecs()
         {
             AddInclude(i => i.Status);
-            AddInclude(i => i.Category);
+            AddInclude(i => i.Product);
             AddInclude(i => i.Campus);
             AddInclude(i => i.AssetAccount);
             AddInclude(i => i.DepreciationExpense);

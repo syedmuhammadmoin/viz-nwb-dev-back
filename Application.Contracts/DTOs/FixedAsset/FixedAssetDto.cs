@@ -17,8 +17,8 @@ namespace Application.Contracts.DTOs
         public DateTime DateofAcquisition { get; set; }
         public string Name { get; set; }
         public int PurchaseCost { get; set; }
-        public int CategoryId { get; set; }
-        public string CategoryName { get; set; }
+        public int ProductId { get; set; }
+        public string ProductName { get; set; }
         public int SalvageValue { get; set; }
         public bool DepreciationApplicability { get; set; }
         public int? DepreciationId { get; set; }
@@ -44,6 +44,8 @@ namespace Application.Contracts.DTOs
         public IEnumerable<RemarksDto> RemarksList { get; set; }
         public bool IsAllowedRole { get; set; }
         public bool IsHeldforSaleOrDisposal { get; set; }
-        
+        public int Quantinty { get; set; }
+
+
     }
 }
