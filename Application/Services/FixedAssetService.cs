@@ -337,6 +337,15 @@ namespace Application.Services
             return new Response<List<FixedAssetDto>>(_mapper.Map<List<FixedAssetDto>>(fixedAsset), "Returning List");
 
         }
+        public async Task<Response<List<FixedAssetDto>>> GetAssetByProductIdDropDown(int ProductId)
+        {
+            var fixedAsset = await _unitOfWork.FixedAsset.GetAll(new FixedAssetSpecs(ProductId));
+            if (!fixedAsset.Any())
+                return new Response<List<FixedAssetDto>>(null, "List is empty");
+
+            return new Response<List<FixedAssetDto>>(_mapper.Map<List<FixedAssetDto>>(fixedAsset), "Returning List");
+
+        }
 
     }
 }

@@ -49,5 +49,10 @@ namespace Infrastructure.Specifications
         {
           
         }
+        public FixedAssetSpecs(int ProductId)
+      : base(e => (e.ProductId == ProductId))
+        {
+
+        }
     }
 }

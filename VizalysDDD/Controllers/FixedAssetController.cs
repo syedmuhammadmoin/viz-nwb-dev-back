@@ -87,6 +87,11 @@ namespace Vizalys.Api.Controllers
         {
             return Ok(await _fixedAssetService.GetDisposableAssetDropDown()); // Status Code : 200
         }
+        [HttpGet("Product/{ProductId:int}")]
+        public async Task<ActionResult<Response<List<Level4Dto>>>> GetAssetByProductIdDropDown(int ProductId)
+        {
+            return Ok(await _fixedAssetService.GetAssetByProductIdDropDown(ProductId)); // Status Code : 200
+        }
         
     }
 }
