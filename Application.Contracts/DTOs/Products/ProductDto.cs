@@ -23,5 +23,6 @@ namespace Application.Contracts.DTOs
         public decimal PurchasePrice { get; set; }
         public decimal SalesTax { get; set; }
         public string Barcode { get; set; }
+        public bool IsFixedAsset { get; set; }
     }
 }
