@@ -32,7 +32,7 @@ namespace Domain.Entities
         public bool DepreciationApplicability { get; private set; }
         public int? DepreciationId { get; private set; }
         [ForeignKey("DepreciationId")]
-        public Depreciation Depreciation { get; private set; }
+        public DepreciationModel Depreciation { get; private set; }
         public DepreciationMethod ModelType { get; private set; }
         public Guid? AssetAccountId { get; private set; }
         [ForeignKey("AssetAccountId")]
@@ -50,12 +50,14 @@ namespace Domain.Entities
         public bool Active { get; private set; }
         public int StatusId { get; private set; }
         public bool IsHeldforSaleOrDisposal { get; private set; }
-
+        public bool IsIssued { get; private set; }
+        public bool IsReserved { get; private set; }
+        public bool IsDisposed { get; private set; }
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get; private set; }
-        public int? GRNId { get; private set; }
-        [ForeignKey("GRNId")]
-        public GRNMaster GRN { get; private set; }
+        public int DocId { get; private set; }
+        public DocType Doctype { get; private set; }
+
         protected FixedAsset()
         {
         }

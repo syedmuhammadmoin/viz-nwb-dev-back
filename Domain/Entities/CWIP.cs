@@ -32,7 +32,7 @@ namespace Domain.Entities
         public bool DepreciationApplicability { get; private set; }
         public int? DepreciationId { get; private set; }
         [ForeignKey("DepreciationId")]
-        public Depreciation Depreciation { get; private set; }
+        public DepreciationModel Depreciation { get; private set; }
         public DepreciationMethod ModelType { get; private set; }
         public Guid? DepreciationExpenseId { get; private set; }
         [ForeignKey("DepreciationExpenseId")]
