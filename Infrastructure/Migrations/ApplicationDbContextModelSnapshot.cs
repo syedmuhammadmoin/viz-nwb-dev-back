@@ -2647,6 +2647,9 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<int?>("FixedAssetId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
@@ -2673,6 +2676,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FixedAssetId");
 
                     b.HasIndex("ItemId");
 
@@ -6935,6 +6940,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.IssuanceReturnLines", b =>
                 {
+                    b.HasOne("Domain.Entities.FixedAsset", "Asset")
+                        .WithMany()
+                        .HasForeignKey("FixedAssetId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.Product", "Item")
                         .WithMany()
                         .HasForeignKey("ItemId")
@@ -6952,6 +6962,8 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("WarehouseId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Asset");
 
                     b.Navigation("IssuanceReturnMaster");
 

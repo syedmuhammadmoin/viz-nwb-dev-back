@@ -17,6 +17,12 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.AddColumn<int>(
                 name: "FixedAssetId",
+                table: "IssuanceReturnLines",
+                type: "int",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "FixedAssetId",
                 table: "IssuanceLines",
                 type: "int",
                 nullable: true);
@@ -316,6 +322,11 @@ namespace Infrastructure.Migrations
                 column: "FixedAssetId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_IssuanceReturnLines_FixedAssetId",
+                table: "IssuanceReturnLines",
+                column: "FixedAssetId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_IssuanceLines_FixedAssetId",
                 table: "IssuanceLines",
                 column: "FixedAssetId");
@@ -457,6 +468,14 @@ namespace Infrastructure.Migrations
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_IssuanceReturnLines_FixedAssets_FixedAssetId",
+                table: "IssuanceReturnLines",
+                column: "FixedAssetId",
+                principalTable: "FixedAssets",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_RequisitionLines_FixedAssets_FixedAssetId",
                 table: "RequisitionLines",
                 column: "FixedAssetId",
@@ -474,6 +493,10 @@ namespace Infrastructure.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_IssuanceLines_FixedAssets_FixedAssetId",
                 table: "IssuanceLines");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_IssuanceReturnLines_FixedAssets_FixedAssetId",
+                table: "IssuanceReturnLines");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_RequisitionLines_FixedAssets_FixedAssetId",
@@ -496,6 +519,10 @@ namespace Infrastructure.Migrations
                 table: "RequisitionLines");
 
             migrationBuilder.DropIndex(
+                name: "IX_IssuanceReturnLines_FixedAssetId",
+                table: "IssuanceReturnLines");
+
+            migrationBuilder.DropIndex(
                 name: "IX_IssuanceLines_FixedAssetId",
                 table: "IssuanceLines");
 
@@ -506,6 +533,10 @@ namespace Infrastructure.Migrations
             migrationBuilder.DropColumn(
                 name: "FixedAssetId",
                 table: "RequisitionLines");
+
+            migrationBuilder.DropColumn(
+                name: "FixedAssetId",
+                table: "IssuanceReturnLines");
 
             migrationBuilder.DropColumn(
                 name: "FixedAssetId",
