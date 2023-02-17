@@ -10,7 +10,19 @@ namespace Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
-                name: "DepreciationId",
+                name: "FixedAssetId",
+                table: "RequisitionLines",
+                type: "int",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "FixedAssetId",
+                table: "IssuanceLines",
+                type: "int",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "DepreciationModelId",
                 table: "Categories",
                 type: "int",
                 nullable: true);
@@ -23,12 +35,11 @@ namespace Infrastructure.Migrations
                 defaultValue: false);
 
             migrationBuilder.CreateTable(
-                name: "Depreciations",
+                name: "DepreciationModels",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DocNo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     ModelName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     UseFullLife = table.Column<int>(type: "int", nullable: false),
                     AssetAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -44,21 +55,21 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Depreciations", x => x.Id);
+                    table.PrimaryKey("PK_DepreciationModels", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Depreciations_Level4_AccumulatedDepreciationId",
+                        name: "FK_DepreciationModels_Level4_AccumulatedDepreciationId",
                         column: x => x.AccumulatedDepreciationId,
                         principalTable: "Level4",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Depreciations_Level4_AssetAccountId",
+                        name: "FK_DepreciationModels_Level4_AssetAccountId",
                         column: x => x.AssetAccountId,
                         principalTable: "Level4",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Depreciations_Level4_DepreciationExpenseId",
+                        name: "FK_DepreciationModels_Level4_DepreciationExpenseId",
                         column: x => x.DepreciationExpenseId,
                         principalTable: "Level4",
                         principalColumn: "Id",
@@ -74,22 +85,21 @@ namespace Infrastructure.Migrations
                     CwipCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     DateOfAcquisition = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CWIPAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CampusId = table.Column<int>(type: "int", nullable: false),
                     WarehouseId = table.Column<int>(type: "int", nullable: false),
                     CostOfAsset = table.Column<int>(type: "int", nullable: false),
-                    AssetAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SalvageValue = table.Column<int>(type: "int", nullable: true),
                     DepreciationApplicability = table.Column<bool>(type: "bit", nullable: false),
-                    DepreciationId = table.Column<int>(type: "int", nullable: true),
-                    ModelType = table.Column<int>(type: "int", nullable: false),
+                    DepreciationModelId = table.Column<int>(type: "int", nullable: true),
+                    UseFullLife = table.Column<int>(type: "int", nullable: true),
+                    AssetAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DepreciationExpenseId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     AccumulatedDepreciationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UseFullLife = table.Column<int>(type: "int", nullable: true),
-                    Quantinty = table.Column<int>(type: "int", nullable: false),
+                    ModelType = table.Column<int>(type: "int", nullable: false),
                     DecLiningRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    StatusId = table.Column<int>(type: "int", nullable: false),
+                    Quantinty = table.Column<int>(type: "int", nullable: false),
                     ProrataBasis = table.Column<bool>(type: "bit", nullable: false),
-                    Active = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    StatusId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -100,15 +110,9 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_CWIPs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CWIPs_Campuses_CampusId",
-                        column: x => x.CampusId,
-                        principalTable: "Campuses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_CWIPs_Depreciations_DepreciationId",
-                        column: x => x.DepreciationId,
-                        principalTable: "Depreciations",
+                        name: "FK_CWIPs_DepreciationModels_DepreciationModelId",
+                        column: x => x.DepreciationModelId,
+                        principalTable: "DepreciationModels",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -157,23 +161,28 @@ namespace Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AssetCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     DateofAcquisition = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    PurchaseCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    CampusId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Cost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
                     WarehouseId = table.Column<int>(type: "int", nullable: false),
                     SalvageValue = table.Column<int>(type: "int", nullable: false),
                     DepreciationApplicability = table.Column<bool>(type: "bit", nullable: false),
-                    DepreciationId = table.Column<int>(type: "int", nullable: true),
-                    ModelType = table.Column<int>(type: "int", nullable: false),
+                    DepreciationModelId = table.Column<int>(type: "int", nullable: true),
+                    UseFullLife = table.Column<int>(type: "int", nullable: true),
                     AssetAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DepreciationExpenseId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     AccumulatedDepreciationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UseFullLife = table.Column<int>(type: "int", nullable: true),
+                    ModelType = table.Column<int>(type: "int", nullable: false),
                     DecLiningRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ProrataBasis = table.Column<bool>(type: "bit", nullable: false),
-                    Active = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     StatusId = table.Column<int>(type: "int", nullable: false),
+                    IsHeldforSaleOrDisposal = table.Column<bool>(type: "bit", nullable: false),
+                    IsIssued = table.Column<bool>(type: "bit", nullable: false),
+                    IsReserved = table.Column<bool>(type: "bit", nullable: false),
+                    IsDisposed = table.Column<bool>(type: "bit", nullable: false),
+                    DocId = table.Column<int>(type: "int", nullable: false),
+                    Doctype = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -184,21 +193,9 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_FixedAssets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FixedAssets_Campuses_CampusId",
-                        column: x => x.CampusId,
-                        principalTable: "Campuses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_FixedAssets_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_FixedAssets_Depreciations_DepreciationId",
-                        column: x => x.DepreciationId,
-                        principalTable: "Depreciations",
+                        name: "FK_FixedAssets_DepreciationModels_DepreciationModelId",
+                        column: x => x.DepreciationModelId,
+                        principalTable: "DepreciationModels",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -217,6 +214,12 @@ namespace Infrastructure.Migrations
                         name: "FK_FixedAssets_Level4_DepreciationExpenseId",
                         column: x => x.DepreciationExpenseId,
                         principalTable: "Level4",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_FixedAssets_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -240,12 +243,13 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DocNo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    AssetId = table.Column<int>(type: "int", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    PurchaseCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    FixedAssetId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    Cost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     SalvageValue = table.Column<int>(type: "int", nullable: false),
                     UseFullLife = table.Column<int>(type: "int", nullable: false),
                     AccumulatedDepreciationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BookValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     DisposalDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DisposalValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     WarehouseId = table.Column<int>(type: "int", nullable: false),
@@ -260,14 +264,8 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Disposals", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Disposals_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Disposals_FixedAssets_AssetId",
-                        column: x => x.AssetId,
+                        name: "FK_Disposals_FixedAssets_FixedAssetId",
+                        column: x => x.FixedAssetId,
                         principalTable: "FixedAssets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -275,6 +273,12 @@ namespace Infrastructure.Migrations
                         name: "FK_Disposals_Level4_AccumulatedDepreciationId",
                         column: x => x.AccumulatedDepreciationId,
                         principalTable: "Level4",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Disposals_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -292,9 +296,19 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categories_DepreciationId",
+                name: "IX_RequisitionLines_FixedAssetId",
+                table: "RequisitionLines",
+                column: "FixedAssetId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IssuanceLines_FixedAssetId",
+                table: "IssuanceLines",
+                column: "FixedAssetId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_DepreciationModelId",
                 table: "Categories",
-                column: "DepreciationId");
+                column: "DepreciationModelId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CWIPs_AccumulatedDepreciationId",
@@ -307,11 +321,6 @@ namespace Infrastructure.Migrations
                 column: "AssetAccountId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CWIPs_CampusId",
-                table: "CWIPs",
-                column: "CampusId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CWIPs_CWIPAccountId",
                 table: "CWIPs",
                 column: "CWIPAccountId");
@@ -322,9 +331,9 @@ namespace Infrastructure.Migrations
                 column: "DepreciationExpenseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CWIPs_DepreciationId",
+                name: "IX_CWIPs_DepreciationModelId",
                 table: "CWIPs",
-                column: "DepreciationId");
+                column: "DepreciationModelId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CWIPs_StatusId",
@@ -337,18 +346,18 @@ namespace Infrastructure.Migrations
                 column: "WarehouseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Depreciations_AccumulatedDepreciationId",
-                table: "Depreciations",
+                name: "IX_DepreciationModels_AccumulatedDepreciationId",
+                table: "DepreciationModels",
                 column: "AccumulatedDepreciationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Depreciations_AssetAccountId",
-                table: "Depreciations",
+                name: "IX_DepreciationModels_AssetAccountId",
+                table: "DepreciationModels",
                 column: "AssetAccountId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Depreciations_DepreciationExpenseId",
-                table: "Depreciations",
+                name: "IX_DepreciationModels_DepreciationExpenseId",
+                table: "DepreciationModels",
                 column: "DepreciationExpenseId");
 
             migrationBuilder.CreateIndex(
@@ -357,14 +366,14 @@ namespace Infrastructure.Migrations
                 column: "AccumulatedDepreciationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Disposals_AssetId",
+                name: "IX_Disposals_FixedAssetId",
                 table: "Disposals",
-                column: "AssetId");
+                column: "FixedAssetId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Disposals_CategoryId",
+                name: "IX_Disposals_ProductId",
                 table: "Disposals",
-                column: "CategoryId");
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Disposals_StatusId",
@@ -387,24 +396,19 @@ namespace Infrastructure.Migrations
                 column: "AssetAccountId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FixedAssets_CampusId",
-                table: "FixedAssets",
-                column: "CampusId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FixedAssets_CategoryId",
-                table: "FixedAssets",
-                column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_FixedAssets_DepreciationExpenseId",
                 table: "FixedAssets",
                 column: "DepreciationExpenseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FixedAssets_DepreciationId",
+                name: "IX_FixedAssets_DepreciationModelId",
                 table: "FixedAssets",
-                column: "DepreciationId");
+                column: "DepreciationModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FixedAssets_ProductId",
+                table: "FixedAssets",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_FixedAssets_StatusId",
@@ -417,10 +421,26 @@ namespace Infrastructure.Migrations
                 column: "WarehouseId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Categories_Depreciations_DepreciationId",
+                name: "FK_Categories_DepreciationModels_DepreciationModelId",
                 table: "Categories",
-                column: "DepreciationId",
-                principalTable: "Depreciations",
+                column: "DepreciationModelId",
+                principalTable: "DepreciationModels",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_IssuanceLines_FixedAssets_FixedAssetId",
+                table: "IssuanceLines",
+                column: "FixedAssetId",
+                principalTable: "FixedAssets",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_RequisitionLines_FixedAssets_FixedAssetId",
+                table: "RequisitionLines",
+                column: "FixedAssetId",
+                principalTable: "FixedAssets",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
         }
@@ -428,8 +448,16 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Categories_Depreciations_DepreciationId",
+                name: "FK_Categories_DepreciationModels_DepreciationModelId",
                 table: "Categories");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_IssuanceLines_FixedAssets_FixedAssetId",
+                table: "IssuanceLines");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_RequisitionLines_FixedAssets_FixedAssetId",
+                table: "RequisitionLines");
 
             migrationBuilder.DropTable(
                 name: "CWIPs");
@@ -441,14 +469,30 @@ namespace Infrastructure.Migrations
                 name: "FixedAssets");
 
             migrationBuilder.DropTable(
-                name: "Depreciations");
+                name: "DepreciationModels");
 
             migrationBuilder.DropIndex(
-                name: "IX_Categories_DepreciationId",
+                name: "IX_RequisitionLines_FixedAssetId",
+                table: "RequisitionLines");
+
+            migrationBuilder.DropIndex(
+                name: "IX_IssuanceLines_FixedAssetId",
+                table: "IssuanceLines");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Categories_DepreciationModelId",
                 table: "Categories");
 
             migrationBuilder.DropColumn(
-                name: "DepreciationId",
+                name: "FixedAssetId",
+                table: "RequisitionLines");
+
+            migrationBuilder.DropColumn(
+                name: "FixedAssetId",
+                table: "IssuanceLines");
+
+            migrationBuilder.DropColumn(
+                name: "DepreciationModelId",
                 table: "Categories");
 
             migrationBuilder.DropColumn(

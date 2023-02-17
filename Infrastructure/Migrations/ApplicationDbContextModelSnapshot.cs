@@ -971,7 +971,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DepreciationId")
+                    b.Property<int?>("DepreciationModelId")
                         .HasColumnType("int");
 
                     b.Property<Guid>("InventoryAccountId")
@@ -1001,7 +1001,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CostAccountId");
 
-                    b.HasIndex("DepreciationId");
+                    b.HasIndex("DepreciationModelId");
 
                     b.HasIndex("InventoryAccountId");
 
@@ -1164,17 +1164,11 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("AccumulatedDepreciationId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("AssetAccountId")
+                    b.Property<Guid?>("AssetAccountId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CWIPAccountId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("CampusId")
-                        .HasColumnType("int");
 
                     b.Property<int>("CostOfAsset")
                         .HasColumnType("int");
@@ -1202,8 +1196,11 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DepreciationExpenseId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("DepreciationId")
+                    b.Property<int?>("DepreciationModelId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
@@ -1244,11 +1241,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CWIPAccountId");
 
-                    b.HasIndex("CampusId");
-
                     b.HasIndex("DepreciationExpenseId");
 
-                    b.HasIndex("DepreciationId");
+                    b.HasIndex("DepreciationModelId");
 
                     b.HasIndex("StatusId");
 
@@ -1445,7 +1440,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("Departments");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Depreciation", b =>
+            modelBuilder.Entity("Domain.Entities.DepreciationModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1471,10 +1466,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<Guid>("DepreciationExpenseId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("DocNo")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
@@ -1504,7 +1495,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("DepreciationExpenseId");
 
-                    b.ToTable("Depreciations");
+                    b.ToTable("DepreciationModels");
                 });
 
             modelBuilder.Entity("Domain.Entities.Designation", b =>
@@ -1549,11 +1540,11 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("AccumulatedDepreciationId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("AssetId")
-                        .HasColumnType("int");
+                    b.Property<decimal>("BookValue")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -1572,6 +1563,9 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int>("FixedAssetId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
@@ -1582,8 +1576,8 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("PurchaseCost")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
                     b.Property<int>("SalvageValue")
                         .HasColumnType("int");
@@ -1601,9 +1595,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("AccumulatedDepreciationId");
 
-                    b.HasIndex("AssetId");
+                    b.HasIndex("FixedAssetId");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("StatusId");
 
@@ -1923,9 +1917,6 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("AccumulatedDepreciationId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
                     b.Property<Guid?>("AssetAccountId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1933,11 +1924,8 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<int>("CampusId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -1958,10 +1946,31 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("DepreciationExpenseId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("DepreciationId")
+                    b.Property<int?>("DepreciationModelId")
                         .HasColumnType("int");
 
+                    b.Property<int>("DocId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Doctype")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDisposed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsHeldforSaleOrDisposal")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsIssued")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsReserved")
                         .HasColumnType("bit");
 
                     b.Property<int>("ModelType")
@@ -1975,14 +1984,14 @@ namespace Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("ProrataBasis")
                         .HasColumnType("bit");
-
-                    b.Property<decimal>("PurchaseCost")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("SalvageValue")
                         .HasColumnType("int");
@@ -2002,13 +2011,11 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("AssetAccountId");
 
-                    b.HasIndex("CampusId");
-
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("DepreciationExpenseId");
 
-                    b.HasIndex("DepreciationId");
+                    b.HasIndex("DepreciationModelId");
+
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("StatusId");
 
@@ -2511,6 +2518,9 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<int?>("FixedAssetId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
@@ -2537,6 +2547,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FixedAssetId");
 
                     b.HasIndex("ItemId");
 
@@ -5001,6 +5013,9 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int?>("FixedAssetId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
@@ -5033,6 +5048,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FixedAssetId");
 
                     b.HasIndex("ItemId");
 
@@ -6144,9 +6161,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Depreciation", "Depreciation")
+                    b.HasOne("Domain.Entities.DepreciationModel", "DepreciationModel")
                         .WithMany()
-                        .HasForeignKey("DepreciationId")
+                        .HasForeignKey("DepreciationModelId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Level4", "InventoryAccount")
@@ -6163,7 +6180,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("CostAccount");
 
-                    b.Navigation("Depreciation");
+                    b.Navigation("DepreciationModel");
 
                     b.Navigation("InventoryAccount");
 
@@ -6255,18 +6272,11 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "AssetAccount")
                         .WithMany()
                         .HasForeignKey("AssetAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Level4", "CWIPAccount")
                         .WithMany()
                         .HasForeignKey("CWIPAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Campus", "Campus")
-                        .WithMany()
-                        .HasForeignKey("CampusId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -6275,9 +6285,9 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("DepreciationExpenseId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Entities.Depreciation", "Depreciation")
+                    b.HasOne("Domain.Entities.DepreciationModel", "DepreciationModel")
                         .WithMany()
-                        .HasForeignKey("DepreciationId")
+                        .HasForeignKey("DepreciationModelId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
@@ -6298,11 +6308,9 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("CWIPAccount");
 
-                    b.Navigation("Campus");
-
-                    b.Navigation("Depreciation");
-
                     b.Navigation("DepreciationExpense");
+
+                    b.Navigation("DepreciationModel");
 
                     b.Navigation("Status");
 
@@ -6395,7 +6403,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("Campus");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Depreciation", b =>
+            modelBuilder.Entity("Domain.Entities.DepreciationModel", b =>
                 {
                     b.HasOne("Domain.Entities.Level4", "AccumulatedDepreciation")
                         .WithMany()
@@ -6430,15 +6438,15 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.FixedAsset", "Asset")
+                    b.HasOne("Domain.Entities.FixedAsset", "FixedAsset")
                         .WithMany()
-                        .HasForeignKey("AssetId")
+                        .HasForeignKey("FixedAssetId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Category", "Category")
+                    b.HasOne("Domain.Entities.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -6456,9 +6464,9 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("AccumulatedDepreciation");
 
-                    b.Navigation("Asset");
+                    b.Navigation("FixedAsset");
 
-                    b.Navigation("Category");
+                    b.Navigation("Product");
 
                     b.Navigation("Status");
 
@@ -6544,27 +6552,21 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("AssetAccountId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Entities.Campus", "Campus")
-                        .WithMany()
-                        .HasForeignKey("CampusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.Level4", "DepreciationExpense")
                         .WithMany()
                         .HasForeignKey("DepreciationExpenseId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Entities.Depreciation", "Depreciation")
+                    b.HasOne("Domain.Entities.DepreciationModel", "DepreciationModel")
                         .WithMany()
-                        .HasForeignKey("DepreciationId")
+                        .HasForeignKey("DepreciationModelId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
                         .WithMany()
@@ -6582,13 +6584,11 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("AssetAccount");
 
-                    b.Navigation("Campus");
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Depreciation");
-
                     b.Navigation("DepreciationExpense");
+
+                    b.Navigation("DepreciationModel");
+
+                    b.Navigation("Product");
 
                     b.Navigation("Status");
 
@@ -6847,6 +6847,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.IssuanceLines", b =>
                 {
+                    b.HasOne("Domain.Entities.FixedAsset", "Asset")
+                        .WithMany()
+                        .HasForeignKey("FixedAssetId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.Product", "Item")
                         .WithMany()
                         .HasForeignKey("ItemId")
@@ -6864,6 +6869,8 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("WarehouseId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Asset");
 
                     b.Navigation("IssuanceMaster");
 
@@ -7589,6 +7596,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.RequisitionLines", b =>
                 {
+                    b.HasOne("Domain.Entities.FixedAsset", "Asset")
+                        .WithMany()
+                        .HasForeignKey("FixedAssetId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.Product", "Item")
                         .WithMany()
                         .HasForeignKey("ItemId")
@@ -7606,6 +7618,8 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("WarehouseId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Asset");
 
                     b.Navigation("Item");
 
