@@ -22,11 +22,11 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public FixedAssetService(IUnitOfWork unitOfWork , IMapper mapper , IHttpContextAccessor httpContextAccessor) 
+        public FixedAssetService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
-         _mapper= mapper;
-         _unitOfWork= unitOfWork;    
-         _httpContextAccessor= httpContextAccessor;
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Response<FixedAssetDto>> CreateAsync(CreateFixedAssetDto entity)
@@ -213,35 +213,40 @@ namespace Application.Services
             {
                 entity.DepreciationApplicability = false;
                 entity.DepreciationId = null;
-                entity.AssetAccountId= null;
+                entity.AssetAccountId = null;
                 entity.DepreciationExpenseId = null;
                 entity.AccumulatedDepreciationId = null;
                 entity.UseFullLife = null;
                 entity.DecLiningRate = 0;
-                entity.ModelType = 0 ;
+                entity.ModelType = 0;
             }
+
             var warehouse = await _unitOfWork.Warehouse.GetById((int)entity.WarehouseId, new WarehouseSpecs());
+            if (warehouse == null)
+            {
+                return new Response<FixedAssetDto>("Invalid warehouse id");
+            }
 
-            var fix = _mapper.Map<FixedAsset>(entity);
-
-            //Setting status
-            fix.SetStatus(status);
-            fix.SetCampus(warehouse.CampusId);
             _unitOfWork.CreateTransaction();
-
-            //Saving in table
-            var result = await _unitOfWork.FixedAsset.Add(fix);
-            await _unitOfWork.SaveAsync();
-
-            //For creating docNo
-            fix.CreateCode();
-            await _unitOfWork.SaveAsync();
+            for (int i = 0; i < entity.Quantity; i++)
+            {
+                var fix = _mapper.Map<FixedAsset>(entity);
+                //Setting status
+                fix.SetStatus(status);
+                fix.SetCampus(warehouse.CampusId);
+                await _unitOfWork.FixedAsset.Add(fix);
+                await _unitOfWork.SaveAsync();
+                //For creating docNo
+                fix.CreateCode();
+                await _unitOfWork.SaveAsync();
+            }
 
             //Commiting the transaction 
             _unitOfWork.Commit();
 
             //returning response
-            return new Response<FixedAssetDto>(_mapper.Map<FixedAssetDto>(result), "Created successfully");
+            return new Response<FixedAssetDto>(null
+                , "Created successfully");
 
         }
 
@@ -266,7 +271,7 @@ namespace Application.Services
                 entity.DepreciationExpenseId = null;
                 entity.AccumulatedDepreciationId = null;
                 entity.AssetAccountId = null;
-                entity.ModelType = 0 ;
+                entity.ModelType = 0;
                 entity.UseFullLife = null;
                 entity.DecLiningRate = 0;
             }
