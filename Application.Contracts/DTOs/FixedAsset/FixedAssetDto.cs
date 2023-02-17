@@ -21,8 +21,8 @@ namespace Application.Contracts.DTOs
         public string ProductName { get; set; }
         public int SalvageValue { get; set; }
         public bool DepreciationApplicability { get; set; }
-        public int? DepreciationId { get; set; }
-        public string Depreciation { get; set; }
+        public int? DepreciationModelId { get; set; }
+        public string DepreciationModel { get; set; }
         public int CampusId { get; set; }
         public string Campus { get; set; }
         public int WarehouseId { get; set; }

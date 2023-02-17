@@ -1,13 +1,4 @@
 ﻿using Domain.Constants;
-using Domain.Entities;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Contracts.DTOs
 {
@@ -23,6 +14,6 @@ namespace Application.Contracts.DTOs
         public Guid AccumulatedDepreciationId { get; set; }
         public string AccumulatedDepreciation { get; set; }
         public DepreciationMethod ModelType { get; set; }
-        public decimal? DecliningRate { get; set; }
+        public decimal DecliningRate { get; set; }
     }
 }

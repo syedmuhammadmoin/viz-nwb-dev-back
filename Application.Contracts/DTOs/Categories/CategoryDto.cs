@@ -18,7 +18,7 @@ namespace Application.Contracts.DTOs
         public string RevenueAccount { get; set; }
         public string CostAccount { get; set; }
         public bool IsFixedAsset { get; set; }
-        public int? DepreciationId { get; set; }
-        public string Depreciation { get; set; }
+        public int? DepreciationModelId { get; set; }
+        public string DepreciationModel { get; set; }
     }
 }

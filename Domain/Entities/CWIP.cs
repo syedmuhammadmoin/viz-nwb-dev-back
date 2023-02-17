@@ -30,9 +30,9 @@ namespace Domain.Entities
         public Level4 AssetAccount { get; private set; }
         public int? SalvageValue { get; private set; }
         public bool DepreciationApplicability { get; private set; }
-        public int? DepreciationId { get; private set; }
-        [ForeignKey("DepreciationId")]
-        public DepreciationModel Depreciation { get; private set; }
+        public int? DepreciationModelId { get; private set; }
+        [ForeignKey("DepreciationModelId")]
+        public DepreciationModel DepreciationModel { get; private set; }
         public DepreciationMethod ModelType { get; private set; }
         public Guid? DepreciationExpenseId { get; private set; }
         [ForeignKey("DepreciationExpenseId")]

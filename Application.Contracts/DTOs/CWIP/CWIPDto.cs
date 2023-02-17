@@ -24,8 +24,8 @@ namespace Application.Contracts.DTOs
         public string AssetAccount { get; set; }
         public int? SalvageValue { get; set; }
         public bool DepreciationApplicability { get; set; }
-        public int? DepreciationId { get; set; }
-        public string Depreciation { get; set; }
+        public int? DepreciationModelId { get; set; }
+        public string DepreciationModel { get; set; }
         public DepreciationMethod ModelType { get; set; }
         public Guid? DepreciationExpenseId { get; set; }
         public string DepreciationExpense { get; set; }

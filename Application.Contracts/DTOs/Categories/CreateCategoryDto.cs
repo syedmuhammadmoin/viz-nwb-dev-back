@@ -23,6 +23,6 @@ namespace Application.Contracts.DTOs
         public Guid? CostAccountId { get; set; }
         [Required]
         public bool? IsFixedAsset { get; set; }
-        public int? DepreciationId { get; set; }
+        public int? DepreciationModelId { get; set; }
     }
 }

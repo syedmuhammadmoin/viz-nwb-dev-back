@@ -3,15 +3,9 @@ using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
-using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -28,18 +22,13 @@ namespace Application.Services
 
         public async Task<Response<DepreciationModelDto>> CreateAsync(CreateDepreciationModelDto entity)
         {
-            var depreciation = _mapper.Map<DepreciationModel>(entity);
-         
-            _unitOfWork.CreateTransaction();
+            var depreciationModel = _mapper.Map<DepreciationModel>(entity);
             //Saving in table
-            var result = await _unitOfWork.Depreciation.Add(depreciation);
+            await _unitOfWork.DepreciationModel.Add(depreciationModel);
             await _unitOfWork.SaveAsync();
-
-            //Commiting the transaction 
-            _unitOfWork.Commit();
-
+            
             //returning response
-            return new Response<DepreciationModelDto>(_mapper.Map<DepreciationModelDto>(result), "Created successfully");
+            return new Response<DepreciationModelDto>(_mapper.Map<DepreciationModelDto>(depreciationModel), "Created successfully");
         }
 
         public Task<Response<int>> DeleteAsync(int id)
@@ -47,55 +36,52 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
+        public async Task<Response<DepreciationModelDto>> UpdateAsync(CreateDepreciationModelDto entity)
+        {
+            var result = await _unitOfWork.DepreciationModel.GetById((int)entity.Id);
+            
+            if (result == null)
+                return new Response<DepreciationModelDto>("Not found");
+            
+            //For updating data
+            _mapper.Map(entity, result);
+            await _unitOfWork.SaveAsync();
+
+            //returning response
+            return new Response<DepreciationModelDto>(_mapper.Map<DepreciationModelDto>(result), "Updated successfully");
+        }
+
         public async Task<PaginationResponse<List<DepreciationModelDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-
-            var depreciation = await _unitOfWork.Depreciation.GetAll(new DepreciationModelSpecs(filter, false));
-
+            var depreciation = await _unitOfWork.DepreciationModel
+                .GetAll(new DepreciationModelSpecs(filter, false));
+            
             if (depreciation.Count() == 0)
                 return new PaginationResponse<List<DepreciationModelDto>>(_mapper.Map<List<DepreciationModelDto>>(depreciation), "List is empty");
 
-            var totalRecords = await _unitOfWork.Depreciation.TotalRecord(new DepreciationModelSpecs(filter, true));
-
+            var totalRecords = await _unitOfWork.DepreciationModel.TotalRecord(new DepreciationModelSpecs(filter, true));
             return new PaginationResponse<List<DepreciationModelDto>>(_mapper.Map<List<DepreciationModelDto>>(depreciation),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
 
         public async Task<Response<DepreciationModelDto>> GetByIdAsync(int id)
         {
-            var depreciation = await _unitOfWork.Depreciation.GetById(id, new DepreciationModelSpecs());
-            if (depreciation == null)
+            var result = await _unitOfWork.DepreciationModel
+                .GetById(id, new DepreciationModelSpecs());
+            if (result == null)
                 return new Response<DepreciationModelDto>("Not found");
-            var depreciationDto = _mapper.Map<DepreciationModelDto>(depreciation);
-            return new Response<DepreciationModelDto>(depreciationDto, "Returning value"); 
+
+            return new Response<DepreciationModelDto>(_mapper.Map<DepreciationModelDto>(result), "Returning value"); 
         }
 
-        public async Task<Response<List<DepreciationModelDto>>> GetDepreciationDown()
+        public async Task<Response<List<DepreciationModelDto>>> GetDropDown()
         {
-            var depreciations = await _unitOfWork.Depreciation.GetAll();
-            if (!depreciations.Any())
+            var result = await _unitOfWork.DepreciationModel.GetAll();
+            if (!result.Any())
                 return new Response<List<DepreciationModelDto>>("List is empty");
 
-            return new Response<List<DepreciationModelDto>>(_mapper.Map<List<DepreciationModelDto>>(depreciations), "Returning List");
+            return new Response<List<DepreciationModelDto>>(_mapper.Map<List<DepreciationModelDto>>(result), "Returning List");
         }
-
-        public async Task<Response<DepreciationModelDto>> UpdateAsync(CreateDepreciationModelDto entity)
-        {
-            var depreciation = await _unitOfWork.Depreciation.GetById((int)entity.Id, new DepreciationModelSpecs());
-            if (depreciation == null)
-                return new Response<DepreciationModelDto>("Not found");
-            //For updating data
-            _mapper.Map<CreateDepreciationModelDto, DepreciationModel>(entity, depreciation);
-
-            _unitOfWork.CreateTransaction();
-
-            await _unitOfWork.SaveAsync();
-
-            //Commiting the transaction
-            _unitOfWork.Commit();
-
-            //returning response
-            return new Response<DepreciationModelDto>(_mapper.Map<DepreciationModelDto>(depreciation), "Updated successfully");
-        }
+    
     }
 }

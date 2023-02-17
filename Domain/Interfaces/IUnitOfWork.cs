@@ -63,7 +63,7 @@ namespace Domain.Interfaces
         IQuotationRepository Quotation { get; }
         ICallForQuotationRepository CallForQuotation { get; }
         IQuotationComparativeRepository QuotationComparative { get; }
-        IDepreciationModelRepository Depreciation { get; }
+        IDepreciationModelRepository DepreciationModel { get; }
         IFixedAssetRepository FixedAsset { get; }
         ICWIPRepository CWIP { get; }
         IDisposalRepository Disposal { get; }
