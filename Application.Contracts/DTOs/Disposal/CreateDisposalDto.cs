@@ -1,13 +1,4 @@
-﻿using Domain.Entities;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Constants;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Application.Contracts.DTOs
 {
@@ -15,11 +6,11 @@ namespace Application.Contracts.DTOs
     {
         public int? Id { get; set; }
         [Required]
-        public int? AssetId { get; set; }
+        public int? FixedAssetId { get; set; }
         [Required]
-        public int? CategoryId { get; set; }
+        public int? ProductId { get; set; }
         [Required]
-        public decimal PurchaseCost { get; set; }
+        public decimal Cost { get; set; }
         [Required]
         public int SalvageValue { get; set; }
         [Required]
@@ -27,14 +18,13 @@ namespace Application.Contracts.DTOs
         [Required]
         public Guid? AccumulatedDepreciationId { get; set; }
         [Required]
-        public decimal BookValue { get; set; }
-        [Required]
         public DateTime DisposalDate { get; set; }
         [Required]
+        [Range(1.00, double.MaxValue, ErrorMessage = "Value must be greater than 0")]
         public decimal DisposalValue { get; set; }
         [Required]   
         public int? WarehouseId { get; set; }
         [Required]
-        public bool? isSubmit { get; set; }
+        public bool? IsSubmit { get; set; }
     }
 }

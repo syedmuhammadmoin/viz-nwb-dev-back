@@ -154,7 +154,7 @@ namespace Application.Services
                         var addRemarks = new Remark()
                         {
                             DocId = getCwip.Id,
-                            DocType = DocType.FixedAsset,
+                            DocType = DocType.CWIP,
                             Remarks = data.Remarks,
                             UserId = userId
                         };

@@ -9,11 +9,6 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -29,88 +24,40 @@ namespace Application.Services
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
         }
-        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
-        {
-            var getDisposal = await _unitOfWork.Disposal.GetById(data.DocId, new DisposalSpecs());
-
-            if (getDisposal == null)
-            {
-                return new Response<bool>("Disposal with the input id not found");
-            }
-            if (getDisposal.Status.State == DocumentStatus.Unpaid || getDisposal.Status.State == DocumentStatus.Partial || getDisposal.Status.State == DocumentStatus.Paid)
-            {
-                return new Response<bool>("Disposal already approved");
-            }
-            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Disposal)).FirstOrDefault();
-
-            if (workflow == null)
-            {
-                return new Response<bool>("No activated workflow found for this document");
-            }
-            var transition = workflow.WorkflowTransitions
-                    .FirstOrDefault(x => (x.CurrentStatusId == getDisposal.StatusId && x.Action == data.Action));
-
-            if (transition == null)
-            {
-                return new Response<bool>("No transition found");
-            }
-
-            // Creating object of getUSer class
-            var getUser = new GetUser(this._httpContextAccessor);
-
-            var userId = getUser.GetCurrentUserId();
-            var currentUserRoles = new GetUser(_httpContextAccessor).GetCurrentUserRoles();
-            _unitOfWork.CreateTransaction();
-
-            foreach (var role in currentUserRoles)
-            {
-                if (transition.AllowedRole.Name == role)
-                {
-                    getDisposal.SetStatus(transition.NextStatusId);
-
-                    if (!String.IsNullOrEmpty(data.Remarks))
-                    {
-                        var addRemarks = new Remark()
-                        {
-                            DocId = getDisposal.Id,
-                            DocType = DocType.Disposal,
-                            Remarks = data.Remarks,
-                            UserId = userId
-                        };
-                        await _unitOfWork.Remarks.Add(addRemarks);
-                    }
-
-                    if (transition.NextStatus.State == DocumentStatus.Rejected)
-                    {
-                        await _unitOfWork.SaveAsync();
-                        _unitOfWork.Commit();
-                        return new Response<bool>(true, "Disposal Rejected");
-                    }
-                    await _unitOfWork.SaveAsync();
-                    _unitOfWork.Commit();
-                    return new Response<bool>(true, "Disposal Reviewed");
-                }
-            }
-
-            return new Response<bool>("User does not have allowed role");
-        }
 
         public async Task<Response<DisposalDto>> CreateAsync(CreateDisposalDto entity)
         {
 
-            if ((bool)entity.isSubmit)
+            if ((bool)entity.IsSubmit)
             {
-                return await this.Submit(entity);
+                return await Submit(entity);
             }
             else
             {
-                return await this.Save(entity, 1);
+                return await Save(entity, 1);
             }
         }
+
+        public async Task<Response<DisposalDto>> UpdateAsync(CreateDisposalDto entity)
+        {
+            if ((bool)entity.IsSubmit)
+            {
+                return await Submit(entity);
+            }
+            else
+            {
+                return await Update(entity, 1);
+            }
+        }
+
+        public Task<Response<int>> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<PaginationResponse<List<DisposalDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var disposal = await _unitOfWork.Disposal.GetAll(new DisposalSpecs(filter, false));
-
             if (disposal.Count() == 0)
                 return new PaginationResponse<List<DisposalDto>>(_mapper.Map<List<DisposalDto>>(disposal), "List is empty");
 
@@ -125,10 +72,12 @@ namespace Application.Services
             var disposal = await _unitOfWork.Disposal.GetById(id, new DisposalSpecs());
             if (disposal == null)
                 return new Response<DisposalDto>("Not found");
+            
             var disposalDto = _mapper.Map<DisposalDto>(disposal);
-            ReturningRemarks(disposalDto, DocType.Disposal);
 
+            ReturningRemarks(disposalDto);
             disposalDto.IsAllowedRole = false;
+            
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Disposal)).FirstOrDefault();
             if (workflow != null)
             {
@@ -147,31 +96,90 @@ namespace Application.Services
                     }
                 }
             }
+
             return new Response<DisposalDto>(disposalDto, "Returning value");
         }
-        public async Task<Response<DisposalDto>> UpdateAsync(CreateDisposalDto entity)
+
+        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
-            if ((bool)entity.isSubmit)
+            var getDisposal = await _unitOfWork.Disposal.GetById(data.DocId, new DisposalSpecs());
+            if (getDisposal == null)
             {
-                return await this.Submit(entity);
+                return new Response<bool>("Disposal with the input id not found");
             }
-            else
+            
+            if (getDisposal.Status.State == DocumentStatus.Unpaid || getDisposal.Status.State == DocumentStatus.Partial || getDisposal.Status.State == DocumentStatus.Paid)
             {
-                return await this.Update(entity, 1);
+                return new Response<bool>("Disposal already approved");
             }
+            
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Disposal)).FirstOrDefault();
+            if (workflow == null)
+            {
+                return new Response<bool>("No activated workflow found for this document");
+            }
+            
+            var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == getDisposal.StatusId && x.Action == data.Action));
+            if (transition == null)
+            {
+                return new Response<bool>("No transition found");
+            }
+
+            // Creating object of getUSer class
+            var getUser = new GetUser(this._httpContextAccessor);
+
+            var userId = getUser.GetCurrentUserId();
+            var currentUserRoles = new GetUser(_httpContextAccessor).GetCurrentUserRoles();
+            _unitOfWork.CreateTransaction();
+
+            foreach (var role in currentUserRoles)
+            {
+                if (transition.AllowedRole.Name == role)
+                {
+                    getDisposal.SetStatus(transition.NextStatusId);
+                    if (!String.IsNullOrEmpty(data.Remarks))
+                    {
+                        var addRemarks = new Remark()
+                        {
+                            DocId = getDisposal.Id,
+                            DocType = DocType.Disposal,
+                            Remarks = data.Remarks,
+                            UserId = userId
+                        };
+                        await _unitOfWork.Remarks.Add(addRemarks);
+                    }
+
+                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                    {
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Document Approved");
+                    }
+                    if (transition.NextStatus.State == DocumentStatus.Rejected)
+                    {
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Document Rejected");
+                    }
+                    await _unitOfWork.SaveAsync();
+                    _unitOfWork.Commit();
+                    return new Response<bool>(true, "Document Reviewed");
+                }
+            }
+
+            return new Response<bool>("User does not have allowed role");
         }
-        public Task<Response<int>> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
+        
+        //Private methods
         private async Task<Response<DisposalDto>> Submit(CreateDisposalDto entity)
         {
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Disposal)).FirstOrDefault();
-
             if (checkingActiveWorkFlows == null)
             {
                 return new Response<DisposalDto>("No workflow found for Disposal");
             }
+
             if (entity.Id == null)
             {
                 return await this.Save(entity, 6);
@@ -184,9 +192,9 @@ namespace Application.Services
 
         private async Task<Response<DisposalDto>> Save(CreateDisposalDto entity, int status)
         {
-            
-
             var disposal = _mapper.Map<Disposal>(entity);
+            
+            //TODO: Add Book value calculation in mapping
 
             //Setting status
             disposal.SetStatus(status);
@@ -194,7 +202,7 @@ namespace Application.Services
             _unitOfWork.CreateTransaction();
 
             //Saving in table
-            var result = await _unitOfWork.Disposal.Add(disposal);
+            await _unitOfWork.Disposal.Add(disposal);
             await _unitOfWork.SaveAsync();
 
             //For creating docNo
@@ -205,40 +213,38 @@ namespace Application.Services
             _unitOfWork.Commit();
 
             //returning response
-            return new Response<DisposalDto>(_mapper.Map<DisposalDto>(result), "Created successfully");
+            return new Response<DisposalDto>(_mapper.Map<DisposalDto>(disposal), "Created successfully");
 
         }
 
         private async Task<Response<DisposalDto>> Update(CreateDisposalDto entity, int status)
         {
-            var specification = new DisposalSpecs();
-            var Dis = await _unitOfWork.Disposal.GetById((int)entity.Id, specification);
+            var result = await _unitOfWork.Disposal.GetById((int)entity.Id);
 
-            if (Dis == null)
+            if (result == null)
                 return new Response<DisposalDto>("Not found");
 
-            if (Dis.StatusId != 1 && Dis.StatusId != 2)
+            if (result.StatusId != 1 && result.StatusId != 2)
                 return new Response<DisposalDto>("Only draft document can be edited");
 
+            //TODO: Add Book value calculation in mapping
 
-
-            Dis.SetStatus(status);
-
+            //Setting status
+            result.SetStatus(status);
             _unitOfWork.CreateTransaction();
 
             //For updating data
-            _mapper.Map<CreateDisposalDto, Disposal>(entity, Dis);
-
+            _mapper.Map(entity, result);
             await _unitOfWork.SaveAsync();
 
             //Commiting the transaction
             _unitOfWork.Commit();
 
             //returning response
-            return new Response<DisposalDto>(_mapper.Map<DisposalDto>(Dis), "Updated successfully");
-
+            return new Response<DisposalDto>(_mapper.Map<DisposalDto>(result), "Updated successfully");
         }
-        private List<RemarksDto> ReturningRemarks(DisposalDto data, DocType docType)
+
+        private List<RemarksDto> ReturningRemarks(DisposalDto data)
         {
             var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.Disposal))
                     .Select(e => new RemarksDto()
@@ -252,8 +258,8 @@ namespace Application.Services
             {
                 data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
             }
-
             return remarks;
         }
+
     }
 }

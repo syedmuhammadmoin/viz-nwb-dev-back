@@ -3,9 +3,7 @@ using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
-using Application.Services;
 using Domain.Constants;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Vizalys.Api.Controllers
@@ -31,6 +29,21 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
+        
+        [ClaimRequirement("Permission", new string[] { Permissions.DisposalClaims.Edit })]
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<Response<DisposalDto>>> UpdateAsync(int id, CreateDisposalDto entity)
+        {
+            if (id != entity.Id)
+                return BadRequest("ID mismatch");
+
+            var result = await _disposalService.UpdateAsync(entity);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
+
         [ClaimRequirement("Permission", new string[] { Permissions.DisposalClaims.Create, Permissions.DisposalClaims.View, Permissions.DisposalClaims.Delete, Permissions.DisposalClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<DisposalDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
@@ -52,20 +65,7 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
-        [ClaimRequirement("Permission", new string[] { Permissions.DisposalClaims.Edit })]
-        [HttpPut("{id:int}")]
-        public async Task<ActionResult<Response<DisposalDto>>> UpdateAsync(int id, CreateDisposalDto entity)
-        {
-            if (id != entity.Id)
-                return BadRequest("ID mismatch");
-
-            var result = await _disposalService.UpdateAsync(entity);
-            if (result.IsSuccess)
-                return Ok(result); // Status Code : 200
-
-            return BadRequest(result); // Status code : 400
-        }
-
+       
         [HttpPost("workflow")]
         public async Task<ActionResult<Response<bool>>> CheckWorkFlow([FromBody] ApprovalDto data)
         {
@@ -75,5 +75,6 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status Code : 400
         }
+
     }
 }
