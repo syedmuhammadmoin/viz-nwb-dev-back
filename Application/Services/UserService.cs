@@ -471,7 +471,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.QuotationClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.CallForQuotationClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.QuotationComparativeClaims), id);
-            allPermissions.GetPermissions(typeof(Permissions.DepreciationClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DepreciationModelClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.FixedAssetClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.CWIPClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.DisposalClaims), id);
@@ -604,7 +604,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.QuotationClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.CallForQuotationClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.QuotationComparativeClaims), "12");
-            allPermissions.GetPermissions(typeof(Permissions.DepreciationClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.DepreciationModelClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.FixedAssetClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.CWIPClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.DisposalClaims), "12");

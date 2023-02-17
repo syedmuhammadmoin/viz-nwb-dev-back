@@ -546,18 +546,17 @@ namespace Application.Mapper
                     a => a.Status == DocumentStatus.Draft ? "Draft" :
                     a.Status == DocumentStatus.Submitted ? "Submitted" :
                     a.Status == DocumentStatus.Paid ? "Awarded" : "N/A"));
-            CreateMap<Depreciation, DepreciationDto>()
+            CreateMap<DepreciationModel, DepreciationModelDto>()
                 .ForMember(dto => dto.AssetAccount, core => core.MapFrom(a => a.AssetAccount.Name))
                 .ForMember(dto => dto.DepreciationExpense, core => core.MapFrom(d => d.DepreciationExpense.Name))
                 .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(a => a.AccumulatedDepreciation.Name));
-            CreateMap<CreateDepreciationDto, Depreciation>();
+            CreateMap<CreateDepreciationModelDto, DepreciationModel>();
 
             CreateMap<FixedAsset, FixedAssetDto>()
                 .ForMember(dto => dto.AssetAccount, core => core.MapFrom(a => a.AssetAccount.Name))
                 .ForMember(dto => dto.Depreciation, core => core.MapFrom(d => d.Depreciation.ModelName))
                 .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(a => a.AccumulatedDepreciation.Name))
                 .ForMember(dto => dto.DepreciationExpense, core => core.MapFrom(d => d.DepreciationExpense.Name))
-                .ForMember(dto => dto.ProductName, core => core.MapFrom(c => c.Product.ProductName))
                 .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State))
                 .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
             CreateMap<CreateFixedAssetDto, FixedAsset>();

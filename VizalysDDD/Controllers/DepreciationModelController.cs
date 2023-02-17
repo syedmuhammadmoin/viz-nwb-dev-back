@@ -12,18 +12,18 @@ namespace Vizalys.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DepreciationController : ControllerBase
+    public class DepreciationModelController : ControllerBase
     {
-        private readonly IDepreciationService _depreciationService;
+        private readonly IDepreciationModelService _depreciationService;
 
-        public DepreciationController(IDepreciationService depreciationService)
+        public DepreciationModelController(IDepreciationModelService depreciationService)
         {
             _depreciationService = depreciationService;
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.DepreciationClaims.Create })]
+        [ClaimRequirement("Permission", new string[] { Permissions.DepreciationModelClaims.Create })]
         [HttpPost]
-        public async Task<ActionResult<Response<DepreciationDto>>> CreateAsync(CreateDepreciationDto entity)
+        public async Task<ActionResult<Response<DepreciationModelDto>>> CreateAsync(CreateDepreciationModelDto entity)
         {
             var result = await _depreciationService.CreateAsync(entity);
             if (result.IsSuccess)
@@ -32,9 +32,9 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.DepreciationClaims.Create, Permissions.DepreciationClaims.View, Permissions.DepreciationClaims.Delete, Permissions.DepreciationClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.DepreciationModelClaims.Create, Permissions.DepreciationModelClaims.View, Permissions.DepreciationModelClaims.Delete, Permissions.DepreciationModelClaims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<DepreciationDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<DepreciationModelDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
         {
             var results = await _depreciationService.GetAllAsync(filter);
             if (results.IsSuccess)
@@ -42,9 +42,9 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(results); // Status code : 400
         }
-        [ClaimRequirement("Permission", new string[] { Permissions.DepreciationClaims.Create, Permissions.DepreciationClaims.View, Permissions.DepreciationClaims.Delete, Permissions.DepreciationClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.DepreciationModelClaims.Create, Permissions.DepreciationModelClaims.View, Permissions.DepreciationModelClaims.Delete, Permissions.DepreciationModelClaims.Edit })]
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Response<DepreciationDto>>> GetByIdAsync(int id)
+        public async Task<ActionResult<Response<DepreciationModelDto>>> GetByIdAsync(int id)
         {
             var result = await _depreciationService.GetByIdAsync(id);
             if (result.IsSuccess)
@@ -52,9 +52,9 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
-        [ClaimRequirement("Permission", new string[] { Permissions.DepreciationClaims.Edit })]
+        [ClaimRequirement("Permission", new string[] { Permissions.DepreciationModelClaims.Edit })]
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Response<DepreciationDto>>> UpdateAsync(int id, CreateDepreciationDto entity)
+        public async Task<ActionResult<Response<DepreciationModelDto>>> UpdateAsync(int id, CreateDepreciationModelDto entity)
         {
             if (id != entity.Id)
                 return BadRequest("ID mismatch");

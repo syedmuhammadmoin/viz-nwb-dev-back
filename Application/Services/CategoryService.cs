@@ -64,7 +64,7 @@ namespace Application.Services
 
             if ((bool)entity.IsFixedAsset && (entity.DepreciationId == null || entity.DepreciationId == 0))
             {
-                return new Response<CategoryDto>("Depreciation is Required");
+                return new Response<CategoryDto>("DepreciationModel is Required");
             }
             if ((bool)!entity.IsFixedAsset)
             {
@@ -141,7 +141,7 @@ namespace Application.Services
 
             if ((bool)entity.IsFixedAsset && (entity.DepreciationId == null || entity.DepreciationId == 0))
             {
-                return new Response<CategoryDto>("Depreciation is Required");
+                return new Response<CategoryDto>("DepreciationModel is Required");
             }
             if ((bool)!entity.IsFixedAsset)
             {

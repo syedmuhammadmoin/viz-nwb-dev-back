@@ -191,7 +191,7 @@ namespace Application.Services
                 if (entity.DepreciationId == null && entity.DepreciationId == 0 || entity.DepreciationExpenseId == null ||
                     entity.UseFullLife == null)
                 {
-                    return new Response<CWIPDto>("Depreciation Model Fields are Required");
+                    return new Response<CWIPDto>("DepreciationModel Model Fields are Required");
                 }
 
                 if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
@@ -218,7 +218,7 @@ namespace Application.Services
                 if (entity.DepreciationId == null || entity.DepreciationExpenseId == null || entity.AccumulatedDepreciationId == null ||
                     entity.UseFullLife == null)
                 {
-                    return new Response<CWIPDto>("Depreciation Model Fields are Required");
+                    return new Response<CWIPDto>("DepreciationModel Model Fields are Required");
 
                 }
                 if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
@@ -271,7 +271,7 @@ namespace Application.Services
                 if (entity.DepreciationId == null && entity.DepreciationId == 0 || entity.DepreciationExpenseId == null ||
                     entity.UseFullLife == null)
                 {
-                    return new Response<CWIPDto>("Depreciation Model Fields are Required");
+                    return new Response<CWIPDto>("DepreciationModel Model Fields are Required");
                 }
 
                 if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)

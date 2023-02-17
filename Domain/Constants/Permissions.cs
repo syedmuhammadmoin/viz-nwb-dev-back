@@ -363,12 +363,12 @@ namespace Domain.Constants
             public const string Edit = "Permissions.Procurement.QuotationComparativeClaims.Edit";
             public const string Delete = "Permissions.Procurement.QuotationComparativeClaims.Delete";
         }
-        public static class DepreciationClaims
+        public static class DepreciationModelClaims
         {
-            public const string View = "Permissions.FixedAsset.DepreciationClaims.View";
-            public const string Create = "Permissions.FixedAsset.DepreciationClaims.Create";
-            public const string Edit = "Permissions.FixedAsset.DepreciationClaims.Edit";
-            public const string Delete = "Permissions.FixedAsset.DepreciationClaims.Delete";
+            public const string View = "Permissions.FixedAsset.DepreciationModelClaims.View";
+            public const string Create = "Permissions.FixedAsset.DepreciationModelClaims.Create";
+            public const string Edit = "Permissions.FixedAsset.DepreciationModelClaims.Edit";
+            public const string Delete = "Permissions.FixedAsset.DepreciationModelClaims.Delete";
         }
         public static class FixedAssetClaims
         {

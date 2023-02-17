@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class DepreciationRepository : GenericRepository<Depreciation, int>, IDepreciationRepository
+    public class DepreciationModelRepository : GenericRepository<DepreciationModel, int>, IDepreciationModelRepository
     {
-        public DepreciationRepository(ApplicationDbContext context) : base(context)
+        public DepreciationModelRepository(ApplicationDbContext context) : base(context)
         {
         }
     }

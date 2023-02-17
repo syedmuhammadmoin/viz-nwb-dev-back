@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Depreciation : BaseEntity<int>
+    public class DepreciationModel : BaseEntity<int>
     {
         [MaxLength(50)]
         public string DocNo { get; private set; }
@@ -30,7 +30,7 @@ namespace Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal DecliningRate { get; private set; }
 
-        protected Depreciation()
+        protected DepreciationModel()
         {
         }
     }

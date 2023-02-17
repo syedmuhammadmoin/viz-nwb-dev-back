@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.DTOs
 {
-    public class CreateDepreciationDto
+    public class CreateDepreciationModelDto
     {
         public int Id { get; set; }
         [Required]
