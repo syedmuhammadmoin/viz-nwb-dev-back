@@ -78,6 +78,21 @@ namespace Application.Services
                 await _unitOfWork.SaveAsync();
             }
 
+            if (entity.DocId!=null)
+            {
+
+                if (entity.DocId != null && entity.Doctype == DocType.GRN)
+                {
+                    var GRN = await _unitOfWork.GRN.GetById(entity.DocId.Value);
+
+                    GRN.GRNLines.Where(x => x.ItemId == entity.ProductId).FirstOrDefault().UpdateIsFixedAssetCreated(true);
+                    await _unitOfWork.SaveAsync();
+
+                } 
+            }
+
+
+
             //Commiting the transaction 
             _unitOfWork.Commit();
 

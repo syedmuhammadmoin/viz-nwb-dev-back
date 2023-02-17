@@ -31,7 +31,11 @@ namespace Domain.Entities
         public int MasterId { get; private set; }
         [ForeignKey("MasterId")]
         public GRNMaster GRNMaster { get; private set; }
-
+        public bool IsFixedAssetCreated { get; private set; }
+        public void UpdateIsFixedAssetCreated(bool isFixedAssetCreated)
+        {
+            IsFixedAssetCreated = isFixedAssetCreated;
+        }
         public void SetStatus(DocumentStatus status)
         {
             Status = status;
