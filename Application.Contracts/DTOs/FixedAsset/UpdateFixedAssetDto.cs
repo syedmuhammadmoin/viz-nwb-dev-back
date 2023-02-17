@@ -3,8 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.Contracts.DTOs
 {
-    public class CreateFixedAssetDto
+    public class UpdateFixedAssetDto
     {
+        [Required]
+        public int? Id { get; set; }
         [Required]
         public DateTime DateofAcquisition { get; set; }
         [Required]
@@ -35,8 +37,6 @@ namespace Application.Contracts.DTOs
         public bool IsActive { get; set; }
         public int DocId { get; set; }
         public DocType Doctype { get; set; }
-        [Required]
-        public int? Quantity { get; set; }
         [Required]
         public bool? IsSubmit { get; set; }
     }

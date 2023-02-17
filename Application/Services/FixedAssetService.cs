@@ -9,11 +9,6 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -22,6 +17,7 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+
         public FixedAssetService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
@@ -31,14 +27,129 @@ namespace Application.Services
 
         public async Task<Response<FixedAssetDto>> CreateAsync(CreateFixedAssetDto entity)
         {
-            if ((bool)entity.isSubmit)
+            //Checking workflow
+            int status = 1;
+            if ((bool)entity.IsSubmit)
             {
-                return await this.Submit(entity);
+                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.FixedAsset)).FirstOrDefault();
+                if (checkingActiveWorkFlows == null)
+                {
+                    return new Response<FixedAssetDto>("No workflow found for Fixed Asset");
+                }
+                status = 6;
+            }
+
+            //Checking validation
+            if (entity.DepreciationApplicability)
+            {
+                if ((entity.DepreciationModelId == null && entity.DepreciationModelId == 0)
+                    || (entity.UseFullLife == null && entity.UseFullLife == 0)
+                    || entity.DepreciationExpenseId == null)
+                {
+                    return new Response<FixedAssetDto>("Depreciation Model Fields are Required");
+                }
+                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
+                {
+                    return new Response<FixedAssetDto>("Declining Rate is Required");
+                }
             }
             else
             {
-                return await this.Save(entity, 1);
+                entity.DepreciationModelId = null;
+                entity.AssetAccountId = null;
+                entity.DepreciationExpenseId = null;
+                entity.AccumulatedDepreciationId = null;
+                entity.UseFullLife = null;
+                entity.DecLiningRate = 0;
+                entity.ModelType = 0;
             }
+
+            _unitOfWork.CreateTransaction();
+
+            for (int i = 0; i < entity.Quantity; i++)
+            {
+                var fix = _mapper.Map<FixedAsset>(entity);
+                //Setting status
+                fix.SetStatus(status);
+                await _unitOfWork.FixedAsset.Add(fix);
+                await _unitOfWork.SaveAsync();
+                //For creating docNo
+                fix.CreateCode();
+                await _unitOfWork.SaveAsync();
+            }
+
+            //Commiting the transaction 
+            _unitOfWork.Commit();
+
+            //returning response
+            return new Response<FixedAssetDto>(null, "Created successfully");
+        }
+
+        public async Task<Response<FixedAssetDto>> UpdateAsync(UpdateFixedAssetDto entity)
+        {
+            //Checking workflow
+            int status = 1;
+            if ((bool)entity.IsSubmit)
+            {
+                var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.FixedAsset)).FirstOrDefault();
+                if (checkingActiveWorkFlows == null)
+                {
+                    return new Response<FixedAssetDto>("No workflow found for Fixed Asset");
+                }
+                status = 6;
+            }
+
+            //Checking validation
+            if (entity.DepreciationApplicability)
+            {
+                if ((entity.DepreciationModelId == null && entity.DepreciationModelId == 0)
+                    || (entity.UseFullLife == null && entity.UseFullLife == 0)
+                    || entity.DepreciationExpenseId == null)
+                {
+                    return new Response<FixedAssetDto>("Depreciation Model Fields are Required");
+                }
+                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
+                {
+                    return new Response<FixedAssetDto>("Declining Rate is Required");
+                }
+            }
+            else
+            {
+                entity.DepreciationModelId = null;
+                entity.AssetAccountId = null;
+                entity.DepreciationExpenseId = null;
+                entity.AccumulatedDepreciationId = null;
+                entity.UseFullLife = null;
+                entity.DecLiningRate = 0;
+                entity.ModelType = 0;
+            }
+
+            //Getting fixed asset
+            var result = await _unitOfWork.FixedAsset.GetById((int)entity.Id);
+            if (result == null)
+                return new Response<FixedAssetDto>("Not found");
+
+            if (result.StatusId != 1 && result.StatusId != 2)
+                return new Response<FixedAssetDto>("Only draft document can be edited");
+
+            //Setting status
+            result.SetStatus(status);
+
+            _unitOfWork.CreateTransaction();
+            //For updating data
+            _mapper.Map(entity, result);
+            await _unitOfWork.SaveAsync();
+
+            //Commiting the transaction
+            _unitOfWork.Commit();
+
+            //returning response
+            return new Response<FixedAssetDto>(_mapper.Map<FixedAssetDto>(result), "Updated successfully");
+        }
+
+        public Task<Response<int>> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<PaginationResponse<List<FixedAssetDto>>> GetAllAsync(TransactionFormFilter filter)
@@ -57,25 +168,31 @@ namespace Application.Services
         public async Task<Response<FixedAssetDto>> GetByIdAsync(int id)
         {
             var fixedAsset = await _unitOfWork.FixedAsset.GetById(id, new FixedAssetSpecs());
+
             if (fixedAsset == null)
                 return new Response<FixedAssetDto>("Not found");
+
             var fixedAssetDto = _mapper.Map<FixedAssetDto>(fixedAsset);
-            ReturningRemarks(fixedAssetDto, DocType.FixedAsset);
+            ReturningRemarks(fixedAssetDto);
 
             if (fixedAssetDto.DepreciationApplicability == false)
             {
-                fixedAssetDto.DepreciationId = null;
-                fixedAssetDto.AccumulatedDepreciation = null;
+                fixedAssetDto.DepreciationModelId = null;
                 fixedAssetDto.AssetAccountId = null;
+                fixedAssetDto.AccumulatedDepreciation = null;
                 fixedAssetDto.DepreciationExpenseId = null;
             }
+
             fixedAssetDto.IsAllowedRole = false;
-            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.FixedAsset)).FirstOrDefault();
+
+            var workflow = _unitOfWork.WorkFlow
+                .Find(new WorkFlowSpecs(DocType.FixedAsset))
+                .FirstOrDefault();
+
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
                     .FirstOrDefault(x => (x.CurrentStatusId == fixedAssetDto.StatusId));
-
                 if (transition != null)
                 {
                     var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
@@ -91,239 +208,7 @@ namespace Application.Services
             return new Response<FixedAssetDto>(fixedAssetDto, "Returning value");
         }
 
-        public async Task<Response<FixedAssetDto>> UpdateAsync(CreateFixedAssetDto entity)
-        {
-            if ((bool)entity.isSubmit)
-            {
-                return await this.Submit(entity);
-            }
-            else
-            {
-                return await this.Update(entity, 1);
-            }
-        }
-
-        public Task<Response<int>> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
-        {
-            var getFixedAsset = await _unitOfWork.FixedAsset.GetById(data.DocId, new FixedAssetSpecs());
-
-            if (getFixedAsset == null)
-            {
-                return new Response<bool>("Fixed Asset with the input id not found");
-            }
-            if (getFixedAsset.Status.State == DocumentStatus.Unpaid || getFixedAsset.Status.State == DocumentStatus.Partial || getFixedAsset.Status.State == DocumentStatus.Paid)
-            {
-                return new Response<bool>("Fixed Asset already approved");
-            }
-            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.FixedAsset)).FirstOrDefault();
-
-            if (workflow == null)
-            {
-                return new Response<bool>("No activated workflow found for this document");
-            }
-            var transition = workflow.WorkflowTransitions
-                    .FirstOrDefault(x => (x.CurrentStatusId == getFixedAsset.StatusId && x.Action == data.Action));
-
-            if (transition == null)
-            {
-                return new Response<bool>("No transition found");
-            }
-
-            // Creating object of getUSer class
-            var getUser = new GetUser(this._httpContextAccessor);
-
-            var userId = getUser.GetCurrentUserId();
-            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
-            _unitOfWork.CreateTransaction();
-
-            foreach (var role in currentUserRoles)
-            {
-                if (transition.AllowedRole.Name == role)
-                {
-                    getFixedAsset.SetStatus(transition.NextStatusId);
-
-                    if (!String.IsNullOrEmpty(data.Remarks))
-                    {
-                        var addRemarks = new Remark()
-                        {
-                            DocId = getFixedAsset.Id,
-                            DocType = DocType.FixedAsset,
-                            Remarks = data.Remarks,
-                            UserId = userId
-                        };
-                        await _unitOfWork.Remarks.Add(addRemarks);
-                    }
-
-                    if (transition.NextStatus.State == DocumentStatus.Rejected)
-                    {
-                        await _unitOfWork.SaveAsync();
-                        _unitOfWork.Commit();
-                        return new Response<bool>(true, "FixedAsset Rejected");
-                    }
-                    await _unitOfWork.SaveAsync();
-                    _unitOfWork.Commit();
-                    return new Response<bool>(true, "FixedAsset Reviewed");
-                }
-            }
-
-            return new Response<bool>("User does not have allowed role");
-
-
-        }
-
-        private async Task<Response<FixedAssetDto>> Submit(CreateFixedAssetDto entity)
-        {
-            var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.FixedAsset)).FirstOrDefault();
-
-            if (checkingActiveWorkFlows == null)
-            {
-                return new Response<FixedAssetDto>("No workflow found for Fixed Asset");
-            }
-            if (entity.Id == null)
-            {
-                return await this.Save(entity, 6);
-            }
-            else
-            {
-                return await this.Update(entity, 6);
-            }
-        }
-
-        private async Task<Response<FixedAssetDto>> Save(CreateFixedAssetDto entity, int status)
-        {
-            if (entity.DepreciationApplicability)
-            {
-                if (entity.DepreciationId == null && entity.DepreciationId == 0 || entity.DepreciationExpenseId == null ||
-                    entity.UseFullLife == null)
-                {
-                    return new Response<FixedAssetDto>("Depreciation Model Fields are Required");
-                }
-
-                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
-                {
-                    return new Response<FixedAssetDto>("Declining Rate is Required");
-                }
-            }
-            else
-            {
-                entity.DepreciationApplicability = false;
-                entity.DepreciationId = null;
-                entity.AssetAccountId = null;
-                entity.DepreciationExpenseId = null;
-                entity.AccumulatedDepreciationId = null;
-                entity.UseFullLife = null;
-                entity.DecLiningRate = 0;
-                entity.ModelType = 0;
-            }
-
-            var warehouse = await _unitOfWork.Warehouse.GetById((int)entity.WarehouseId, new WarehouseSpecs());
-            if (warehouse == null)
-            {
-                return new Response<FixedAssetDto>("Invalid warehouse id");
-            }
-
-            _unitOfWork.CreateTransaction();
-            for (int i = 0; i < entity.Quantity; i++)
-            {
-                var fix = _mapper.Map<FixedAsset>(entity);
-                //Setting status
-                fix.SetStatus(status);
-                fix.SetCampus(warehouse.CampusId);
-                await _unitOfWork.FixedAsset.Add(fix);
-                await _unitOfWork.SaveAsync();
-                //For creating docNo
-                fix.CreateCode();
-                await _unitOfWork.SaveAsync();
-            }
-
-            //Commiting the transaction 
-            _unitOfWork.Commit();
-
-            //returning response
-            return new Response<FixedAssetDto>(null
-                , "Created successfully");
-
-        }
-
-        private async Task<Response<FixedAssetDto>> Update(CreateFixedAssetDto entity, int status)
-        {
-            if (entity.DepreciationApplicability)
-            {
-                if (entity.DepreciationId == null && entity.DepreciationId == 0 || entity.DepreciationExpenseId == null ||
-                    entity.UseFullLife == null)
-                {
-                    return new Response<FixedAssetDto>("Depreciation Model Fields are Required");
-                }
-
-                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
-                {
-                    return new Response<FixedAssetDto>("Declining Rate is Required");
-                }
-            }
-            else
-            {
-                entity.DepreciationId = null;
-                entity.DepreciationExpenseId = null;
-                entity.AccumulatedDepreciationId = null;
-                entity.AssetAccountId = null;
-                entity.ModelType = 0;
-                entity.UseFullLife = null;
-                entity.DecLiningRate = 0;
-            }
-            var warehouse = await _unitOfWork.Warehouse.GetById((int)entity.WarehouseId, new WarehouseSpecs());
-
-
-            var specification = new FixedAssetSpecs();
-            var fix = await _unitOfWork.FixedAsset.GetById((int)entity.Id, specification);
-
-            if (fix == null)
-                return new Response<FixedAssetDto>("Not found");
-
-            if (fix.StatusId != 1 && fix.StatusId != 2)
-                return new Response<FixedAssetDto>("Only draft document can be edited");
-
-
-            fix.SetCampus(warehouse.CampusId);
-            fix.SetStatus(status);
-
-            _unitOfWork.CreateTransaction();
-
-            //For updating data
-            _mapper.Map<CreateFixedAssetDto, FixedAsset>(entity, fix);
-
-            await _unitOfWork.SaveAsync();
-
-            //Commiting the transaction
-            _unitOfWork.Commit();
-
-            //returning response
-            return new Response<FixedAssetDto>(_mapper.Map<FixedAssetDto>(fix), "Updated successfully");
-
-        }
-
-        private List<RemarksDto> ReturningRemarks(FixedAssetDto data, DocType docType)
-        {
-            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.FixedAsset))
-                    .Select(e => new RemarksDto()
-                    {
-                        Remarks = e.Remarks,
-                        UserName = e.User.UserName,
-                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
-                    }).ToList();
-
-            if (remarks.Count() > 0)
-            {
-                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
-            }
-
-            return remarks;
-        }
-        public async Task<Response<List<FixedAssetDto>>> GetAssetDropDown()
+        public async Task<Response<List<FixedAssetDto>>> GetDropDown()
         {
             var fixedAsset = await _unitOfWork.FixedAsset.GetAll();
             if (!fixedAsset.Any())
@@ -342,6 +227,7 @@ namespace Application.Services
             return new Response<List<FixedAssetDto>>(_mapper.Map<List<FixedAssetDto>>(fixedAsset), "Returning List");
 
         }
+
         public async Task<Response<List<FixedAssetDto>>> GetAssetByProductIdDropDown(int ProductId)
         {
             var fixedAsset = await _unitOfWork.FixedAsset.GetAll(new FixedAssetSpecs(ProductId));
@@ -350,6 +236,103 @@ namespace Application.Services
 
             return new Response<List<FixedAssetDto>>(_mapper.Map<List<FixedAssetDto>>(fixedAsset), "Returning List");
 
+        }
+
+        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
+        {
+            var getFixedAsset = await _unitOfWork.FixedAsset.GetById(data.DocId, new FixedAssetSpecs());
+
+            if (getFixedAsset == null)
+            {
+                return new Response<bool>("Fixed Asset with the input id not found");
+            }
+
+            if (getFixedAsset.Status.State == DocumentStatus.Unpaid || getFixedAsset.Status.State == DocumentStatus.Partial || getFixedAsset.Status.State == DocumentStatus.Paid)
+            {
+                return new Response<bool>("Fixed Asset already approved");
+            }
+
+            var workflow = _unitOfWork.WorkFlow
+                .Find(new WorkFlowSpecs(DocType.FixedAsset))
+                .FirstOrDefault();
+
+            if (workflow == null)
+            {
+                return new Response<bool>("No activated workflow found for this document");
+            }
+
+            var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == getFixedAsset.StatusId && x.Action == data.Action));
+
+            if (transition == null)
+            {
+                return new Response<bool>("No transition found");
+            }
+
+            // Creating object of getUSer class
+            var getUser = new GetUser(this._httpContextAccessor);
+
+            var userId = getUser.GetCurrentUserId();
+            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+
+            _unitOfWork.CreateTransaction();
+            foreach (var role in currentUserRoles)
+            {
+                if (transition.AllowedRole.Name == role)
+                {
+                    getFixedAsset.SetStatus(transition.NextStatusId);
+                    if (!String.IsNullOrEmpty(data.Remarks))
+                    {
+                        var addRemarks = new Remark()
+                        {
+                            DocId = getFixedAsset.Id,
+                            DocType = DocType.FixedAsset,
+                            Remarks = data.Remarks,
+                            UserId = userId
+                        };
+                        await _unitOfWork.Remarks.Add(addRemarks);
+                    }
+
+                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                    {
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Document Approved");
+                    }
+                    if (transition.NextStatus.State == DocumentStatus.Rejected)
+                    {
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Document Rejected");
+                    }
+                    await _unitOfWork.SaveAsync();
+                    _unitOfWork.Commit();
+                    return new Response<bool>(true, "Document Reviewed");
+                }
+            }
+
+            return new Response<bool>("User does not have allowed role");
+
+
+        }
+
+        //Private methods
+        private List<RemarksDto> ReturningRemarks(FixedAssetDto data)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.FixedAsset))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
         }
 
     }

@@ -3,9 +3,7 @@ using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
-using Application.Services;
 using Domain.Constants;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Vizalys.Api.Controllers
@@ -26,6 +24,20 @@ namespace Vizalys.Api.Controllers
         public async Task<ActionResult<Response<FixedAssetDto>>> CreateAsync(CreateFixedAssetDto entity)
         {
             var result = await _fixedAssetService.CreateAsync(entity);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
+
+        [ClaimRequirement("Permission", new string[] { Permissions.FixedAssetClaims.Edit })]
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<Response<FixedAssetDto>>> UpdateAsync(int id, UpdateFixedAssetDto entity)
+        {
+            if (id != entity.Id)
+                return BadRequest("ID mismatch");
+
+            var result = await _fixedAssetService.UpdateAsync(entity);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 
@@ -54,20 +66,6 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
         
-        [ClaimRequirement("Permission", new string[] { Permissions.FixedAssetClaims.Edit })]
-        [HttpPut("{id:int}")]
-        public async Task<ActionResult<Response<FixedAssetDto>>> UpdateAsync(int id, CreateFixedAssetDto entity)
-        {
-            if (id != entity.Id)
-                return BadRequest("ID mismatch");
-
-            var result = await _fixedAssetService.UpdateAsync(entity);
-            if (result.IsSuccess)
-                return Ok(result); // Status Code : 200
-
-            return BadRequest(result); // Status code : 400
-        }
-
         [HttpPost("workflow")]
         public async Task<ActionResult<Response<bool>>> CheckWorkFlow([FromBody] ApprovalDto data)
         {
@@ -77,20 +75,35 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status Code : 400
         }
+
         [HttpGet("Dropdown")]
-        public async Task<ActionResult<Response<List<Level4Dto>>>> GetFixedAssetDropDown()
+        public async Task<ActionResult<Response<List<Level4Dto>>>> GetDropDown()
         {
-            return Ok(await _fixedAssetService.GetAssetDropDown()); // Status Code : 200
+            var result = await _fixedAssetService.GetDropDown();
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status Code : 400
         }
+        
         [HttpGet("Disposable/Dropdown")]
         public async Task<ActionResult<Response<List<Level4Dto>>>> GetDisposableAssetDropDown()
         {
-            return Ok(await _fixedAssetService.GetDisposableAssetDropDown()); // Status Code : 200
+            var result = await _fixedAssetService.GetDisposableAssetDropDown();
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status Code : 400
         }
+        
         [HttpGet("Product/{ProductId:int}")]
         public async Task<ActionResult<Response<List<Level4Dto>>>> GetAssetByProductIdDropDown(int ProductId)
         {
-            return Ok(await _fixedAssetService.GetAssetByProductIdDropDown(ProductId)); // Status Code : 200
+            var result = await _fixedAssetService.GetAssetByProductIdDropDown(ProductId);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status Code : 400
         }
         
     }

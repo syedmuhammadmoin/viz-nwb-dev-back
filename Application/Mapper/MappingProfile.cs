@@ -556,25 +556,29 @@ namespace Application.Mapper
 
             //FixedAsset
             CreateMap<FixedAsset, FixedAssetDto>()
-                .ForMember(dto => dto.AssetAccount, core => core.MapFrom(a => a.AssetAccount.Name))
+                .ForMember(dto => dto.Product, core => core.MapFrom(a => a.Product.ProductName))
+                .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
                 .ForMember(dto => dto.DepreciationModel, core => core.MapFrom(d => d.DepreciationModel.ModelName))
-                .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(a => a.AccumulatedDepreciation.Name))
+                .ForMember(dto => dto.AssetAccount, core => core.MapFrom(a => a.AssetAccount.Name))
                 .ForMember(dto => dto.DepreciationExpense, core => core.MapFrom(d => d.DepreciationExpense.Name))
-                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State))
+                .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(a => a.AccumulatedDepreciation.Name))
+                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
                 .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+
             CreateMap<CreateFixedAssetDto, FixedAsset>();
+            CreateMap<UpdateFixedAssetDto, FixedAsset>();
 
             //CWIP
             CreateMap<CWIP, CWIPDto>()
                 .ForMember(dto => dto.CWIPAccount, core => core.MapFrom(d => d.CWIPAccount.Name))
-                .ForMember(dto => dto.AssetAccount, core => core.MapFrom(d => d.AssetAccount.Name))
+                .ForMember(dto => dto.Warehouse, core => core.MapFrom(d => d.Warehouse.Name))
                 .ForMember(dto => dto.DepreciationModel, core => core.MapFrom(d => d.DepreciationModel.ModelName))
-                .ForMember(dto => dto.Campus , core => core.MapFrom(a => a.Campus.Name))
+                .ForMember(dto => dto.AssetAccount, core => core.MapFrom(d => d.AssetAccount.Name))
                 .ForMember(dto => dto.DepreciationExpense, core => core.MapFrom(d => d.DepreciationExpense.Name))
                 .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(d => d.AccumulatedDepreciation.Name))
-                .ForMember(dto => dto.WarehouseName, core => core.MapFrom(a => a.Warehouse.Name))
-                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State))
+                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
                 .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+
             CreateMap<CreateCWIPDto, CWIP>();
 
             //Disposal

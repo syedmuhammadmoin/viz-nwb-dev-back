@@ -20,6 +20,6 @@ namespace Application.Contracts.DTOs
         [Required]
         public DepreciationMethod ModelType { get; set; }
         [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 0 and 100")]
-        public decimal? DecliningRate { get; set; }
+        public decimal DecliningRate { get; set; }
     }
 }
