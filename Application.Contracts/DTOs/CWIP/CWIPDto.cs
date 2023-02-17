@@ -25,7 +25,7 @@ namespace Application.Contracts.DTOs
         public string AccumulatedDepreciation { get; set; }
         public DepreciationMethod ModelType { get; set; }
         public decimal DecLiningRate { get; set; }
-        public int Quantinty { get; set; }
+        public int Quantity { get; set; }
         public bool ProrataBasis { get; set; }
         public bool IsActive { get; set; }
         public int StatusId { get; set; }

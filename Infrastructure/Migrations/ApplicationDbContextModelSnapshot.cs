@@ -1218,7 +1218,7 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("ProrataBasis")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Quantinty")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<int?>("SalvageValue")

@@ -96,7 +96,7 @@ namespace Infrastructure.Migrations
                     AccumulatedDepreciationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ModelType = table.Column<int>(type: "int", nullable: false),
                     DecLiningRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Quantinty = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
                     ProrataBasis = table.Column<bool>(type: "bit", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     StatusId = table.Column<int>(type: "int", nullable: false),

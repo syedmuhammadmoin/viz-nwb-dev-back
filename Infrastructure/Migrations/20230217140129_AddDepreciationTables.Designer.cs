@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230217130942_AddDepreciationTables")]
+    [Migration("20230217140129_AddDepreciationTables")]
     partial class AddDepreciationTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1220,7 +1220,7 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("ProrataBasis")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Quantinty")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<int?>("SalvageValue")

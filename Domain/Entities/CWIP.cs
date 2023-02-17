@@ -46,7 +46,7 @@ namespace Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal DecLiningRate { get; private set; }
 
-        public int Quantinty { get; private set; }
+        public int Quantity { get; private set; }
         public bool ProrataBasis { get; private set; }
         public bool IsActive { get; private set; }
 

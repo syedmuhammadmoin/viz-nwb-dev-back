@@ -26,7 +26,7 @@ namespace Application.Contracts.DTOs
         [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 0 and 100")]
         public decimal? DecLiningRate { get; set; }
         [Required]
-        public int Quantinty { get; set; }
+        public int Quantity { get; set; }
         [Required]
         public bool ProrataBasis { get; set; }
         [Required]
