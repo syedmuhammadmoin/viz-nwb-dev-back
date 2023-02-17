@@ -563,11 +563,13 @@ namespace Application.Mapper
                 .ForMember(dto => dto.AssetAccount, core => core.MapFrom(a => a.AssetAccount.Name))
                 .ForMember(dto => dto.DepreciationExpense, core => core.MapFrom(d => d.DepreciationExpense.Name))
                 .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(a => a.AccumulatedDepreciation.Name))
-                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.StatusId == 3 ? "Approved"
+                : a.Status.Status))
                 .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<CreateFixedAssetDto, FixedAsset>();
             CreateMap<UpdateFixedAssetDto, FixedAsset>();
+            CreateMap<CWIP, FixedAsset>();
 
             //CWIP
             CreateMap<CWIP, CWIPDto>()

@@ -163,7 +163,17 @@ namespace Application.Services
 
                     if (transition.NextStatus.State == DocumentStatus.Unpaid)
                     {
-                        await _unitOfWork.SaveAsync();
+                        for (int i = 0; i < getCwip.Quantity; i++)
+                        {
+                            var fix = _mapper.Map<FixedAsset>(getCwip);
+                            //Setting status
+                            fix.SetStatus(3);
+                            await _unitOfWork.FixedAsset.Add(fix);
+                            await _unitOfWork.SaveAsync();
+                            //For creating docNo
+                            fix.CreateCode();
+                            await _unitOfWork.SaveAsync();
+                        }
                         _unitOfWork.Commit();
                         return new Response<bool>(true, "Document Approved");
                     }
