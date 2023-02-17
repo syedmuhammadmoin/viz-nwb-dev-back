@@ -33,6 +33,7 @@ namespace Application.Contracts.DTOs
         public Guid? DepreciationExpenseId { get; set; }
         public string DepreciationExpense { get; set; }
         public Guid? AccumulatedDepreciationId { get; set; }
+        public int Quantity { get; set; }
         public string AccumulatedDepreciation { get; set; }
         public int UseFullLife { get; set; }
         public decimal DecLiningRate { get; set; }
@@ -45,7 +46,6 @@ namespace Application.Contracts.DTOs
         public bool IsAllowedRole { get; set; }
         public bool IsHeldforSaleOrDisposal { get; set; }
         public int Quantinty { get; set; }
-        public int? GRNId { get; set; }
         public string GRNDocNo { get; set; }
 
 

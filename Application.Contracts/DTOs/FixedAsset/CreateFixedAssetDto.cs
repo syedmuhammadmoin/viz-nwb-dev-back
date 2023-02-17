@@ -28,6 +28,8 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? WarehouseId { get; set; }
         [Required]
+        public int? Quantity { get; set; }
+        [Required]
         public bool DepreciationApplicability { get; set; }
         public int? DepreciationId { get; set; }
         public DepreciationMethod ModelType { get; set; }
@@ -44,9 +46,11 @@ namespace Application.Contracts.DTOs
         [Required]
         public bool Active { get;  set; }
         public bool IsHeldforSaleOrDisposal { get;  set; }
-        public int Quantinty { get; set; }
-        public int? GRNId { get; set; }
-        public string GRNDocNo { get; set; }
+        public bool IsIssued { get; set; }
+        public bool IsReserved { get; set; }
+        public bool IsDisposed { get; set; }
+        public int DocId { get;  set; }
+        public DocType Doctype { get; set; }
 
 
 

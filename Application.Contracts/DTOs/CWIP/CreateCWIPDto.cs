@@ -33,6 +33,7 @@ namespace Application.Contracts.DTOs
         public Guid? DepreciationExpenseId { get; set; }
         public Guid? AccumulatedDepreciationId { get; set; }
         public int? UseFullLife { get; set; }
+        [Required]
         public int Quantinty { get; set; }
         [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 0 and 100")]
         public decimal? DecLiningRate { get; set; }
