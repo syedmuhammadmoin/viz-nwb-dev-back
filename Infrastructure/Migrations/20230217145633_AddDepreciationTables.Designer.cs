@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230217143111_AddDepreciationTables")]
+    [Migration("20230217145633_AddDepreciationTables")]
     partial class AddDepreciationTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2189,6 +2189,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFixedAssetCreated")
                         .HasColumnType("bit");
 
                     b.Property<int>("ItemId")

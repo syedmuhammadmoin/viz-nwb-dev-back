@@ -21,6 +21,13 @@ namespace Infrastructure.Migrations
                 type: "int",
                 nullable: true);
 
+            migrationBuilder.AddColumn<bool>(
+                name: "IsFixedAssetCreated",
+                table: "GRNLines",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
+
             migrationBuilder.AddColumn<int>(
                 name: "DepreciationModelId",
                 table: "Categories",
@@ -503,6 +510,10 @@ namespace Infrastructure.Migrations
             migrationBuilder.DropColumn(
                 name: "FixedAssetId",
                 table: "IssuanceLines");
+
+            migrationBuilder.DropColumn(
+                name: "IsFixedAssetCreated",
+                table: "GRNLines");
 
             migrationBuilder.DropColumn(
                 name: "DepreciationModelId",
