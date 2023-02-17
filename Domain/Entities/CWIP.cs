@@ -10,16 +10,22 @@ namespace Domain.Entities
         [MaxLength(20)]
         public string CwipCode { get; private set; }
         public DateTime DateOfAcquisition { get; private set; }
+        [MaxLength(200)]
+        public string Name { get; private set; }
 
         public Guid CWIPAccountId { get; private set; }
         [ForeignKey("CWIPAccountId")]
         public Level4 CWIPAccount { get; private set; }
-        
+
+        public int Cost { get; private set; }
+
+        public int ProductId { get; private set; }
+        [ForeignKey("ProductId")]
+        public Product Product { get; private set; }
+
         public int WarehouseId { get; private set; }
         [ForeignKey("WarehouseId")]
         public Warehouse Warehouse { get; private set; }
-
-        public int CostOfAsset { get; private set; }
         
         public int? SalvageValue { get; private set; }
         public bool DepreciationApplicability { get; private set; }

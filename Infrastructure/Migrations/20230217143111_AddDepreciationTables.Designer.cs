@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230217140129_AddDepreciationTables")]
+    [Migration("20230217143111_AddDepreciationTables")]
     partial class AddDepreciationTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1172,7 +1172,7 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("CWIPAccountId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("CostOfAsset")
+                    b.Property<int>("Cost")
                         .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
@@ -1217,6 +1217,13 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Name")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("ProrataBasis")
                         .HasColumnType("bit");
 
@@ -1246,6 +1253,8 @@ namespace Infrastructure.Migrations
                     b.HasIndex("DepreciationExpenseId");
 
                     b.HasIndex("DepreciationModelId");
+
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("StatusId");
 
@@ -6292,6 +6301,12 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("DepreciationModelId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
                         .WithMany()
                         .HasForeignKey("StatusId")
@@ -6313,6 +6328,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("DepreciationExpense");
 
                     b.Navigation("DepreciationModel");
+
+                    b.Navigation("Product");
 
                     b.Navigation("Status");
 

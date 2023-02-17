@@ -11,9 +11,11 @@ namespace Application.Contracts.DTOs
         [Required]
         public Guid CWIPAccountId { get; set; }
         [Required]
-        public int? WarehouseId { get; set; }
+        public int? Cost { get; set; }
         [Required]
-        public int? CostOfAsset { get; set; }
+        public int? ProductId { get; set; }
+        [Required]
+        public int? WarehouseId { get; set; }
         public int? SalvageValue { get; set; }
         [Required]
         public bool DepreciationApplicability { get; set; }

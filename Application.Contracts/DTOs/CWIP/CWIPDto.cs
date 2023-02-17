@@ -9,9 +9,11 @@ namespace Application.Contracts.DTOs
         public DateTime DateOfAcquisition { get; set; }
         public Guid CWIPAccountId { get; set; }
         public string CWIPAccount { get; set; }
+        public int Cost { get; set; }
+        public int ProductId { get; set; }
+        public string Product { get; set; }
         public int WarehouseId { get; set; }
         public string Warehouse { get; set; }
-        public int CostOfAsset { get; set; }
         public int? SalvageValue { get; set; }
         public bool DepreciationApplicability { get; set; }
         public int? DepreciationModelId { get; set; }

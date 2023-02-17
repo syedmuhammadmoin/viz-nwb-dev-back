@@ -84,9 +84,11 @@ namespace Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CwipCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     DateOfAcquisition = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     CWIPAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Cost = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
                     WarehouseId = table.Column<int>(type: "int", nullable: false),
-                    CostOfAsset = table.Column<int>(type: "int", nullable: false),
                     SalvageValue = table.Column<int>(type: "int", nullable: true),
                     DepreciationApplicability = table.Column<bool>(type: "bit", nullable: false),
                     DepreciationModelId = table.Column<int>(type: "int", nullable: true),
@@ -137,6 +139,12 @@ namespace Infrastructure.Migrations
                         name: "FK_CWIPs_Level4_DepreciationExpenseId",
                         column: x => x.DepreciationExpenseId,
                         principalTable: "Level4",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_CWIPs_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -334,6 +342,11 @@ namespace Infrastructure.Migrations
                 name: "IX_CWIPs_DepreciationModelId",
                 table: "CWIPs",
                 column: "DepreciationModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CWIPs_ProductId",
+                table: "CWIPs",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CWIPs_StatusId",
