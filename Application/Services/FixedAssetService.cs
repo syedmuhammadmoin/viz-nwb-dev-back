@@ -65,7 +65,10 @@ namespace Application.Services
             }
 
             _unitOfWork.CreateTransaction();
-
+            if( entity.Quantity == 0)
+            {
+                return new Response<FixedAssetDto>("Quantity is Required");
+            }
             for (int i = 0; i < entity.Quantity; i++)
             {
                 var fix = _mapper.Map<FixedAsset>(entity);
