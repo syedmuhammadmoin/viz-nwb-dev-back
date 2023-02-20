@@ -22,6 +22,7 @@ namespace Application.Contracts.DTOs
         public string Warehouse { get; set; }
         public int MasterId { get; set; }
         public bool IsFixedAssetCreated { get;  set; }
+        public bool IsFixedAsset { get;  set; }
 
        
 
