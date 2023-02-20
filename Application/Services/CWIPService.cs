@@ -9,11 +9,6 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -33,7 +28,7 @@ namespace Application.Services
 
         public async Task<Response<CWIPDto>> CreateAsync(CreateCWIPDto entity)
         {
-            if ((bool)entity.isSubmit)
+            if ((bool)entity.IsSubmit)
             {
                 return await this.Submit(entity);
             }
@@ -42,17 +37,34 @@ namespace Application.Services
                 return await this.Save(entity, 1);
             }
         }
+
+        public async Task<Response<CWIPDto>> UpdateAsync(CreateCWIPDto entity)
+        {
+            if ((bool)entity.IsSubmit)
+            {
+                return await this.Submit(entity);
+            }
+            else
+            {
+                return await this.Update(entity, 1);
+            }
+        }
+
+        public Task<Response<int>> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
         
         public async Task<PaginationResponse<List<CWIPDto>>> GetAllAsync(TransactionFormFilter filter)
         {
-            var cwip = await _unitOfWork.CWIP.GetAll(new CWIPSpecs(filter, false));
+            var result = await _unitOfWork.CWIP.GetAll(new CWIPSpecs(filter, false));
 
-            if (cwip.Count() == 0)
-                return new PaginationResponse<List<CWIPDto>>(_mapper.Map<List<CWIPDto>>(cwip), "List is empty");
+            if (result.Count() == 0)
+                return new PaginationResponse<List<CWIPDto>>(_mapper.Map<List<CWIPDto>>(result), "List is empty");
 
             var totalRecords = await _unitOfWork.CWIP.TotalRecord(new CWIPSpecs(filter, true));
 
-            return new PaginationResponse<List<CWIPDto>>(_mapper.Map<List<CWIPDto>>(cwip),
+            return new PaginationResponse<List<CWIPDto>>(_mapper.Map<List<CWIPDto>>(result),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
         }
 
@@ -64,12 +76,11 @@ namespace Application.Services
                 return new Response<CWIPDto>("Not found");
 
             var cwipDto = _mapper.Map<CWIPDto>(cwip);
-
-            ReturningRemarks(cwipDto, DocType.CWIP);
+            ReturningRemarks(cwipDto);
 
             if (cwipDto.DepreciationApplicability == false)
             {
-                cwipDto.DepreciationId = null;
+                cwipDto.DepreciationModelId = null;
                 cwipDto.AccumulatedDepreciation = null;
                 cwipDto.DepreciationExpenseId = null;
                 cwipDto.ModelType = DepreciationMethod.StraightLine;
@@ -77,13 +88,14 @@ namespace Application.Services
                 cwipDto.DecLiningRate = 0;
 
             }
+
             cwipDto.IsAllowedRole = false;
+            
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.CWIP)).FirstOrDefault();
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
                     .FirstOrDefault(x => (x.CurrentStatusId == cwipDto.StatusId));
-
                 if (transition != null)
                 {
                     var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
@@ -99,23 +111,6 @@ namespace Application.Services
             return new Response<CWIPDto>(cwipDto, "Returning value");
         }
         
-        public async Task<Response<CWIPDto>> UpdateAsync(CreateCWIPDto entity)
-        {
-            if ((bool)entity.isSubmit)
-            {
-                return await this.Submit(entity);
-            }
-            else
-            {
-                return await this.Update(entity, 1);
-            }
-        }
-
-        public Task<Response<int>> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-      
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
             var getCwip = await _unitOfWork.CWIP.GetById(data.DocId, new CWIPSpecs());
@@ -154,7 +149,6 @@ namespace Application.Services
                 if (transition.AllowedRole.Name == role)
                 {
                     getCwip.SetStatus(transition.NextStatusId);
-
                     if (!String.IsNullOrEmpty(data.Remarks))
                     {
                         var addRemarks = new Remark()
@@ -167,85 +161,38 @@ namespace Application.Services
                         await _unitOfWork.Remarks.Add(addRemarks);
                     }
 
+                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                    {
+                        for (int i = 0; i < getCwip.Quantity; i++)
+                        {
+                            var fix = _mapper.Map<FixedAsset>(getCwip);
+                            //Setting status
+                            fix.SetStatus(3);
+                            await _unitOfWork.FixedAsset.Add(fix);
+                            await _unitOfWork.SaveAsync();
+                            //For creating docNo
+                            fix.CreateCode();
+                            await _unitOfWork.SaveAsync();
+                        }
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Document Approved");
+                    }
                     if (transition.NextStatus.State == DocumentStatus.Rejected)
                     {
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
-                        return new Response<bool>(true, "CWIP Rejected");
+                        return new Response<bool>(true, "Document Rejected");
                     }
                     await _unitOfWork.SaveAsync();
                     _unitOfWork.Commit();
-                    return new Response<bool>(true, "CWIP Reviewed");
+                    return new Response<bool>(true, "Document Reviewed");
                 }
             }
 
             return new Response<bool>("User does not have allowed role");
-
-
-        }
-      
-        private async Task<Response<CWIPDto>> Update(CreateCWIPDto entity , int status)
-        {
-            if (entity.DepreciationApplicability)
-            {
-                if (entity.DepreciationId == null && entity.DepreciationId == 0 || entity.DepreciationExpenseId == null ||
-                    entity.UseFullLife == null)
-                {
-                    return new Response<CWIPDto>("Depreciation Model Fields are Required");
-                }
-
-                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
-                {
-                    return new Response<CWIPDto>("Declining Rate is Required");
-                }
-            }
-            else
-            {
-                entity.DepreciationApplicability = false;
-                entity.DepreciationId = null;
-                entity.DepreciationExpenseId = null;
-                entity.AccumulatedDepreciationId = null;
-                entity.UseFullLife = null;
-                entity.DecLiningRate = 0;
-                entity.ModelType = DepreciationMethod.StraightLine;
-            }
-            var cwip = await _unitOfWork.CWIP.GetById((int)entity.Id, new CWIPSpecs());
-            if (cwip == null)
-                return new Response<CWIPDto>("Not found");
-
-            if (entity.DepreciationApplicability == true)
-            {
-                if (entity.DepreciationId == null || entity.DepreciationExpenseId == null || entity.AccumulatedDepreciationId == null ||
-                    entity.UseFullLife == null)
-                {
-                    return new Response<CWIPDto>("Depreciation Model Fields are Required");
-
-                }
-                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
-                {
-                    return new Response<CWIPDto>("Declining Rate is Required");
-                }
-            }
-            cwip.SetStatus(status);
-
-            //For updating data
-            _mapper.Map<CreateCWIPDto, CWIP>(entity, cwip);
-
-
-            _unitOfWork.CreateTransaction();
-
-
-            //Setting status
-            cwip.SetStatus(status);
-            await _unitOfWork.SaveAsync();
-
-            //Commiting the transaction
-            _unitOfWork.Commit();
-
-            //returning response
-            return new Response<CWIPDto>(_mapper.Map<CWIPDto>(cwip), "Updated successfully");
         }
 
+        //Private methods
         private async Task<Response<CWIPDto>> Submit(CreateCWIPDto entity)
         {
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.CWIP)).FirstOrDefault();
@@ -268,10 +215,10 @@ namespace Application.Services
         {
             if (entity.DepreciationApplicability)
             {
-                if (entity.DepreciationId == null && entity.DepreciationId == 0 || entity.DepreciationExpenseId == null ||
+                if (entity.DepreciationModelId == null && entity.DepreciationModelId == 0 || entity.DepreciationExpenseId == null ||
                     entity.UseFullLife == null)
                 {
-                    return new Response<CWIPDto>("Depreciation Model Fields are Required");
+                    return new Response<CWIPDto>("DepreciationModel Model Fields are Required");
                 }
 
                 if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
@@ -281,25 +228,23 @@ namespace Application.Services
             }
             else
             {
-                entity.DepreciationApplicability = false;
-                entity.DepreciationId = null;
+                entity.DepreciationModelId = null;
                 entity.DepreciationExpenseId = null;
                 entity.AccumulatedDepreciationId = null;
                 entity.UseFullLife = null;
-                entity.DecLiningRate = 0;
                 entity.ModelType = DepreciationMethod.StraightLine;
+                entity.DecLiningRate = 0;
             }
 
             var cwip = _mapper.Map<CWIP>(entity);
             _unitOfWork.CreateTransaction();
-
+            
             //Setting status
             cwip.SetStatus(status);
 
             //Saving in table
-            var result = await _unitOfWork.CWIP.Add(cwip);
+            await _unitOfWork.CWIP.Add(cwip);
             await _unitOfWork.SaveAsync();
-
 
             //For creating docNo
             cwip.CreateCode();
@@ -308,10 +253,55 @@ namespace Application.Services
             _unitOfWork.Commit();
 
             //returning response
-            return new Response<CWIPDto>(_mapper.Map<CWIPDto>(result), "Created successfully");
+            return new Response<CWIPDto>(_mapper.Map<CWIPDto>(cwip), "Created successfully");
         }
 
-        private List<RemarksDto> ReturningRemarks(CWIPDto data, DocType docType)
+        private async Task<Response<CWIPDto>> Update(CreateCWIPDto entity , int status)
+        {
+            if (entity.DepreciationApplicability)
+            {
+                if (entity.DepreciationModelId == null && entity.DepreciationModelId == 0 || entity.DepreciationExpenseId == null ||
+                    entity.UseFullLife == null)
+                {
+                    return new Response<CWIPDto>("DepreciationModel Model Fields are Required");
+                }
+
+                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
+                {
+                    return new Response<CWIPDto>("Declining Rate is Required");
+                }
+            }
+            else
+            {
+                entity.DepreciationModelId = null;
+                entity.DepreciationExpenseId = null;
+                entity.AccumulatedDepreciationId = null;
+                entity.UseFullLife = null;
+                entity.ModelType = DepreciationMethod.StraightLine;
+                entity.DecLiningRate = 0;
+            }
+
+            var cwip = await _unitOfWork.CWIP.GetById((int)entity.Id);
+            if (cwip == null)
+                return new Response<CWIPDto>("Not found");
+
+            //Setting status
+            cwip.SetStatus(status);
+
+            _unitOfWork.CreateTransaction();
+
+            //For updating data
+            _mapper.Map(entity, cwip);
+            await _unitOfWork.SaveAsync();
+
+            //Commiting the transaction
+            _unitOfWork.Commit();
+
+            //returning response
+            return new Response<CWIPDto>(_mapper.Map<CWIPDto>(cwip), "Updated successfully");
+        }
+
+        private List<RemarksDto> ReturningRemarks(CWIPDto data)
         {
             var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.CWIP))
                     .Select(e => new RemarksDto()

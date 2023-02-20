@@ -24,5 +24,9 @@ namespace Application.Contracts.DTOs
         public decimal Tax { get; set; }
         [Required]
         public int? WarehouseId { get; set; }
+        public bool IsFixedAssetCreated { get;  set; }
+
+
+
     }
 }

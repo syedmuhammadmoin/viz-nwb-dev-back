@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Specifications
 {
-    public class DepreciationSpecs : BaseSpecification<Depreciation>
+    public class DepreciationModelSpecs : BaseSpecification<DepreciationModel>
     {
-        public DepreciationSpecs(TransactionFormFilter filter, bool isTotalRecord)
+        public DepreciationModelSpecs(TransactionFormFilter filter, bool isTotalRecord)
             : base(c => c.ModelName.Contains(filter.Name != null ? filter.Name : ""))
         {
             if (!isTotalRecord)
@@ -23,7 +23,7 @@ namespace Infrastructure.Specifications
                 ApplyOrderByDescending(i => i.Id);
             }
         }
-        public DepreciationSpecs()
+        public DepreciationModelSpecs()
         {
             AddInclude(i => i.AssetAccount);
             AddInclude(i => i.AccumulatedDepreciation);

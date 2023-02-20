@@ -247,6 +247,15 @@ namespace Application.Services
                     return new Response<WorkFlowDto>("CWIP is pending for this workflow");
                 }
             }
+            if (entity.DocType == DocType.Disposal)
+            {
+                var checking = _unitOfWork.Disposal.Find(new DisposalSpecs("")).ToList();
+
+                if (checking.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Disposal is pending for this workflow");
+                }
+            }
             //For updating data
             _mapper.Map<CreateWorkFlowDto, WorkFlowMaster>(entity, workFlow);
             await _unitOfWork.SaveAsync();

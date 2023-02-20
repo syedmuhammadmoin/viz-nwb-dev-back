@@ -81,7 +81,7 @@ namespace Application.Mapper
                 .ForMember(dto => dto.InventoryAccount, core => core.MapFrom(a => a.InventoryAccount.Name))
                 .ForMember(dto => dto.RevenueAccount, core => core.MapFrom(a => a.RevenueAccount.Name))
                 .ForMember(dto => dto.CostAccount, core => core.MapFrom(a => a.CostAccount.Name))
-                .ForMember(dto => dto.Depreciation , core => core.MapFrom(a => a.Depreciation.ModelName));
+                .ForMember(dto => dto.DepreciationModel, core => core.MapFrom(a => a.DepreciationModel.ModelName));
             CreateMap<CreateCategoryDto, Category>();
 
             // BusinessPartner Mapping
@@ -93,6 +93,7 @@ namespace Application.Mapper
             // Product Mapping
             CreateMap<Product, ProductDto>()
                 .ForMember(dto => dto.CategoryName, core => core.MapFrom(a => a.Category.Name))
+                .ForMember(dto => dto.IsFixedAsset, core => core.MapFrom(a => a.Category.IsFixedAsset))
                 .ForMember(dto => dto.UnitOfMeasurementName, core => core.MapFrom(a => a.UnitOfMeasurement.Name))
                 .ForMember(dto => dto.CostAccountId, core => core.MapFrom(a => a.Category.CostAccountId))
                 .ForMember(dto => dto.RevenueAccountId, core => core.MapFrom(a => a.Category.RevenueAccountId))
@@ -359,7 +360,9 @@ namespace Application.Mapper
             CreateMap<GRNLines, GRNLinesDto>()
               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
               .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName))
-              .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity));
+              .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity))
+              .ForMember(dto => dto.IsFixedAsset , core => core.MapFrom(a => a.Item.ProductType == ProductType.FixedAsset ? true : false))
+              ;
 
             CreateMap<CreateGRNDto, GRNMaster>()
                .ForMember(core => core.TotalBeforeTax, dto => dto.MapFrom(a => a.GRNLines.Sum(e => e.Quantity * e.Cost)))
@@ -546,35 +549,54 @@ namespace Application.Mapper
                     a => a.Status == DocumentStatus.Draft ? "Draft" :
                     a.Status == DocumentStatus.Submitted ? "Submitted" :
                     a.Status == DocumentStatus.Paid ? "Awarded" : "N/A"));
-            CreateMap<Depreciation, DepreciationDto>()
+
+            //DepreciationModel
+            CreateMap<DepreciationModel, DepreciationModelDto>()
                 .ForMember(dto => dto.AssetAccount, core => core.MapFrom(a => a.AssetAccount.Name))
                 .ForMember(dto => dto.DepreciationExpense, core => core.MapFrom(d => d.DepreciationExpense.Name))
                 .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(a => a.AccumulatedDepreciation.Name));
-            CreateMap<CreateDepreciationDto, Depreciation>();
+            CreateMap<CreateDepreciationModelDto, DepreciationModel>();
 
+            //FixedAsset
             CreateMap<FixedAsset, FixedAssetDto>()
+                .ForMember(dto => dto.Product, core => core.MapFrom(a => a.Product.ProductName))
+                .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
+                .ForMember(dto => dto.DepreciationModel, core => core.MapFrom(d => d.DepreciationModel.ModelName))
                 .ForMember(dto => dto.AssetAccount, core => core.MapFrom(a => a.AssetAccount.Name))
-                .ForMember(dto => dto.Depreciation, core => core.MapFrom(d => d.Depreciation.ModelName))
-                .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(a => a.AccumulatedDepreciation.Name))
                 .ForMember(dto => dto.DepreciationExpense, core => core.MapFrom(d => d.DepreciationExpense.Name))
-                .ForMember(dto => dto.CategoryName, core => core.MapFrom(c => c.Category.Name))
-                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State))
+                .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(a => a.AccumulatedDepreciation.Name))
+                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.StatusId == 3 ? "Approved"
+                : a.Status.Status))
                 .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
-            CreateMap<CreateFixedAssetDto, FixedAsset>();
 
+            CreateMap<CreateFixedAssetDto, FixedAsset>();
+            CreateMap<UpdateFixedAssetDto, FixedAsset>();
+            CreateMap<CWIP, FixedAsset>();
+
+            //CWIP
             CreateMap<CWIP, CWIPDto>()
                 .ForMember(dto => dto.CWIPAccount, core => core.MapFrom(d => d.CWIPAccount.Name))
+                .ForMember(dto => dto.Warehouse, core => core.MapFrom(d => d.Warehouse.Name))
+                .ForMember(dto => dto.DepreciationModel, core => core.MapFrom(d => d.DepreciationModel.ModelName))
                 .ForMember(dto => dto.AssetAccount, core => core.MapFrom(d => d.AssetAccount.Name))
-                .ForMember(dto => dto.Depreciation, core => core.MapFrom(d => d.Depreciation.ModelName))
-                .ForMember(dto => dto.Campus , core => core.MapFrom(a => a.Campus.Name))
                 .ForMember(dto => dto.DepreciationExpense, core => core.MapFrom(d => d.DepreciationExpense.Name))
                 .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(d => d.AccumulatedDepreciation.Name))
-                .ForMember(dto => dto.WarehouseName, core => core.MapFrom(a => a.Warehouse.Name))
-                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State))
+                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
                 .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
-
             CreateMap<CreateCWIPDto, CWIP>();
+
+            //Disposal
+            CreateMap<Disposal, DisposalDto>()
+               .ForMember(dto => dto.FixedAsset, core => core.MapFrom(d => d.FixedAsset.Name))
+               .ForMember(dto => dto.Product, core => core.MapFrom(d => d.Product.ProductName))
+               .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(d => d.AccumulatedDepreciation.Name))
+               .ForMember(dto => dto.Warehouse, core => core.MapFrom(d => d.Warehouse.Name))
+               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State))
+               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+
+            CreateMap<CreateDisposalDto, Disposal>()
+                .ForMember(core => core.BookValue, dto => dto.MapFrom(a => 0));
         }
     }
 }

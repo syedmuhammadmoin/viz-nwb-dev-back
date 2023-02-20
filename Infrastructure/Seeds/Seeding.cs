@@ -571,7 +571,7 @@ namespace Infrastructure.Seeds
             //}, new Level3
             //{
             //    Id = new Guid("56700000-5566-7788-99AA-BBCCDDEEFF00"),
-            //    Name = "Depreciation, Amortization & Impairment",
+            //    Name = "DepreciationModel, Amortization & Impairment",
             //    Level2_id = new Guid("56000000-5566-7788-99AA-BBCCDDEEFF00"),
             //    Code = "A180"
             //}, new Level3

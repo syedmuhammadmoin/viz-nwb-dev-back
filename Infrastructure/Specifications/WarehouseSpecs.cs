@@ -27,5 +27,9 @@ namespace Infrastructure.Specifications
         {
             
         }
+        public WarehouseSpecs() 
+        {
+              AddInclude(i => i.Campus);
+        }
     }
 }

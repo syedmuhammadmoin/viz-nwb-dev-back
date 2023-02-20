@@ -21,7 +21,7 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.InventoryAccount);
                 AddInclude(i => i.CostAccount);
                 AddInclude(i => i.RevenueAccount);
-                AddInclude(i => i.Depreciation);
+                AddInclude(i => i.DepreciationModel);
             } 
         }
         public CategorySpecs()
@@ -29,14 +29,14 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.InventoryAccount);
             AddInclude(i => i.CostAccount);
             AddInclude(i => i.RevenueAccount);
-            AddInclude(i => i.Depreciation);
+            AddInclude(i => i.DepreciationModel);
         }
         public CategorySpecs(int Id) : base(c => c.IsFixedAsset == true)
         {
             AddInclude(i => i.InventoryAccount);
             AddInclude(i => i.CostAccount);
             AddInclude(i => i.RevenueAccount);
-            AddInclude(i => i.Depreciation);
+            AddInclude(i => i.DepreciationModel);
         }
     }
 }

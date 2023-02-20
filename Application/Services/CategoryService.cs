@@ -62,9 +62,9 @@ namespace Application.Services
                 return new Response<CategoryDto>("Cost account Invalid");
             }
 
-            if ((bool)entity.IsFixedAsset && (entity.DepreciationId == null || entity.DepreciationId == 0))
+            if ((bool)entity.IsFixedAsset && (entity.DepreciationModelId == null || entity.DepreciationModelId == 0))
             {
-                return new Response<CategoryDto>("Depreciation is Required");
+                return new Response<CategoryDto>("DepreciationModel is Required");
             }
             if ((bool)!entity.IsFixedAsset)
             {
@@ -139,9 +139,9 @@ namespace Application.Services
                 return new Response<CategoryDto>("Cost account Invalid");
             }
 
-            if ((bool)entity.IsFixedAsset && (entity.DepreciationId == null || entity.DepreciationId == 0))
+            if ((bool)entity.IsFixedAsset && (entity.DepreciationModelId == null || entity.DepreciationModelId == 0))
             {
-                return new Response<CategoryDto>("Depreciation is Required");
+                return new Response<CategoryDto>("DepreciationModel is Required");
             }
             if ((bool)!entity.IsFixedAsset)
             {

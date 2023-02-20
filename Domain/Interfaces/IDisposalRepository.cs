@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IDepreciationRepository : IGenericRepository<Depreciation, int>
+    public interface IDisposalRepository : IGenericRepository<Disposal, int>
     {
     }
 }

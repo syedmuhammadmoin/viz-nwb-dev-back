@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Constants
+﻿namespace Domain.Constants
 {
     public static class Permissions
     {
@@ -363,12 +357,12 @@ namespace Domain.Constants
             public const string Edit = "Permissions.Procurement.QuotationComparativeClaims.Edit";
             public const string Delete = "Permissions.Procurement.QuotationComparativeClaims.Delete";
         }
-        public static class DepreciationClaims
+        public static class DepreciationModelClaims
         {
-            public const string View = "Permissions.FixedAsset.DepreciationClaims.View";
-            public const string Create = "Permissions.FixedAsset.DepreciationClaims.Create";
-            public const string Edit = "Permissions.FixedAsset.DepreciationClaims.Edit";
-            public const string Delete = "Permissions.FixedAsset.DepreciationClaims.Delete";
+            public const string View = "Permissions.FixedAsset.DepreciationModelClaims.View";
+            public const string Create = "Permissions.FixedAsset.DepreciationModelClaims.Create";
+            public const string Edit = "Permissions.FixedAsset.DepreciationModelClaims.Edit";
+            public const string Delete = "Permissions.FixedAsset.DepreciationModelClaims.Delete";
         }
         public static class FixedAssetClaims
         {
@@ -383,6 +377,13 @@ namespace Domain.Constants
             public const string Create = "Permissions.FixedAsset.CWIPClaims.Create";
             public const string Edit = "Permissions.FixedAsset.CWIPClaims.Edit";
             public const string Delete = "Permissions.FixedAsset.CWIPClaims.Delete";
+        }
+        public static class DisposalClaims
+        {
+            public const string View = "Permissions.FixedAsset.DisposalClaims.View";
+            public const string Create = "Permissions.FixedAsset.DisposalClaims.Create";
+            public const string Edit = "Permissions.FixedAsset.DisposalClaims.Edit";
+            public const string Delete = "Permissions.FixedAsset.DisposalClaims.Delete";
         }
         //Reporting Form
         public static class ChartOfAccountClaims

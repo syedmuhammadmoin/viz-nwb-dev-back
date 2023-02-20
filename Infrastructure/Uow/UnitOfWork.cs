@@ -73,9 +73,10 @@ namespace Infrastructure.Uow
         public IQuotationRepository Quotation { get; private set; }
         public ICallForQuotationRepository CallForQuotation { get; private set; }
         public IQuotationComparativeRepository QuotationComparative { get; private set; }
-        public IDepreciationRepository Depreciation { get; private set; }
+        public IDepreciationModelRepository DepreciationModel { get; private set; }
         public IFixedAssetRepository FixedAsset { get; private set; }
         public ICWIPRepository CWIP { get; private set; }
+        public IDisposalRepository Disposal { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -133,9 +134,10 @@ namespace Infrastructure.Uow
             Quotation = new QuotationRepository(context);
             CallForQuotation = new CallForQuotationRepository(context);
             QuotationComparative = new QuotationComparativeRepository(context);
-            Depreciation = new DepreciationRepository(context);
+            DepreciationModel = new DepreciationModelRepository(context);
             FixedAsset = new FixedAssetRepository(context);  
             CWIP = new CWIPRepository(context);
+            Disposal = new DisposalRepository(context);
         }
 
         public async Task SaveAsync()

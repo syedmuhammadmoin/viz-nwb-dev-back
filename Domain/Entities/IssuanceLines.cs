@@ -25,6 +25,9 @@ namespace Domain.Entities
         public int MasterId { get; private set; }
         [ForeignKey("MasterId")]
         public IssuanceMaster IssuanceMaster { get; private set; }
+        public int? FixedAssetId { get; private set; }
+        [ForeignKey("FixedAssetId")]
+        public FixedAsset Asset { get; private set; }
         public void SetStatus(DocumentStatus status)
         {
             Status = status;

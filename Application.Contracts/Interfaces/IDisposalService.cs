@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface IDepreciationService : ICrudService<CreateDepreciationDto, DepreciationDto, int, TransactionFormFilter>
+    public interface IDisposalService : ICrudService<CreateDisposalDto, DisposalDto, int, TransactionFormFilter>
     {
-        Task<Response<List<DepreciationDto>>> GetDepreciationDown();
+        Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
     }
 }

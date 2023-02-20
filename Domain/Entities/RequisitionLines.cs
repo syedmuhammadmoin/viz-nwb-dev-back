@@ -29,7 +29,12 @@ namespace Domain.Entities
         public int MasterId { get; private set; }
         [ForeignKey("MasterId")]
         public RequisitionMaster RequisitionMaster { get; private set; }
-        
+
+        public int? FixedAssetId { get; private set; }
+        [ForeignKey("FixedAssetId")]
+        public FixedAsset Asset { get; private set; }
+       
+
         protected RequisitionLines()
         {
 
