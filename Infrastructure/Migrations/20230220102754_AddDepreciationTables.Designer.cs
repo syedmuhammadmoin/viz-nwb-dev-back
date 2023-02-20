@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230217150209_AddDepreciationTables")]
+    [Migration("20230220102754_AddDepreciationTables")]
     partial class AddDepreciationTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1960,10 +1960,10 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("DepreciationModelId")
                         .HasColumnType("int");
 
-                    b.Property<int>("DocId")
+                    b.Property<int?>("DocId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Doctype")
+                    b.Property<int?>("Doctype")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")

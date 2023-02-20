@@ -1958,10 +1958,10 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("DepreciationModelId")
                         .HasColumnType("int");
 
-                    b.Property<int>("DocId")
+                    b.Property<int?>("DocId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Doctype")
+                    b.Property<int?>("Doctype")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
