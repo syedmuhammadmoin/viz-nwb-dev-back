@@ -60,8 +60,8 @@ namespace Domain.Entities
         public bool IsReserved { get; private set; }
         public bool IsDisposed { get; private set; }
 
-        public int DocId { get; private set; }
-        public DocType Doctype { get; private set; }
+        public int? DocId { get; private set; }
+        public DocType? Doctype { get; private set; }
 
         protected FixedAsset()
         {
