@@ -35,8 +35,8 @@ namespace Application.Contracts.DTOs
         public bool ProrataBasis { get; set; }
         [Required]
         public bool IsActive { get; set; }
-        public int DocId { get; set; }
-        public DocType Doctype { get; set; }
+        public int? DocId { get; set; }
+        public DocType? Doctype { get; set; }
         [Required]
         public bool? IsSubmit { get; set; }
     }

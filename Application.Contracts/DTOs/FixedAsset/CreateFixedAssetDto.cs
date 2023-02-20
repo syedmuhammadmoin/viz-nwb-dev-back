@@ -34,7 +34,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public bool IsActive { get; set; }
         public int? DocId { get; set; }
-        public DocType Doctype { get; set; }
+        public DocType? Doctype { get; set; }
         [Required]
         public int? Quantity { get; set; }
         [Required]
