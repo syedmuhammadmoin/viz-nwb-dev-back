@@ -71,6 +71,7 @@ builder.Services.AddScoped<IDepreciationModelService, DepreciationModelService>(
 builder.Services.AddScoped<IFixedAssetService, FixedAssetService>();
 builder.Services.AddScoped<ICWIPService, CWIPService>();
 builder.Services.AddScoped<IDisposalService, DisposalService>();
+builder.Services.AddScoped<IBudgetReappropriationService, BudgetReappropriationService>();
 
 
 //Add auto mapper config
