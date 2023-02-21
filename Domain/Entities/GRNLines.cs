@@ -34,7 +34,7 @@ namespace Domain.Entities
         public bool IsFixedAssetCreated { get; private set; }
         public void UpdateIsFixedAssetCreated(bool isFixedAssetCreated)
         {
-            IsFixedAssetCreated = isFixedAssetCreated;
+            IsFixedAssetCreated = true;
         }
         public void SetStatus(DocumentStatus status)
         {
