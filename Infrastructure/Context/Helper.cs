@@ -130,6 +130,12 @@ namespace Infrastructure.Context
             .WithMany(c => c.CallForQuotationLines)
             .OnDelete(DeleteBehavior.Cascade);
 
+            //BudgetReappropriation
+            modelBuilder.Entity<BudgetReappropriationLines>()
+            .HasOne(tc => tc.BudgetReappropriationMaster)
+            .WithMany(c => c.BudgetReappropriationLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
             //Composite key for Same payroll
             modelBuilder.Entity<PayrollTransactionMaster>()
             .HasAlternateKey(p => new { p.Month, p.Year, p.EmployeeId });

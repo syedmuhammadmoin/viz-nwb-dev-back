@@ -32,7 +32,6 @@ namespace Infrastructure.Context
         public DbSet<BankStmtLines> BankStmtLines { get; set; }
         public DbSet<WorkFlowStatus> WorkFlowStatus { get; set; }
         public DbSet<Campus> Campuses { get; set; }
-
         public DbSet<JournalEntryMaster> JournalEntryMaster { get; set; }
         public DbSet<JournalEntryLines> JournalEntryLines { get; set; }
         public DbSet<InvoiceMaster> InvoiceMaster { get; set; }
@@ -94,7 +93,8 @@ namespace Infrastructure.Context
         public DbSet<FixedAsset> FixedAssets { get; set; }
         public DbSet<CWIP> CWIPs { get; set; }
         public DbSet<Disposal> Disposals { get; set; }
-
+        public DbSet<BudgetReappropriationMaster> BudgetReappropriationMaster { get; set; }
+        public DbSet<BudgetReappropriationLines> BudgetReappropriationLines { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
