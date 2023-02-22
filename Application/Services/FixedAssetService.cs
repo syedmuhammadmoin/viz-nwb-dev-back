@@ -86,16 +86,15 @@ namespace Application.Services
 
                 if (entity.DocId != null && entity.Doctype == DocType.GRN)
                 {
-                    var GRNLines =  _unitOfWork.GRN.FindLines(new GRNLinesSpecs((int)entity.DocId , (int)entity.ProductId)).FirstOrDefault();
-
+                    var GRNLines =  _unitOfWork.GRN
+                        .FindLines(new GRNLinesSpecs((int)entity.DocId , (int)entity.ProductId, (int)entity.WarehouseId, false))
+                        .FirstOrDefault();
+                  
                     if(GRNLines != null )
                     {
-                        GRNLines.UpdateIsFixedAssetCreated();   
-
+                        GRNLines.SetIsFixedAssetCreatedTrue();
+                        await _unitOfWork.SaveAsync();
                     }
-                  
-                    await _unitOfWork.SaveAsync();
-
                 } 
             }
 
