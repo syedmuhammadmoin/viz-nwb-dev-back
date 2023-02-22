@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230222092321_AddBudgetAppropiationTable")]
+    [Migration("20230222115636_AddBudgetAppropiationTable")]
     partial class AddBudgetAppropiationTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1614,9 +1614,6 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CampusId")
-                        .HasColumnType("int");
-
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -1631,6 +1628,10 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<string>("DocNo")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
@@ -1644,11 +1645,14 @@ namespace Infrastructure.Migrations
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TransactionId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CampusId");
-
                     b.HasIndex("StatusId");
+
+                    b.HasIndex("TransactionId");
 
                     b.ToTable("DepreciationAdjustmentMaster");
                 });
@@ -6707,21 +6711,20 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.DepreciationAdjustmentMaster", b =>
                 {
-                    b.HasOne("Domain.Entities.Campus", "Campus")
-                        .WithMany()
-                        .HasForeignKey("CampusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
                         .WithMany()
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Campus");
+                    b.HasOne("Domain.Entities.Transactions", "Transactions")
+                        .WithMany()
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Status");
+
+                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("Domain.Entities.DepreciationModel", b =>

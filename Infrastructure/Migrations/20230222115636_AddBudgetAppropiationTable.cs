@@ -47,10 +47,11 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    DocNo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     DateOfDepreciationAdjustment = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CampusId = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     StatusId = table.Column<int>(type: "int", nullable: false),
+                    TransactionId = table.Column<int>(type: "int", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -61,9 +62,9 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_DepreciationAdjustmentMaster", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DepreciationAdjustmentMaster_Campuses_CampusId",
-                        column: x => x.CampusId,
-                        principalTable: "Campuses",
+                        name: "FK_DepreciationAdjustmentMaster_Transactions_TransactionId",
+                        column: x => x.TransactionId,
+                        principalTable: "Transactions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -198,14 +199,14 @@ namespace Infrastructure.Migrations
                 column: "MasterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DepreciationAdjustmentMaster_CampusId",
-                table: "DepreciationAdjustmentMaster",
-                column: "CampusId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_DepreciationAdjustmentMaster_StatusId",
                 table: "DepreciationAdjustmentMaster",
                 column: "StatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DepreciationAdjustmentMaster_TransactionId",
+                table: "DepreciationAdjustmentMaster",
+                column: "TransactionId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
