@@ -571,7 +571,9 @@ namespace Application.Mapper
 
             CreateMap<CreateFixedAssetDto, FixedAsset>();
             CreateMap<UpdateFixedAssetDto, FixedAsset>();
-            CreateMap<CWIP, FixedAsset>();
+            CreateMap<CWIP, FixedAsset>()
+                .ForMember(fixedAsset => fixedAsset.Doctype, cwip => cwip.MapFrom(d => DocType.CWIP))
+                .ForMember(fixedAsset => fixedAsset.DocId, cwip => cwip.MapFrom(d => d.Id));
 
             //CWIP
             CreateMap<CWIP, CWIPDto>()
