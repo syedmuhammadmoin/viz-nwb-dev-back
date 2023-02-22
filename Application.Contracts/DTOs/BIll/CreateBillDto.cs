@@ -22,7 +22,7 @@ namespace Application.Contracts.DTOs
         public int? CampusId { get; set; }
         public int? GRNId { get; set; }
         [Required]
-        public bool? isSubmit { get; set; }
+        public bool? IsSubmit { get; set; }
         [Required]
         public virtual List<CreateBillLinesDto> BillLines { get; set; }
     }

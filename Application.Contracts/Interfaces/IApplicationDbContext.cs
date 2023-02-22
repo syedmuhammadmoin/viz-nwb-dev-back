@@ -88,6 +88,8 @@ namespace Application.Interfaces
         public DbSet<FixedAsset> FixedAssets { get; set; }
         public DbSet<CWIP> CWIPs { get; set; }
         public DbSet<Disposal> Disposals { get; set; }
+        public DbSet<BudgetReappropriationMaster>  BudgetReappropriationMaster { get; set; }
+        public DbSet<BudgetReappropriationLines>  BudgetReappropriationLines { get; set; }
         public DbSet<DepreciationAdjustmentMaster>  DepreciationAdjustmentMaster { get; set; }
         public DbSet<DepreciationAdjustmentLines> DepreciationAdjustmentLines { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
