@@ -7,6 +7,7 @@ namespace Application.Contracts.DTOs
         public int Id { get; set; }
         public string CwipCode { get; set; }
         public DateTime DateOfAcquisition { get; set; }
+        public string Name { get; set; }
         public Guid CWIPAccountId { get; set; }
         public string CWIPAccount { get; set; }
         public int Cost { get; set; }
