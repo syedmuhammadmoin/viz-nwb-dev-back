@@ -165,7 +165,7 @@ namespace Application.Services
                     {
                         for (int i = 0; i < getCwip.Quantity; i++)
                         {
-                            var fix = _mapper.Map<FixedAsset>(getCwip);
+                            var fix = _mapper.Map<FixedAsset>(_mapper.Map<CreateFixedAssetDto>(getCwip));
                             //Setting status
                             fix.SetStatus(3);
                             await _unitOfWork.FixedAsset.Add(fix);
