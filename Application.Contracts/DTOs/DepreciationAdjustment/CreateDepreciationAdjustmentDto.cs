@@ -14,12 +14,10 @@ namespace Application.Contracts.DTOs
         public int? Id { get; set; }
         [Required]
         public DateTime DateOfDepreciationAdjustment { get;  set; }
-        [Required]
-        public int? CampusId { get;  set; }
         [MaxLength(500)]
         public string Description { get; set; }
         [Required]
-        public bool IsSubmit { get; set; }
+        public bool? IsSubmit { get; set; }
         [Required]
         public virtual List<CreateDepreciationAdjustmentLinesDto> DepreciationAdjustmentLines { get; set; }
     }

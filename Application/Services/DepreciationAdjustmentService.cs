@@ -9,11 +9,6 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -28,18 +23,6 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
-        }
-
-        public async Task<Response<DepreciationAdjustmentDto>> CreateAsync(CreateDepreciationAdjustmentDto entity)
-        {
-            if ((bool)entity.IsSubmit)
-            {
-                return await SubmitDepreciationAdjustment(entity);
-            }
-            else
-            {
-                return await SaveDepreciationAdjustment(entity, 1);
-            }
         }
 
         public async Task<PaginationResponse<List<DepreciationAdjustmentDto>>> GetAllAsync(TransactionFormFilter filter)
@@ -63,17 +46,15 @@ namespace Application.Services
                 return new Response<DepreciationAdjustmentDto>("Not found");
 
             var depreciationAdjustmentDto = _mapper.Map<DepreciationAdjustmentDto>(depreciationAdjustment);
-
+            
             ReturningRemarks(depreciationAdjustmentDto);
-
             depreciationAdjustmentDto.IsAllowedRole = false;
+            
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.DepreciationAdjustment)).FirstOrDefault();
-
             if (workflow != null)
             {
                 var transition = workflow.WorkflowTransitions
                     .FirstOrDefault(x => (x.CurrentStatusId == depreciationAdjustmentDto.StatusId));
-
                 if (transition != null)
                 {
                     var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
@@ -89,55 +70,125 @@ namespace Application.Services
             return new Response<DepreciationAdjustmentDto>(depreciationAdjustmentDto, "Returning value");
         }
 
+        public async Task<Response<DepreciationAdjustmentDto>> CreateAsync(CreateDepreciationAdjustmentDto entity)
+        {
+            if ((bool)entity.IsSubmit)
+            {
+                return await Submit(entity);
+            }
+            else
+            {
+                return await Save(entity, 1);
+            }
+        }
+
         public async Task<Response<DepreciationAdjustmentDto>> UpdateAsync(CreateDepreciationAdjustmentDto entity)
         {
             if ((bool)entity.IsSubmit)
             {
-                return await SubmitDepreciationAdjustment(entity);
+                return await Submit(entity);
             }
             else
             {
-                return await UpdateDepreciationAdjustment(entity, 1);
+                return await Update(entity, 1);
             }
         }
-
-        private List<RemarksDto> ReturningRemarks(DepreciationAdjustmentDto data)
+        
+        public Task<Response<int>> DeleteAsync(int id)
         {
-            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.DepreciationAdjustment))
-                    .Select(e => new RemarksDto()
-                    {
-                        Remarks = e.Remarks,
-                        UserName = e.User.UserName,
-                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
-                    }).ToList();
-
-            if (remarks.Count() > 0)
+            throw new NotImplementedException();
+        }
+        
+        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
+        {
+            var getDepreciationAdjustment = await _unitOfWork.DepreciationAdjustment.GetById(data.DocId, new DepreciationAdjustmentSpecs());
+            if (getDepreciationAdjustment == null)
             {
-                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+                return new Response<bool>("Depreciation Adjustment with the input id not found");
+            }
+            
+            if (getDepreciationAdjustment.Status.State == DocumentStatus.Unpaid 
+                || getDepreciationAdjustment.Status.State == DocumentStatus.Partial 
+                || getDepreciationAdjustment.Status.State == DocumentStatus.Paid)
+            {
+                return new Response<bool>("Depreciation Adjustment already approved");
             }
 
-            return remarks;
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.DepreciationAdjustment)).FirstOrDefault();
+            if (workflow == null)
+            {
+                return new Response<bool>("No activated workflow found for this document");
+            }
+
+            var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == getDepreciationAdjustment.StatusId 
+                    && x.Action == data.Action));
+            if (transition == null)
+            {
+                return new Response<bool>("No transition found");
+            }
+
+            // Creating object of getUSer class
+            var getUser = new GetUser(this._httpContextAccessor);
+            var userId = getUser.GetCurrentUserId();
+            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+            
+            _unitOfWork.CreateTransaction();
+            foreach (var role in currentUserRoles)
+            {
+                if (transition.AllowedRole.Name == role)
+                {
+                    getDepreciationAdjustment.SetStatus(transition.NextStatusId);
+                    if (!String.IsNullOrEmpty(data.Remarks))
+                    {
+                        var addRemarks = new Remark()
+                        {
+                            DocId = getDepreciationAdjustment.Id,
+                            DocType = DocType.DepreciationAdjustment,
+                            Remarks = data.Remarks,
+                            UserId = userId
+                        };
+                        await _unitOfWork.Remarks.Add(addRemarks);
+                    }
+                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                    {
+                        await AddToLedger(getDepreciationAdjustment);
+                        return new Response<bool>(true, "Depreciation Adjustment Approved");
+                    }
+
+                    if (transition.NextStatus.State == DocumentStatus.Rejected)
+                    {
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Depreciation Adjustment Rejected");
+                    }
+
+                    await _unitOfWork.SaveAsync();
+                    _unitOfWork.Commit();
+                    return new Response<bool>(true, "Depreciation Adjustment Reviewed");
+                }
+            }
+            return new Response<bool>("User does not have allowed role");
         }
-        //Private
-        private async Task<Response<DepreciationAdjustmentDto>> SubmitDepreciationAdjustment(CreateDepreciationAdjustmentDto entity)
+
+        //Private methods
+        private async Task<Response<DepreciationAdjustmentDto>> Submit(CreateDepreciationAdjustmentDto entity)
         {
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.DepreciationAdjustment)).FirstOrDefault();
-
             if (checkingActiveWorkFlows == null)
-            {
                 return new Response<DepreciationAdjustmentDto>("No workflow found for Depreciation Adjustment");
-            }
 
             if (entity.Id == null)
             {
-                return await SaveDepreciationAdjustment(entity, 6);
+                return await Save(entity, 6);
             }
             else
             {
-                return await UpdateDepreciationAdjustment(entity, 6);
+                return await Update(entity, 6);
             }
         }
-        private async Task<Response<DepreciationAdjustmentDto>> SaveDepreciationAdjustment(CreateDepreciationAdjustmentDto entity, int status)
+        
+        private async Task<Response<DepreciationAdjustmentDto>> Save(CreateDepreciationAdjustmentDto entity, int status)
         {
             if (entity.DepreciationAdjustmentLines.Count() == 0)
                 return new Response<DepreciationAdjustmentDto>("Lines are required");
@@ -147,24 +198,24 @@ namespace Application.Services
             //Setting status
             depreciationAdjustment.SetStatus(status);
 
-            //_unitOfWork.CreateTransaction();
+            _unitOfWork.CreateTransaction();
 
             //Saving in table
             var result = await _unitOfWork.DepreciationAdjustment.Add(depreciationAdjustment);
             await _unitOfWork.SaveAsync();
 
-            ////For creating docNo
-            //depreciationAdjustment.CreateDocNo();
-            //await _unitOfWork.SaveAsync();
+            //For creating docNo
+            depreciationAdjustment.CreateDocNo();
+            await _unitOfWork.SaveAsync();
 
-            ////Commiting the transaction 
-            //_unitOfWork.Commit();
+            //Commiting the transaction 
+            _unitOfWork.Commit();
 
             //returning response
             return new Response<DepreciationAdjustmentDto>(_mapper.Map<DepreciationAdjustmentDto>(result), "Created successfully");
-
         }
-        private async Task<Response<DepreciationAdjustmentDto>> UpdateDepreciationAdjustment(CreateDepreciationAdjustmentDto entity, int status)
+        
+        private async Task<Response<DepreciationAdjustmentDto>> Update(CreateDepreciationAdjustmentDto entity, int status)
         {
             if (entity.DepreciationAdjustmentLines.Count() == 0)
                 return new Response<DepreciationAdjustmentDto>("Lines are required");
@@ -192,79 +243,52 @@ namespace Application.Services
 
             //returning response
             return new Response<DepreciationAdjustmentDto>(_mapper.Map<DepreciationAdjustmentDto>(depreciationAdjustment), "Created successfully");
-
         }
-        public Task<Response<int>> DeleteAsync(int id)
+        
+        private List<RemarksDto> ReturningRemarks(DepreciationAdjustmentDto data)
         {
-            throw new NotImplementedException();
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.DepreciationAdjustment))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
         }
-        public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
+
+        private async Task AddToLedger(DepreciationAdjustmentMaster entity)
         {
-            var getDepreciationAdjustment = await _unitOfWork.DepreciationAdjustment.GetById(data.DocId, new DepreciationAdjustmentSpecs(true));
+            var transaction = new Transactions(entity.Id, entity.DocNo, DocType.DepreciationAdjustment);
+            var addTransaction = await _unitOfWork.Transaction.Add(transaction);
+            await _unitOfWork.SaveAsync();
 
-            if (getDepreciationAdjustment  == null)
-            {
-                return new Response<bool>("Depreciation Adjustment with the input id not found");
-            }
-            if (getDepreciationAdjustment.Status.State == DocumentStatus.Unpaid || getDepreciationAdjustment.Status.State == DocumentStatus.Partial || getDepreciationAdjustment.Status.State == DocumentStatus.Paid)
-            {
-                return new Response<bool>("Depreciation Adjustment already approved");
-            }
-            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.DepreciationAdjustment)).FirstOrDefault();
+            entity.SetTransactionId(transaction.Id);
+            await _unitOfWork.SaveAsync();
 
-            if (workflow == null)
-            {
-                return new Response<bool>("No activated workflow found for this document");
-            }
-            var transition = workflow.WorkflowTransitions
-                    .FirstOrDefault(x => (x.CurrentStatusId == getDepreciationAdjustment.StatusId && x.Action == data.Action));
+            //Inserting data into recordledger table
+            List<RecordLedger> recordLedger = entity.DepreciationAdjustmentLines
+                .Select(line => new RecordLedger(
+                    transaction.Id,
+                    line.Level4Id,
+                    null,
+                    line.FixedAsset.WarehouseId,
+                    line.Description,
+                    line.Debit > 0 && line.Credit <= 0 ? 'D' : 'C',
+                    line.Debit > 0 && line.Credit <= 0 ? line.Debit : line.Credit,
+                    line.FixedAsset.Warehouse.CampusId,
+                    entity.DateOfDepreciationAdjustment
+                    )).ToList();
 
-            if (transition == null)
-            {
-                return new Response<bool>("No transition found");
-            }
-            // Creating object of getUSer class
-            var getUser = new GetUser(this._httpContextAccessor);
-
-            var userId = getUser.GetCurrentUserId();
-            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
-            _unitOfWork.CreateTransaction();
-
-            foreach (var role in currentUserRoles)
-            {
-                if (transition.AllowedRole.Name == role)
-                {
-                    getDepreciationAdjustment.SetStatus(transition.NextStatusId);
-                    if (!String.IsNullOrEmpty(data.Remarks))
-                    {
-                        var addRemarks = new Remark()
-                        {
-                            DocId = getDepreciationAdjustment.Id,
-                            DocType = DocType.DepreciationAdjustment,
-                            Remarks = data.Remarks,
-                            UserId = userId
-                        };
-                        await _unitOfWork.Remarks.Add(addRemarks);
-                    }
-
-
-                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
-                    {
-                        return new Response<bool>(true, "Depreciation Adjustment Approved");
-                    }
-                    if (transition.NextStatus.State == DocumentStatus.Rejected)
-                    {
-                        await _unitOfWork.SaveAsync();
-                        _unitOfWork.Commit();
-                        return new Response<bool>(true, "Depreciation Adjustment Rejected");
-                    }
-                    await _unitOfWork.SaveAsync();
-                    _unitOfWork.Commit();
-                    return new Response<bool>(true, "Depreciation Adjustment Reviewed");
-                }
-            }
-
-            return new Response<bool>("User does not have allowed role");
+            await _unitOfWork.Ledger.AddRange(recordLedger);
+            await _unitOfWork.SaveAsync();
         }
+
     }
 }
