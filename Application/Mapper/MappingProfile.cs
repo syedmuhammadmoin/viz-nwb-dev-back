@@ -597,6 +597,17 @@ namespace Application.Mapper
 
             CreateMap<CreateDisposalDto, Disposal>()
                 .ForMember(core => core.BookValue, dto => dto.MapFrom(a => 0));
+            //DepreciationAdjustment
+            CreateMap<DepreciationAdjustmentMaster, DepreciationAdjustmentDto>()
+               .ForMember(dto => dto.Campus, core => core.MapFrom(d => d.Campus.Name))
+               .ForMember(dto => dto.Status, core => core.MapFrom(d => d.Status.Status))
+               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State))
+               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+            CreateMap<CreateDepreciationAdjustmentDto, DepreciationAdjustmentMaster>();
+            CreateMap<DepreciationAdjustmentLines, DepreciationAdjustmentLinesDto>()
+                   .ForMember(dto => dto.Level4, core => core.MapFrom(d => d.Level4.Name))
+                   .ForMember(dto => dto.FixedAsset, core => core.MapFrom(d => d.FixedAsset.Name));
+            CreateMap<CreateDepreciationAdjustmentLinesDto, DepreciationAdjustmentLines>();
         }
     }
 }
