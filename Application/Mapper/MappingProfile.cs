@@ -616,7 +616,6 @@ namespace Application.Mapper
             
             //DepreciationAdjustment
             CreateMap<DepreciationAdjustmentMaster, DepreciationAdjustmentDto>()
-               .ForMember(dto => dto.Campus, core => core.MapFrom(d => d.Campus.Name))
                .ForMember(dto => dto.Status, core => core.MapFrom(d => d.Status.Status))
                .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
             
