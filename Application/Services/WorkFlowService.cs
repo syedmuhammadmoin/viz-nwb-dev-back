@@ -256,6 +256,15 @@ namespace Application.Services
                     return new Response<WorkFlowDto>("Disposal is pending for this workflow");
                 }
             }
+            if (entity.DocType == DocType.BudgetReappropriation)
+            {
+                var checking = _unitOfWork.BudgetReappropriation.Find(new BudgetReappropriationSpecs("")).ToList();
+
+                if (checking.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Budget Reappropriation is pending for this workflow");
+                }
+            }
             //For updating data
             _mapper.Map<CreateWorkFlowDto, WorkFlowMaster>(entity, workFlow);
             await _unitOfWork.SaveAsync();

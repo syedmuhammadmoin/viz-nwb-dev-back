@@ -33,7 +33,7 @@ namespace Application.Services
 
         public async Task<Response<BillDto>> CreateAsync(CreateBillDto entity)
         {
-            if ((bool)entity.isSubmit)
+            if ((bool)entity.IsSubmit)
             {
                 return await this.SubmitBILL(entity);
             }
@@ -117,7 +117,7 @@ namespace Application.Services
 
         public async Task<Response<BillDto>> UpdateAsync(CreateBillDto entity)
         {
-            if ((bool)entity.isSubmit)
+            if ((bool)entity.IsSubmit)
             {
                 return await this.SubmitBILL(entity);
             }

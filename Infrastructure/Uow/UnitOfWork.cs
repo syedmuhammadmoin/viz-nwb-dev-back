@@ -17,16 +17,12 @@ namespace Infrastructure.Uow
         public ICategoryRepository Category { get; private set; }
         public IOrganizationRepository Organization { get; private set; }
         public IWarehouseRepository Warehouse { get; private set; }
-
         public IBusinessPartnerRepository BusinessPartner { get; private set; }
         public IProductRepository Product { get; private set; }
         public ILevel4Repository Level4 { get; private set; }
-
         public ILevel1Repository Level1 { get; private set; }
         public ILevel2Repository Level2 { get; private set; }
-
         public ILevel3Repository Level3 { get; private set; }
-
         public IJournalEntryRepository JournalEntry { get; private set; }
         public IInvoiceRepository Invoice { get; private set; }
         public IBillRepository Bill{ get; private set; }
@@ -77,6 +73,7 @@ namespace Infrastructure.Uow
         public IFixedAssetRepository FixedAsset { get; private set; }
         public ICWIPRepository CWIP { get; private set; }
         public IDisposalRepository Disposal { get; private set; }
+        public IBudgetReappropriationRepository BudgetReappropriation { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -138,6 +135,7 @@ namespace Infrastructure.Uow
             FixedAsset = new FixedAssetRepository(context);  
             CWIP = new CWIPRepository(context);
             Disposal = new DisposalRepository(context);
+            BudgetReappropriation = new BudgetReappropriationRepository(context);
         }
 
         public async Task SaveAsync()

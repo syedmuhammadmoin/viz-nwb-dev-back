@@ -67,6 +67,8 @@ namespace Domain.Interfaces
         IFixedAssetRepository FixedAsset { get; }
         ICWIPRepository CWIP { get; }
         IDisposalRepository Disposal { get; }
+
+        IBudgetReappropriationRepository BudgetReappropriation { get; } 
         Task SaveAsync();
         void CreateTransaction();
         void Commit();

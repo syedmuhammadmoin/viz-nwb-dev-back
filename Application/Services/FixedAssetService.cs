@@ -86,9 +86,14 @@ namespace Application.Services
 
                 if (entity.DocId != null && entity.Doctype == DocType.GRN)
                 {
-                    var GRN = await _unitOfWork.GRN.GetById(entity.DocId.Value);
+                    var GRNLines =  _unitOfWork.GRN.FindLines(new GRNLinesSpecs((int)entity.DocId , (int)entity.ProductId)).FirstOrDefault();
 
-                    GRN.GRNLines.Where(x => x.ItemId == entity.ProductId).FirstOrDefault().UpdateIsFixedAssetCreated(true);
+                    if(GRNLines != null )
+                    {
+                        GRNLines.UpdateIsFixedAssetCreated(true);   
+
+                    }
+                  
                     await _unitOfWork.SaveAsync();
 
                 } 

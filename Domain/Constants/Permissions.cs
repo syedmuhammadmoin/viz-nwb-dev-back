@@ -385,6 +385,13 @@
             public const string Edit = "Permissions.FixedAsset.DisposalClaims.Edit";
             public const string Delete = "Permissions.FixedAsset.DisposalClaims.Delete";
         }
+        public static class BudgetReappropriationClaims
+        {
+            public const string View = "Permissions.Budget.BudgetReappropriationClaims.View";
+            public const string Create = "Permissions.Budget.BudgetReappropriationClaims.Create";
+            public const string Edit = "Permissions.Budget.BudgetReappropriationClaims.Edit";
+            public const string Delete = "Permissions.Budget.BudgetReappropriationClaims.Delete";
+        }
         //Reporting Form
         public static class ChartOfAccountClaims
         {

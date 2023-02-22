@@ -581,6 +581,7 @@ namespace Application.Mapper
                 .ForMember(dto => dto.AssetAccount, core => core.MapFrom(d => d.AssetAccount.Name))
                 .ForMember(dto => dto.DepreciationExpense, core => core.MapFrom(d => d.DepreciationExpense.Name))
                 .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(d => d.AccumulatedDepreciation.Name))
+                .ForMember(dto => dto.Product, core => core.MapFrom(d => d.Product.ProductName))
                 .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
                 .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
@@ -597,6 +598,19 @@ namespace Application.Mapper
 
             CreateMap<CreateDisposalDto, Disposal>()
                 .ForMember(core => core.BookValue, dto => dto.MapFrom(a => 0));
+
+            //BudgetReappropriation
+            CreateMap<BudgetReappropriationMaster, BudgetReappropriationDto>()
+               .ForMember(dto => dto.Budget, core => core.MapFrom(d => d.Budget.BudgetName))
+               .ForMember(dto => dto.Status, core => core.MapFrom(d => d.Status.Status))
+               .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.State))
+               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+
+            CreateMap<CreateBudgetReappropriationDto, BudgetReappropriationMaster>();
+            CreateMap<BudgetReappropriationLines, BudgetReappropriationLinesDto>()
+                   .ForMember(dto => dto.Level4, core => core.MapFrom(d => d.Level4.Name))
+                   .ForMember(dto => dto.Campus, core => core.MapFrom(d => d.Campus.Name));
+            CreateMap<CreateBudgetReappropriationLinesDto, BudgetReappropriationLines>();
         }
     }
 }

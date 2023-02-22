@@ -78,7 +78,8 @@ namespace Domain.Constants
         QuotationComparative = 24,
         FixedAsset = 25,
         CWIP = 26,
-        Disposal = 27
+        Disposal = 27,
+        BudgetReappropriation = 28
     }
     public enum ActionButton
     {
