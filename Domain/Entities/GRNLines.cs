@@ -32,7 +32,7 @@ namespace Domain.Entities
         [ForeignKey("MasterId")]
         public GRNMaster GRNMaster { get; private set; }
         public bool IsFixedAssetCreated { get; private set; }
-        public void UpdateIsFixedAssetCreated(bool isFixedAssetCreated)
+        public void UpdateIsFixedAssetCreated()
         {
             IsFixedAssetCreated = true;
         }

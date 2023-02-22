@@ -90,7 +90,7 @@ namespace Application.Services
 
                     if(GRNLines != null )
                     {
-                        GRNLines.UpdateIsFixedAssetCreated(true);   
+                        GRNLines.UpdateIsFixedAssetCreated();   
 
                     }
                   
@@ -98,8 +98,6 @@ namespace Application.Services
 
                 } 
             }
-
-
 
             //Commiting the transaction 
             _unitOfWork.Commit();

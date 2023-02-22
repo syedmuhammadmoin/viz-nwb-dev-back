@@ -49,7 +49,7 @@ namespace Application.Services
             if (!budgetReappropriations.Any())
                 return new PaginationResponse<List<BudgetReappropriationDto>>(_mapper.Map<List<BudgetReappropriationDto>>(budgetReappropriations), "List is empty");
 
-            var totalRecords = await _unitOfWork.Budget.TotalRecord(new BudgetSpecs(filter, true));
+            var totalRecords = await _unitOfWork.BudgetReappropriation.TotalRecord(new BudgetReappropriationSpecs(filter, true));
 
             return new PaginationResponse<List<BudgetReappropriationDto>>(_mapper.Map<List<BudgetReappropriationDto>>(budgetReappropriations),
                 filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
