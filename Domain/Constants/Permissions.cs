@@ -385,6 +385,13 @@
             public const string Edit = "Permissions.FixedAsset.DisposalClaims.Edit";
             public const string Delete = "Permissions.FixedAsset.DisposalClaims.Delete";
         }
+        public static class DepreciationAdjustmentClaims
+        {
+            public const string View = "Permissions.FixedAsset.DepreciationAdjustmentClaims.View";
+            public const string Create = "Permissions.FixedAsset.DepreciationAdjustmentClaims.Create";
+            public const string Edit = "Permissions.FixedAsset.DepreciationAdjustmentClaims.Edit";
+            public const string Delete = "Permissions.FixedAsset.DepreciationAdjustmentClaims.Delete";
+        }
         //Reporting Form
         public static class ChartOfAccountClaims
         {
