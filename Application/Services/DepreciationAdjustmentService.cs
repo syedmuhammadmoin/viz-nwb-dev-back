@@ -129,9 +129,9 @@ namespace Application.Services
             }
 
             // Creating object of getUSer class
-            var getUser = new GetUser(this._httpContextAccessor);
+            var getUser = new GetUser(_httpContextAccessor);
             var userId = getUser.GetCurrentUserId();
-            var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+            var currentUserRoles = new GetUser(_httpContextAccessor).GetCurrentUserRoles();
             
             _unitOfWork.CreateTransaction();
             foreach (var role in currentUserRoles)
@@ -153,6 +153,7 @@ namespace Application.Services
                     if (transition.NextStatus.State == DocumentStatus.Unpaid)
                     {
                         await AddToLedger(getDepreciationAdjustment);
+                        _unitOfWork.Commit();
                         return new Response<bool>(true, "Depreciation Adjustment Approved");
                     }
 
