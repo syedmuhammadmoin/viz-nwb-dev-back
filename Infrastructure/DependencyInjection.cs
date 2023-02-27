@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
+using Infrastructure.BackgroundServices;
 using Infrastructure.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -52,6 +53,8 @@ namespace Infrastructure
                     ValidateIssuerSigningKey = true
                 };
             });
+
+            services.AddHostedService<DepreciationBackgroundService>();
         }
     }
 }
