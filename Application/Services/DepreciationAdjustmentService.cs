@@ -196,7 +196,7 @@ namespace Application.Services
 
             foreach (var lines in entity.DepreciationAdjustmentLines)
             {
-                if (lines.Debit > 0 && lines.Credit > 0)
+                if (lines.Debit == lines.Credit)
                     return new Response<DepreciationAdjustmentDto>("Debit and Credit amount should be in seperate lines");
             }
 
@@ -232,7 +232,7 @@ namespace Application.Services
 
             foreach (var lines in entity.DepreciationAdjustmentLines)
             {
-                if (lines.Debit > 0 && lines.Credit > 0)
+                if (lines.Debit == lines.Credit)
                     return new Response<DepreciationAdjustmentDto>("Debit and Credit amount should be in seperate lines");
             }
 
