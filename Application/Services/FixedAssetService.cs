@@ -315,6 +315,8 @@ namespace Application.Services
 
                     if (transition.NextStatus.State == DocumentStatus.Unpaid)
                     {
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
                         return new Response<bool>(true, "Document Approved");
                     }
                     if (transition.NextStatus.State == DocumentStatus.Rejected)
