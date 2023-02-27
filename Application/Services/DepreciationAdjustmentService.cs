@@ -194,6 +194,15 @@ namespace Application.Services
             if (entity.DepreciationAdjustmentLines.Count() == 0)
                 return new Response<DepreciationAdjustmentDto>("Lines are required");
 
+            foreach (var lines in entity.DepreciationAdjustmentLines)
+            {
+                if (lines.Debit > 0 && lines.Credit > 0)
+                    return new Response<DepreciationAdjustmentDto>("Debit and Credit amount should be in seperate lines");
+            }
+
+            if (entity.DepreciationAdjustmentLines.Sum(i => i.Debit) != entity.DepreciationAdjustmentLines.Sum(i => i.Credit))
+                return new Response<DepreciationAdjustmentDto>("Sum of debit and credit must be equal");
+
             var depreciationAdjustment = _mapper.Map<DepreciationAdjustmentMaster>(entity);
 
             //Setting status
@@ -220,6 +229,15 @@ namespace Application.Services
         {
             if (entity.DepreciationAdjustmentLines.Count() == 0)
                 return new Response<DepreciationAdjustmentDto>("Lines are required");
+
+            foreach (var lines in entity.DepreciationAdjustmentLines)
+            {
+                if (lines.Debit > 0 && lines.Credit > 0)
+                    return new Response<DepreciationAdjustmentDto>("Debit and Credit amount should be in seperate lines");
+            }
+
+            if (entity.DepreciationAdjustmentLines.Sum(i => i.Debit) != entity.DepreciationAdjustmentLines.Sum(i => i.Credit))
+                return new Response<DepreciationAdjustmentDto>("Sum of debit and credit must be equal");
 
             var specification = new DepreciationAdjustmentSpecs(true);
             var depreciationAdjustment = await _unitOfWork.DepreciationAdjustment.GetById((int)entity.Id, specification);
