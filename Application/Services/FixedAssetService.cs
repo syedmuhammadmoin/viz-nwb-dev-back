@@ -40,6 +40,9 @@ namespace Application.Services
             }
 
             //Checking validation
+            if (entity.SalvageValue > entity.Cost)
+                return new Response<FixedAssetDto>("Salvage value cannot be greater than cost");
+
             if (entity.DepreciationApplicability)
             {
                 if ((entity.DepreciationModelId == null && entity.DepreciationModelId == 0)
@@ -120,6 +123,8 @@ namespace Application.Services
             }
 
             //Checking validation
+            if (entity.SalvageValue > entity.Cost)
+                return new Response<FixedAssetDto>("Salvage value cannot be greater than cost");
             if (entity.DepreciationApplicability)
             {
                 if ((entity.DepreciationModelId == null && entity.DepreciationModelId == 0)

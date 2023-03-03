@@ -213,6 +213,8 @@ namespace Application.Services
 
         private async Task<Response<CWIPDto>> Save(CreateCWIPDto entity, int status)
         {
+            if (entity.SalvageValue > entity.Cost)
+                return new Response<CWIPDto>("Salvage value cannot be greater than cost");
             if (entity.DepreciationApplicability)
             {
                 if (entity.DepreciationModelId == null && entity.DepreciationModelId == 0 || entity.DepreciationExpenseId == null ||
@@ -258,6 +260,8 @@ namespace Application.Services
 
         private async Task<Response<CWIPDto>> Update(CreateCWIPDto entity , int status)
         {
+            if (entity.SalvageValue > entity.Cost)
+                return new Response<CWIPDto>("Salvage value cannot be greater than cost");
             if (entity.DepreciationApplicability)
             {
                 if (entity.DepreciationModelId == null && entity.DepreciationModelId == 0 || entity.DepreciationExpenseId == null ||
