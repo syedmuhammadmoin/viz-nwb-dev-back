@@ -152,6 +152,8 @@ namespace Application.Services
 
                     if (transition.NextStatus.State == DocumentStatus.Unpaid)
                     {
+                        var getFixedAsset = await _unitOfWork.FixedAsset.GetById(getDisposal.FixedAssetId);
+                        getFixedAsset.SetIsDisposedTrue();
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
                         return new Response<bool>(true, "Document Approved");
@@ -192,16 +194,18 @@ namespace Application.Services
 
         private async Task<Response<DisposalDto>> Save(CreateDisposalDto entity, int status)
         {
-            var disposal = _mapper.Map<Disposal>(entity);
-            
-            //TODO: Add Book value calculation in mapping
+            //Getting fixed asset
+            var getFixedAsset = await _unitOfWork.FixedAsset.GetById((int)entity.FixedAssetId);
+            if(getFixedAsset == null)
+                return new Response<DisposalDto>("Invalid fixed asset id");
 
-            //Setting status
-            disposal.SetStatus(status);
-
-            _unitOfWork.CreateTransaction();
+            //Setting values in disposal
+            var disposal = new Disposal((int)entity.FixedAssetId, getFixedAsset.ProductId, getFixedAsset.Cost,
+                getFixedAsset.SalvageValue, (int)getFixedAsset.UseFullLife, (Guid)getFixedAsset.AccumulatedDepreciationId,
+                0, entity.DisposalDate, entity.DisposalValue, getFixedAsset.WarehouseId, status);
 
             //Saving in table
+            _unitOfWork.CreateTransaction();
             await _unitOfWork.Disposal.Add(disposal);
             await _unitOfWork.SaveAsync();
 
@@ -214,31 +218,31 @@ namespace Application.Services
 
             //returning response
             return new Response<DisposalDto>(_mapper.Map<DisposalDto>(disposal), "Created successfully");
-
         }
 
         private async Task<Response<DisposalDto>> Update(CreateDisposalDto entity, int status)
         {
+            //Getting disposal by id
             var result = await _unitOfWork.Disposal.GetById((int)entity.Id);
-
             if (result == null)
                 return new Response<DisposalDto>("Not found");
-
+            
+            //Checking status
             if (result.StatusId != 1 && result.StatusId != 2)
                 return new Response<DisposalDto>("Only draft document can be edited");
 
-            //TODO: Add Book value calculation in mapping
+            //Getting fixed asset
+            var getFixedAsset = await _unitOfWork.FixedAsset.GetById((int)entity.FixedAssetId);
+            if (getFixedAsset == null)
+                return new Response<DisposalDto>("Invalid fixed asset id");
 
-            //Setting status
-            result.SetStatus(status);
-            _unitOfWork.CreateTransaction();
+            //Updating disposal
+            result.Update((int)entity.FixedAssetId, getFixedAsset.ProductId, getFixedAsset.Cost,
+                getFixedAsset.SalvageValue, (int)getFixedAsset.UseFullLife, (Guid)getFixedAsset.AccumulatedDepreciationId,
+                0, entity.DisposalDate, entity.DisposalValue, getFixedAsset.WarehouseId, status);
 
-            //For updating data
-            _mapper.Map(entity, result);
+            //saving data
             await _unitOfWork.SaveAsync();
-
-            //Commiting the transaction
-            _unitOfWork.Commit();
 
             //returning response
             return new Response<DisposalDto>(_mapper.Map<DisposalDto>(result), "Updated successfully");

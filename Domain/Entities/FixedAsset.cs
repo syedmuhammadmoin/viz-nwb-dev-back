@@ -78,6 +78,11 @@ namespace Domain.Entities
             IsActive = false;
         }
 
+        public void SetIsDisposedTrue()
+        {
+            IsDisposed = true;
+        }
+
         public void CreateCode()
         {
             //Creating doc no..

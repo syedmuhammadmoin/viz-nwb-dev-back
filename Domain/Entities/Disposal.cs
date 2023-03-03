@@ -39,6 +39,40 @@ namespace Domain.Entities
         public int StatusId { get; private set; }
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get; private set; }
+        
+        protected Disposal()
+        {
+        }
+
+        public Disposal(int fixedAssetId, int productId, decimal cost, int salvageValue, int useFullLife, Guid accumulatedDepreciationId, decimal bookValue, DateTime disposalDate, decimal disposalValue, int warehouseId, int statusId)
+        {
+            FixedAssetId = fixedAssetId;
+            ProductId = productId;
+            Cost = cost;
+            SalvageValue = salvageValue;
+            UseFullLife = useFullLife;
+            AccumulatedDepreciationId = accumulatedDepreciationId;
+            BookValue = bookValue;
+            DisposalDate = disposalDate;
+            DisposalValue = disposalValue;
+            WarehouseId = warehouseId;
+            StatusId = statusId;
+        }
+
+        public void Update(int fixedAssetId, int productId, decimal cost, int salvageValue, int useFullLife, Guid accumulatedDepreciationId, decimal bookValue, DateTime disposalDate, decimal disposalValue, int warehouseId, int statusId)
+        {
+            FixedAssetId = fixedAssetId;
+            ProductId = productId;
+            Cost = cost;
+            SalvageValue = salvageValue;
+            UseFullLife = useFullLife;
+            AccumulatedDepreciationId = accumulatedDepreciationId;
+            BookValue = bookValue;
+            DisposalDate = disposalDate;
+            DisposalValue = disposalValue;
+            WarehouseId = warehouseId;
+            StatusId = statusId;
+        }
 
         public void CreateCode()
         {
