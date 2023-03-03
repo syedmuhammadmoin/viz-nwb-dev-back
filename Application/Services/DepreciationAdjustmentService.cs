@@ -322,7 +322,7 @@ namespace Application.Services
                     return new Response<DepreciationAdjustmentDto>($"Error on line no {lineNo}: Invalid fixed asset");
 
                 if (line.Level4Id != fixedAsset.AccumulatedDepreciationId
-                    || line.Level4Id != fixedAsset.DepreciationExpenseId)
+                    && line.Level4Id != fixedAsset.DepreciationExpenseId)
                 {
                     return new Response<DepreciationAdjustmentDto>($"Error on line no {lineNo}: Must select Accumulated Depreciation Account or Depreciation Expense Account");
                 }
@@ -355,6 +355,23 @@ namespace Application.Services
 
             if (entity.DepreciationAdjustmentLines.Sum(i => i.Debit) != entity.DepreciationAdjustmentLines.Sum(i => i.Credit))
                 return new Response<DepreciationAdjustmentDto>("Sum of debit and credit must be equal");
+
+            //Checking fixed asset totals
+            var getFixedAssetTotal = entity.DepreciationAdjustmentLines
+                .GroupBy(x => x.FixedAssetId)
+                .Select(y => new
+                {
+                     Debit = y.Sum(i => i.Debit),
+                     Credit = y.Sum(i => i.Credit),
+                })
+                .ToList();
+
+            foreach (var item in getFixedAssetTotal)
+            {
+                if (item.Debit != item.Credit)
+                    return new Response<DepreciationAdjustmentDto>("Sum of debit and credit must be equal of each asset");
+
+            }
 
             return new Response<DepreciationAdjustmentDto>(null, "");
         }
