@@ -221,7 +221,7 @@ namespace Application.Services
                     return new Response<CWIPDto>("DepreciationModel Model Fields are Required");
                 }
 
-                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
+                if (entity.ModelType == DepreciationMethod.Declining && (entity.DecLiningRate == null || entity.DecLiningRate == 0))
                 {
                     return new Response<CWIPDto>("Declining Rate is Required");
                 }
@@ -266,7 +266,7 @@ namespace Application.Services
                     return new Response<CWIPDto>("DepreciationModel Model Fields are Required");
                 }
 
-                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
+                if (entity.ModelType == DepreciationMethod.Declining && (entity.DecLiningRate == null || entity.DecLiningRate == 0))
                 {
                     return new Response<CWIPDto>("Declining Rate is Required");
                 }

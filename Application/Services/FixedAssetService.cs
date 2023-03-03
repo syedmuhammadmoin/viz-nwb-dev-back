@@ -48,7 +48,7 @@ namespace Application.Services
                 {
                     return new Response<FixedAssetDto>("Depreciation Model Fields are Required");
                 }
-                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
+                if (entity.ModelType == DepreciationMethod.Declining && (entity.DecLiningRate == null || entity.DecLiningRate == 0))
                 {
                     return new Response<FixedAssetDto>("Declining Rate is Required");
                 }
@@ -128,7 +128,7 @@ namespace Application.Services
                 {
                     return new Response<FixedAssetDto>("Depreciation Model Fields are Required");
                 }
-                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
+                if (entity.ModelType == DepreciationMethod.Declining && (entity.DecLiningRate == null || entity.DecLiningRate == 0))
                 {
                     return new Response<FixedAssetDto>("Declining Rate is Required");
                 }
