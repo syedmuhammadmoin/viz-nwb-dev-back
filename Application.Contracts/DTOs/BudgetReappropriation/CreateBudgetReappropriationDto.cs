@@ -15,7 +15,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? BudgetId { get; set; }  
         [Required]
-        public DateTime BudgetRepappropriationDate { get; set;}
+        public DateTime BudgetReappropriationDate { get; set;}
         [Required]
         public bool IsSubmit { get; set;}
         [Required]
