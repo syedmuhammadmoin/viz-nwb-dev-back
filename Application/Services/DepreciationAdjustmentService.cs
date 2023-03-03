@@ -191,20 +191,13 @@ namespace Application.Services
         
         private async Task<Response<DepreciationAdjustmentDto>> Save(CreateDepreciationAdjustmentDto entity, int status)
         {
-            if (entity.DepreciationAdjustmentLines.Count() == 0)
-                return new Response<DepreciationAdjustmentDto>("Lines are required");
+            //Checking validations
+            var validation = await CheckValidations(entity);
+            if (!validation.IsSuccess)
+                return new Response<DepreciationAdjustmentDto>(validation.Message);
 
-            foreach (var lines in entity.DepreciationAdjustmentLines)
-            {
-                if (lines.Debit == lines.Credit)
-                    return new Response<DepreciationAdjustmentDto>("Debit and Credit amount should be in seperate lines");
-            }
-
-            if (entity.DepreciationAdjustmentLines.Sum(i => i.Debit) != entity.DepreciationAdjustmentLines.Sum(i => i.Credit))
-                return new Response<DepreciationAdjustmentDto>("Sum of debit and credit must be equal");
-
+            //Mapping values
             var depreciationAdjustment = _mapper.Map<DepreciationAdjustmentMaster>(entity);
-
             //Setting status
             depreciationAdjustment.SetStatus(status);
 
@@ -227,18 +220,12 @@ namespace Application.Services
         
         private async Task<Response<DepreciationAdjustmentDto>> Update(CreateDepreciationAdjustmentDto entity, int status)
         {
-            if (entity.DepreciationAdjustmentLines.Count() == 0)
-                return new Response<DepreciationAdjustmentDto>("Lines are required");
+            //Checking validations
+            var validation = await CheckValidations(entity);
+            if (!validation.IsSuccess)
+                return new Response<DepreciationAdjustmentDto>(validation.Message);
 
-            foreach (var lines in entity.DepreciationAdjustmentLines)
-            {
-                if (lines.Debit == lines.Credit)
-                    return new Response<DepreciationAdjustmentDto>("Debit and Credit amount should be in seperate lines");
-            }
-
-            if (entity.DepreciationAdjustmentLines.Sum(i => i.Debit) != entity.DepreciationAdjustmentLines.Sum(i => i.Credit))
-                return new Response<DepreciationAdjustmentDto>("Sum of debit and credit must be equal");
-
+            //Get depreciation adjustment
             var specification = new DepreciationAdjustmentSpecs(true);
             var depreciationAdjustment = await _unitOfWork.DepreciationAdjustment.GetById((int)entity.Id, specification);
 
@@ -307,6 +294,69 @@ namespace Application.Services
 
             await _unitOfWork.Ledger.AddRange(recordLedger);
             await _unitOfWork.SaveAsync();
+        }
+
+        private async Task<Response<DepreciationAdjustmentDto>> CheckValidations(CreateDepreciationAdjustmentDto entity)
+        {
+            if (entity.DepreciationAdjustmentLines.Count() == 0)
+                return new Response<DepreciationAdjustmentDto>("Lines are required");
+
+            //Checking duplicate Lines if any
+            var duplicates = entity.DepreciationAdjustmentLines.GroupBy(x => new { x.FixedAssetId, x.Level4Id })
+             .Where(g => g.Count() > 1)
+             .Select(y => y.Key)
+             .ToList();
+            if (duplicates.Any())
+                return new Response<DepreciationAdjustmentDto>("Duplicate Lines found");
+
+            // Create a dictionary to keep track of the count of each item
+            int lineNo = 1;
+            Dictionary<int, int> counts = new Dictionary<int, int>();
+            foreach (var line in entity.DepreciationAdjustmentLines)
+            {
+                if (line.Debit == line.Credit)
+                    return new Response<DepreciationAdjustmentDto>($"Error on line no {lineNo}: Debit and Credit amount should be in seperate lines");
+
+                var fixedAsset = await _unitOfWork.FixedAsset.GetById((int)line.FixedAssetId);
+                if (fixedAsset == null)
+                    return new Response<DepreciationAdjustmentDto>($"Error on line no {lineNo}: Invalid fixed asset");
+
+                if (line.Level4Id != fixedAsset.AccumulatedDepreciationId
+                    || line.Level4Id != fixedAsset.DepreciationExpenseId)
+                {
+                    return new Response<DepreciationAdjustmentDto>($"Error on line no {lineNo}: Must select Accumulated Depreciation Account or Depreciation Expense Account");
+                }
+
+                if (counts.ContainsKey((int)line.FixedAssetId))
+                {
+                    counts[(int)line.FixedAssetId]++;
+                }
+                else
+                {
+                    counts[(int)line.FixedAssetId] = 1;
+                }
+                lineNo++;
+            }
+
+            // Check if every count is equal to 2
+            var isValid = true;
+            foreach (int count in counts.Values)
+            {
+                if (count != 2)
+                {
+                    isValid = false;
+                    break;
+                }
+            }
+
+            // Print the validation result
+            if (!isValid)
+                return new Response<DepreciationAdjustmentDto>("Add both account entry for fixed asset");
+
+            if (entity.DepreciationAdjustmentLines.Sum(i => i.Debit) != entity.DepreciationAdjustmentLines.Sum(i => i.Credit))
+                return new Response<DepreciationAdjustmentDto>("Sum of debit and credit must be equal");
+
+            return new Response<DepreciationAdjustmentDto>(null, "");
         }
 
     }
