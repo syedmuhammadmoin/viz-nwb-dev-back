@@ -42,12 +42,12 @@ namespace Infrastructure.Specifications
         }
 
         public FixedAssetSpecs(bool IsDisposable)
-            : base(e => (e.IsHeldforSaleOrDisposal == IsDisposable))
+            : base(e => (e.IsHeldforSaleOrDisposal == true))
         {
         }
 
         public FixedAssetSpecs(int ProductId)
-            : base(e => (e.ProductId == ProductId))
+            : base(e => e.ProductId == ProductId && e.IsHeldforSaleOrDisposal == false)
         {
         }
     }

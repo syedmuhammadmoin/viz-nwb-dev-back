@@ -10,5 +10,6 @@ namespace Application.Contracts.Interfaces
         Task<Response<List<FixedAssetDto>>> GetDropDown();
         Task<Response<List<FixedAssetDto>>> GetDisposableAssetDropDown();
         Task<Response<List<FixedAssetDto>>> GetAssetByProductIdDropDown(int ProductId);
+        Task<Response<bool>> HeldAssetForDisposal(int Id);
     }
 }

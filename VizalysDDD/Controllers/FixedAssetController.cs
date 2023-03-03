@@ -105,6 +105,16 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status Code : 400
         }
-        
+
+        [HttpPost("HeldForDisposal/{id:int}")]
+        public async Task<ActionResult<Response<bool>>> HeldAssetForDisposal(int id)
+        {
+            var result = await _fixedAssetService.HeldAssetForDisposal(id);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status Code : 400
+        }
+
     }
 }

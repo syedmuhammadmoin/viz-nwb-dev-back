@@ -341,6 +341,23 @@ namespace Application.Services
 
         }
 
+        public async Task<Response<bool>> HeldAssetForDisposal(int Id)
+        {
+            //Getting fixed asset
+            var result = await _unitOfWork.FixedAsset.GetById(Id);
+            if (result == null)
+                return new Response<bool>("Not found");
+
+            if(result.IsHeldforSaleOrDisposal)
+                return new Response<bool>("Already held for disposal or sale");
+
+            //Setting status
+            result.SetHeldForDisposalTrue();
+            await _unitOfWork.SaveAsync();
+
+            return new Response<bool>(true, "Held for disposal successfully");
+        }
+
         //Private methods
         private List<RemarksDto> ReturningRemarks(FixedAssetDto data)
         {
@@ -360,5 +377,6 @@ namespace Application.Services
             return remarks;
         }
 
+        
     }
 }
