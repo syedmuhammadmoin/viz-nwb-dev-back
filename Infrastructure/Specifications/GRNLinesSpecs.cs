@@ -17,7 +17,7 @@ namespace Infrastructure.Specifications
         {
         }
 
-        public GRNLinesSpecs(int id , int productId) : base(x => x.ItemId == productId && x.Id == id ) 
+        public GRNLinesSpecs(int id , int productId, int warehouseId, bool isLineCheck) : base(x => x.MasterId == id && x.ItemId == productId && x.WarehouseId== warehouseId) 
         {
 
         }

@@ -181,6 +181,16 @@ namespace Application.Services
                 }
             }
 
+            if (entity.DocType == DocType.GoodsReturnNote)
+            {
+                var checkingGRN = _unitOfWork.GoodsReturnNote.Find(new GoodsReturnNoteSpecs()).ToList();
+
+                if (checkingGRN.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Goods Return Note is pending for this workflow");
+                }
+            }
+
             if (entity.DocType == DocType.Requisition)
             {
                 var checkingRequisition = _unitOfWork.Requisition.Find(new RequisitionSpecs("")).ToList();

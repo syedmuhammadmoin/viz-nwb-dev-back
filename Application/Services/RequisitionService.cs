@@ -259,7 +259,7 @@ namespace Application.Services
                 return new Response<RequisitionDto>("Lines are required");
 
             //Checking duplicate Lines if any
-            var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId , x.WarehouseId })
+            var duplicates = entity.RequisitionLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
              .Where(g => g.Count() > 1)
              .Select(y => y.Key)
              .ToList();
@@ -351,7 +351,7 @@ namespace Application.Services
 
                 data.References = references;
             }
-            var purchaseOrder = _unitOfWork.PurchaseOrder.Find(new PurchaseOrderSpecs(data.Id , true));
+            var purchaseOrder = _unitOfWork.PurchaseOrder.Find(new PurchaseOrderSpecs(data.Id, true));
             if (purchaseOrder != null)
             {
                 foreach (var po in purchaseOrder)
@@ -413,29 +413,29 @@ namespace Application.Services
             return data;
         }
 
-        private  RequisitionDto CheckingConditions(RequisitionDto requisitionDto, List<int> requisitionProductItemIds)
+        private RequisitionDto CheckingConditions(RequisitionDto requisitionDto, List<int> requisitionProductItemIds)
         {
-            var stock =  _unitOfWork.Stock.GetAll(new StockSpecs(requisitionProductItemIds)).Result;
+            var stock = _unitOfWork.Stock.GetAll(new StockSpecs(requisitionProductItemIds)).Result;
 
             bool isRequiredQty = false;
             List<decimal> purchaseAmounts = new List<decimal>();
 
-            if(requisitionDto.State != DocumentStatus.Paid) { 
-        
-                foreach (var line in requisitionDto.RequisitionLines)
+            if (requisitionDto.State != DocumentStatus.Paid)
             {
-                if (stock.Count() > 0)
+                foreach (var line in requisitionDto.RequisitionLines)
                 {
-                    line.AvailableQuantity = stock.Where(x => x.ItemId == line.ItemId && x.WarehouseId == line.WarehouseId).Select(i => i.AvailableQuantity).FirstOrDefault();
-                }
+                    if (stock.Count() > 0)
+                    {
+                        line.AvailableQuantity = stock.Where(x => x.ItemId == line.ItemId && x.WarehouseId == line.WarehouseId).Select(i => i.AvailableQuantity).FirstOrDefault();
+                    }
 
-                if (line.ReserveQuantity > 0)
-                {
-                    requisitionDto.IsShowIssuanceButton = true;
-                }
+                    if (line.ReserveQuantity > 0)
+                    {
+                        requisitionDto.IsShowIssuanceButton = true;
+                    }
 
-                if (line.Quantity > line.ReserveQuantity)
-                {
+                    if (line.Quantity > line.ReserveQuantity)
+                    {
                         var IssuedQuantity = _unitOfWork.RequisitionToIssuanceLineReconcile
                                                   .Find(new RequisitionToIssuanceLineReconcileSpecs(line.MasterId,
                                                   line.Id, line.ItemId)).Sum(p => p.Quantity);
@@ -447,27 +447,27 @@ namespace Application.Services
                         }
 
                         purchaseAmounts.Add(requiredQuantity * line.PurchasePrice);
+                    }
                 }
-            }
 
-            var totalAmount = purchaseAmounts.Sum();
-            if (isRequiredQty)
-            {
-                if (totalAmount <= 100000)
+                var totalAmount = purchaseAmounts.Sum();
+                if (isRequiredQty)
                 {
-                    requisitionDto.IsShowPurchaseOrderButton = true;
+                    if (totalAmount <= 100000)
+                    {
+                        requisitionDto.IsShowPurchaseOrderButton = true;
+                    }
+                    else if (totalAmount > 100000 && totalAmount <= 300000)
+                    {
+                        requisitionDto.IsShowCFQButton = true;
+                        requisitionDto.IsShowQuotationButton = true;
+                    }
+                    else if (totalAmount > 300000)
+                    {
+                        requisitionDto.IsShowTenderButton = true;
+                    }
+
                 }
-                else if (totalAmount > 100000 && totalAmount <= 300000)
-                {
-                    requisitionDto.IsShowCFQButton = true;
-                    requisitionDto.IsShowQuotationButton = true;
-                }
-                else if (totalAmount > 300000)
-                {
-                    requisitionDto.IsShowTenderButton = true;
-                }
-             
-            }
             }
             return requisitionDto;
 

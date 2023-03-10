@@ -165,7 +165,7 @@ namespace Application.Services
                     {
                         for (int i = 0; i < getCwip.Quantity; i++)
                         {
-                            var fix = _mapper.Map<FixedAsset>(getCwip);
+                            var fix = _mapper.Map<FixedAsset>(_mapper.Map<CreateFixedAssetDto>(getCwip));
                             //Setting status
                             fix.SetStatus(3);
                             await _unitOfWork.FixedAsset.Add(fix);
@@ -213,6 +213,8 @@ namespace Application.Services
 
         private async Task<Response<CWIPDto>> Save(CreateCWIPDto entity, int status)
         {
+            if (entity.SalvageValue > entity.Cost)
+                return new Response<CWIPDto>("Salvage value cannot be greater than cost");
             if (entity.DepreciationApplicability)
             {
                 if (entity.DepreciationModelId == null && entity.DepreciationModelId == 0 || entity.DepreciationExpenseId == null ||
@@ -221,7 +223,7 @@ namespace Application.Services
                     return new Response<CWIPDto>("DepreciationModel Model Fields are Required");
                 }
 
-                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
+                if (entity.ModelType == DepreciationMethod.Declining && (entity.DecLiningRate == null || entity.DecLiningRate == 0))
                 {
                     return new Response<CWIPDto>("Declining Rate is Required");
                 }
@@ -258,6 +260,8 @@ namespace Application.Services
 
         private async Task<Response<CWIPDto>> Update(CreateCWIPDto entity , int status)
         {
+            if (entity.SalvageValue > entity.Cost)
+                return new Response<CWIPDto>("Salvage value cannot be greater than cost");
             if (entity.DepreciationApplicability)
             {
                 if (entity.DepreciationModelId == null && entity.DepreciationModelId == 0 || entity.DepreciationExpenseId == null ||
@@ -266,7 +270,7 @@ namespace Application.Services
                     return new Response<CWIPDto>("DepreciationModel Model Fields are Required");
                 }
 
-                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
+                if (entity.ModelType == DepreciationMethod.Declining && (entity.DecLiningRate == null || entity.DecLiningRate == 0))
                 {
                     return new Response<CWIPDto>("Declining Rate is Required");
                 }

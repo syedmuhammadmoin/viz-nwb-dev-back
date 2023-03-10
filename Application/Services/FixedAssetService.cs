@@ -40,6 +40,9 @@ namespace Application.Services
             }
 
             //Checking validation
+            if (entity.SalvageValue > entity.Cost)
+                return new Response<FixedAssetDto>("Salvage value cannot be greater than cost");
+
             if (entity.DepreciationApplicability)
             {
                 if ((entity.DepreciationModelId == null && entity.DepreciationModelId == 0)
@@ -48,7 +51,7 @@ namespace Application.Services
                 {
                     return new Response<FixedAssetDto>("Depreciation Model Fields are Required");
                 }
-                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
+                if (entity.ModelType == DepreciationMethod.Declining && (entity.DecLiningRate == null || entity.DecLiningRate == 0))
                 {
                     return new Response<FixedAssetDto>("Declining Rate is Required");
                 }
@@ -86,20 +89,17 @@ namespace Application.Services
 
                 if (entity.DocId != null && entity.Doctype == DocType.GRN)
                 {
-                    var GRNLines =  _unitOfWork.GRN.FindLines(new GRNLinesSpecs((int)entity.DocId , (int)entity.ProductId)).FirstOrDefault();
-
+                    var GRNLines =  _unitOfWork.GRN
+                        .FindLines(new GRNLinesSpecs((int)entity.DocId , (int)entity.ProductId, (int)entity.WarehouseId, false))
+                        .FirstOrDefault();
+                  
                     if(GRNLines != null )
                     {
-                        GRNLines.UpdateIsFixedAssetCreated(true);   
-
+                        GRNLines.SetIsFixedAssetCreatedTrue();
+                        await _unitOfWork.SaveAsync();
                     }
-                  
-                    await _unitOfWork.SaveAsync();
-
                 } 
             }
-
-
 
             //Commiting the transaction 
             _unitOfWork.Commit();
@@ -123,6 +123,8 @@ namespace Application.Services
             }
 
             //Checking validation
+            if (entity.SalvageValue > entity.Cost)
+                return new Response<FixedAssetDto>("Salvage value cannot be greater than cost");
             if (entity.DepreciationApplicability)
             {
                 if ((entity.DepreciationModelId == null && entity.DepreciationModelId == 0)
@@ -131,7 +133,7 @@ namespace Application.Services
                 {
                     return new Response<FixedAssetDto>("Depreciation Model Fields are Required");
                 }
-                if (entity.ModelType == DepreciationMethod.Declining && entity.DecLiningRate == null)
+                if (entity.ModelType == DepreciationMethod.Declining && (entity.DecLiningRate == null || entity.DecLiningRate == 0))
                 {
                     return new Response<FixedAssetDto>("Declining Rate is Required");
                 }
@@ -339,6 +341,23 @@ namespace Application.Services
 
         }
 
+        public async Task<Response<bool>> HeldAssetForDisposal(int Id)
+        {
+            //Getting fixed asset
+            var result = await _unitOfWork.FixedAsset.GetById(Id);
+            if (result == null)
+                return new Response<bool>("Not found");
+
+            if(result.IsHeldforSaleOrDisposal)
+                return new Response<bool>("Already held for disposal or sale");
+
+            //Setting status
+            result.SetHeldForDisposalTrue();
+            await _unitOfWork.SaveAsync();
+
+            return new Response<bool>(true, "Held for disposal successfully");
+        }
+
         //Private methods
         private List<RemarksDto> ReturningRemarks(FixedAssetDto data)
         {
@@ -358,5 +377,6 @@ namespace Application.Services
             return remarks;
         }
 
+        
     }
 }

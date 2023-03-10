@@ -16,7 +16,7 @@ namespace Application.Contracts.DTOs
         public int Id{ get; set; }
         public int BudgetId { get; set; }
         public string Budget { get; set; }
-        public DateTime BudgetRepappropriationDate { get; set; }
+        public DateTime BudgetReappropriationDate { get; set; }
         public int StatusId { get; set; }
         public string Status { get; set; }
         public DocumentStatus State { get; set; }

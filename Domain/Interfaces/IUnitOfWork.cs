@@ -69,6 +69,7 @@ namespace Domain.Interfaces
         IDisposalRepository Disposal { get; }
 
         IBudgetReappropriationRepository BudgetReappropriation { get; } 
+        IDepreciationAdjustmentRepository DepreciationAdjustment { get; }
         Task SaveAsync();
         void CreateTransaction();
         void Commit();

@@ -571,7 +571,9 @@ namespace Application.Mapper
 
             CreateMap<CreateFixedAssetDto, FixedAsset>();
             CreateMap<UpdateFixedAssetDto, FixedAsset>();
-            CreateMap<CWIP, FixedAsset>();
+            CreateMap<CWIP, CreateFixedAssetDto>()
+                .ForMember(fixedAsset => fixedAsset.Doctype, cwip => cwip.MapFrom(d => DocType.CWIP))
+                .ForMember(fixedAsset => fixedAsset.DocId, cwip => cwip.MapFrom(d => d.Id));
 
             //CWIP
             CreateMap<CWIP, CWIPDto>()
@@ -611,6 +613,18 @@ namespace Application.Mapper
                    .ForMember(dto => dto.Level4, core => core.MapFrom(d => d.Level4.Name))
                    .ForMember(dto => dto.Campus, core => core.MapFrom(d => d.Campus.Name));
             CreateMap<CreateBudgetReappropriationLinesDto, BudgetReappropriationLines>();
+            
+            //DepreciationAdjustment
+            CreateMap<DepreciationAdjustmentMaster, DepreciationAdjustmentDto>()
+               .ForMember(dto => dto.Status, core => core.MapFrom(d => d.Status.Status))
+               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+            
+            CreateMap<DepreciationAdjustmentLines, DepreciationAdjustmentLinesDto>()
+                   .ForMember(dto => dto.Level4, core => core.MapFrom(d => d.Level4.Name))
+                   .ForMember(dto => dto.FixedAsset, core => core.MapFrom(d => d.FixedAsset.Name));
+
+            CreateMap<CreateDepreciationAdjustmentDto, DepreciationAdjustmentMaster>();
+            CreateMap<CreateDepreciationAdjustmentLinesDto, DepreciationAdjustmentLines>();
         }
     }
 }

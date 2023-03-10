@@ -71,7 +71,18 @@ namespace Domain.Entities
         {
             StatusId = statusId;
         }
-        
+
+        public void SetHeldForDisposalTrue()
+        {
+            IsHeldforSaleOrDisposal = true;
+            IsActive = false;
+        }
+
+        public void SetIsDisposedTrue()
+        {
+            IsDisposed = true;
+        }
+
         public void CreateCode()
         {
             //Creating doc no..

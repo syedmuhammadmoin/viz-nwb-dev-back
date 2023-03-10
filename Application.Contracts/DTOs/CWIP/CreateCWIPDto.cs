@@ -9,6 +9,9 @@ namespace Application.Contracts.DTOs
         [Required]
         public DateTime DateOfAcquisition { get; set; }
         [Required]
+        [MaxLength(200)]
+        public string Name { get; set; }
+        [Required]
         public Guid CWIPAccountId { get; set; }
         [Required]
         public int? Cost { get; set; }

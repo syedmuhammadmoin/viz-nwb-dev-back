@@ -3,6 +3,7 @@ using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
+using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
@@ -22,6 +23,10 @@ namespace Application.Services
 
         public async Task<Response<DepreciationModelDto>> CreateAsync(CreateDepreciationModelDto entity)
         {
+            if (entity.ModelType == DepreciationMethod.Declining && entity.DecliningRate == 0)
+            {
+                return new Response<DepreciationModelDto>("Declining rate must be greater than zero");
+            }
             var depreciationModel = _mapper.Map<DepreciationModel>(entity);
             //Saving in table
             await _unitOfWork.DepreciationModel.Add(depreciationModel);
@@ -38,8 +43,12 @@ namespace Application.Services
 
         public async Task<Response<DepreciationModelDto>> UpdateAsync(CreateDepreciationModelDto entity)
         {
-            var result = await _unitOfWork.DepreciationModel.GetById((int)entity.Id);
+            if (entity.ModelType == DepreciationMethod.Declining && entity.DecliningRate == 0)
+            {
+                return new Response<DepreciationModelDto>("Declining rate must be greater than zero");
+            }
             
+            var result = await _unitOfWork.DepreciationModel.GetById((int)entity.Id);
             if (result == null)
                 return new Response<DepreciationModelDto>("Not found");
             
