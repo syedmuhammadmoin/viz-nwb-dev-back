@@ -74,6 +74,7 @@ builder.Services.AddScoped<IDisposalService, DisposalService>();
 builder.Services.AddScoped<IBudgetReappropriationService, BudgetReappropriationService>();
 builder.Services.AddScoped<IDepreciationAdjustmentService, DepreciationAdjustmentService>();
 builder.Services.AddScoped<IFacultyService, FacultyService>();
+builder.Services.AddScoped<IAcademicDepartmentService, AcademicDepartmentService>();
 
 
 //Add auto mapper config

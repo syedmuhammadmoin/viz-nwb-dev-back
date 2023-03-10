@@ -408,6 +408,13 @@
             public const string Delete = "Permissions.Admission.FacultyClaims.Delete";
         }
 
+        public static class AcademicDepartmentClaims
+        {
+            public const string View = "Permissions.Admission.AcademicDepartmentClaims.View";
+            public const string Create = "Permissions.Admission.AcademicDepartmentClaims.Create";
+            public const string Edit = "Permissions.Admission.AcademicDepartmentClaims.Edit";
+            public const string Delete = "Permissions.Admission.AcademicDepartmentClaims.Delete";
+        }
 
         //Reporting Form
         public static class ChartOfAccountClaims

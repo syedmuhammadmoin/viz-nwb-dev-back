@@ -76,6 +76,7 @@ namespace Infrastructure.Uow
         public IBudgetReappropriationRepository BudgetReappropriation { get; private set; }
         public IDepreciationAdjustmentRepository DepreciationAdjustment { get; private set; }
         public IFacultyRepository Faculty { get; private set; }
+        public IAcademicDepartmentRepository AcademicDepartment { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {

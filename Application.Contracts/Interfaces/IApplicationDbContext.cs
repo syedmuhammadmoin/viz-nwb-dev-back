@@ -93,6 +93,7 @@ namespace Application.Interfaces
         public DbSet<DepreciationAdjustmentMaster>  DepreciationAdjustmentMaster { get; set; }
         public DbSet<DepreciationAdjustmentLines> DepreciationAdjustmentLines { get; set; }
         public DbSet<Faculty> Faculties { get; set; }
+        public DbSet<AcademicDepartment> AcademicDepartments { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

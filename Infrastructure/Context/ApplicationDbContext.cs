@@ -98,6 +98,7 @@ namespace Infrastructure.Context
         public DbSet<DepreciationAdjustmentMaster> DepreciationAdjustmentMaster { get; set; }
         public DbSet<DepreciationAdjustmentLines> DepreciationAdjustmentLines { get; set; }
         public DbSet<Faculty> Faculties { get; set; }
+        public DbSet<AcademicDepartment> AcademicDepartments { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

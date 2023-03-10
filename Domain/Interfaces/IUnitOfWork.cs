@@ -67,10 +67,11 @@ namespace Domain.Interfaces
         IFixedAssetRepository FixedAsset { get; }
         ICWIPRepository CWIP { get; }
         IDisposalRepository Disposal { get; }
-        IFacultyRepository Faculty { get; }
-
         IBudgetReappropriationRepository BudgetReappropriation { get; } 
         IDepreciationAdjustmentRepository DepreciationAdjustment { get; }
+        IFacultyRepository Faculty { get; }
+        IAcademicDepartmentRepository AcademicDepartment { get; }
+
         Task SaveAsync();
         void CreateTransaction();
         void Commit();
