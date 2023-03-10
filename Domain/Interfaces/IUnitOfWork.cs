@@ -67,6 +67,7 @@ namespace Domain.Interfaces
         IFixedAssetRepository FixedAsset { get; }
         ICWIPRepository CWIP { get; }
         IDisposalRepository Disposal { get; }
+        IFacultyRepository Faculty { get; }
 
         IBudgetReappropriationRepository BudgetReappropriation { get; } 
         IDepreciationAdjustmentRepository DepreciationAdjustment { get; }

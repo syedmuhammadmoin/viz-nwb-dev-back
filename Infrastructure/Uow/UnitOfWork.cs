@@ -75,6 +75,7 @@ namespace Infrastructure.Uow
         public IDisposalRepository Disposal { get; private set; }
         public IBudgetReappropriationRepository BudgetReappropriation { get; private set; }
         public IDepreciationAdjustmentRepository DepreciationAdjustment { get; private set; }
+        public IFacultyRepository Faculty { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -138,6 +139,7 @@ namespace Infrastructure.Uow
             Disposal = new DisposalRepository(context);
             BudgetReappropriation = new BudgetReappropriationRepository(context);
             DepreciationAdjustment = new DepreciationAdjustmentRepository(context);
+            Faculty = new FacultyRepository(context);
         }
 
         public async Task SaveAsync()

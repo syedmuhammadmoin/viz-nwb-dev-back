@@ -399,6 +399,16 @@
             public const string Edit = "Permissions.FixedAsset.DepreciationAdjustmentClaims.Edit";
             public const string Delete = "Permissions.FixedAsset.DepreciationAdjustmentClaims.Delete";
         }
+
+        public static class FacultyClaims
+        {
+            public const string View = "Permissions.Admission.FacultyClaims.View";
+            public const string Create = "Permissions.Admission.FacultyClaims.Create";
+            public const string Edit = "Permissions.Admission.FacultyClaims.Edit";
+            public const string Delete = "Permissions.Admission.FacultyClaims.Delete";
+        }
+
+
         //Reporting Form
         public static class ChartOfAccountClaims
         {

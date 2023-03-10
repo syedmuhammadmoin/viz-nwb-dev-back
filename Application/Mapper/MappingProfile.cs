@@ -625,6 +625,11 @@ namespace Application.Mapper
 
             CreateMap<CreateDepreciationAdjustmentDto, DepreciationAdjustmentMaster>();
             CreateMap<CreateDepreciationAdjustmentLinesDto, DepreciationAdjustmentLines>();
+
+            //Faculty
+            CreateMap<Faculty, FacultyDto>();
+            CreateMap<CreateFacultyDto, Faculty>();
+        
         }
     }
 }
