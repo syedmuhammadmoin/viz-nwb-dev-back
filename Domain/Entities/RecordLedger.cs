@@ -70,5 +70,9 @@ namespace Domain.Entities
         {
             ReconStatus = status;
         }
+        public void SetTransactioId(int transectionId)
+        {
+            this.TransactionId= transectionId;
+        }
     }
 }

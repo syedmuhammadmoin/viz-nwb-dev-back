@@ -3,6 +3,7 @@ using Application.Contracts.Interfaces;
 using Application.Services;
 using Domain.Interfaces;
 using Infrastructure;
+using Infrastructure.BackgroundServices;
 using Infrastructure.GlobalExceptionFilter;
 using Infrastructure.Repositories;
 using Infrastructure.Seeds;
@@ -74,6 +75,7 @@ builder.Services.AddScoped<IDisposalService, DisposalService>();
 builder.Services.AddScoped<IBudgetReappropriationService, BudgetReappropriationService>();
 builder.Services.AddScoped<IDepreciationAdjustmentService, DepreciationAdjustmentService>();
 
+builder.Services.AddHostedService<DepreciationBackgroundService>();
 
 //Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

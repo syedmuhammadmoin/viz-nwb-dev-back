@@ -1,6 +1,8 @@
-﻿using Domain.Entities;
+﻿using Application.Contracts.DTOs;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +16,6 @@ namespace Infrastructure.Repositories
         public FixedAssetRepository(ApplicationDbContext context) : base(context)
         {
         }
+
     }
 }

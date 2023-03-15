@@ -569,7 +569,15 @@ namespace Application.Mapper
                 : a.Status.Status))
                 .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
+            CreateMap<FixedAssetLines, FixedAssetLinesDto>();
+            CreateMap<DepreciationRegister, DepreciationRegisterDto>();
+            CreateMap<CreateDepreciationRegisterDto, DepreciationRegister>();
+
+
             CreateMap<CreateFixedAssetDto, FixedAsset>();
+
+            CreateMap<FixedAssetLinesDto, FixedAssetLines>();
+
             CreateMap<UpdateFixedAssetDto, FixedAsset>();
             CreateMap<CWIP, CreateFixedAssetDto>()
                 .ForMember(fixedAsset => fixedAsset.Doctype, cwip => cwip.MapFrom(d => DocType.CWIP))

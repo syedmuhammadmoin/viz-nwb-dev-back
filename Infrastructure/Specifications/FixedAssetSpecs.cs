@@ -50,5 +50,11 @@ namespace Infrastructure.Specifications
             : base(e => e.ProductId == ProductId && e.IsHeldforSaleOrDisposal == false)
         {
         }
+
+        public FixedAssetSpecs(bool isDisposed, bool isHeldforSaleOrDisposal,
+            bool depreciationApplicability) : base(i => i.IsDisposed == isDisposed && i.IsHeldforSaleOrDisposal == isHeldforSaleOrDisposal && i.DepreciationApplicability == depreciationApplicability)
+        {
+
+        }
     }
 }
