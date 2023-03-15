@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.FixedAsset;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -9,6 +10,7 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
 using Microsoft.AspNetCore.Http;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
 namespace Application.Services
 {
@@ -172,6 +174,26 @@ namespace Application.Services
             return new Response<FixedAssetDto>(_mapper.Map<FixedAssetDto>(result), "Updated successfully");
         }
 
+        public async Task<Response<FixedAssetDto>> UpdateAfterApproval(UpdateSalvageValueDto entity)
+        {
+            //Getting fixed asset
+            var result = await _unitOfWork.FixedAsset.GetById((int)entity.Id, new FixedAssetSpecs());
+            if (result == null)
+                return new Response<FixedAssetDto>("Not found");
+
+            if (entity.SalvageValue > result.Cost)
+                return new Response<FixedAssetDto>("Salvage value cannot be greater than cost");
+
+            if (result.Status.State != DocumentStatus.Unpaid)
+                return new Response<FixedAssetDto>("Only approved asset can be edited");
+            
+            //For updating data
+            _mapper.Map(entity, result);
+            await _unitOfWork.SaveAsync();
+
+            return new Response<FixedAssetDto>(_mapper.Map<FixedAssetDto>(result), "Updated successfully");
+        }
+
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
@@ -200,15 +222,15 @@ namespace Application.Services
             //Getting fixed asset lines
             var fixedAssetLines = await _unitOfWork.FixedAssetLines.GetByMonthAndYear(id, d.Month, d.Year);
             var fixedAssetLinesDto = _mapper.Map<List<FixedAssetLinesDto>>(fixedAssetLines);
-            
+
             //Mappiing fixed asset
             var fixedAssetDto = _mapper.Map<FixedAssetDto>(fixedAsset);
-            
+
             //Mapping Lines
             fixedAssetDto.FixedAssetlines = fixedAssetLinesDto;
 
             //Getting Depreciation register
-            var depreciationRegister = await _unitOfWork.DepreciationRegister.GetByMonthAndYear(id,d.Month,d.Year);
+            var depreciationRegister = await _unitOfWork.DepreciationRegister.GetByMonthAndYear(id, d.Month, d.Year);
 
 
             //Mappiing fixed asset
@@ -377,6 +399,7 @@ namespace Application.Services
 
             return new Response<bool>(true, "Held for disposal successfully");
         }
+        
         public async Task<Response<FixedAssetLinesDto>> CreateFixedAssetLinesAsync(CreateFixedAssetLinesDto entity)
         {
             _unitOfWork.CreateTransaction();
@@ -387,6 +410,7 @@ namespace Application.Services
             return new Response<FixedAssetLinesDto>(null, "Created successfully");
 
         }
+        
         public async Task<Response<DepreciationRegisterDto>> CreateDepreciationRegisterAsync(CreateDepreciationRegisterDto entity)
         {
             _unitOfWork.CreateTransaction();
@@ -397,6 +421,7 @@ namespace Application.Services
             return new Response<DepreciationRegisterDto>(null, "Created successfully");
 
         }
+        
         public async Task<Response<FixedAssetDto>> Depreciate(CreateDepreciationRegisterDto createDepreciationRegisterDto)
         {
 
@@ -484,6 +509,26 @@ namespace Application.Services
             return new Response<FixedAssetDto>(null, "Created successfully");
 
         }
+        
+        //Private methods
+        private List<RemarksDto> ReturningRemarks(FixedAssetDto data)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.FixedAsset))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
+        }
+
         private async Task AddToLedger(List<RecordLedger> recordLedgers = null)
         {
             var transaction = new Transactions(0, "", DocType.FixedAsset);
@@ -506,25 +551,6 @@ namespace Application.Services
             await _unitOfWork.Ledger.AddRange(recordLedgers);
             await _unitOfWork.SaveAsync();
         }
-        //Private methods
-        private List<RemarksDto> ReturningRemarks(FixedAssetDto data)
-        {
-            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.FixedAsset))
-                    .Select(e => new RemarksDto()
-                    {
-                        Remarks = e.Remarks,
-                        UserName = e.User.UserName,
-                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
-                    }).ToList();
-
-            if (remarks.Count() > 0)
-            {
-                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
-            }
-
-            return remarks;
-        }
-
 
     }
 }

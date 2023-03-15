@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.FixedAsset;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -43,6 +44,21 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
+
+        [ClaimRequirement("Permission", new string[] { Permissions.FixedAssetClaims.Edit })]
+        [HttpPut("Update/{id:int}")]
+        public async Task<ActionResult<Response<FixedAssetDto>>> UpdateAfterApproval(int id, UpdateSalvageValueDto entity)
+        {
+            if (id != entity.Id)
+                return BadRequest("ID mismatch");
+
+            var result = await _fixedAssetService.UpdateAfterApproval(entity);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
+
 
         [ClaimRequirement("Permission", new string[] { Permissions.FixedAssetClaims.Create, Permissions.FixedAssetClaims.View, Permissions.FixedAssetClaims.Delete, Permissions.FixedAssetClaims.Edit })]
         [HttpGet]

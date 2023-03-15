@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.FixedAsset;
 using Application.Contracts.Filters;
 using Application.Contracts.Response;
 
@@ -11,5 +12,6 @@ namespace Application.Contracts.Interfaces
         Task<Response<List<FixedAssetDto>>> GetDisposableAssetDropDown();
         Task<Response<List<FixedAssetDto>>> GetAssetByProductIdDropDown(int ProductId);
         Task<Response<bool>> HeldAssetForDisposal(int Id);
+        Task<Response<FixedAssetDto>> UpdateAfterApproval(UpdateSalvageValueDto entity);
     }
 }

@@ -11,7 +11,7 @@ using Infrastructure.Uow;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Infrastructure.BackgroundServices
+namespace Application.BackgroundServices
 {
     public class DepreciationBackgroundService : IHostedService, IDisposable
     {

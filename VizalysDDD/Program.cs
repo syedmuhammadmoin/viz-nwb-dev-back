@@ -1,11 +1,10 @@
 
+using Application.BackgroundServices;
 using Application.Contracts.Interfaces;
 using Application.Services;
 using Domain.Interfaces;
 using Infrastructure;
-using Infrastructure.BackgroundServices;
 using Infrastructure.GlobalExceptionFilter;
-using Infrastructure.Repositories;
 using Infrastructure.Seeds;
 using Infrastructure.Uow;
 using System.Net.Mime;

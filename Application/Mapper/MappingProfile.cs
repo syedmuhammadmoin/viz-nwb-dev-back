@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.FixedAsset;
 using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
@@ -570,15 +571,19 @@ namespace Application.Mapper
                 .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
             CreateMap<FixedAssetLines, FixedAssetLinesDto>();
-            CreateMap<DepreciationRegister, DepreciationRegisterDto>();
-            CreateMap<CreateDepreciationRegisterDto, DepreciationRegister>();
 
+            CreateMap<DepreciationRegister, DepreciationRegisterDto>();
+            
+            CreateMap<CreateDepreciationRegisterDto, DepreciationRegister>();
 
             CreateMap<CreateFixedAssetDto, FixedAsset>();
 
             CreateMap<FixedAssetLinesDto, FixedAssetLines>();
 
             CreateMap<UpdateFixedAssetDto, FixedAsset>();
+            
+            CreateMap<UpdateSalvageValueDto, FixedAsset>();
+
             CreateMap<CWIP, CreateFixedAssetDto>()
                 .ForMember(fixedAsset => fixedAsset.Doctype, cwip => cwip.MapFrom(d => DocType.CWIP))
                 .ForMember(fixedAsset => fixedAsset.DocId, cwip => cwip.MapFrom(d => d.Id));
