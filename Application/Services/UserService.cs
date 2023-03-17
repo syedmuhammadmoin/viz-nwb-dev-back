@@ -476,6 +476,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.CWIPClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.DisposalClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.BudgetReappropriationClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.FixedAssetReportClaims), id);
 
 
             //Getting all claims for this role

@@ -73,6 +73,7 @@ builder.Services.AddScoped<ICWIPService, CWIPService>();
 builder.Services.AddScoped<IDisposalService, DisposalService>();
 builder.Services.AddScoped<IBudgetReappropriationService, BudgetReappropriationService>();
 builder.Services.AddScoped<IDepreciationAdjustmentService, DepreciationAdjustmentService>();
+builder.Services.AddScoped<IFixedAssetReportService, FixedAssetReportService>();
 
 builder.Services.AddHostedService<DepreciationBackgroundService>();
 

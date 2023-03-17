@@ -14,10 +14,12 @@ namespace Vizalys.Api.Controllers
     public class FixedAssetController : ControllerBase
     {
         private readonly IFixedAssetService _fixedAssetService;
+        private readonly IFixedAssetReportService _fixedAssetReportService;
 
-        public FixedAssetController(IFixedAssetService fixedAssetService)
+        public FixedAssetController(IFixedAssetService fixedAssetService, IFixedAssetReportService fixedAssetReportService)
         {
             _fixedAssetService = fixedAssetService;
+            _fixedAssetReportService = fixedAssetReportService;
         }
 
         [ClaimRequirement("Permission", new string[] { Permissions.FixedAssetClaims.Create })]
@@ -132,5 +134,15 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status Code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.FixedAssetReportClaims.View })]
+        [HttpPost("Report")]
+        public ActionResult<Response<List<FixedAssetReportDto>>> GetReport(FixedAssetReportFilter filters)
+        {
+            var result = _fixedAssetReportService.GetReport(filters);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status Code : 400
+        }
     }
 }
