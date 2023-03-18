@@ -4,7 +4,7 @@ namespace Application.Contracts.DTOs
 {
     public class FixedAssetDto
     {
-       
+
         private int _monthDay;
         private decimal _depreciationAmount;
         private decimal _perDayDepreciation;
@@ -54,7 +54,7 @@ namespace Application.Contracts.DTOs
             {
                 if (ModelType == DepreciationMethod.Declining)
                 {
-                    return (DepreciableAmount - AccumulatedDepreciationAmount) * DecLiningRate / UseFullLife.Value;
+                    return RemainingDepreciationAmount * DecLiningRate;
                 }
                 else if (ModelType == DepreciationMethod.StraightLine)
                 {
@@ -121,10 +121,13 @@ namespace Application.Contracts.DTOs
         public decimal DepreciableAmount
         {
             get { return _depreciableAmount = Cost - SalvageValue; }
-            set
+
+        }
+        public decimal RemainingDepreciationAmount
+        {
+            get
             {
-
-
+                return DepreciableAmount - AccumulatedDepreciationAmount;
             }
         }
         public bool IsDepreciable
@@ -178,8 +181,27 @@ namespace Application.Contracts.DTOs
         }
         public int DepreciationMonth { get; set; }
         public int DepreciationYear { get; set; }
-        public int LastMonthofDepreciation { get; set; }
-        public int LastYearofDepreciation { get; set; }
+        public int LastMonthofDepreciation
+        {
+            get
+            {
+                int usefulLifeInDay = YearDays / 12 * UseFullLife.Value;
+                int remainingDays = usefulLifeInDay - (TotalActiveDays + ActiveDaysofMonth());
+                DateTime LastDayOfDepreciation = CurrentDate.AddDays(remainingDays);
+                return LastDayOfDepreciation.Month;
+
+            }
+        }
+        public int LastYearofDepreciation
+        {
+            get
+            {
+                int usefulLifeInDay = YearDays / 12 * UseFullLife.Value;
+                int remainingDays = usefulLifeInDay - (TotalActiveDays + ActiveDaysofMonth());
+                DateTime LastDayOfDepreciation = CurrentDate.AddDays(remainingDays);
+                return LastDayOfDepreciation.Year;
+            }
+        }
         public int YearDays { get; set; } = 360; //360 or 365
         public int MonthDays
         {
@@ -194,7 +216,7 @@ namespace Application.Contracts.DTOs
             }
         }
         public int TotalActiveDays { get; set; }
-        public DateTime CurrentDate { get; set; } = new DateTime(2023, 3, 31);
+        public DateTime CurrentDate { get; set; } 
         public bool IsGoingtoDisposeAsset { get; set; }
         public bool IsAllowedRole { get; set; }
         public IEnumerable<RemarksDto> RemarksList { get; set; }
@@ -204,7 +226,7 @@ namespace Application.Contracts.DTOs
         {
             if (this.DepriecaitonRegisterList != null)
             {
-                return this.DepriecaitonRegisterList.Where(x => x.IsAutomatedCalculation == true).Count() > 1 ? true : false;
+                return this.DepriecaitonRegisterList.Where(x => x.IsAutomatedCalculation == true).Count() > 0 ? true : false;
             }
             return false;
         }
@@ -234,15 +256,17 @@ namespace Application.Contracts.DTOs
             }
             return 0;
         }
-        public void CalculateLast_MonthAndYearofUseFul_Lif()
-        {
-            int usefulLifeInDay = YearDays / 12 * UseFullLife.Value;
-            int remainingDays = usefulLifeInDay - TotalActiveDays + ActiveDaysofMonth();
-            DateTime LastDayOfDepreciation = CurrentDate.AddDays(remainingDays);
-            LastMonthofDepreciation = LastDayOfDepreciation.Month;
-            LastYearofDepreciation = LastDayOfDepreciation.Year;
+        //public void CalculateLast_MonthAndYearofUseFul_Life()
+        //{
 
-        }
+
+        //    int usefulLifeInDay = YearDays / 12 * UseFullLife.Value;
+        //    int remainingDays = usefulLifeInDay - TotalActiveDays + ActiveDaysofMonth();
+        //    DateTime LastDayOfDepreciation = CurrentDate.AddDays(remainingDays);
+        //    LastMonthofDepreciation = LastDayOfDepreciation.Month;
+        //    LastYearofDepreciation = LastDayOfDepreciation.Year;
+
+        //}
 
 
     }
