@@ -21,7 +21,7 @@ namespace Domain.Entities
         {
         }
 
-        public void SetInactiveDate(DateTime inactiveDate)
+        public void SetInactiveDate(DateTime? inactiveDate)
         {
             InactiveDate = inactiveDate;
         }

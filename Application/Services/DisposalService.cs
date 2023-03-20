@@ -100,6 +100,59 @@ namespace Application.Services
             return new Response<DisposalDto>(disposalDto, "Returning value");
         }
 
+        //private async Task AddToLedger(Disposal bill)
+        //{
+        //    var transaction = new Transactions(bill.Id, bill.DocNo, DocType.Disposal);
+        //    await _unitOfWork.Transaction.Add(transaction);
+        //    await _unitOfWork.SaveAsync();
+
+        //    bill.SetTransactionId(transaction.Id);
+        //    await _unitOfWork.SaveAsync();
+
+        //    //Inserting line amount into recordledger table
+           
+               
+
+        //        var drAccumulatedDepreciation = new RecordLedger(
+        //            transaction.Id,
+        //            line.AccountId,
+        //            bill.VendorId,
+        //            line.WarehouseId,
+        //            line.Description,
+        //            'D',
+        //            amount + tax + line.AnyOtherTax,
+        //            bill.CampusId,
+        //            bill.BillDate
+        //            );
+
+        //        await _unitOfWork.Ledger.Add(drAccumulatedDepreciation);
+        //        await _unitOfWork.SaveAsync();
+
+
+            
+        //    var getVendorAccount = await _unitOfWork.BusinessPartner.GetById(bill.VendorId);
+        //    var addPayableInLedger = new RecordLedger(
+        //                transaction.Id,
+        //                (Guid)getVendorAccount.AccountPayableId,
+        //                bill.VendorId,
+        //                null,
+        //                bill.DocNo,
+        //                'C',
+        //                bill.TotalAmount,
+        //                bill.CampusId,
+        //                bill.BillDate
+        //            );
+
+        //    await _unitOfWork.Ledger.Add(addPayableInLedger);
+        //    await _unitOfWork.SaveAsync();
+
+        //    //Getting transaction with Payment Transaction Id
+        //    var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(transaction.Id, true)).FirstOrDefault();
+
+        //    bill.SetLedgerId(getUnreconciledDocumentAmount.Id);
+        //    await _unitOfWork.SaveAsync();
+        //}
+
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
             var getDisposal = await _unitOfWork.Disposal.GetById(data.DocId, new DisposalSpecs());
@@ -154,6 +207,8 @@ namespace Application.Services
                     {
                         var getFixedAsset = await _unitOfWork.FixedAsset.GetById(getDisposal.FixedAssetId);
                         getFixedAsset.SetIsDisposedTrue();
+                        // Ledger Entry
+                        //await AddToLedger();
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
                         return new Response<bool>(true, "Document Approved");

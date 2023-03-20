@@ -137,6 +137,8 @@ namespace Application.Contracts.DTOs
             {
                 if (
 
+                    
+
                    // Depreciation is disable
                    !DepreciationApplicability
 

@@ -89,6 +89,14 @@ namespace Domain.Entities
             IsDisposed = true;
         }
 
+        public void SetIsReservedTrue()
+        {
+            IsReserved= true;
+        }
+        public void SetIsIssuedTrue()
+        {
+            IsIssued = true;
+        }
         public void CreateCode()
         {
             //Creating doc no..
