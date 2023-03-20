@@ -52,6 +52,11 @@ namespace Application.Contracts.DTOs
         {
             get
             {
+                if (UseFullLife.Value==0 || UseFullLife==null)
+                {
+                    return 0;
+                }
+
                 if (ModelType == DepreciationMethod.Declining)
                 {
                     return RemainingDepreciationAmount * DecLiningRate;
