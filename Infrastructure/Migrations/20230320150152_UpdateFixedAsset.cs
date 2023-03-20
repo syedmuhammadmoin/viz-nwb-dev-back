@@ -29,6 +29,26 @@ namespace Infrastructure.Migrations
                 nullable: false,
                 defaultValue: 0);
 
+            migrationBuilder.AddColumn<Guid>(
+                name: "CashOrAccountsReceivableAccountId",
+                table: "Disposals",
+                type: "uniqueidentifier",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "GainOrLossOnDisposalAccountId",
+                table: "Disposals",
+                type: "uniqueidentifier",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            migrationBuilder.AddColumn<int>(
+                name: "TransactionId",
+                table: "Disposals",
+                type: "int",
+                nullable: true);
+
             migrationBuilder.CreateTable(
                 name: "DepreciationRegister",
                 columns: table => new
@@ -90,6 +110,21 @@ namespace Infrastructure.Migrations
                 column: "FixedAssetId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Disposals_CashOrAccountsReceivableAccountId",
+                table: "Disposals",
+                column: "CashOrAccountsReceivableAccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Disposals_GainOrLossOnDisposalAccountId",
+                table: "Disposals",
+                column: "GainOrLossOnDisposalAccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Disposals_TransactionId",
+                table: "Disposals",
+                column: "TransactionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DepreciationRegister_FixedAssetId",
                 table: "DepreciationRegister",
                 column: "FixedAssetId");
@@ -98,6 +133,30 @@ namespace Infrastructure.Migrations
                 name: "IX_FixedAssetLines_MasterId",
                 table: "FixedAssetLines",
                 column: "MasterId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Disposals_Level4_CashOrAccountsReceivableAccountId",
+                table: "Disposals",
+                column: "CashOrAccountsReceivableAccountId",
+                principalTable: "Level4",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Disposals_Level4_GainOrLossOnDisposalAccountId",
+                table: "Disposals",
+                column: "GainOrLossOnDisposalAccountId",
+                principalTable: "Level4",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Disposals_Transactions_TransactionId",
+                table: "Disposals",
+                column: "TransactionId",
+                principalTable: "Transactions",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_RecordLedger_FixedAssets_FixedAssetId",
@@ -110,6 +169,18 @@ namespace Infrastructure.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Disposals_Level4_CashOrAccountsReceivableAccountId",
+                table: "Disposals");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Disposals_Level4_GainOrLossOnDisposalAccountId",
+                table: "Disposals");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Disposals_Transactions_TransactionId",
+                table: "Disposals");
+
             migrationBuilder.DropForeignKey(
                 name: "FK_RecordLedger_FixedAssets_FixedAssetId",
                 table: "RecordLedger");
@@ -124,6 +195,18 @@ namespace Infrastructure.Migrations
                 name: "IX_RecordLedger_FixedAssetId",
                 table: "RecordLedger");
 
+            migrationBuilder.DropIndex(
+                name: "IX_Disposals_CashOrAccountsReceivableAccountId",
+                table: "Disposals");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Disposals_GainOrLossOnDisposalAccountId",
+                table: "Disposals");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Disposals_TransactionId",
+                table: "Disposals");
+
             migrationBuilder.DropColumn(
                 name: "FixedAssetId",
                 table: "RecordLedger");
@@ -135,6 +218,18 @@ namespace Infrastructure.Migrations
             migrationBuilder.DropColumn(
                 name: "TotalActiveDays",
                 table: "FixedAssets");
+
+            migrationBuilder.DropColumn(
+                name: "CashOrAccountsReceivableAccountId",
+                table: "Disposals");
+
+            migrationBuilder.DropColumn(
+                name: "GainOrLossOnDisposalAccountId",
+                table: "Disposals");
+
+            migrationBuilder.DropColumn(
+                name: "TransactionId",
+                table: "Disposals");
         }
     }
 }

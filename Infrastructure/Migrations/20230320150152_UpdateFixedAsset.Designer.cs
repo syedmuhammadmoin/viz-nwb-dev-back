@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230320080604_UpdateFixedAsset")]
+    [Migration("20230320150152_UpdateFixedAsset")]
     partial class UpdateFixedAsset
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1807,6 +1807,9 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("BookValue")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid>("CashOrAccountsReceivableAccountId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal>("Cost")
                         .HasColumnType("decimal(18,2)");
 
@@ -1830,6 +1833,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("FixedAssetId")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("GainOrLossOnDisposalAccountId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
@@ -1849,6 +1855,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TransactionId")
+                        .HasColumnType("int");
+
                     b.Property<int>("UseFullLife")
                         .HasColumnType("int");
 
@@ -1859,11 +1868,17 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("AccumulatedDepreciationId");
 
+                    b.HasIndex("CashOrAccountsReceivableAccountId");
+
                     b.HasIndex("FixedAssetId");
+
+                    b.HasIndex("GainOrLossOnDisposalAccountId");
 
                     b.HasIndex("ProductId");
 
                     b.HasIndex("StatusId");
+
+                    b.HasIndex("TransactionId");
 
                     b.HasIndex("WarehouseId");
 
@@ -6875,9 +6890,21 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.Level4", "CashOrAccountsReceivableAccount")
+                        .WithMany()
+                        .HasForeignKey("CashOrAccountsReceivableAccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.FixedAsset", "FixedAsset")
                         .WithMany()
                         .HasForeignKey("FixedAssetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Level4", "GainOrLossOnDisposalAccount")
+                        .WithMany()
+                        .HasForeignKey("GainOrLossOnDisposalAccountId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -6893,6 +6920,11 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.Transactions", "Transactions")
+                        .WithMany()
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.Warehouse", "Warehouse")
                         .WithMany()
                         .HasForeignKey("WarehouseId")
@@ -6901,11 +6933,17 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("AccumulatedDepreciation");
 
+                    b.Navigation("CashOrAccountsReceivableAccount");
+
                     b.Navigation("FixedAsset");
+
+                    b.Navigation("GainOrLossOnDisposalAccount");
 
                     b.Navigation("Product");
 
                     b.Navigation("Status");
+
+                    b.Navigation("Transactions");
 
                     b.Navigation("Warehouse");
                 });
