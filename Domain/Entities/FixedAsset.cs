@@ -89,13 +89,13 @@ namespace Domain.Entities
             IsDisposed = true;
         }
 
-        public void SetIsReservedTrue()
+        public void SetIsReserved(bool isReserved)
         {
-            IsReserved= true;
+            IsReserved= isReserved;
         }
-        public void SetIsIssuedTrue()
+        public void SetIsIssued(bool isIssued)
         {
-            IsIssued = true;
+            IsIssued = isIssued;
         }
         public void CreateCode()
         {

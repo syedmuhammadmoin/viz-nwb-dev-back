@@ -488,8 +488,6 @@ namespace Application.Services
             return new Response<FixedAssetLinesDto>(null, "Created successfully");
 
         }
-
-
         public async Task<Response<FixedAssetDto>> Depreciate(CreateDepreciationRegisterDto createDepreciationRegisterDto)
         {
 

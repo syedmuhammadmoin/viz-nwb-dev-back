@@ -42,6 +42,15 @@ namespace Domain.Entities
         public int? TransactionId { get; private set; }
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
+
+        public Guid GainOrLossOnDisposalAccountId { get; private set; }
+        [ForeignKey("GainOrLossOnDisposalAccountId")]
+        public Level4 GainOrLossOnDisposalAccount { get; private set; }
+
+        public Guid CashOrAccountsReceivableAccountId { get; private set; }
+        [ForeignKey("CashOrAccountsReceivableAccountId")]
+        public Level4 CashOrAccountsReceivableAccount { get; private set; }
+
         public void SetTransactionId(int transactionId)
         {
             TransactionId = transactionId;

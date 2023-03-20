@@ -179,12 +179,31 @@ namespace Application.Services
                             }
                             await _unitOfWork.SaveAsync();
                         }
+                        foreach (var line in getIssuance.IssuanceLines)
+                        {
+                            //non fixed asset
+                            if (line.FixedAssetId==null)
+                            {
+                                //updating reserved quantity in stock
+                                var updateStockOnApproveOrReject = await UpdateStockOnApproveOrReject(getIssuance);
+                                if (!updateStockOnApproveOrReject.IsSuccess)
+                                    return new Response<bool>(updateStockOnApproveOrReject.Message);
+                            }
+                            //fixed Asset
+                            else
+                            {
+                                var fixedAsset = await _unitOfWork.FixedAsset.GetById(line.FixedAssetId.Value);
+                                if (fixedAsset.IsReserved)
+                                {
+                                    fixedAsset.SetIsReserved(false);
+                                }
+                                else
+                                {
+                                    fixedAsset.SetIsIssued(true);
+                                }
 
-                        //updating reserved quantity in stock
-                        var updateStockOnApproveOrReject = await UpdateStockOnApproveOrReject(getIssuance);
-                        if (!updateStockOnApproveOrReject.IsSuccess)
-                            return new Response<bool>(updateStockOnApproveOrReject.Message);
-
+                            }
+                        }
 
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
