@@ -76,6 +76,7 @@ builder.Services.AddScoped<IDepreciationAdjustmentService, DepreciationAdjustmen
 builder.Services.AddScoped<IFixedAssetReportService, FixedAssetReportService>();
 builder.Services.AddScoped<IFacultyService, FacultyService>();
 builder.Services.AddScoped<IAcademicDepartmentService, AcademicDepartmentService>();
+builder.Services.AddScoped<IDegreeService, DegreeService>();
 
 builder.Services.AddHostedService<DepreciationBackgroundService>();
 

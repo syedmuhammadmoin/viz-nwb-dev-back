@@ -71,6 +71,7 @@ namespace Domain.Interfaces
         IDepreciationAdjustmentRepository DepreciationAdjustment { get; }
         IFacultyRepository Faculty { get; }
         IAcademicDepartmentRepository AcademicDepartment { get; }
+        IDegreeRepository Degree { get; }
 
         Task SaveAsync();
         void CreateTransaction();

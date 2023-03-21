@@ -101,6 +101,7 @@ namespace Infrastructure.Context
         public DbSet<FixedAssetLines> FixedAssetLines { get; set; }
         public DbSet<Faculty> Faculties { get; set; }
         public DbSet<AcademicDepartment> AcademicDepartments { get; set; }
+        public DbSet<Degree> Degrees { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -416,6 +416,14 @@
             public const string Delete = "Permissions.Admission.AcademicDepartmentClaims.Delete";
         }
 
+        public static class DegreeClaims
+        {
+            public const string View = "Permissions.Admission.DegreeClaims.View";
+            public const string Create = "Permissions.Admission.DegreeClaims.Create";
+            public const string Edit = "Permissions.Admission.DegreeClaims.Edit";
+            public const string Delete = "Permissions.Admission.DegreeClaims.Delete";
+        }
+
         //Reporting Form
         public static class ChartOfAccountClaims
         {

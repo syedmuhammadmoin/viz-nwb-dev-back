@@ -96,6 +96,7 @@ namespace Application.Interfaces
         public DbSet<FixedAssetLines> FixedAssetLines { get; set; }
         public DbSet<Faculty> Faculties { get; set; }
         public DbSet<AcademicDepartment> AcademicDepartments { get; set; }
+        public DbSet<Degree> Degrees { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

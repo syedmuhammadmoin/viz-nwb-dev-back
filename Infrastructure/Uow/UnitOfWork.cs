@@ -75,12 +75,11 @@ namespace Infrastructure.Uow
         public IDisposalRepository Disposal { get; private set; }
         public IBudgetReappropriationRepository BudgetReappropriation { get; private set; }
         public IDepreciationAdjustmentRepository DepreciationAdjustment { get; private set; }
+        public IFixedAssetLinesRepository FixedAssetLines { get; private set; }
+        public IDepreciationRegisterRepository DepreciationRegister { get; private set; }
         public IFacultyRepository Faculty { get; private set; }
         public IAcademicDepartmentRepository AcademicDepartment { get; private set; }
-
-        public IFixedAssetLinesRepository FixedAssetLines { get; private set; }
-
-        public IDepreciationRegisterRepository DepreciationRegister { get; private set; }
+        public IDegreeRepository Degree { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -147,6 +146,7 @@ namespace Infrastructure.Uow
             FixedAssetLines = new FixedAssetLinesRepository(context);
             DepreciationRegister = new DepreciationRegisterRepository(context);
             Faculty = new FacultyRepository(context);
+            Degree = new DegreeRepository(context);
         }
 
         public async Task SaveAsync()
