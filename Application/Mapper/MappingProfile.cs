@@ -652,6 +652,12 @@ namespace Application.Mapper
             CreateMap<DegreeDto, Degree>();
             CreateMap<Degree, DegreeDto>();
 
+            //Program
+            CreateMap<Program, ProgramDto>()
+                   .ForMember(dto => dto.Degree, core => core.MapFrom(d => d.Degree.Name))
+                   .ForMember(dto => dto.AcademicDepartment, core => core.MapFrom(d => d.AcademicDepartment.Name));
+            CreateMap<CreateProgramDto, Program>();
+
         }
     }
 }

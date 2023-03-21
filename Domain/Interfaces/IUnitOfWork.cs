@@ -74,6 +74,7 @@ namespace Domain.Interfaces
         IFacultyRepository Faculty { get; }
         IAcademicDepartmentRepository AcademicDepartment { get; }
         IDegreeRepository Degree { get; }
+        IProgramRepository Program { get; }
 
         Task SaveAsync();
         void CreateTransaction();
