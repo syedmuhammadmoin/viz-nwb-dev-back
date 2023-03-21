@@ -440,6 +440,15 @@
             public const string Delete = "Permissions.Admission.SemesterClaims.Delete";
         }
 
+        public static class CourseClaims
+        {
+            public const string View = "Permissions.Admission.CourseClaims.View";
+            public const string Create = "Permissions.Admission.CourseClaims.Create";
+            public const string Edit = "Permissions.Admission.CourseClaims.Edit";
+            public const string Delete = "Permissions.Admission.CourseClaims.Delete";
+        }
+
+
         //Reporting Form
         public static class ChartOfAccountClaims
         {

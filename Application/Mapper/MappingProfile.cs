@@ -662,6 +662,10 @@ namespace Application.Mapper
             CreateMap<SemesterDto, Semester>();
             CreateMap<Semester, SemesterDto>();
 
+            //Course
+            CreateMap<CourseDto, Course>();
+            CreateMap<Course, CourseDto>();
+
         }
     }
 }

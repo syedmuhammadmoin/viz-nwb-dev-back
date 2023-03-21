@@ -104,6 +104,7 @@ namespace Infrastructure.Context
         public DbSet<Degree> Degrees { get; set; }
         public DbSet<Program> Programs { get; set; }
         public DbSet<Semester> Semesters { get; set; }
+        public DbSet<Course> Courses { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
