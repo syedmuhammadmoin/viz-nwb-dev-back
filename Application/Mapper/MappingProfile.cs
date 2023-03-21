@@ -638,6 +638,20 @@ namespace Application.Mapper
 
             CreateMap<CreateDepreciationAdjustmentDto, DepreciationAdjustmentMaster>();
             CreateMap<CreateDepreciationAdjustmentLinesDto, DepreciationAdjustmentLines>();
+
+            //AcademicDepartment
+            CreateMap<AcademicDepartment, AcademicDepartmentDto>()
+                   .ForMember(dto => dto.Faculty, core => core.MapFrom(d => d.Faculty.Name));
+            CreateMap<CreateAcademicDepartmentDto, AcademicDepartment>();
+
+            //Faculty
+            CreateMap<Faculty, FacultyDto>();
+            CreateMap<CreateFacultyDto, Faculty>();
+
+            //Degree
+            CreateMap<DegreeDto, Degree>();
+            CreateMap<Degree, DegreeDto>();
+
         }
     }
 }
