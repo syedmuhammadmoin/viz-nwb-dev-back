@@ -81,6 +81,7 @@ namespace Infrastructure.Uow
         public IAcademicDepartmentRepository AcademicDepartment { get; private set; }
         public IDegreeRepository Degree { get; private set; }
         public IProgramRepository Program { get; private set; }
+        public ISemesterRepository Semester { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -149,6 +150,7 @@ namespace Infrastructure.Uow
             Faculty = new FacultyRepository(context);
             Degree = new DegreeRepository(context);
             Program = new ProgramRepository(context);
+            Semester = new SemesterRepository(context);
         }
 
         public async Task SaveAsync()

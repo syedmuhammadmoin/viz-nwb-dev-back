@@ -78,6 +78,7 @@ builder.Services.AddScoped<IFacultyService, FacultyService>();
 builder.Services.AddScoped<IAcademicDepartmentService, AcademicDepartmentService>();
 builder.Services.AddScoped<IDegreeService, DegreeService>();
 builder.Services.AddScoped<IProgramService, ProgramService>();
+builder.Services.AddScoped<ISemesterService, SemesterService>();
 
 builder.Services.AddHostedService<DepreciationBackgroundService>();
 

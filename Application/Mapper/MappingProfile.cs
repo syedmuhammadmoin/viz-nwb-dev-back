@@ -658,6 +658,10 @@ namespace Application.Mapper
                    .ForMember(dto => dto.AcademicDepartment, core => core.MapFrom(d => d.AcademicDepartment.Name));
             CreateMap<CreateProgramDto, Program>();
 
+            //Semester
+            CreateMap<SemesterDto, Semester>();
+            CreateMap<Semester, SemesterDto>();
+
         }
     }
 }

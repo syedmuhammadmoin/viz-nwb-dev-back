@@ -432,6 +432,14 @@
             public const string Delete = "Permissions.Admission.ProgramClaims.Delete";
         }
 
+        public static class SemesterClaims
+        {
+            public const string View = "Permissions.Admission.SemesterClaims.View";
+            public const string Create = "Permissions.Admission.SemesterClaims.Create";
+            public const string Edit = "Permissions.Admission.SemesterClaims.Edit";
+            public const string Delete = "Permissions.Admission.SemesterClaims.Delete";
+        }
+
         //Reporting Form
         public static class ChartOfAccountClaims
         {
