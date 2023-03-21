@@ -428,5 +428,10 @@
         {
             public const string View = "Permissions.Procurement.StockClaims.View";
         }
+
+        public static class FixedAssetReportClaims
+        {
+            public const string View = "Permissions.FixedAsset.FixedAssetReportClaims.View";
+        }
     }
 }

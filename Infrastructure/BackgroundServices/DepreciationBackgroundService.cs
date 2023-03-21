@@ -1,5 +1,4 @@
-﻿using Domain.Entities;
-using Infrastructure.Context;
+﻿using Infrastructure.Context;
 using Infrastructure.Uow;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

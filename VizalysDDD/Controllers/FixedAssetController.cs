@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.FixedAsset;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -13,10 +14,12 @@ namespace Vizalys.Api.Controllers
     public class FixedAssetController : ControllerBase
     {
         private readonly IFixedAssetService _fixedAssetService;
+        private readonly IFixedAssetReportService _fixedAssetReportService;
 
-        public FixedAssetController(IFixedAssetService fixedAssetService)
+        public FixedAssetController(IFixedAssetService fixedAssetService, IFixedAssetReportService fixedAssetReportService)
         {
             _fixedAssetService = fixedAssetService;
+            _fixedAssetReportService = fixedAssetReportService;
         }
 
         [ClaimRequirement("Permission", new string[] { Permissions.FixedAssetClaims.Create })]
@@ -43,6 +46,21 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
+
+        [ClaimRequirement("Permission", new string[] { Permissions.FixedAssetClaims.Edit })]
+        [HttpPut("Update/{id:int}")]
+        public async Task<ActionResult<Response<FixedAssetDto>>> UpdateAfterApproval(int id, UpdateSalvageValueDto entity)
+        {
+            if (id != entity.Id)
+                return BadRequest("ID mismatch");
+
+            var result = await _fixedAssetService.UpdateAfterApproval(entity);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
+
 
         [ClaimRequirement("Permission", new string[] { Permissions.FixedAssetClaims.Create, Permissions.FixedAssetClaims.View, Permissions.FixedAssetClaims.Delete, Permissions.FixedAssetClaims.Edit })]
         [HttpGet]
@@ -106,15 +124,25 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status Code : 400
         }
 
-        [HttpPost("HeldForDisposal/{id:int}")]
-        public async Task<ActionResult<Response<bool>>> HeldAssetForDisposal(int id)
+        [HttpPost("HeldForDisposal")]
+        public async Task<ActionResult<Response<bool>>> HeldAssetForDisposal([FromBody] CreateHeldAssetForDisposal data)
         {
-            var result = await _fixedAssetService.HeldAssetForDisposal(id);
+            var result = await _fixedAssetService.HeldAssetForDisposal(data);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 
             return BadRequest(result); // Status Code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.FixedAssetReportClaims.View })]
+        [HttpPost("Report")]
+        public ActionResult<Response<List<FixedAssetReportDto>>> GetReport(FixedAssetReportFilter filters)
+        {
+            var result = _fixedAssetReportService.GetReport(filters);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status Code : 400
+        }
     }
 }
