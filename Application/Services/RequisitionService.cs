@@ -167,6 +167,8 @@ namespace Application.Services
                         foreach (var line in getRequisition.RequisitionLines)
                         {
                             line.SetStatus(DocumentStatus.Unreconciled);
+
+
                         }
 
                         await _unitOfWork.SaveAsync();
@@ -216,7 +218,7 @@ namespace Application.Services
             }
             //this code is not support for editable Requisition
             //Checking available quantity in stock
-            var requisition = CheckOrUpdateQty(entity);
+            var requisition = CheckOrUpdateQty(entity).Result;
 
             //this code is not support for editable Requisition
             if (entity.Id == null)
@@ -229,25 +231,43 @@ namespace Application.Services
             }
         }
 
-        private CreateRequisitionDto CheckOrUpdateQty(CreateRequisitionDto entity)
+        private async Task<CreateRequisitionDto> CheckOrUpdateQty(CreateRequisitionDto entity)
         {
             foreach (var line in entity.RequisitionLines)
             {
-                var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
-                if (getStockRecord != null)
+                // non fixed asset
+                if (line.FixedAssetId == null)
                 {
-                    if (getStockRecord.AvailableQuantity > 0)
+                    var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
+                    if (getStockRecord != null)
                     {
-                        int reserveableQuantity = (int)line.Quantity;
+                        if (getStockRecord.AvailableQuantity > 0)
+                        {
+                            int reserveableQuantity = (int)line.Quantity;
 
-                        if (line.Quantity > getStockRecord.AvailableQuantity)
-                            reserveableQuantity = getStockRecord.AvailableQuantity;
+                            if (line.Quantity > getStockRecord.AvailableQuantity)
+                                reserveableQuantity = getStockRecord.AvailableQuantity;
 
-                        //Need to Save reserveable Quantity with Requesition
-                        line.ReserveQuantity = reserveableQuantity;
-                        getStockRecord.UpdateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity + reserveableQuantity);
-                        getStockRecord.UpdateAvailableQuantity(getStockRecord.AvailableQuantity - reserveableQuantity);
+                            //Need to Save reserveable Quantity with Requesition
+                            line.ReserveQuantity = reserveableQuantity;
+                            getStockRecord.UpdateRequisitionReservedQuantity(getStockRecord.ReservedRequisitionQuantity + reserveableQuantity);
+                            getStockRecord.UpdateAvailableQuantity(getStockRecord.AvailableQuantity - reserveableQuantity);
+                        }
                     }
+                }
+                // Fixed Asset
+                else
+                {
+                    var fixedAsset = await _unitOfWork.FixedAsset.GetById(line.FixedAssetId.Value);
+                    if (fixedAsset.IsReserved)
+                    {
+                        // no reserve allow
+                    }
+                    else
+                    {
+                    fixedAsset.SetIsReserved(true);
+                    }
+
                 }
             }
             return entity;

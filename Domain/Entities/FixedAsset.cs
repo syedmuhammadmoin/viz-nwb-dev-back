@@ -63,6 +63,12 @@ namespace Domain.Entities
         public int? DocId { get; private set; }
         public DocType? Doctype { get; private set; }
 
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal AccumulatedDepreciationAmount { get; private set; }
+        public int TotalActiveDays { get; private set; }
+        public virtual List<FixedAssetLines> FixedAssetlines { get; set; }
+        public virtual List<DepreciationRegister> DepreciatonRegisterList { get; set; }
+
         protected FixedAsset()
         {
         }
@@ -83,11 +89,29 @@ namespace Domain.Entities
             IsDisposed = true;
         }
 
+        public void SetIsReserved(bool isReserved)
+        {
+            IsReserved= isReserved;
+        }
+        public void SetIsIssued(bool isIssued)
+        {
+            IsIssued = isIssued;
+        }
         public void CreateCode()
         {
             //Creating doc no..
             AssetCode = "FXA-" + String.Format("{0:000}", Id);
         }
-    
+
+
+        public void SetAccumulatedDepreciationAmount(decimal accumulatedDepreciationAmount)
+        {
+            AccumulatedDepreciationAmount = accumulatedDepreciationAmount;
+        }
+        public void SetTotalActiveDays(int totalActiveDays)
+        {
+            TotalActiveDays = totalActiveDays;
+        }
+
     }
 }

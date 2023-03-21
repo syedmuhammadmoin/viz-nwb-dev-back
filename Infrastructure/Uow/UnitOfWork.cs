@@ -78,6 +78,10 @@ namespace Infrastructure.Uow
         public IFacultyRepository Faculty { get; private set; }
         public IAcademicDepartmentRepository AcademicDepartment { get; private set; }
 
+        public IFixedAssetLinesRepository FixedAssetLines { get; private set; }
+
+        public IDepreciationRegisterRepository DepreciationRegister { get; private set; }
+
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
@@ -140,6 +144,8 @@ namespace Infrastructure.Uow
             Disposal = new DisposalRepository(context);
             BudgetReappropriation = new BudgetReappropriationRepository(context);
             DepreciationAdjustment = new DepreciationAdjustmentRepository(context);
+            FixedAssetLines = new FixedAssetLinesRepository(context);
+            DepreciationRegister = new DepreciationRegisterRepository(context);
             Faculty = new FacultyRepository(context);
         }
 

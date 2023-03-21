@@ -17,6 +17,8 @@ namespace Domain.Entities
         public int? BusinessPartnerId { get; private set; }
         public int? WarehouseId { get; private set; }
         public int? CampusId { get; private set; }
+        public int? FixedAssetId { get; private set; }
+
         [MaxLength(500)]
         public string Description { get; private set; }
         
@@ -38,6 +40,10 @@ namespace Domain.Entities
 
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
+        
+        [ForeignKey("FixedAssetId")]
+        public FixedAsset FixedAsset { get; private set; }
+
         public DateTime TransactionDate { get; private set; }
         public DocumentStatus ReconStatus { get; private set; }
         public bool IsReconcilable { get; private set; }
@@ -62,6 +68,21 @@ namespace Domain.Entities
             ReconStatus = DocumentStatus.Unreconciled;
         }
 
+        public RecordLedger(int transactionId, Guid level4_id, int? businessPartnerId, int? warehouseId, string description, char sign, decimal amount, int? campusId, DateTime transactionDate, int? fixedAssetId)
+        {
+            TransactionId = transactionId;
+            Level4_id = level4_id;
+            BusinessPartnerId = businessPartnerId;
+            WarehouseId = warehouseId;
+            Description = description;
+            Sign = sign;
+            Amount = amount;
+            CampusId = campusId;
+            TransactionDate = transactionDate;
+            FixedAssetId = fixedAssetId;
+            ReconStatus = DocumentStatus.Unreconciled;
+        }
+
         public void SetIsReconcilable(bool value)
         {
             IsReconcilable = value;
@@ -69,6 +90,10 @@ namespace Domain.Entities
         public void SetStatus(DocumentStatus status)
         {
             ReconStatus = status;
+        }
+        public void SetTransactioId(int transectionId)
+        {
+            this.TransactionId= transectionId;
         }
     }
 }

@@ -92,6 +92,8 @@ namespace Application.Interfaces
         public DbSet<BudgetReappropriationLines>  BudgetReappropriationLines { get; set; }
         public DbSet<DepreciationAdjustmentMaster>  DepreciationAdjustmentMaster { get; set; }
         public DbSet<DepreciationAdjustmentLines> DepreciationAdjustmentLines { get; set; }
+        public DbSet<DepreciationRegister> DepreciationRegister { get; set; }
+        public DbSet<FixedAssetLines> FixedAssetLines { get; set; }
         public DbSet<Faculty> Faculties { get; set; }
         public DbSet<AcademicDepartment> AcademicDepartments { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);

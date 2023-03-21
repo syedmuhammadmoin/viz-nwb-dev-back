@@ -46,10 +46,10 @@ namespace Application.Services
                 return new Response<DepreciationAdjustmentDto>("Not found");
 
             var depreciationAdjustmentDto = _mapper.Map<DepreciationAdjustmentDto>(depreciationAdjustment);
-            
+
             ReturningRemarks(depreciationAdjustmentDto);
             depreciationAdjustmentDto.IsAllowedRole = false;
-            
+
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.DepreciationAdjustment)).FirstOrDefault();
             if (workflow != null)
             {
@@ -93,12 +93,12 @@ namespace Application.Services
                 return await Update(entity, 1);
             }
         }
-        
+
         public Task<Response<int>> DeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
-        
+
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
             var getDepreciationAdjustment = await _unitOfWork.DepreciationAdjustment.GetById(data.DocId, new DepreciationAdjustmentSpecs());
@@ -106,9 +106,9 @@ namespace Application.Services
             {
                 return new Response<bool>("Depreciation Adjustment with the input id not found");
             }
-            
-            if (getDepreciationAdjustment.Status.State == DocumentStatus.Unpaid 
-                || getDepreciationAdjustment.Status.State == DocumentStatus.Partial 
+
+            if (getDepreciationAdjustment.Status.State == DocumentStatus.Unpaid
+                || getDepreciationAdjustment.Status.State == DocumentStatus.Partial
                 || getDepreciationAdjustment.Status.State == DocumentStatus.Paid)
             {
                 return new Response<bool>("Depreciation Adjustment already approved");
@@ -121,7 +121,7 @@ namespace Application.Services
             }
 
             var transition = workflow.WorkflowTransitions
-                    .FirstOrDefault(x => (x.CurrentStatusId == getDepreciationAdjustment.StatusId 
+                    .FirstOrDefault(x => (x.CurrentStatusId == getDepreciationAdjustment.StatusId
                     && x.Action == data.Action));
             if (transition == null)
             {
@@ -132,7 +132,7 @@ namespace Application.Services
             var getUser = new GetUser(_httpContextAccessor);
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(_httpContextAccessor).GetCurrentUserRoles();
-            
+
             _unitOfWork.CreateTransaction();
             foreach (var role in currentUserRoles)
             {
@@ -152,7 +152,30 @@ namespace Application.Services
                     }
                     if (transition.NextStatus.State == DocumentStatus.Unpaid)
                     {
+                        // 1.entry in Depreciation Register
+                        var depreciationGroupData = getDepreciationAdjustment.DepreciationAdjustmentLines.GroupBy(p => p.FixedAssetId);
+                        foreach (var item in depreciationGroupData)
+                        {
+                            CreateDepreciationRegisterDto createDepreciationRegisterDto = new CreateDepreciationRegisterDto()
+                            {
+                                FixedAssetId = item.Key,
+                                TransactionDate = getDepreciationAdjustment.DateOfDepreciationAdjustment,
+                                DepreciationAmount = item.Sum(x => x.Debit),
+                                Description = "Depreciation of month " + getDepreciationAdjustment.DateOfDepreciationAdjustment.Month.ToString() + " / " + getDepreciationAdjustment.DateOfDepreciationAdjustment.Year.ToString(),
+                                IsAutomatedCalculation = false,
+                                IsGoingtoDispose = false
+                            };
+                            await CreateDepreciationRegisterAsync(createDepreciationRegisterDto);
+
+                            //2.update accumulated_Depreciation in Fixed Asset
+                            var result = await _unitOfWork.FixedAsset.GetById((int)createDepreciationRegisterDto.FixedAssetId);
+                            var fixedAssetDto = _mapper.Map<FixedAssetDto>(result);
+                            result.SetAccumulatedDepreciationAmount(fixedAssetDto.AccumulatedDepreciationAmount + createDepreciationRegisterDto.DepreciationAmount);
+                        }
+
+                        //3.entry in the ledger
                         await AddToLedger(getDepreciationAdjustment);
+
                         _unitOfWork.Commit();
                         return new Response<bool>(true, "Depreciation Adjustment Approved");
                     }
@@ -172,6 +195,16 @@ namespace Application.Services
             return new Response<bool>("User does not have allowed role");
         }
 
+        public async Task<Response<DepreciationRegisterDto>> CreateDepreciationRegisterAsync(CreateDepreciationRegisterDto entity)
+        {
+
+            var depreciationRegister = _mapper.Map<DepreciationRegister>(entity);
+            await _unitOfWork.DepreciationRegister.Add(depreciationRegister);
+            await _unitOfWork.SaveAsync();
+            //returning response
+            return new Response<DepreciationRegisterDto>(null, "Created successfully");
+
+        }
         //Private methods
         private async Task<Response<DepreciationAdjustmentDto>> Submit(CreateDepreciationAdjustmentDto entity)
         {
@@ -188,7 +221,7 @@ namespace Application.Services
                 return await Update(entity, 6);
             }
         }
-        
+
         private async Task<Response<DepreciationAdjustmentDto>> Save(CreateDepreciationAdjustmentDto entity, int status)
         {
             //Checking validations
@@ -217,7 +250,7 @@ namespace Application.Services
             //returning response
             return new Response<DepreciationAdjustmentDto>(_mapper.Map<DepreciationAdjustmentDto>(result), "Created successfully");
         }
-        
+
         private async Task<Response<DepreciationAdjustmentDto>> Update(CreateDepreciationAdjustmentDto entity, int status)
         {
             //Checking validations
@@ -250,7 +283,7 @@ namespace Application.Services
             //returning response
             return new Response<DepreciationAdjustmentDto>(_mapper.Map<DepreciationAdjustmentDto>(depreciationAdjustment), "Created successfully");
         }
-        
+
         private List<RemarksDto> ReturningRemarks(DepreciationAdjustmentDto data)
         {
             var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.DepreciationAdjustment))
@@ -289,7 +322,8 @@ namespace Application.Services
                     line.Debit > 0 && line.Credit <= 0 ? 'D' : 'C',
                     line.Debit > 0 && line.Credit <= 0 ? line.Debit : line.Credit,
                     line.FixedAsset.Warehouse.CampusId,
-                    entity.DateOfDepreciationAdjustment
+                    entity.DateOfDepreciationAdjustment,
+                    line.FixedAssetId
                     )).ToList();
 
             await _unitOfWork.Ledger.AddRange(recordLedger);
@@ -361,8 +395,8 @@ namespace Application.Services
                 .GroupBy(x => x.FixedAssetId)
                 .Select(y => new
                 {
-                     Debit = y.Sum(i => i.Debit),
-                     Credit = y.Sum(i => i.Credit),
+                    Debit = y.Sum(i => i.Debit),
+                    Credit = y.Sum(i => i.Credit),
                 })
                 .ToList();
 

@@ -179,12 +179,29 @@ namespace Application.Services
                             }
                             await _unitOfWork.SaveAsync();
                         }
+                        foreach (var line in getIssuance.IssuanceLines)
+                        {
+                            //non fixed asset
+                            if (line.FixedAssetId == null)
+                            {
+                                //updating reserved quantity in stock
+                                var updateStockOnApproveOrReject = await UpdateStockOnApproveOrReject(getIssuance);
+                                if (!updateStockOnApproveOrReject.IsSuccess)
+                                    return new Response<bool>(updateStockOnApproveOrReject.Message);
+                            }
+                            //fixed Asset
+                            else
+                            {
+                                var fixedAsset = await _unitOfWork.FixedAsset.GetById(line.FixedAssetId.Value);
+                                if (fixedAsset.IsReserved)
+                                {
+                                    fixedAsset.SetIsReserved(false);
+                                    fixedAsset.SetIsIssued(true);
+                                }
 
-                        //updating reserved quantity in stock
-                        var updateStockOnApproveOrReject = await UpdateStockOnApproveOrReject(getIssuance);
-                        if (!updateStockOnApproveOrReject.IsSuccess)
-                            return new Response<bool>(updateStockOnApproveOrReject.Message);
 
+                            }
+                        }
 
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
@@ -222,7 +239,7 @@ namespace Application.Services
                 {
                     //Getting Unreconciled Requisition lines
                     var getrequisitionLine = _unitOfWork.Requisition
-                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, (int)entity.RequisitionId ,(int)issuanceLine.WarehouseId, true))
+                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, (int)entity.RequisitionId, (int)issuanceLine.WarehouseId, true))
                         .FirstOrDefault();
 
                     if (getrequisitionLine == null)
@@ -231,8 +248,39 @@ namespace Application.Services
                     var checkValidation = CheckValidation((int)entity.RequisitionId, getrequisitionLine, _mapper.Map<IssuanceLines>(issuanceLine));
                     if (!checkValidation.IsSuccess)
                         return new Response<IssuanceDto>(checkValidation.Message);
+                    
+                    if (issuanceLine.FixedAssetId!=null)
+                    {
+                        var currentDate = DateTime.Now;
+                        var fixedAssetLines = await _unitOfWork.FixedAssetLines.GetByMonthAndYear(entity.Id.Value, currentDate.Month, currentDate.Year);
+
+                        var lastActiveRecord = fixedAssetLines.Where(p => p.ActiveDate <= currentDate && p.InactiveDate != null).OrderByDescending(x => x.ActiveDate).FirstOrDefault();
+                        if (lastActiveRecord != null)
+                        {
+                            if (lastActiveRecord.InactiveDate.Value.Date.CompareTo(currentDate.Date) == 0 && currentDate.Day != DateTime.DaysInMonth(currentDate.Year, currentDate.Month))
+                            {
+                                lastActiveRecord.SetInactiveDate(null);
+                                lastActiveRecord.SetActiveDays(0);
+
+                                var createFixedAssetlineDto = _mapper.Map<FixedAssetLines>(lastActiveRecord);
+                                await _unitOfWork.FixedAssetLines.Add(createFixedAssetlineDto);
+                            }
+                            else if (currentDate.Day == DateTime.DaysInMonth(currentDate.Year, currentDate.Month))
+                            {
+                                //Operation Not Allow
+                            }
+                            else
+                            {
+                                var createFixedAssetlineDto2 = new FixedAssetLinesDto() { ActiveDate = currentDate, MasterId = entity.Id.Value };
+                               await _unitOfWork.FixedAssetLines.Add(_mapper.Map<FixedAssetLines>(createFixedAssetlineDto2));
+                            }
+                        }
+                    }
+
                 }
             }
+
+
 
             if (entity.RequisitionId == null)
             {  //Checking available quantity in stock
@@ -246,6 +294,8 @@ namespace Application.Services
                 if (!checkOrUpdateQty.IsSuccess)
                     return new Response<IssuanceDto>(checkOrUpdateQty.Message);
             }
+
+
 
 
 
@@ -387,21 +437,24 @@ namespace Application.Services
         {
             foreach (var line in issuance.IssuanceLines)
             {
-                var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
+                if (line.FixedAssetId == null)
+                {
+                    var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
 
-                if (getStockRecord == null)
-                    return new Response<bool>("Item not found in stock");
+                    if (getStockRecord == null)
+                        return new Response<bool>("Item not found in stock");
 
-                if (getStockRecord.AvailableQuantity == 0)
-                    return new Response<bool>("Selected item is out of stock");
-
-
-                if (line.Quantity > getStockRecord.AvailableQuantity)
-                    return new Response<bool>("Selected item quantity is exceeding available quantity");
+                    if (getStockRecord.AvailableQuantity == 0)
+                        return new Response<bool>("Selected item is out of stock");
 
 
-                getStockRecord.UpdateReservedQuantity(getStockRecord.ReservedQuantity + (int)line.Quantity);
-                getStockRecord.UpdateAvailableQuantity(getStockRecord.AvailableQuantity - (int)line.Quantity);
+                    if (line.Quantity > getStockRecord.AvailableQuantity)
+                        return new Response<bool>("Selected item quantity is exceeding available quantity");
+
+
+                    getStockRecord.UpdateReservedQuantity(getStockRecord.ReservedQuantity + (int)line.Quantity);
+                    getStockRecord.UpdateAvailableQuantity(getStockRecord.AvailableQuantity - (int)line.Quantity);
+                }
 
 
 
@@ -412,17 +465,20 @@ namespace Application.Services
         {
             foreach (var line in issuance.IssuanceLines)
             {
-                var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
+                if (line.FixedAssetId == null)
+                {
+                    var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
 
-                if (getStockRecord == null)
-                    return new Response<bool>("Item not found in stock");
+                    if (getStockRecord == null)
+                        return new Response<bool>("Item not found in stock");
 
-                if (getStockRecord.ReservedRequisitionQuantity == 0)
-                    return new Response<bool>("Selected item is out of stock");
+                    if (getStockRecord.ReservedRequisitionQuantity == 0)
+                        return new Response<bool>("Selected item is out of stock");
 
 
-                if (line.Quantity > getStockRecord.ReservedRequisitionQuantity)
-                    return new Response<bool>("Selected item quantity is exceeding available quantity");
+                    if (line.Quantity > getStockRecord.ReservedRequisitionQuantity)
+                        return new Response<bool>("Selected item quantity is exceeding available quantity");
+                }
             }
             return new Response<bool>(true, "");
         }
@@ -523,7 +579,7 @@ namespace Application.Services
             {
                 //Getting Unreconciled Requisition lines
                 var getRequisitionLine = _unitOfWork.Requisition
-                    .FindLines(new RequisitionLinesSpecs(IssuanceLine.ItemId, requisitionId, IssuanceLine.WarehouseId ,true))
+                    .FindLines(new RequisitionLinesSpecs(IssuanceLine.ItemId, requisitionId, IssuanceLine.WarehouseId, true))
                     .FirstOrDefault();
                 if (getRequisitionLine == null)
                     return new Response<bool>("No Requisition line found for reconciliaiton");

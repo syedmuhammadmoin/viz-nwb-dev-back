@@ -1,10 +1,10 @@
 
+using Application.BackgroundServices;
 using Application.Contracts.Interfaces;
 using Application.Services;
 using Domain.Interfaces;
 using Infrastructure;
 using Infrastructure.GlobalExceptionFilter;
-using Infrastructure.Repositories;
 using Infrastructure.Seeds;
 using Infrastructure.Uow;
 using System.Net.Mime;
@@ -73,9 +73,11 @@ builder.Services.AddScoped<ICWIPService, CWIPService>();
 builder.Services.AddScoped<IDisposalService, DisposalService>();
 builder.Services.AddScoped<IBudgetReappropriationService, BudgetReappropriationService>();
 builder.Services.AddScoped<IDepreciationAdjustmentService, DepreciationAdjustmentService>();
+builder.Services.AddScoped<IFixedAssetReportService, FixedAssetReportService>();
 builder.Services.AddScoped<IFacultyService, FacultyService>();
 builder.Services.AddScoped<IAcademicDepartmentService, AcademicDepartmentService>();
 
+builder.Services.AddHostedService<DepreciationBackgroundService>();
 
 //Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
