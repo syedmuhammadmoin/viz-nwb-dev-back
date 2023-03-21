@@ -9,7 +9,7 @@ using Infrastructure.Specifications;
 
 namespace Application.Services
 {
-    internal class DegreeService : IDegreeService
+    public class DegreeService : IDegreeService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
