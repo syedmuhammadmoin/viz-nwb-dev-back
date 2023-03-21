@@ -52,7 +52,7 @@ namespace Application.Contracts.DTOs
         {
             get
             {
-                if (UseFullLife.Value==0 || UseFullLife==null)
+                if (UseFullLife == null || UseFullLife.Value==0)
                 {
                     return 0;
                 }
@@ -192,6 +192,11 @@ namespace Application.Contracts.DTOs
         {
             get
             {
+                if (UseFullLife==null || UseFullLife.Value==0)
+                {
+                    return 0;
+                }
+
                 int usefulLifeInDay = YearDays / 12 * UseFullLife.Value;
                 int remainingDays = usefulLifeInDay - (TotalActiveDays + ActiveDaysofMonth());
                 DateTime LastDayOfDepreciation = CurrentDate.AddDays(remainingDays);
@@ -203,6 +208,11 @@ namespace Application.Contracts.DTOs
         {
             get
             {
+                if (UseFullLife == null || UseFullLife.Value == 0)
+                {
+                    return 0;
+                }
+
                 int usefulLifeInDay = YearDays / 12 * UseFullLife.Value;
                 int remainingDays = usefulLifeInDay - (TotalActiveDays + ActiveDaysofMonth());
                 DateTime LastDayOfDepreciation = CurrentDate.AddDays(remainingDays);
