@@ -1,4 +1,3 @@
-
 using Application.BackgroundServices;
 using Application.Contracts.Interfaces;
 using Application.Services;
@@ -82,6 +81,7 @@ builder.Services.AddScoped<ISemesterService, SemesterService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IQualificationService, QualificationService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
+builder.Services.AddScoped<IFeeItemService, FeeItemService>();
 
 builder.Services.AddHostedService<DepreciationBackgroundService>();
 

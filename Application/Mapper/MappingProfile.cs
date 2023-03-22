@@ -669,6 +669,12 @@ namespace Application.Mapper
             CreateMap<SubjectDto, Subject>();
             CreateMap<Subject, SubjectDto>();
 
+
+            //FeeItem
+            CreateMap<FeeItem, FeeItemDto>()
+                   .ForMember(dto => dto.Account, core => core.MapFrom(d => d.Account.Name));
+            CreateMap<CreateFeeItemDto, FeeItem>();
+
         }
     }
 }
