@@ -80,6 +80,7 @@ builder.Services.AddScoped<IDegreeService, DegreeService>();
 builder.Services.AddScoped<IProgramService, ProgramService>();
 builder.Services.AddScoped<ISemesterService, SemesterService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IQualificationService, QualificationService>();
 
 builder.Services.AddHostedService<DepreciationBackgroundService>();
 

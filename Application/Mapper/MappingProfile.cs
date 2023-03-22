@@ -3,11 +3,6 @@ using Application.Contracts.DTOs.FixedAsset;
 using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Mapper
 {
@@ -665,6 +660,10 @@ namespace Application.Mapper
             //Course
             CreateMap<CourseDto, Course>();
             CreateMap<Course, CourseDto>();
+
+            //Qualification
+            CreateMap<QualificationDto, Qualification>();
+            CreateMap<Qualification, QualificationDto>();
 
         }
     }
