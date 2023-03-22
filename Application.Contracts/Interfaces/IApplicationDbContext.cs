@@ -101,6 +101,7 @@ namespace Application.Interfaces
         public DbSet<Semester> Semesters { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Qualification> Qualifications { get; set; }
+        public DbSet<Subject> Subjects { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

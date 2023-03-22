@@ -665,6 +665,10 @@ namespace Application.Mapper
             CreateMap<QualificationDto, Qualification>();
             CreateMap<Qualification, QualificationDto>();
 
+            //Subject
+            CreateMap<SubjectDto, Subject>();
+            CreateMap<Subject, SubjectDto>();
+
         }
     }
 }
