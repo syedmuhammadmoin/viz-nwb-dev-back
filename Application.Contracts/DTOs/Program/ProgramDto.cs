@@ -8,5 +8,6 @@
         public string Degree { get; set; }
         public int AcademicDepartmentId { get; set; }
         public string AcademicDepartment { get; set; }
+        public List<SemesterCousesDto> SemesterCoursesList { get; set; }
     }
 }

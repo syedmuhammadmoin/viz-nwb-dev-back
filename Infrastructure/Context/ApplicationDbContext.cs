@@ -108,6 +108,8 @@ namespace Infrastructure.Context
         public DbSet<Qualification> Qualifications { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<FeeItem> FeeItems { get; set; }
+        public DbSet<ProgramCourse> ProgramCourses { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -121,6 +123,7 @@ namespace Infrastructure.Context
             Helper.DataConfiguration(modelBuilder);
             Seeding.seeds(modelBuilder);
         }
+
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
             OnBeforeSaving();

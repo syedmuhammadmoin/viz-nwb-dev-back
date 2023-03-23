@@ -76,5 +76,16 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.ProgramCourseClaims.Create })]
+        [HttpPost("AddCourses")]
+        public async Task<ActionResult<Response<ProgramDto>>> AddCourses(AddCoursesDto entity)
+        {
+            var result = await _programService.AddCourses(entity);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
+
     }
 }

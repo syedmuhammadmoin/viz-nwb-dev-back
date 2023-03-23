@@ -7,5 +7,6 @@ namespace Application.Contracts.Interfaces
     public interface IProgramService : ICrudService<CreateProgramDto, ProgramDto, int, TransactionFormFilter>
     {
         Task<Response<List<ProgramDto>>> GetDropDown();
+        Task<Response<int>> AddCourses(AddCoursesDto entity);
     }
 }

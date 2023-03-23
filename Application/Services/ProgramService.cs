@@ -36,6 +36,23 @@ namespace Application.Services
             if (result == null)
                 return new Response<ProgramDto>("Not found");
 
+            var semesterCoursesList = new List<SemesterCousesDto>();
+            var getSemesterCourses = await _unitOfWork.ProgramCourse.GetByProgramId(result.Id);
+            if (getSemesterCourses.Any())
+            {
+                foreach (var item in getSemesterCourses)
+                {
+                    semesterCoursesList.Add(new SemesterCousesDto()
+                    {
+                        CourseId = item.CourseId,
+                        Course = item.Course.Name,
+                        SemesterId = item.SemesterId,
+                        Semester = item.Semester.Name,
+                    });
+                }
+            }
+            var programDto = _mapper.Map<ProgramDto>(result);
+            programDto.SemesterCoursesList = semesterCoursesList;
             return new Response<ProgramDto>(_mapper.Map<ProgramDto>(result), "Returning value");
         }
 
@@ -70,6 +87,29 @@ namespace Application.Services
             _mapper.Map(entity, result);
             await _unitOfWork.SaveAsync();
             return new Response<ProgramDto>(_mapper.Map<ProgramDto>(result), "Updated successfully");
+        }
+
+        public async Task<Response<int>> AddCourses(AddCoursesDto entity)
+        {
+            //Checking duplicate courses if any
+            var duplicates = entity.SemesterCousesList.GroupBy(x => new { x.CourseId })
+             .Where(g => g.Count() > 1)
+             .Select(y => y.Key)
+             .ToList();
+
+            if (duplicates.Any())
+                return new Response<int>("Courses must be unique for each semester");
+
+            var programCourses = new List<ProgramCourse>();
+            foreach (var item in entity.SemesterCousesList)
+            {
+                programCourses.Add(new ProgramCourse((int)entity.ProgramId,
+                    (int)item.SemesterId, (int)item.CourseId));
+            }
+            await _unitOfWork.ProgramCourse.AddRange(programCourses);
+            await _unitOfWork.SaveAsync();
+
+            return new Response<int>(1,"Added successfully");
         }
 
     }
