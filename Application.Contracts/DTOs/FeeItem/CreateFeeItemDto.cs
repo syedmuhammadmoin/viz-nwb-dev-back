@@ -10,5 +10,8 @@ namespace Application.Contracts.DTOs
         public string Name { get; set; }
         [Required]
         public Guid? AccountId { get; set; }
+        [Required]
+        [Range(1, double.MaxValue, ErrorMessage = "Amount must be greater than 0")]
+        public decimal? Amount { get; set; }
     }
 }

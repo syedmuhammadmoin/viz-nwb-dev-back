@@ -11,5 +11,10 @@ namespace Domain.Entities
         public Guid AccountId { get; private set; }
         [ForeignKey("AccountId")]
         public Level4 Account { get; private set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Amount { get; private set; }
+        protected FeeItem()
+        {
+        }
     }
 }
