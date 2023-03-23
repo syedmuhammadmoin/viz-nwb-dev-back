@@ -284,7 +284,7 @@ namespace Application.BackgroundServices
                
 
                 List<DateTime> dateTimes = new List<DateTime>();
-                int numberofMonth = 6;
+                int numberofMonth = 12;
                 int DepreciationMonth = (int)Month.January;
                 int DepreciationYear = 2020;
                 int DepreciationDay = DateTime.DaysInMonth(DepreciationYear, DepreciationMonth);
