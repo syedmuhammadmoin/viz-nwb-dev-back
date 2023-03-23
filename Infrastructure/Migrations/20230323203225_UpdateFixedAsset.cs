@@ -29,19 +29,17 @@ namespace Infrastructure.Migrations
                 nullable: false,
                 defaultValue: 0);
 
-            migrationBuilder.AddColumn<Guid>(
-                name: "CashOrAccountsReceivableAccountId",
+            migrationBuilder.AddColumn<int>(
+                name: "BusinessPartnerId",
                 table: "Disposals",
-                type: "uniqueidentifier",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                type: "int",
+                nullable: true);
 
-            migrationBuilder.AddColumn<Guid>(
-                name: "GainOrLossOnDisposalAccountId",
+            migrationBuilder.AddColumn<int>(
+                name: "LedgerId",
                 table: "Disposals",
-                type: "uniqueidentifier",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                type: "int",
+                nullable: true);
 
             migrationBuilder.AddColumn<int>(
                 name: "TransactionId",
@@ -110,14 +108,9 @@ namespace Infrastructure.Migrations
                 column: "FixedAssetId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Disposals_CashOrAccountsReceivableAccountId",
+                name: "IX_Disposals_BusinessPartnerId",
                 table: "Disposals",
-                column: "CashOrAccountsReceivableAccountId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Disposals_GainOrLossOnDisposalAccountId",
-                table: "Disposals",
-                column: "GainOrLossOnDisposalAccountId");
+                column: "BusinessPartnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Disposals_TransactionId",
@@ -135,18 +128,10 @@ namespace Infrastructure.Migrations
                 column: "MasterId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Disposals_Level4_CashOrAccountsReceivableAccountId",
+                name: "FK_Disposals_BusinessPartners_BusinessPartnerId",
                 table: "Disposals",
-                column: "CashOrAccountsReceivableAccountId",
-                principalTable: "Level4",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Disposals_Level4_GainOrLossOnDisposalAccountId",
-                table: "Disposals",
-                column: "GainOrLossOnDisposalAccountId",
-                principalTable: "Level4",
+                column: "BusinessPartnerId",
+                principalTable: "BusinessPartners",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
 
@@ -170,11 +155,7 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Disposals_Level4_CashOrAccountsReceivableAccountId",
-                table: "Disposals");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Disposals_Level4_GainOrLossOnDisposalAccountId",
+                name: "FK_Disposals_BusinessPartners_BusinessPartnerId",
                 table: "Disposals");
 
             migrationBuilder.DropForeignKey(
@@ -196,11 +177,7 @@ namespace Infrastructure.Migrations
                 table: "RecordLedger");
 
             migrationBuilder.DropIndex(
-                name: "IX_Disposals_CashOrAccountsReceivableAccountId",
-                table: "Disposals");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Disposals_GainOrLossOnDisposalAccountId",
+                name: "IX_Disposals_BusinessPartnerId",
                 table: "Disposals");
 
             migrationBuilder.DropIndex(
@@ -220,11 +197,11 @@ namespace Infrastructure.Migrations
                 table: "FixedAssets");
 
             migrationBuilder.DropColumn(
-                name: "CashOrAccountsReceivableAccountId",
+                name: "BusinessPartnerId",
                 table: "Disposals");
 
             migrationBuilder.DropColumn(
-                name: "GainOrLossOnDisposalAccountId",
+                name: "LedgerId",
                 table: "Disposals");
 
             migrationBuilder.DropColumn(
