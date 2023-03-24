@@ -321,6 +321,12 @@ namespace Application.Services
             var getFixedAsset = await _unitOfWork.FixedAsset.GetById((int)entity.FixedAssetId);
             if (getFixedAsset == null)
                 return new Response<DisposalDto>("Invalid fixed asset id");
+
+            if (getFixedAsset.DepreciationApplicability==false)
+            {
+                return new Response<DisposalDto>("Depreciation Applicability is disabled");
+
+            }
             var bookvalue = getFixedAsset.Cost - getFixedAsset.AccumulatedDepreciationAmount;
             //Setting values in disposal
             var disposal = new Disposal((int)entity.FixedAssetId, getFixedAsset.ProductId, getFixedAsset.Cost,
