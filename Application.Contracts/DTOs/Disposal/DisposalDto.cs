@@ -27,6 +27,7 @@ namespace Application.Contracts.DTOs
         public int? BusinessPartnerId { get; set; }
         public string BusinessPartnerName { get; set; }
         public int StatusId { get; set; }
+        public int? LedgerId { get; set; }
         public string Status { get; set; }
         public DocumentStatus State { get; set; }
         public IEnumerable<RemarksDto> RemarksList { get; set; }

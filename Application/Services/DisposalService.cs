@@ -135,7 +135,7 @@ namespace Application.Services
             await _unitOfWork.Ledger.Add(drAccumulatedDepreciation);
             await _unitOfWork.SaveAsync();
             
-            if (disposal.BusinessPartnerId != null && disposal.DisposalValue != 0)
+            if (disposal.BusinessPartnerId != null && disposal.DisposalValue > 0)
             {
                 var getCustomerAccount = await _unitOfWork.BusinessPartner.GetById(disposal.BusinessPartnerId.Value);
                 var addReceivableInLedger = new RecordLedger(
@@ -153,6 +153,13 @@ namespace Application.Services
 
                 await _unitOfWork.Ledger.Add(addReceivableInLedger);
                 await _unitOfWork.SaveAsync();
+
+                //Getting transaction with Payment Transaction Id
+                var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(transaction.Id, true)).FirstOrDefault();
+
+                disposal.SetLedgerId(getUnreconciledDocumentAmount.Id);
+                await _unitOfWork.SaveAsync();
+
             }
 
 
@@ -214,11 +221,7 @@ namespace Application.Services
 
             }
 
-            //Getting transaction with Payment Transaction Id
-            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(transaction.Id, true)).FirstOrDefault();
-
-            disposal.SetLedgerId(getUnreconciledDocumentAmount.Id);
-            await _unitOfWork.SaveAsync();
+         
         }
 
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
