@@ -86,7 +86,6 @@ namespace Infrastructure.Uow
         public IQualificationRepository Qualification { get; private set; }
         public ISubjectRepository Subject { get; private set; }
         public IFeeItemRepository FeeItem { get; private set; }
-        public IProgramCourseRepository ProgramCourse { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -160,7 +159,6 @@ namespace Infrastructure.Uow
             Qualification = new QualificationRepository(context);
             Subject = new SubjectRepository(context);
             FeeItem = new FeeItemRepository(context);
-            ProgramCourse = new ProgramCourseRepository(context);
         }
 
         public async Task SaveAsync()

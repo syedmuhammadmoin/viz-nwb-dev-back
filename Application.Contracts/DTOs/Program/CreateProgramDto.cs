@@ -12,5 +12,7 @@ namespace Application.Contracts.DTOs
         public int? DegreeId { get; set; }
         [Required]
         public int? AcademicDepartmentId { get; set; }
+        [Required]
+        public List<AddSemesterCoursesDto> SemesterCousesList { get; set; }
     }
 }

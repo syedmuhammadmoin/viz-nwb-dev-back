@@ -51,6 +51,17 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [HttpGet("GetProgramSemesters/{programId:int}")]
+        public async Task<ActionResult<Response<List<ProgramSemesterDto>>>> GetProgramSemester(int programId)
+        {
+            var result = await _programService.GetProgramSemesters(programId);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
+
+
         [ClaimRequirement("Permission", new string[] { Permissions.ProgramClaims.Create })]
         [HttpPost]
         public async Task<ActionResult<Response<ProgramDto>>> CreateAsync(CreateProgramDto entity)
@@ -76,11 +87,11 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
-        [ClaimRequirement("Permission", new string[] { Permissions.ProgramCourseClaims.Create })]
-        [HttpPost("AddCourses")]
-        public async Task<ActionResult<Response<ProgramDto>>> AddCourses(AddCoursesDto entity)
+        [ClaimRequirement("Permission", new string[] { Permissions.ProgramClaims.Create, Permissions.ProgramClaims.Edit })]
+        [HttpPost("AddFees")]
+        public async Task<ActionResult<Response<int>>> AddFees(List<AddSemesterFeesDto> entity)
         {
-            var result = await _programService.AddCourses(entity);
+            var result = await _programService.AddFees(entity);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 

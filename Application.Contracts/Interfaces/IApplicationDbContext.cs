@@ -103,7 +103,9 @@ namespace Application.Interfaces
         public DbSet<Qualification> Qualifications { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<FeeItem> FeeItems { get; set; }
+        public DbSet<ProgramSemester> ProgramSemester { get; set; }
         public DbSet<ProgramCourse> ProgramCourses { get; set; }
+        public DbSet<ProgramFees> ProgramFees { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

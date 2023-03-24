@@ -80,7 +80,6 @@ namespace Domain.Interfaces
         IQualificationRepository Qualification { get; }
         ISubjectRepository Subject { get; }
         IFeeItemRepository FeeItem { get; }
-        IProgramCourseRepository ProgramCourse { get; }
 
         Task SaveAsync();
         void CreateTransaction();

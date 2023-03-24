@@ -5,13 +5,9 @@ namespace Domain.Entities
 {
     public class ProgramFees : BaseEntity<int>
     {
-        public int ProgramId { get; private set; }
-        [ForeignKey("ProgramId")]
-        public Program Program { get; private set; }
-
-        public int SemesterId { get; private set; }
-        [ForeignKey("SemesterId")]
-        public Semester Semester { get; private set; }
+        public int ProgramSemesterId { get; private set; }
+        [ForeignKey("ProgramSemesterId")]
+        public ProgramSemester ProgramSemester { get; private set; }
 
         public int FeeItemId { get; private set; }
         [ForeignKey("FeeItemId")]
@@ -23,5 +19,13 @@ namespace Domain.Entities
         protected ProgramFees()
         {
         }
+
+        public ProgramFees(int programSemesterId, int feeItemId, decimal amount)
+        {
+            ProgramSemesterId = programSemesterId;
+            FeeItemId = feeItemId;
+            Amount = amount;
+        }
+
     }
 }
