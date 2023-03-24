@@ -42,24 +42,24 @@ namespace Domain.Entities
         public int? TransactionId { get; private set; }
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
-
-        public Guid GainOrLossOnDisposalAccountId { get; private set; }
-        [ForeignKey("GainOrLossOnDisposalAccountId")]
-        public Level4 GainOrLossOnDisposalAccount { get; private set; }
-
-        public Guid CashOrAccountsReceivableAccountId { get; private set; }
-        [ForeignKey("CashOrAccountsReceivableAccountId")]
-        public Level4 CashOrAccountsReceivableAccount { get; private set; }
+        public int? LedgerId { get; private set; }
+        public int? BusinessPartnerId { get; private set; }
+        [ForeignKey("BusinessPartnerId")]
+        public BusinessPartner BusinessPartner { get; private set; }
 
         public void SetTransactionId(int transactionId)
         {
             TransactionId = transactionId;
         }
+        public void SetLedgerId(int ledgerId)
+        {
+            LedgerId = ledgerId;
+        }
         protected Disposal()
         {
         }
 
-        public Disposal(int fixedAssetId, int productId, decimal cost, int salvageValue, int useFullLife, Guid accumulatedDepreciationId, decimal bookValue, DateTime disposalDate, decimal disposalValue, int warehouseId, int statusId)
+        public Disposal(int fixedAssetId, int productId, decimal cost, int salvageValue, int useFullLife, Guid accumulatedDepreciationId, decimal bookValue, DateTime disposalDate, decimal disposalValue, int warehouseId, int statusId, int? businessPartnerId)
         {
             FixedAssetId = fixedAssetId;
             ProductId = productId;
@@ -72,9 +72,18 @@ namespace Domain.Entities
             DisposalValue = disposalValue;
             WarehouseId = warehouseId;
             StatusId = statusId;
+            if (businessPartnerId!=null)
+            {
+                BusinessPartnerId = businessPartnerId.Value;
+            }
+            else
+            {
+                BusinessPartnerId = null;
+            }
+           
         }
 
-        public void Update(int fixedAssetId, int productId, decimal cost, int salvageValue, int useFullLife, Guid accumulatedDepreciationId, decimal bookValue, DateTime disposalDate, decimal disposalValue, int warehouseId, int statusId)
+        public void Update(int fixedAssetId, int productId, decimal cost, int salvageValue, int useFullLife, Guid accumulatedDepreciationId, decimal bookValue, DateTime disposalDate, decimal disposalValue, int warehouseId, int statusId, int? businessPartnerId)
         {
             FixedAssetId = fixedAssetId;
             ProductId = productId;
@@ -87,6 +96,14 @@ namespace Domain.Entities
             DisposalValue = disposalValue;
             WarehouseId = warehouseId;
             StatusId = statusId;
+            if (businessPartnerId != null)
+            {
+                BusinessPartnerId = businessPartnerId.Value;
+            }
+            else
+            {
+                BusinessPartnerId = null;
+            }
         }
 
         public void CreateCode()

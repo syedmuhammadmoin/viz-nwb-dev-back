@@ -19,17 +19,13 @@ namespace Application.Contracts.DTOs
         public Guid AccumulatedDepreciationId { get; set; }
         public string AccumulatedDepreciation { get; set; }
         public decimal AccumulatedDepreciationAmount { get; set; }
-        public Guid CashOrAccountsReceivableAccountId { get; set; }
-        public string CashOrAccountsReceivableAccount { get; set; }
-        public decimal CashOrAccountsReceivableAmount { get; set; }
-        public decimal GainOrLossOnDisposalAmount { get; set; }
-        public Guid GainOrLossOnDisposalAccountId { get; set; }
-        public string GainOrLossOnDisposalAccount { get; set; }
         public decimal BookValue { get; set; }
         public DateTime DisposalDate { get; set; }
         public decimal DisposalValue { get; set; }
         public int WarehouseId { get; set; }
         public string Warehouse { get; set; }
+        public int? BusinessPartnerId { get; set; }
+        public string BusinessPartnerName { get; set; }
         public int StatusId { get; set; }
         public string Status { get; set; }
         public DocumentStatus State { get; set; }

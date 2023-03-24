@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230320150152_UpdateFixedAsset")]
+    [Migration("20230323203225_UpdateFixedAsset")]
     partial class UpdateFixedAsset
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1807,8 +1807,8 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("BookValue")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("CashOrAccountsReceivableAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("BusinessPartnerId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Cost")
                         .HasColumnType("decimal(18,2)");
@@ -1833,11 +1833,11 @@ namespace Infrastructure.Migrations
                     b.Property<int>("FixedAssetId")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("GainOrLossOnDisposalAccountId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("LedgerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(100)
@@ -1868,11 +1868,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("AccumulatedDepreciationId");
 
-                    b.HasIndex("CashOrAccountsReceivableAccountId");
+                    b.HasIndex("BusinessPartnerId");
 
                     b.HasIndex("FixedAssetId");
-
-                    b.HasIndex("GainOrLossOnDisposalAccountId");
 
                     b.HasIndex("ProductId");
 
@@ -6890,21 +6888,14 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Level4", "CashOrAccountsReceivableAccount")
+                    b.HasOne("Domain.Entities.BusinessPartner", "BusinessPartner")
                         .WithMany()
-                        .HasForeignKey("CashOrAccountsReceivableAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("BusinessPartnerId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.FixedAsset", "FixedAsset")
                         .WithMany()
                         .HasForeignKey("FixedAssetId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Level4", "GainOrLossOnDisposalAccount")
-                        .WithMany()
-                        .HasForeignKey("GainOrLossOnDisposalAccountId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -6933,11 +6924,9 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("AccumulatedDepreciation");
 
-                    b.Navigation("CashOrAccountsReceivableAccount");
+                    b.Navigation("BusinessPartner");
 
                     b.Navigation("FixedAsset");
-
-                    b.Navigation("GainOrLossOnDisposalAccount");
 
                     b.Navigation("Product");
 
