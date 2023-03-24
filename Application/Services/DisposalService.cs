@@ -72,12 +72,12 @@ namespace Application.Services
             var disposal = await _unitOfWork.Disposal.GetById(id, new DisposalSpecs());
             if (disposal == null)
                 return new Response<DisposalDto>("Not found");
-            
+
             var disposalDto = _mapper.Map<DisposalDto>(disposal);
 
             ReturningRemarks(disposalDto);
             disposalDto.IsAllowedRole = false;
-            
+
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Disposal)).FirstOrDefault();
             if (workflow != null)
             {
@@ -100,83 +100,151 @@ namespace Application.Services
             return new Response<DisposalDto>(disposalDto, "Returning value");
         }
 
-        //private async Task AddToLedger(Disposal bill)
-        //{
-        //    var transaction = new Transactions(bill.Id, bill.DocNo, DocType.Disposal);
-        //    await _unitOfWork.Transaction.Add(transaction);
-        //    await _unitOfWork.SaveAsync();
+        private async Task AddToLedger(Disposal disposal)
+        {
 
-        //    bill.SetTransactionId(transaction.Id);
-        //    await _unitOfWork.SaveAsync();
+            var transaction = new Transactions(disposal.Id, disposal.DocNo, DocType.Disposal);
+            var product = await _unitOfWork.Product.GetById(disposal.ProductId);
+            var category = await _unitOfWork.Category.GetById(product.CategoryId);
+            var RevenueOrGainOnSaleofAssetAccountId = category.RevenueAccountId;
+            var ExpenseOrLossOnSaleofAssetAccountId = category.CostAccountId;
+            var CostAccountId = category.CostAccountId;
 
-        //    //Inserting line amount into recordledger table
-           
-               
+            var fixedAsset = await _unitOfWork.FixedAsset.GetById(disposal.FixedAssetId);
+            var profitOrLoss = disposal.DisposalValue - (disposal.Cost - fixedAsset.AccumulatedDepreciationAmount);
 
-        //        var drAccumulatedDepreciation = new RecordLedger(
-        //            transaction.Id,
-        //            line.AccountId,
-        //            bill.VendorId,
-        //            line.WarehouseId,
-        //            line.Description,
-        //            'D',
-        //            amount + tax + line.AnyOtherTax,
-        //            bill.CampusId,
-        //            bill.BillDate
-        //            );
+            await _unitOfWork.Transaction.Add(transaction);
+            await _unitOfWork.SaveAsync();
 
-        //        await _unitOfWork.Ledger.Add(drAccumulatedDepreciation);
-        //        await _unitOfWork.SaveAsync();
+            disposal.SetTransactionId(transaction.Id);
+            await _unitOfWork.SaveAsync();
 
+            var drAccumulatedDepreciation = new RecordLedger(
+                transaction.Id,
+                disposal.AccumulatedDepreciationId,
+                disposal.BusinessPartnerId,
+                fixedAsset.WarehouseId,
+                "Accumulated Depreciation",
+                'D',
+                fixedAsset.AccumulatedDepreciationAmount,
+                null,
+                disposal.DisposalDate,
+                disposal.FixedAssetId   
+                );
 
+            await _unitOfWork.Ledger.Add(drAccumulatedDepreciation);
+            await _unitOfWork.SaveAsync();
             
-        //    var getVendorAccount = await _unitOfWork.BusinessPartner.GetById(bill.VendorId);
-        //    var addPayableInLedger = new RecordLedger(
-        //                transaction.Id,
-        //                (Guid)getVendorAccount.AccountPayableId,
-        //                bill.VendorId,
-        //                null,
-        //                bill.DocNo,
-        //                'C',
-        //                bill.TotalAmount,
-        //                bill.CampusId,
-        //                bill.BillDate
-        //            );
+            if (disposal.BusinessPartnerId != null && disposal.DisposalValue != 0)
+            {
+                var getCustomerAccount = await _unitOfWork.BusinessPartner.GetById(disposal.BusinessPartnerId.Value);
+                var addReceivableInLedger = new RecordLedger(
+                            transaction.Id,
+                            (Guid)getCustomerAccount.AccountReceivableId,
+                            disposal.BusinessPartnerId,
+                            fixedAsset.WarehouseId,
+                            "Receivable",
+                            'D',
+                            disposal.DisposalValue,
+                            null,
+                            disposal.DisposalDate,
+                            disposal.FixedAssetId
+                        );
 
-        //    await _unitOfWork.Ledger.Add(addPayableInLedger);
-        //    await _unitOfWork.SaveAsync();
+                await _unitOfWork.Ledger.Add(addReceivableInLedger);
+                await _unitOfWork.SaveAsync();
+            }
 
-        //    //Getting transaction with Payment Transaction Id
-        //    var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(transaction.Id, true)).FirstOrDefault();
 
-        //    bill.SetLedgerId(getUnreconciledDocumentAmount.Id);
-        //    await _unitOfWork.SaveAsync();
-        //}
+            var addCostInLedger = new RecordLedger(
+                       transaction.Id,
+                       CostAccountId,
+                       disposal.BusinessPartnerId,
+                       null,
+                       "Cost",
+                       'C',
+                       disposal.Cost,
+                       null,
+                       disposal.DisposalDate,
+                       disposal.FixedAssetId
+                   );
+
+            await _unitOfWork.Ledger.Add(addCostInLedger);
+            await _unitOfWork.SaveAsync();
+
+            if (profitOrLoss > 0)
+            {
+
+                var GainInLedger = new RecordLedger(
+                       transaction.Id,
+                       (Guid)RevenueOrGainOnSaleofAssetAccountId,
+                       disposal.BusinessPartnerId,
+                       fixedAsset.WarehouseId,
+                       "Profit",
+                       'C',
+                       profitOrLoss,
+                       null,
+                       disposal.DisposalDate,
+                       disposal.FixedAssetId
+                   );
+
+                await _unitOfWork.Ledger.Add(GainInLedger);
+                await _unitOfWork.SaveAsync();
+
+            }
+            else if (profitOrLoss < 0)
+            {
+
+
+                var LossInLedger = new RecordLedger(
+                         transaction.Id,
+                        (Guid)ExpenseOrLossOnSaleofAssetAccountId,
+                        disposal.BusinessPartnerId,
+                         fixedAsset.WarehouseId,
+                         "Loss",
+                         'D',
+                         profitOrLoss * -1,
+                         null,
+                         disposal.DisposalDate,
+                         disposal.FixedAssetId
+                     );
+
+                await _unitOfWork.Ledger.Add(LossInLedger);
+                await _unitOfWork.SaveAsync();
+
+            }
+
+            //Getting transaction with Payment Transaction Id
+            var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(transaction.Id, true)).FirstOrDefault();
+
+            disposal.SetLedgerId(getUnreconciledDocumentAmount.Id);
+            await _unitOfWork.SaveAsync();
+        }
 
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
             var getDisposal = await _unitOfWork.Disposal.GetById(data.DocId, new DisposalSpecs());
             if (getDisposal == null)
             {
-                return new Response<bool>("Disposal with the input id not found");
+                return new Response<bool>(true,"Disposal with the input id not found");
             }
-            
+
             if (getDisposal.Status.State == DocumentStatus.Unpaid || getDisposal.Status.State == DocumentStatus.Partial || getDisposal.Status.State == DocumentStatus.Paid)
             {
-                return new Response<bool>("Disposal already approved");
+                return new Response<bool>(true, "Disposal already approved");
             }
-            
+
             var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Disposal)).FirstOrDefault();
             if (workflow == null)
             {
-                return new Response<bool>("No activated workflow found for this document");
+                return new Response<bool>(true, "No activated workflow found for this document");
             }
-            
+
             var transition = workflow.WorkflowTransitions
                     .FirstOrDefault(x => (x.CurrentStatusId == getDisposal.StatusId && x.Action == data.Action));
             if (transition == null)
             {
-                return new Response<bool>("No transition found");
+                return new Response<bool>(true, "No transition found");
             }
 
             // Creating object of getUSer class
@@ -208,7 +276,7 @@ namespace Application.Services
                         var getFixedAsset = await _unitOfWork.FixedAsset.GetById(getDisposal.FixedAssetId);
                         getFixedAsset.SetIsDisposedTrue();
                         // Ledger Entry
-                        //await AddToLedger();
+                        await AddToLedger(getDisposal);
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
                         return new Response<bool>(true, "Document Approved");
@@ -227,7 +295,7 @@ namespace Application.Services
 
             return new Response<bool>("User does not have allowed role");
         }
-        
+
         //Private methods
         private async Task<Response<DisposalDto>> Submit(CreateDisposalDto entity)
         {
@@ -251,13 +319,19 @@ namespace Application.Services
         {
             //Getting fixed asset
             var getFixedAsset = await _unitOfWork.FixedAsset.GetById((int)entity.FixedAssetId);
-            if(getFixedAsset == null)
+            if (getFixedAsset == null)
                 return new Response<DisposalDto>("Invalid fixed asset id");
 
+            if (getFixedAsset.DepreciationApplicability==false)
+            {
+                return new Response<DisposalDto>("Depreciation Applicability is disabled");
+
+            }
+            var bookvalue = getFixedAsset.Cost - getFixedAsset.AccumulatedDepreciationAmount;
             //Setting values in disposal
             var disposal = new Disposal((int)entity.FixedAssetId, getFixedAsset.ProductId, getFixedAsset.Cost,
                 getFixedAsset.SalvageValue, (int)getFixedAsset.UseFullLife, (Guid)getFixedAsset.AccumulatedDepreciationId,
-                0, entity.DisposalDate, entity.DisposalValue, getFixedAsset.WarehouseId, status);
+                bookvalue, entity.DisposalDate, entity.DisposalValue, getFixedAsset.WarehouseId, status, entity.BusinessPartnerId);
 
             //Saving in table
             _unitOfWork.CreateTransaction();
@@ -281,7 +355,7 @@ namespace Application.Services
             var result = await _unitOfWork.Disposal.GetById((int)entity.Id);
             if (result == null)
                 return new Response<DisposalDto>("Not found");
-            
+
             //Checking status
             if (result.StatusId != 1 && result.StatusId != 2)
                 return new Response<DisposalDto>("Only draft document can be edited");
@@ -294,7 +368,7 @@ namespace Application.Services
             //Updating disposal
             result.Update((int)entity.FixedAssetId, getFixedAsset.ProductId, getFixedAsset.Cost,
                 getFixedAsset.SalvageValue, (int)getFixedAsset.UseFullLife, (Guid)getFixedAsset.AccumulatedDepreciationId,
-                0, entity.DisposalDate, entity.DisposalValue, getFixedAsset.WarehouseId, status);
+                0, entity.DisposalDate, entity.DisposalValue, getFixedAsset.WarehouseId, status, entity.BusinessPartnerId);
 
             //saving data
             await _unitOfWork.SaveAsync();
