@@ -6,6 +6,8 @@ using Infrastructure;
 using Infrastructure.GlobalExceptionFilter;
 using Infrastructure.Seeds;
 using Infrastructure.Uow;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using System.Net.Mime;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -104,6 +106,15 @@ builder.Services.AddControllers(options => options.Filters.Add<ErrorHandlingFilt
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//For global authorize filter
+builder.Services.AddMvc(options =>
+{
+    var policy = new AuthorizationPolicyBuilder()
+    .RequireAuthenticatedUser()
+    .Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
+});
 
 builder.Services.AddCors(options =>
 {
