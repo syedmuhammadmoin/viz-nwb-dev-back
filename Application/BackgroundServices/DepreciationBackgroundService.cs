@@ -303,26 +303,51 @@ namespace Application.BackgroundServices
         {
             using (var scope = _services.CreateScope())
             {
-
-
-                List<DateTime> dateTimes = new List<DateTime>();
-                int numberofMonth = 12;
-                int DepreciationMonth = (int)Month.January;
-                int DepreciationYear = 2020;
-                int DepreciationDay = DateTime.DaysInMonth(DepreciationYear, DepreciationMonth);
-                DateTime depreciationDate = new DateTime(DepreciationYear, DepreciationMonth, DepreciationDay); // DateTime.Now;
-
-                dateTimes.Add(depreciationDate);
-
-
-                for (int i = 1; i < numberofMonth; i++)
+                bool executeForTestingPurpose = false;
+                
+                if (executeForTestingPurpose)
                 {
-                    dateTimes.Add(depreciationDate.AddMonths(i));
+                    List<DateTime> dateTimes = new List<DateTime>();
+                    int numberofMonth = 12;
+                    int DepreciationMonth = (int)Month.January;
+                    int DepreciationYear = 2020;
+                    int DepreciationDay = DateTime.DaysInMonth(DepreciationYear, DepreciationMonth);
+                    DateTime depreciationDate = new DateTime(DepreciationYear, DepreciationMonth, DepreciationDay); // DateTime.Now;
 
+                    dateTimes.Add(depreciationDate);
+
+
+                    for (int i = 1; i < numberofMonth; i++)
+                    {
+                        dateTimes.Add(depreciationDate.AddMonths(i));
+
+                    }
+                    foreach (var date in dateTimes)
+                    {
+
+                        var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
+                        var mapper = scope.ServiceProvider.GetService<IMapper>();
+                        var unitOfWork = new UnitOfWork(dbContext);
+
+                        var createDepreciationRegisterDto = dbContext.FixedAssets
+                            .Where(i => i.IsDisposed == false && i.IsHeldforSaleOrDisposal == false
+                            && i.DepreciationApplicability == true)
+                            .Select(i => new CreateDepreciationRegisterDto
+                            {
+                                FixedAssetId = i.Id,
+                                TransactionDate = date,
+                                IsAutomatedCalculation = true,
+                                IsGoingtoDispose = false
+                            }).ToList();
+
+                        foreach (var item in createDepreciationRegisterDto)
+                        {
+                            await Depreciate(item, unitOfWork, mapper);
+                        }
+                    }
                 }
-                foreach (var date in dateTimes)
+                else
                 {
-
                     var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
                     var mapper = scope.ServiceProvider.GetService<IMapper>();
                     var unitOfWork = new UnitOfWork(dbContext);
@@ -333,7 +358,7 @@ namespace Application.BackgroundServices
                         .Select(i => new CreateDepreciationRegisterDto
                         {
                             FixedAssetId = i.Id,
-                            TransactionDate = date,
+                            TransactionDate = DateTime.Now,
                             IsAutomatedCalculation = true,
                             IsGoingtoDispose = false
                         }).ToList();
