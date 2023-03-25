@@ -8,6 +8,7 @@ using Domain.Entities;
 using Infrastructure.Context;
 using Infrastructure.Specifications;
 using Infrastructure.Uow;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -18,33 +19,52 @@ namespace Application.BackgroundServices
         private Timer _timer;
         private readonly IServiceProvider _services;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
-        public DepreciationBackgroundService(IServiceProvider services, IMapper mapper)
+
+        public DepreciationBackgroundService(IServiceProvider services, IMapper mapper,  IConfiguration configuration)
         {
             //_mapper = mapper;
             _services = services;
+            _configuration = configuration;
 
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
+
+            var OgranzationDepreciationDateTime = _configuration["Organization:DepreciationDateTime"];
+            var depreciationTime = Convert.ToDateTime(OgranzationDepreciationDateTime);
+
+            int DepreciationMonth = DateTime.Now.Month;
+            int DepreciationYear = DateTime.Now.Year;
+            int DepreciationDay = DateTime.DaysInMonth(DepreciationYear, DepreciationMonth); //DateTime.Now.Day; to run immediately
+            int DepreciationHour = depreciationTime.Hour;
+            int DepreciationMinute = depreciationTime.Minute;
+
+
+            DateTime depreciationDate = new DateTime(DepreciationYear, DepreciationMonth, DepreciationDay,DepreciationHour,DepreciationMinute,0);
+
+
             // Set the time for the first run at 3PM
             var now = DateTime.Now;
-            var scheduledTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second + 1);
+            
+            var scheduledTime = depreciationDate;
 
             if (now > scheduledTime)
             {
-                //scheduledTime.AddMonths(1)
-                scheduledTime = scheduledTime.AddDays(1);// Todo: add days as number of days in current month timer will be Next month Last Day at 11:00 pm
+                
+                scheduledTime = scheduledTime.AddMonths(1);// Todo: add time to call next time AddSeconds(10); to run 10 second interval
             }
 
-            var interval = scheduledTime - now;
+            TimeSpan delay = scheduledTime - now;
+             
 
             // Set the timer to run the task at 3PM every day
-            _timer = new Timer(DoWork, null, interval, TimeSpan.FromDays(1));
+            _timer = new Timer(DoWork, null, (int)delay.TotalMilliseconds, Timeout.Infinite);
             return Task.CompletedTask;
         }
-
+        
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _timer?.Change(Timeout.Infinite, 0);
@@ -277,11 +297,13 @@ namespace Application.BackgroundServices
             return new Response<FixedAssetDto>(null, "Created successfully");
 
         }
+
+       
         private async void DoWork(object state)
         {
             using (var scope = _services.CreateScope())
             {
-               
+
 
                 List<DateTime> dateTimes = new List<DateTime>();
                 int numberofMonth = 12;
@@ -319,8 +341,10 @@ namespace Application.BackgroundServices
                     foreach (var item in createDepreciationRegisterDto)
                     {
                         await Depreciate(item, unitOfWork, mapper);
-                    } 
+                    }
                 }
+
+
             }
         }
 
