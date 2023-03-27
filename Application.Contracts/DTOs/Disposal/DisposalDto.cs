@@ -31,6 +31,8 @@ namespace Application.Contracts.DTOs
         public int StatusId { get; set; }
         public int? LedgerId { get; set; }
         public string Status { get; set; }
+        public int CampusId { get;  set; }
+
         public DocumentStatus State { get; set; }
         public IEnumerable<RemarksDto> RemarksList { get; set; }
         public bool IsAllowedRole { get; set; }

@@ -333,6 +333,12 @@ namespace Application.Services
             var bookvalue = getFixedAsset.Cost - getFixedAsset.AccumulatedDepreciationAmount;
 
             var getCustomerAccount = await _unitOfWork.BusinessPartner.GetById(entity.BusinessPartnerId.Value);
+
+           var Warehouse =  await _unitOfWork.Warehouse.GetById(getFixedAsset.WarehouseId);
+            var campusId = Warehouse.CampusId;
+
+
+
             Guid? accountRecieveable = null;
             if (getCustomerAccount != null) { 
             
@@ -341,7 +347,7 @@ namespace Application.Services
             //Setting values in disposal
             var disposal = new Disposal((int)entity.FixedAssetId, getFixedAsset.ProductId, getFixedAsset.Cost,
                 getFixedAsset.SalvageValue, (int)getFixedAsset.UseFullLife, (Guid)getFixedAsset.AccumulatedDepreciationId,
-                bookvalue, entity.DisposalDate, entity.DisposalValue, getFixedAsset.WarehouseId, status, entity.BusinessPartnerId, accountRecieveable);
+                bookvalue, entity.DisposalDate, entity.DisposalValue, getFixedAsset.WarehouseId, status, entity.BusinessPartnerId, accountRecieveable, campusId);
 
             //Saving in table
             _unitOfWork.CreateTransaction();
@@ -376,6 +382,8 @@ namespace Application.Services
                 return new Response<DisposalDto>("Invalid fixed asset id");
 
             var getCustomerAccount = await _unitOfWork.BusinessPartner.GetById(entity.BusinessPartnerId.Value);
+            var Warehouse = await _unitOfWork.Warehouse.GetById(getFixedAsset.WarehouseId);
+            var campusId = Warehouse.CampusId;
             Guid? accountRecieveable = null;
             if (getCustomerAccount != null)
             {
@@ -386,7 +394,7 @@ namespace Application.Services
             //Updating disposal
             result.Update((int)entity.FixedAssetId, getFixedAsset.ProductId, getFixedAsset.Cost,
                 getFixedAsset.SalvageValue, (int)getFixedAsset.UseFullLife, (Guid)getFixedAsset.AccumulatedDepreciationId,
-                0, entity.DisposalDate, entity.DisposalValue, getFixedAsset.WarehouseId, status, entity.BusinessPartnerId, accountRecieveable);
+                0, entity.DisposalDate, entity.DisposalValue, getFixedAsset.WarehouseId, status, entity.BusinessPartnerId, accountRecieveable, campusId);
 
             //saving data
             await _unitOfWork.SaveAsync();
