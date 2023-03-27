@@ -153,7 +153,7 @@ namespace Application.Services
 
                 await _unitOfWork.Ledger.Add(addReceivableInLedger);
                 await _unitOfWork.SaveAsync();
-
+                
                 //Getting transaction with Payment Transaction Id
                 var getUnreconciledDocumentAmount = _unitOfWork.Ledger.Find(new LedgerSpecs(transaction.Id, true)).FirstOrDefault();
 
@@ -331,10 +331,17 @@ namespace Application.Services
 
             }
             var bookvalue = getFixedAsset.Cost - getFixedAsset.AccumulatedDepreciationAmount;
+
+            var getCustomerAccount = await _unitOfWork.BusinessPartner.GetById(entity.BusinessPartnerId.Value);
+            Guid? accountRecieveable = null;
+            if (getCustomerAccount != null) { 
+            
+             accountRecieveable = getCustomerAccount.AccountReceivableId;
+            }
             //Setting values in disposal
             var disposal = new Disposal((int)entity.FixedAssetId, getFixedAsset.ProductId, getFixedAsset.Cost,
                 getFixedAsset.SalvageValue, (int)getFixedAsset.UseFullLife, (Guid)getFixedAsset.AccumulatedDepreciationId,
-                bookvalue, entity.DisposalDate, entity.DisposalValue, getFixedAsset.WarehouseId, status, entity.BusinessPartnerId);
+                bookvalue, entity.DisposalDate, entity.DisposalValue, getFixedAsset.WarehouseId, status, entity.BusinessPartnerId, accountRecieveable);
 
             //Saving in table
             _unitOfWork.CreateTransaction();
@@ -368,10 +375,18 @@ namespace Application.Services
             if (getFixedAsset == null)
                 return new Response<DisposalDto>("Invalid fixed asset id");
 
+            var getCustomerAccount = await _unitOfWork.BusinessPartner.GetById(entity.BusinessPartnerId.Value);
+            Guid? accountRecieveable = null;
+            if (getCustomerAccount != null)
+            {
+
+                accountRecieveable = getCustomerAccount.AccountReceivableId;
+            }
+
             //Updating disposal
             result.Update((int)entity.FixedAssetId, getFixedAsset.ProductId, getFixedAsset.Cost,
                 getFixedAsset.SalvageValue, (int)getFixedAsset.UseFullLife, (Guid)getFixedAsset.AccumulatedDepreciationId,
-                0, entity.DisposalDate, entity.DisposalValue, getFixedAsset.WarehouseId, status, entity.BusinessPartnerId);
+                0, entity.DisposalDate, entity.DisposalValue, getFixedAsset.WarehouseId, status, entity.BusinessPartnerId, accountRecieveable);
 
             //saving data
             await _unitOfWork.SaveAsync();

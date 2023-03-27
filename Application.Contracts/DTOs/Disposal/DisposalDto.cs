@@ -19,6 +19,8 @@ namespace Application.Contracts.DTOs
         public Guid AccumulatedDepreciationId { get; set; }
         public string AccumulatedDepreciation { get; set; }
         public decimal AccumulatedDepreciationAmount { get; set; }
+        public Guid? AccountReceivableId { get; set; }
+        public string AccountReceivable { get; set; }
         public decimal BookValue { get; set; }
         public DateTime DisposalDate { get; set; }
         public decimal DisposalValue { get; set; }
