@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230323203225_UpdateFixedAsset")]
+    [Migration("20230327114227_UpdateFixedAsset")]
     partial class UpdateFixedAsset
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1800,6 +1800,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<Guid?>("AccountReceivableId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AccumulatedDepreciationId")
                         .HasColumnType("uniqueidentifier");

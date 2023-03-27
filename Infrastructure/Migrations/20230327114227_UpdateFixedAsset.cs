@@ -29,6 +29,12 @@ namespace Infrastructure.Migrations
                 nullable: false,
                 defaultValue: 0);
 
+            migrationBuilder.AddColumn<Guid>(
+                name: "AccountReceivableId",
+                table: "Disposals",
+                type: "uniqueidentifier",
+                nullable: true);
+
             migrationBuilder.AddColumn<int>(
                 name: "BusinessPartnerId",
                 table: "Disposals",
@@ -195,6 +201,10 @@ namespace Infrastructure.Migrations
             migrationBuilder.DropColumn(
                 name: "TotalActiveDays",
                 table: "FixedAssets");
+
+            migrationBuilder.DropColumn(
+                name: "AccountReceivableId",
+                table: "Disposals");
 
             migrationBuilder.DropColumn(
                 name: "BusinessPartnerId",
