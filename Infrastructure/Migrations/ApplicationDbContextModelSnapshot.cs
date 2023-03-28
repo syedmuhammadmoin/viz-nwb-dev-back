@@ -1811,6 +1811,9 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("BusinessPartnerId")
                         .HasColumnType("int");
 
+                    b.Property<int>("CampusId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Cost")
                         .HasColumnType("decimal(18,2)");
 
@@ -1870,6 +1873,8 @@ namespace Infrastructure.Migrations
                     b.HasIndex("AccumulatedDepreciationId");
 
                     b.HasIndex("BusinessPartnerId");
+
+                    b.HasIndex("CampusId");
 
                     b.HasIndex("FixedAssetId");
 
@@ -6894,6 +6899,12 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("BusinessPartnerId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Domain.Entities.Campus", "Campus")
+                        .WithMany()
+                        .HasForeignKey("CampusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.FixedAsset", "FixedAsset")
                         .WithMany()
                         .HasForeignKey("FixedAssetId")
@@ -6926,6 +6937,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("AccumulatedDepreciation");
 
                     b.Navigation("BusinessPartner");
+
+                    b.Navigation("Campus");
 
                     b.Navigation("FixedAsset");
 
