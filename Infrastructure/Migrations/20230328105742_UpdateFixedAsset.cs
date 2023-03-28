@@ -29,11 +29,24 @@ namespace Infrastructure.Migrations
                 nullable: false,
                 defaultValue: 0);
 
+            migrationBuilder.AddColumn<Guid>(
+                name: "AccountReceivableId",
+                table: "Disposals",
+                type: "uniqueidentifier",
+                nullable: true);
+
             migrationBuilder.AddColumn<int>(
                 name: "BusinessPartnerId",
                 table: "Disposals",
                 type: "int",
                 nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "CampusId",
+                table: "Disposals",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
                 name: "LedgerId",
@@ -113,6 +126,11 @@ namespace Infrastructure.Migrations
                 column: "BusinessPartnerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Disposals_CampusId",
+                table: "Disposals",
+                column: "CampusId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Disposals_TransactionId",
                 table: "Disposals",
                 column: "TransactionId");
@@ -132,6 +150,14 @@ namespace Infrastructure.Migrations
                 table: "Disposals",
                 column: "BusinessPartnerId",
                 principalTable: "BusinessPartners",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Disposals_Campuses_CampusId",
+                table: "Disposals",
+                column: "CampusId",
+                principalTable: "Campuses",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
 
@@ -159,6 +185,10 @@ namespace Infrastructure.Migrations
                 table: "Disposals");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_Disposals_Campuses_CampusId",
+                table: "Disposals");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_Disposals_Transactions_TransactionId",
                 table: "Disposals");
 
@@ -181,6 +211,10 @@ namespace Infrastructure.Migrations
                 table: "Disposals");
 
             migrationBuilder.DropIndex(
+                name: "IX_Disposals_CampusId",
+                table: "Disposals");
+
+            migrationBuilder.DropIndex(
                 name: "IX_Disposals_TransactionId",
                 table: "Disposals");
 
@@ -197,7 +231,15 @@ namespace Infrastructure.Migrations
                 table: "FixedAssets");
 
             migrationBuilder.DropColumn(
+                name: "AccountReceivableId",
+                table: "Disposals");
+
+            migrationBuilder.DropColumn(
                 name: "BusinessPartnerId",
+                table: "Disposals");
+
+            migrationBuilder.DropColumn(
+                name: "CampusId",
                 table: "Disposals");
 
             migrationBuilder.DropColumn(

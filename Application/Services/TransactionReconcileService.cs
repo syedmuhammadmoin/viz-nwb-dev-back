@@ -151,6 +151,10 @@ namespace Application.Services
                         var payrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(updateLedger.TransactionId)).FirstOrDefault();
                         payrollTransaction.SetStatus(5); // Paid
                         break;
+                    case DocType.Disposal:
+                        var disposal = _unitOfWork.Disposal.Find(new DisposalSpecs(updateLedger.TransactionId)).FirstOrDefault();
+                        disposal.SetStatus(5); // Paid
+                        break;
                 }
             }
             else
@@ -189,6 +193,10 @@ namespace Application.Services
                     case DocType.PayrollTransaction:
                         var payrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(updateLedger.TransactionId)).FirstOrDefault();
                         payrollTransaction.SetStatus(4); // Partial
+                        break;
+                    case DocType.Disposal:
+                        var disposal = _unitOfWork.Disposal.Find(new DisposalSpecs(updateLedger.TransactionId)).FirstOrDefault();
+                        disposal.SetStatus(4); // Partial
                         break;
                 }
             }

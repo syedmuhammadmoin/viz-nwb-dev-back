@@ -43,9 +43,14 @@ namespace Domain.Entities
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
         public int? LedgerId { get; private set; }
+        public Guid? AccountReceivableId { get; private set; }
+        
         public int? BusinessPartnerId { get; private set; }
         [ForeignKey("BusinessPartnerId")]
         public BusinessPartner BusinessPartner { get; private set; }
+        public int CampusId { get; private set; }
+        [ForeignKey("CampusId")]
+        public Campus Campus { get; private set; }
 
         public void SetTransactionId(int transactionId)
         {
@@ -59,31 +64,9 @@ namespace Domain.Entities
         {
         }
 
-        public Disposal(int fixedAssetId, int productId, decimal cost, int salvageValue, int useFullLife, Guid accumulatedDepreciationId, decimal bookValue, DateTime disposalDate, decimal disposalValue, int warehouseId, int statusId, int? businessPartnerId)
-        {
-            FixedAssetId = fixedAssetId;
-            ProductId = productId;
-            Cost = cost;
-            SalvageValue = salvageValue;
-            UseFullLife = useFullLife;
-            AccumulatedDepreciationId = accumulatedDepreciationId;
-            BookValue = bookValue;
-            DisposalDate = disposalDate;
-            DisposalValue = disposalValue;
-            WarehouseId = warehouseId;
-            StatusId = statusId;
-            if (businessPartnerId!=null)
-            {
-                BusinessPartnerId = businessPartnerId.Value;
-            }
-            else
-            {
-                BusinessPartnerId = null;
-            }
-           
-        }
+       
 
-        public void Update(int fixedAssetId, int productId, decimal cost, int salvageValue, int useFullLife, Guid accumulatedDepreciationId, decimal bookValue, DateTime disposalDate, decimal disposalValue, int warehouseId, int statusId, int? businessPartnerId)
+        public Disposal(int fixedAssetId, int productId, decimal cost, int salvageValue, int useFullLife, Guid accumulatedDepreciationId, decimal bookValue, DateTime disposalDate, decimal disposalValue, int warehouseId, int statusId,  int? businessPartnerId, Guid? accountReceivableId, int campusId)
         {
             FixedAssetId = fixedAssetId;
             ProductId = productId;
@@ -95,6 +78,7 @@ namespace Domain.Entities
             DisposalDate = disposalDate;
             DisposalValue = disposalValue;
             WarehouseId = warehouseId;
+            CampusId = campusId;
             StatusId = statusId;
             if (businessPartnerId != null)
             {
@@ -104,6 +88,49 @@ namespace Domain.Entities
             {
                 BusinessPartnerId = null;
             }
+            if (accountReceivableId != null)
+            {
+                AccountReceivableId = accountReceivableId.Value;
+            }
+            else
+            {
+                AccountReceivableId = null;
+            }
+
+        }
+
+
+        public void Update(int fixedAssetId, int productId, decimal cost, int salvageValue, int useFullLife, Guid accumulatedDepreciationId, decimal bookValue, DateTime disposalDate, decimal disposalValue, int warehouseId, int statusId, int? businessPartnerId, Guid? accountReceivableId, int campusId)
+        {
+            FixedAssetId = fixedAssetId;
+            ProductId = productId;
+            Cost = cost;
+            SalvageValue = salvageValue;
+            UseFullLife = useFullLife;
+            AccumulatedDepreciationId = accumulatedDepreciationId;
+            BookValue = bookValue;
+            DisposalDate = disposalDate;
+            DisposalValue = disposalValue;
+            WarehouseId = warehouseId;
+            StatusId = statusId;
+            CampusId = campusId;
+            if (businessPartnerId != null)
+            {
+                BusinessPartnerId = businessPartnerId.Value;
+            }
+            else
+            {
+                BusinessPartnerId = null;
+            }
+            if (accountReceivableId != null)
+            {
+                AccountReceivableId = accountReceivableId.Value;
+            }
+            else
+            {
+                AccountReceivableId = null;
+            }
+
         }
 
         public void CreateCode()

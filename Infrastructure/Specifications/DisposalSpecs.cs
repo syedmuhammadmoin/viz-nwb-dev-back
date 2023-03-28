@@ -6,6 +6,13 @@ namespace Infrastructure.Specifications
 {
     public class DisposalSpecs : BaseSpecification<Disposal>
     {
+        public DisposalSpecs(int transactionId) :
+            base(p => (p.Status.State == DocumentStatus.Unpaid
+             || p.Status.State == DocumentStatus.Partial) && (p.TransactionId == transactionId))
+        {
+
+            AddInclude(i => i.Status);
+        }
         public DisposalSpecs(TransactionFormFilter filter, bool isTotalRecord)
              : base(c => c.Product.ProductName.Contains(filter.Name != null ? filter.Name : ""))
         {

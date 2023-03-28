@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230323203225_UpdateFixedAsset")]
+    [Migration("20230328105742_UpdateFixedAsset")]
     partial class UpdateFixedAsset
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1801,6 +1801,9 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<Guid?>("AccountReceivableId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("AccumulatedDepreciationId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1808,6 +1811,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("BusinessPartnerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CampusId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Cost")
@@ -1869,6 +1875,8 @@ namespace Infrastructure.Migrations
                     b.HasIndex("AccumulatedDepreciationId");
 
                     b.HasIndex("BusinessPartnerId");
+
+                    b.HasIndex("CampusId");
 
                     b.HasIndex("FixedAssetId");
 
@@ -6893,6 +6901,12 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("BusinessPartnerId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Domain.Entities.Campus", "Campus")
+                        .WithMany()
+                        .HasForeignKey("CampusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.FixedAsset", "FixedAsset")
                         .WithMany()
                         .HasForeignKey("FixedAssetId")
@@ -6925,6 +6939,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("AccumulatedDepreciation");
 
                     b.Navigation("BusinessPartner");
+
+                    b.Navigation("Campus");
 
                     b.Navigation("FixedAsset");
 

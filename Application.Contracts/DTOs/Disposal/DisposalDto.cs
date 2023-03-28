@@ -19,6 +19,8 @@ namespace Application.Contracts.DTOs
         public Guid AccumulatedDepreciationId { get; set; }
         public string AccumulatedDepreciation { get; set; }
         public decimal AccumulatedDepreciationAmount { get; set; }
+        public Guid? AccountReceivableId { get; set; }
+        public string AccountReceivable { get; set; }
         public decimal BookValue { get; set; }
         public DateTime DisposalDate { get; set; }
         public decimal DisposalValue { get; set; }
@@ -27,7 +29,10 @@ namespace Application.Contracts.DTOs
         public int? BusinessPartnerId { get; set; }
         public string BusinessPartnerName { get; set; }
         public int StatusId { get; set; }
+        public int? LedgerId { get; set; }
         public string Status { get; set; }
+        public int CampusId { get;  set; }
+
         public DocumentStatus State { get; set; }
         public IEnumerable<RemarksDto> RemarksList { get; set; }
         public bool IsAllowedRole { get; set; }
