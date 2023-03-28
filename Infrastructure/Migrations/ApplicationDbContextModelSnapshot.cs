@@ -1760,53 +1760,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("DepreciationRegister");
                 });
 
-            modelBuilder.Entity("Domain.Entities.DepreciationRegister", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("DepreciationAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("FixedAssetId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsAutomatedCalculation")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("TransactionDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FixedAssetId");
-
-                    b.ToTable("DepreciationRegister", (string)null);
-                });
-
             modelBuilder.Entity("Domain.Entities.Designation", b =>
                 {
                     b.Property<int>("Id")
@@ -1846,6 +1799,9 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<Guid?>("AccountReceivableId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("AccumulatedDepreciationId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1853,6 +1809,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("BusinessPartnerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CampusId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Cost")
@@ -1914,6 +1873,8 @@ namespace Infrastructure.Migrations
                     b.HasIndex("AccumulatedDepreciationId");
 
                     b.HasIndex("BusinessPartnerId");
+
+                    b.HasIndex("CampusId");
 
                     b.HasIndex("FixedAssetId");
 
@@ -2394,50 +2355,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("MasterId");
 
                     b.ToTable("FixedAssetLines");
-                });
-
-            modelBuilder.Entity("Domain.Entities.FixedAssetLines", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("ActiveDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ActiveDays")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("InactiveDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MasterId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MasterId");
-
-                    b.ToTable("FixedAssetLines", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.GoodsReturnNoteLines", b =>
@@ -6982,6 +6899,12 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("BusinessPartnerId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Domain.Entities.Campus", "Campus")
+                        .WithMany()
+                        .HasForeignKey("CampusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.FixedAsset", "FixedAsset")
                         .WithMany()
                         .HasForeignKey("FixedAssetId")
@@ -7014,6 +6937,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("AccumulatedDepreciation");
 
                     b.Navigation("BusinessPartner");
+
+                    b.Navigation("Campus");
 
                     b.Navigation("FixedAsset");
 
