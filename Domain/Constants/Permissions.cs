@@ -472,6 +472,46 @@
             public const string Delete = "Permissions.Admission.FeeItemClaims.Delete";
         }
 
+        public static class CountryClaims
+        {
+            public const string View = "Permissions.Admission.CountryClaims.View";
+            public const string Create = "Permissions.Admission.CountryClaims.Create";
+            public const string Edit = "Permissions.Admission.CountryClaims.Edit";
+            public const string Delete = "Permissions.Admission.CountryClaims.Delete";
+        }
+
+        public static class StateClaims
+        {
+            public const string View = "Permissions.Admission.StateClaims.View";
+            public const string Create = "Permissions.Admission.StateClaims.Create";
+            public const string Edit = "Permissions.Admission.StateClaims.Edit";
+            public const string Delete = "Permissions.Admission.StateClaims.Delete";
+        }
+
+        public static class CityClaims
+        {
+            public const string View = "Permissions.Admission.CityClaims.View";
+            public const string Create = "Permissions.Admission.CityClaims.Create";
+            public const string Edit = "Permissions.Admission.CityClaims.Edit";
+            public const string Delete = "Permissions.Admission.CityClaims.Delete";
+        }
+
+        public static class DistrictClaims
+        {
+            public const string View = "Permissions.Admission.DistrictClaims.View";
+            public const string Create = "Permissions.Admission.DistrictClaims.Create";
+            public const string Edit = "Permissions.Admission.DistrictClaims.Edit";
+            public const string Delete = "Permissions.Admission.DistrictClaims.Delete";
+        }
+
+        public static class DomicileClaims
+        {
+            public const string View = "Permissions.Admission.DomicileClaims.View";
+            public const string Create = "Permissions.Admission.DomicileClaims.Create";
+            public const string Edit = "Permissions.Admission.DomicileClaims.Edit";
+            public const string Delete = "Permissions.Admission.DomicileClaims.Delete";
+        }
+
         //Reporting Form
         public static class ChartOfAccountClaims
         {

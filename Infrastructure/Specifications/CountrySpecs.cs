@@ -3,9 +3,9 @@ using Domain.Entities;
 
 namespace Infrastructure.Specifications
 {
-    public class SubjectSpecs : BaseSpecification<Subject>
+    public class CountrySpecs : BaseSpecification<Country>
     {
-        public SubjectSpecs(TransactionFormFilter filter, bool isTotalRecord)
+        public CountrySpecs(TransactionFormFilter filter, bool isTotalRecord)
            : base(c => c.Name.Contains(filter.Name != null ? filter.Name : ""))
         {
             if (!isTotalRecord)
@@ -13,13 +13,7 @@ namespace Infrastructure.Specifications
                 var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
                 ApplyOrderByDescending(i => i.Id);
-                AddInclude(i => i.Qualification);
             }
-        }
-
-        public SubjectSpecs()
-        {
-            AddInclude(i => i.Qualification);
         }
     }
 }

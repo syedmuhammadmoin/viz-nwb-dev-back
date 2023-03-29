@@ -84,6 +84,11 @@ builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IQualificationService, QualificationService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped<IFeeItemService, FeeItemService>();
+builder.Services.AddScoped<ICountryService, CountryService>();
+builder.Services.AddScoped<IStateService, StateService>();
+builder.Services.AddScoped<ICityService, CityService>();
+builder.Services.AddScoped<IDistrictService, DistrictService>();
+builder.Services.AddScoped<IDomicileService, DomicileService>();
 
 builder.Services.AddHostedService<DepreciationBackgroundService>();
 

@@ -86,6 +86,11 @@ namespace Infrastructure.Uow
         public IQualificationRepository Qualification { get; private set; }
         public ISubjectRepository Subject { get; private set; }
         public IFeeItemRepository FeeItem { get; private set; }
+        public ICountryRepository Country { get; private set; }
+        public IStateRepository State { get; private set; }
+        public ICityRepository City { get; private set; }
+        public IDistrictRepository District { get; private set; }
+        public IDomicileRepository Domicile { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -160,6 +165,11 @@ namespace Infrastructure.Uow
             Qualification = new QualificationRepository(context);
             Subject = new SubjectRepository(context);
             FeeItem = new FeeItemRepository(context);
+            Country = new CountryRepository(context);
+            State = new StateRepository(context);
+            City = new CityRepository(context);
+            District = new DistrictRepository(context);
+            Domicile = new DomicileRepository(context);
         }
 
         public async Task SaveAsync()

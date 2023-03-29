@@ -32,7 +32,7 @@ namespace Application.Services
 
         public async Task<Response<SubjectDto>> GetByIdAsync(int id)
         {
-            var result = await _unitOfWork.Subject.GetById(id);
+            var result = await _unitOfWork.Subject.GetById(id, new SubjectSpecs());
             if (result == null)
                 return new Response<SubjectDto>("Not found");
 
@@ -48,7 +48,7 @@ namespace Application.Services
             return new Response<List<SubjectDto>>(_mapper.Map<List<SubjectDto>>(result), "Returning List");
         }
 
-        public async Task<Response<SubjectDto>> CreateAsync(SubjectDto entity)
+        public async Task<Response<SubjectDto>> CreateAsync(CreateSubjectDto entity)
         {
             var result = await _unitOfWork.Subject.Add(_mapper.Map<Subject>(entity));
             await _unitOfWork.SaveAsync();
@@ -60,7 +60,7 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public async Task<Response<SubjectDto>> UpdateAsync(SubjectDto entity)
+        public async Task<Response<SubjectDto>> UpdateAsync(CreateSubjectDto entity)
         {
             var result = await _unitOfWork.Subject.GetById((int)entity.Id);
             if (result == null)

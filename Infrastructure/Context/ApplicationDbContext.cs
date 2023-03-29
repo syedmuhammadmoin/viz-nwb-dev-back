@@ -111,6 +111,11 @@ namespace Infrastructure.Context
         public DbSet<ProgramSemester> ProgramSemester { get; set; }
         public DbSet<ProgramCourse> ProgramCourses { get; set; }
         public DbSet<ProgramFees> ProgramFees { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<State> States { get; set; }
+        public DbSet<City> Cities { get; set; }
+        public DbSet<District> Districts { get; set; }
+        public DbSet<Domicile> Domiciles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

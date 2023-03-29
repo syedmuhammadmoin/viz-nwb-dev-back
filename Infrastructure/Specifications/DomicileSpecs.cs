@@ -3,9 +3,9 @@ using Domain.Entities;
 
 namespace Infrastructure.Specifications
 {
-    public class SubjectSpecs : BaseSpecification<Subject>
+    public class DomicileSpecs : BaseSpecification<Domicile>
     {
-        public SubjectSpecs(TransactionFormFilter filter, bool isTotalRecord)
+        public DomicileSpecs(TransactionFormFilter filter, bool isTotalRecord)
            : base(c => c.Name.Contains(filter.Name != null ? filter.Name : ""))
         {
             if (!isTotalRecord)
@@ -13,13 +13,17 @@ namespace Infrastructure.Specifications
                 var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
                 ApplyOrderByDescending(i => i.Id);
-                AddInclude(i => i.Qualification);
+                AddInclude(i => i.District);
             }
         }
 
-        public SubjectSpecs()
+        public DomicileSpecs()
         {
-            AddInclude(i => i.Qualification);
+            AddInclude(i => i.District);
+        }
+
+        public DomicileSpecs(int districtId) : base (i => i.DistrictId == districtId)
+        {
         }
     }
 }

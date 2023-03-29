@@ -1,10 +1,10 @@
 ﻿namespace Application.Contracts.DTOs
 {
-    public class SubjectDto
+    public class DomicileDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int QualificationId { get; set; }
-        public string Qualification { get; set; }
+        public int DistrictId { get; set; }
+        public string District { get; set; }
     }
 }

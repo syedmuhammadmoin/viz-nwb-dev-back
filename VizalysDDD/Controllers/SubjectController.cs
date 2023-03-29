@@ -53,7 +53,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.SubjectClaims.Create })]
         [HttpPost]
-        public async Task<ActionResult<Response<SubjectDto>>> CreateAsync(SubjectDto entity)
+        public async Task<ActionResult<Response<SubjectDto>>> CreateAsync(CreateSubjectDto entity)
         {
             var result = await _subjectService.CreateAsync(entity);
             if (result.IsSuccess)
@@ -64,7 +64,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.SubjectClaims.Edit })]
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Response<SubjectDto>>> UpdateAsync(int id, SubjectDto entity)
+        public async Task<ActionResult<Response<SubjectDto>>> UpdateAsync(int id, CreateSubjectDto entity)
         {
             if (id != entity.Id)
                 return BadRequest("Id mismatch");

@@ -4,8 +4,8 @@ using Application.Contracts.Response;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface ISubjectService : ICrudService<CreateSubjectDto, SubjectDto, int, TransactionFormFilter>
+    public interface ICountryService : ICrudService<CountryDto, CountryDto, int, TransactionFormFilter>
     {
-        Task<Response<List<SubjectDto>>> GetDropDown();
+        Task<Response<List<CountryDto>>> GetDropDown();
     }
 }

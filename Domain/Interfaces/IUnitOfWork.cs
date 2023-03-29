@@ -80,6 +80,11 @@ namespace Domain.Interfaces
         IQualificationRepository Qualification { get; }
         ISubjectRepository Subject { get; }
         IFeeItemRepository FeeItem { get; }
+        ICountryRepository Country { get; }
+        IStateRepository State { get; }
+        ICityRepository City { get; }
+        IDistrictRepository District { get; }
+        IDomicileRepository Domicile { get; }
 
         Task SaveAsync();
         void CreateTransaction();

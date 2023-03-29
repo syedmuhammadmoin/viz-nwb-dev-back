@@ -668,14 +668,40 @@ namespace Application.Mapper
             CreateMap<Qualification, QualificationDto>();
 
             //Subject
-            CreateMap<SubjectDto, Subject>();
-            CreateMap<Subject, SubjectDto>();
+            CreateMap<CreateSubjectDto, Subject>();
+            CreateMap<Subject, SubjectDto>()
+                .ForMember(dto => dto.Qualification, core => core.MapFrom(d => d.Qualification.Name)); ;
 
 
             //FeeItem
             CreateMap<FeeItem, FeeItemDto>()
                    .ForMember(dto => dto.Account, core => core.MapFrom(d => d.Account.Name));
             CreateMap<CreateFeeItemDto, FeeItem>();
+
+            //Country
+            CreateMap<CountryDto, Country>();
+            CreateMap<Country, CountryDto>();
+
+            //State
+            CreateMap<State, StateDto>()
+                   .ForMember(dto => dto.Country, core => core.MapFrom(d => d.Country.Name));
+            CreateMap<CreateStateDto, State>();
+
+            //City
+            CreateMap<City, CityDto>()
+                   .ForMember(dto => dto.State, core => core.MapFrom(d => d.State.Name))
+                   .ForMember(dto => dto.Country, core => core.MapFrom(d => d.State.Country.Name));
+            CreateMap<CreateCityDto, City>();
+
+            //District
+            CreateMap<District, DistrictDto>()
+                   .ForMember(dto => dto.City, core => core.MapFrom(d => d.City.Name));
+            CreateMap<CreateDistrictDto, District>();
+
+            //Domicile
+            CreateMap<Domicile, DomicileDto>()
+                   .ForMember(dto => dto.District, core => core.MapFrom(d => d.District.Name));
+            CreateMap<CreateDomicileDto, Domicile>();
 
         }
     }
