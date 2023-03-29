@@ -152,6 +152,7 @@ namespace Infrastructure.Uow
             FixedAssetLines = new FixedAssetLinesRepository(context);
             DepreciationRegister = new DepreciationRegisterRepository(context);
             Faculty = new FacultyRepository(context);
+            AcademicDepartment = new AcademicDepartmentRepository(context);
             Degree = new DegreeRepository(context);
             Program = new ProgramRepository(context);
             Semester = new SemesterRepository(context);
