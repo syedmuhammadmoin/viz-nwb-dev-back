@@ -7,5 +7,6 @@ namespace Application.Contracts.Interfaces
     public interface IFixedAssetReportService
     {
         Response<List<FixedAssetReportDto>> GetReport(FixedAssetReportFilter filters);
+        Response<List<FixedAssetReportDto>> GetReportMonthly(FixedAssetReportFilter filters);
     }
 }

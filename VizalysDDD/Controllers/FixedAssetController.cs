@@ -144,5 +144,16 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status Code : 400
         }
+
+        [ClaimRequirement("Permission", new string[] { Permissions.FixedAssetReportClaims.View })]
+        [HttpPost("MonthlyReport")]
+        public ActionResult<Response<List<FixedAssetReportDto>>> GetReportMonthly(FixedAssetReportFilter filters)
+        {
+            var result = _fixedAssetReportService.GetReportMonthly(filters);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status Code : 400
+        }
     }
 }

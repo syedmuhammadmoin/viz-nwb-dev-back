@@ -9,6 +9,7 @@ namespace Application.Contracts.DTOs
 {
     public class FixedAssetReportDto
     {
+        public string Month { get; set; }
         public int? FixedAssetId { get; set; }
         public string FixedAsset { get; set; }
         public int? StoreId { get; set; }
