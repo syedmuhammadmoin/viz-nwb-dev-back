@@ -6,19 +6,14 @@ using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
-using Infrastructure.Context;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -478,7 +473,20 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.BudgetReappropriationClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.FixedAssetReportClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.DepreciationAdjustmentClaims), id);
-            
+            allPermissions.GetPermissions(typeof(Permissions.FacultyClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.AcademicDepartmentClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DegreeClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.ProgramClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.SemesterClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.CourseClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.QualificationClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.SubjectClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.FeeItemClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.CountryClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.StateClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.CityClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DistrictClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DomicileClaims), id);
 
 
             //Getting all claims for this role
@@ -614,6 +622,20 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.DisposalClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.BudgetReappropriationClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.DepreciationAdjustmentClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.FacultyClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.AcademicDepartmentClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.DegreeClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.ProgramClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.SemesterClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.CourseClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.QualificationClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.SubjectClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.FeeItemClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.CountryClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.StateClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.CityClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.DistrictClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.DomicileClaims), "12");
 
             var allClaimValues = allPermissions.Select(a => a.Value).ToList();
             return new Response<List<string>>(allClaimValues, "Returning all claims");

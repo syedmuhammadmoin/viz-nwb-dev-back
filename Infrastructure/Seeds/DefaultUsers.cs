@@ -1,12 +1,7 @@
 ﻿using Domain.Constants;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Seeds
 {
@@ -96,6 +91,11 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaim(superAdmin, "Admission", "QualificationClaims");
             await roleManager.AddPermissionClaim(superAdmin, "Admission", "SubjectClaims");
             await roleManager.AddPermissionClaim(superAdmin, "Admission", "FeeItemClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "CountryClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "StateClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "CityClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "DistrictClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "DomicileClaims");
 
 
             await roleManager.AddPermissionClaimReport(superAdmin, "Finance", "ChartOfAccountClaims");
