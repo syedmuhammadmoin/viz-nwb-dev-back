@@ -18,10 +18,18 @@ namespace Infrastructure.Specifications
             }
         }
 
-        public ProgramSpecs()
+        public ProgramSpecs(bool forEdit)
         {
-            AddInclude(i => i.Degree);
-            AddInclude(i => i.AcademicDepartment);
+            if (forEdit)
+            {
+                AddInclude(i => i.SemesterCourseList);
+            }
+            else
+            {
+                AddInclude(i => i.Degree);
+                AddInclude(i => i.AcademicDepartment);
+                AddInclude("SemesterCourseList.Course");
+            }
         }
     }
 }

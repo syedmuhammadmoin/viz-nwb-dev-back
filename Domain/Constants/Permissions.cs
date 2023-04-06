@@ -512,6 +512,22 @@
             public const string Delete = "Admission.Domicile.Delete";
         }
 
+        public static class ShiftClaims
+        {
+            public const string View = "Admission.Shift.View";
+            public const string Create = "Admission.Shift.Create";
+            public const string Edit = "Admission.Shift.Edit";
+            public const string Delete = "Admission.Shift.Delete";
+        }
+
+        public static class BatchClaims
+        {
+            public const string View = "Admission.Batch.View";
+            public const string Create = "Admission.Batch.Create";
+            public const string Edit = "Admission.Batch.Edit";
+            public const string Delete = "Admission.Batch.Delete";
+        }
+
         //Reporting Form
         public static class ChartOfAccountClaims
         {

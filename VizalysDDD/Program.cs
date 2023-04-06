@@ -89,6 +89,8 @@ builder.Services.AddScoped<IStateService, StateService>();
 builder.Services.AddScoped<ICityService, CityService>();
 builder.Services.AddScoped<IDistrictService, DistrictService>();
 builder.Services.AddScoped<IDomicileService, DomicileService>();
+builder.Services.AddScoped<IShiftService, ShiftService>();
+builder.Services.AddScoped<IBatchService, BatchService>();
 
 builder.Services.AddHostedService<DepreciationBackgroundService>();
 

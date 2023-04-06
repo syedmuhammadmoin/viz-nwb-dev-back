@@ -136,12 +136,24 @@ namespace Infrastructure.Context
             .WithMany(c => c.BudgetReappropriationLines)
             .OnDelete(DeleteBehavior.Cascade);
 
-
             //DepreciationAdjustment
             modelBuilder.Entity<DepreciationAdjustmentLines>()
             .HasOne(tc => tc.Master)
             .WithMany(c => c.DepreciationAdjustmentLines)
             .OnDelete(DeleteBehavior.Cascade);
+
+            //Program
+            modelBuilder.Entity<ProgramSemesterCourse>()
+            .HasOne(tc => tc.Program)
+            .WithMany(c => c.SemesterCourseList)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //Batch
+            modelBuilder.Entity<BatchLines>()
+            .HasOne(tc => tc.BatchMaster)
+            .WithMany(c => c.BatchLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
             //Composite key for Same payroll
             modelBuilder.Entity<PayrollTransactionMaster>()
             .HasAlternateKey(p => new { p.Month, p.Year, p.EmployeeId });

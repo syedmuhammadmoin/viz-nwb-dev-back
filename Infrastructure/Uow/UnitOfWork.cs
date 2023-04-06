@@ -91,6 +91,8 @@ namespace Infrastructure.Uow
         public ICityRepository City { get; private set; }
         public IDistrictRepository District { get; private set; }
         public IDomicileRepository Domicile { get; private set; }
+        public IShiftRepository Shift { get; private set; }
+        public IBatchRepository Batch { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -170,6 +172,8 @@ namespace Infrastructure.Uow
             City = new CityRepository(context);
             District = new DistrictRepository(context);
             Domicile = new DomicileRepository(context);
+            Shift = new ShiftRepository(context);
+            Batch = new BatchRepository(context);
         }
 
         public async Task SaveAsync()

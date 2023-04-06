@@ -291,6 +291,101 @@ namespace Infrastructure.Migrations
                     b.ToTable("BankStmtMaster");
                 });
 
+            modelBuilder.Entity("Domain.Entities.BatchLines", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MasterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProgramId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MasterId");
+
+                    b.HasIndex("ProgramId");
+
+                    b.ToTable("BatchLines");
+                });
+
+            modelBuilder.Entity("Domain.Entities.BatchMaster", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CampusId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsAdmissionOpen")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("SemesterId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ShiftId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampusId");
+
+                    b.HasIndex("SemesterId");
+
+                    b.HasIndex("ShiftId");
+
+                    b.ToTable("BatchMaster");
+                });
+
             modelBuilder.Entity("Domain.Entities.BidEvaluationLines", b =>
                 {
                     b.Property<int>("Id")
@@ -1248,6 +1343,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("PassingMarks")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -5192,6 +5290,9 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int>("TotalSemesters")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AcademicDepartmentId");
@@ -5201,7 +5302,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("Programs");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ProgramCourse", b =>
+            modelBuilder.Entity("Domain.Entities.ProgramSemesterCourse", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -5229,99 +5330,19 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProgramSemesterId")
+                    b.Property<int>("ProgramId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SemesterNumber")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
-                    b.HasIndex("ProgramSemesterId");
-
-                    b.ToTable("ProgramCourses");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ProgramFees", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("FeeItemId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ProgramSemesterId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FeeItemId");
-
-                    b.HasIndex("ProgramSemesterId");
-
-                    b.ToTable("ProgramFees");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ProgramSemester", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ProgramId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SemesterId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
                     b.HasIndex("ProgramId");
 
-                    b.HasIndex("SemesterId");
-
-                    b.ToTable("ProgramSemester");
+                    b.ToTable("ProgramSemesterCourses");
                 });
 
             modelBuilder.Entity("Domain.Entities.PurchaseOrderLines", b =>
@@ -6077,6 +6098,55 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsOpenForEnrollment")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Season")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Semesters");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Shift", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
@@ -6088,12 +6158,12 @@ namespace Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Semesters");
+                    b.ToTable("Shifts");
                 });
 
             modelBuilder.Entity("Domain.Entities.State", b =>
@@ -6948,6 +7018,52 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("BankAccount");
+                });
+
+            modelBuilder.Entity("Domain.Entities.BatchLines", b =>
+                {
+                    b.HasOne("Domain.Entities.BatchMaster", "BatchMaster")
+                        .WithMany("BatchLines")
+                        .HasForeignKey("MasterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Program", "Program")
+                        .WithMany()
+                        .HasForeignKey("ProgramId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BatchMaster");
+
+                    b.Navigation("Program");
+                });
+
+            modelBuilder.Entity("Domain.Entities.BatchMaster", b =>
+                {
+                    b.HasOne("Domain.Entities.Campus", "Campus")
+                        .WithMany()
+                        .HasForeignKey("CampusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Semester", "Semester")
+                        .WithMany()
+                        .HasForeignKey("SemesterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Shift", "Shift")
+                        .WithMany()
+                        .HasForeignKey("ShiftId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Campus");
+
+                    b.Navigation("Semester");
+
+                    b.Navigation("Shift");
                 });
 
             modelBuilder.Entity("Domain.Entities.BidEvaluationLines", b =>
@@ -8606,7 +8722,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("Degree");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ProgramCourse", b =>
+            modelBuilder.Entity("Domain.Entities.ProgramSemesterCourse", b =>
                 {
                     b.HasOne("Domain.Entities.Course", "Course")
                         .WithMany()
@@ -8614,53 +8730,15 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.ProgramSemester", "ProgramSemester")
-                        .WithMany()
-                        .HasForeignKey("ProgramSemesterId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("Domain.Entities.Program", "Program")
+                        .WithMany("SemesterCourseList")
+                        .HasForeignKey("ProgramId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Course");
 
-                    b.Navigation("ProgramSemester");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ProgramFees", b =>
-                {
-                    b.HasOne("Domain.Entities.FeeItem", "FeeItem")
-                        .WithMany()
-                        .HasForeignKey("FeeItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.ProgramSemester", "ProgramSemester")
-                        .WithMany()
-                        .HasForeignKey("ProgramSemesterId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("FeeItem");
-
-                    b.Navigation("ProgramSemester");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ProgramSemester", b =>
-                {
-                    b.HasOne("Domain.Entities.Program", "Program")
-                        .WithMany()
-                        .HasForeignKey("ProgramId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Semester", "Semester")
-                        .WithMany()
-                        .HasForeignKey("SemesterId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Program");
-
-                    b.Navigation("Semester");
                 });
 
             modelBuilder.Entity("Domain.Entities.PurchaseOrderLines", b =>
@@ -9168,6 +9246,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("BankStmtLines");
                 });
 
+            modelBuilder.Entity("Domain.Entities.BatchMaster", b =>
+                {
+                    b.Navigation("BatchLines");
+                });
+
             modelBuilder.Entity("Domain.Entities.BidEvaluationMaster", b =>
                 {
                     b.Navigation("BidEvaluationLines");
@@ -9273,6 +9356,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.PayrollTransactionMaster", b =>
                 {
                     b.Navigation("PayrollTransactionLines");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Program", b =>
+                {
+                    b.Navigation("SemesterCourseList");
                 });
 
             modelBuilder.Entity("Domain.Entities.PurchaseOrderMaster", b =>

@@ -34,6 +34,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    PassingMarks = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -131,7 +132,12 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Season = table.Column<int>(type: "int", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsOpenForEnrollment = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -141,6 +147,24 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Semesters", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Shifts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Shifts", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -219,6 +243,47 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BatchMaster",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SemesterId = table.Column<int>(type: "int", nullable: false),
+                    CampusId = table.Column<int>(type: "int", nullable: false),
+                    ShiftId = table.Column<int>(type: "int", nullable: false),
+                    IsAdmissionOpen = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BatchMaster", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BatchMaster_Campuses_CampusId",
+                        column: x => x.CampusId,
+                        principalTable: "Campuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BatchMaster_Semesters_SemesterId",
+                        column: x => x.SemesterId,
+                        principalTable: "Semesters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BatchMaster_Shifts_ShiftId",
+                        column: x => x.ShiftId,
+                        principalTable: "Shifts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Cities",
                 columns: table => new
                 {
@@ -252,6 +317,7 @@ namespace Infrastructure.Migrations
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     DegreeId = table.Column<int>(type: "int", nullable: false),
                     AcademicDepartmentId = table.Column<int>(type: "int", nullable: false),
+                    TotalSemesters = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -301,13 +367,13 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProgramSemester",
+                name: "BatchLines",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProgramId = table.Column<int>(type: "int", nullable: false),
-                    SemesterId = table.Column<int>(type: "int", nullable: false),
+                    MasterId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -316,19 +382,51 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProgramSemester", x => x.Id);
+                    table.PrimaryKey("PK_BatchLines", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProgramSemester_Programs_ProgramId",
+                        name: "FK_BatchLines_BatchMaster_MasterId",
+                        column: x => x.MasterId,
+                        principalTable: "BatchMaster",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BatchLines_Programs_ProgramId",
                         column: x => x.ProgramId,
                         principalTable: "Programs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProgramSemesterCourses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProgramId = table.Column<int>(type: "int", nullable: false),
+                    SemesterNumber = table.Column<int>(type: "int", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProgramSemesterCourses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProgramSemester_Semesters_SemesterId",
-                        column: x => x.SemesterId,
-                        principalTable: "Semesters",
+                        name: "FK_ProgramSemesterCourses_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProgramSemesterCourses_Programs_ProgramId",
+                        column: x => x.ProgramId,
+                        principalTable: "Programs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -356,73 +454,35 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "ProgramCourses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProgramSemesterId = table.Column<int>(type: "int", nullable: false),
-                    CourseId = table.Column<int>(type: "int", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    ModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProgramCourses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ProgramCourses_Courses_CourseId",
-                        column: x => x.CourseId,
-                        principalTable: "Courses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProgramCourses_ProgramSemester_ProgramSemesterId",
-                        column: x => x.ProgramSemesterId,
-                        principalTable: "ProgramSemester",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ProgramFees",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProgramSemesterId = table.Column<int>(type: "int", nullable: false),
-                    FeeItemId = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    ModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProgramFees", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ProgramFees_FeeItems_FeeItemId",
-                        column: x => x.FeeItemId,
-                        principalTable: "FeeItems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProgramFees_ProgramSemester_ProgramSemesterId",
-                        column: x => x.ProgramSemesterId,
-                        principalTable: "ProgramSemester",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AcademicDepartments_FacultyId",
                 table: "AcademicDepartments",
                 column: "FacultyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BatchLines_MasterId",
+                table: "BatchLines",
+                column: "MasterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BatchLines_ProgramId",
+                table: "BatchLines",
+                column: "ProgramId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BatchMaster_CampusId",
+                table: "BatchMaster",
+                column: "CampusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BatchMaster_SemesterId",
+                table: "BatchMaster",
+                column: "SemesterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BatchMaster_ShiftId",
+                table: "BatchMaster",
+                column: "ShiftId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cities_StateId",
@@ -445,26 +505,6 @@ namespace Infrastructure.Migrations
                 column: "AccountId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProgramCourses_CourseId",
-                table: "ProgramCourses",
-                column: "CourseId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProgramCourses_ProgramSemesterId",
-                table: "ProgramCourses",
-                column: "ProgramSemesterId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProgramFees_FeeItemId",
-                table: "ProgramFees",
-                column: "FeeItemId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProgramFees_ProgramSemesterId",
-                table: "ProgramFees",
-                column: "ProgramSemesterId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Programs_AcademicDepartmentId",
                 table: "Programs",
                 column: "AcademicDepartmentId");
@@ -475,14 +515,14 @@ namespace Infrastructure.Migrations
                 column: "DegreeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProgramSemester_ProgramId",
-                table: "ProgramSemester",
-                column: "ProgramId");
+                name: "IX_ProgramSemesterCourses_CourseId",
+                table: "ProgramSemesterCourses",
+                column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProgramSemester_SemesterId",
-                table: "ProgramSemester",
-                column: "SemesterId");
+                name: "IX_ProgramSemesterCourses_ProgramId",
+                table: "ProgramSemesterCourses",
+                column: "ProgramId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_States_CountryId",
@@ -498,16 +538,22 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "BatchLines");
+
+            migrationBuilder.DropTable(
                 name: "Domiciles");
 
             migrationBuilder.DropTable(
-                name: "ProgramCourses");
+                name: "FeeItems");
 
             migrationBuilder.DropTable(
-                name: "ProgramFees");
+                name: "ProgramSemesterCourses");
 
             migrationBuilder.DropTable(
                 name: "Subjects");
+
+            migrationBuilder.DropTable(
+                name: "BatchMaster");
 
             migrationBuilder.DropTable(
                 name: "Districts");
@@ -516,25 +562,19 @@ namespace Infrastructure.Migrations
                 name: "Courses");
 
             migrationBuilder.DropTable(
-                name: "FeeItems");
-
-            migrationBuilder.DropTable(
-                name: "ProgramSemester");
+                name: "Programs");
 
             migrationBuilder.DropTable(
                 name: "Qualifications");
 
             migrationBuilder.DropTable(
-                name: "Cities");
-
-            migrationBuilder.DropTable(
-                name: "Programs");
-
-            migrationBuilder.DropTable(
                 name: "Semesters");
 
             migrationBuilder.DropTable(
-                name: "States");
+                name: "Shifts");
+
+            migrationBuilder.DropTable(
+                name: "Cities");
 
             migrationBuilder.DropTable(
                 name: "AcademicDepartments");
@@ -543,10 +583,13 @@ namespace Infrastructure.Migrations
                 name: "Degrees");
 
             migrationBuilder.DropTable(
-                name: "Countries");
+                name: "States");
 
             migrationBuilder.DropTable(
                 name: "Faculties");
+
+            migrationBuilder.DropTable(
+                name: "Countries");
         }
     }
 }

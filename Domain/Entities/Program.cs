@@ -17,6 +17,9 @@ namespace Domain.Entities
         [ForeignKey("AcademicDepartmentId")]
         public AcademicDepartment AcademicDepartment { get; private set; }
 
+        public int TotalSemesters { get; private set; }
+        public virtual List<ProgramSemesterCourse> SemesterCourseList { get; set; }
+
         protected Program()
         {
         }

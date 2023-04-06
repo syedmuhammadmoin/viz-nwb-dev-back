@@ -131,4 +131,21 @@ namespace Domain.Constants
         StraightLine = 0,
         Declining = 1 
     }
+    public enum SemesterNumber
+    {
+        First = 1,
+        Second = 2,
+        Third = 3,
+        Fourth = 4,
+        Fifth = 5,
+        Sixth = 6,
+        Seventh = 7,
+        Eighth = 8,
+    }
+    public enum Season 
+    {
+        Fall = 0,
+        Spring = 1,
+        Summer = 2,
+    }
 }

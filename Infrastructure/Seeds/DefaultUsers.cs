@@ -96,6 +96,8 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaim(superAdmin, "Admission", "City");
             await roleManager.AddPermissionClaim(superAdmin, "Admission", "District");
             await roleManager.AddPermissionClaim(superAdmin, "Admission", "Domicile");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "Shift");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "Batch");
 
 
             await roleManager.AddPermissionClaimReport(superAdmin, "Finance", "ChartOfAccount");

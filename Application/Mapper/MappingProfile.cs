@@ -357,7 +357,7 @@ namespace Application.Mapper
               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
               .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName))
               .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity))
-              .ForMember(dto => dto.IsFixedAsset , core => core.MapFrom(a => a.Item.ProductType == ProductType.FixedAsset ? true : false))
+              .ForMember(dto => dto.IsFixedAsset, core => core.MapFrom(a => a.Item.ProductType == ProductType.FixedAsset ? true : false))
               ;
 
             CreateMap<CreateGRNDto, GRNMaster>()
@@ -568,7 +568,7 @@ namespace Application.Mapper
             CreateMap<FixedAssetLines, FixedAssetLinesDto>();
 
             CreateMap<DepreciationRegister, DepreciationRegisterDto>();
-            
+
             CreateMap<CreateDepreciationRegisterDto, DepreciationRegister>();
 
             CreateMap<CreateFixedAssetDto, FixedAsset>();
@@ -576,7 +576,7 @@ namespace Application.Mapper
             CreateMap<FixedAssetLinesDto, FixedAssetLines>();
 
             CreateMap<UpdateFixedAssetDto, FixedAsset>();
-            
+
             CreateMap<UpdateSalvageValueDto, FixedAsset>();
 
             CreateMap<CWIP, CreateFixedAssetDto>()
@@ -621,12 +621,12 @@ namespace Application.Mapper
                    .ForMember(dto => dto.Level4, core => core.MapFrom(d => d.Level4.Name))
                    .ForMember(dto => dto.Campus, core => core.MapFrom(d => d.Campus.Name));
             CreateMap<CreateBudgetReappropriationLinesDto, BudgetReappropriationLines>();
-            
+
             //DepreciationAdjustment
             CreateMap<DepreciationAdjustmentMaster, DepreciationAdjustmentDto>()
                .ForMember(dto => dto.Status, core => core.MapFrom(d => d.Status.Status))
                .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
-            
+
             CreateMap<DepreciationAdjustmentLines, DepreciationAdjustmentLinesDto>()
                    .ForMember(dto => dto.Level4, core => core.MapFrom(d => d.Level4.Name))
                    .ForMember(dto => dto.FixedAsset, core => core.MapFrom(d => d.FixedAsset.Name));
@@ -652,8 +652,10 @@ namespace Application.Mapper
                    .ForMember(dto => dto.Degree, core => core.MapFrom(d => d.Degree.Name))
                    .ForMember(dto => dto.AcademicDepartment, core => core.MapFrom(d => d.AcademicDepartment.Name));
             CreateMap<CreateProgramDto, Program>();
-            CreateMap<ProgramSemester, ProgramSemesterDto>()
-                   .ForMember(dto => dto.Semester, core => core.MapFrom(d => d.Semester.Name));
+
+            CreateMap<ProgramSemesterCourse, SemesterCourseDto>()
+                   .ForMember(dto => dto.Course, core => core.MapFrom(d => d.Course.Name));
+            CreateMap<CreateSemesterCourseDto, ProgramSemesterCourse>();
 
             //Semester
             CreateMap<SemesterDto, Semester>();
@@ -702,6 +704,24 @@ namespace Application.Mapper
             CreateMap<Domicile, DomicileDto>()
                    .ForMember(dto => dto.District, core => core.MapFrom(d => d.District.Name));
             CreateMap<CreateDomicileDto, Domicile>();
+
+            //Shift
+            CreateMap<ShiftDto, Shift>();
+            CreateMap<Shift, ShiftDto>();
+
+            //Batch
+            CreateMap<BatchMaster, BatchDto>()
+               .ForMember(dto => dto.Semester, core => core.MapFrom(a => a.Semester.Name))
+               .ForMember(dto => dto.Campus, core => core.MapFrom(d => d.Campus.Name))
+               .ForMember(dto => dto.Shift, core => core.MapFrom(d => d.Shift.Name));
+
+
+            CreateMap<BatchLines, BatchLinesDto>()
+                   .ForMember(dto => dto.Program, core => core.MapFrom(d => d.Program.Name));
+
+            CreateMap<CreateBatchDto, BatchMaster>();
+            CreateMap<CreateBatchLinesDto, BatchLines>();
+
 
         }
     }

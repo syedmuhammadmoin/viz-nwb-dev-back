@@ -13,6 +13,9 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? AcademicDepartmentId { get; set; }
         [Required]
-        public List<AddSemesterCoursesDto> SemesterCousesList { get; set; }
+        [Range(1, 8, ErrorMessage = "Semester count must be between 1-8")]
+        public int? TotalSemesters { get; set; }
+        [Required]
+        public List<CreateSemesterCourseDto> SemesterCousesList { get; set; }
     }
 }

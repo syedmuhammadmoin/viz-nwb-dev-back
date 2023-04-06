@@ -98,19 +98,20 @@ namespace Application.Interfaces
         public DbSet<AcademicDepartment> AcademicDepartments { get; set; }
         public DbSet<Degree> Degrees { get; set; }
         public DbSet<Program> Programs { get; set; }
+        public DbSet<ProgramSemesterCourse> ProgramSemesterCourses { get; set; }
         public DbSet<Semester> Semesters { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Qualification> Qualifications { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<FeeItem> FeeItems { get; set; }
-        public DbSet<ProgramSemester> ProgramSemester { get; set; }
-        public DbSet<ProgramCourse> ProgramCourses { get; set; }
-        public DbSet<ProgramFees> ProgramFees { get; set; }
         public DbSet<Country> Countries { get; set; }
         public DbSet<State> States { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<District> Districts { get; set; }
         public DbSet<Domicile> Domiciles { get; set; }
+        public DbSet<Shift> Shifts { get; set; }
+        public DbSet<BatchMaster> BatchMaster { get; set; }
+        public DbSet<BatchLines> BatchLines { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

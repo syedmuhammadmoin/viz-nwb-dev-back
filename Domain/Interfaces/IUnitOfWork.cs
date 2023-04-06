@@ -85,6 +85,8 @@ namespace Domain.Interfaces
         ICityRepository City { get; }
         IDistrictRepository District { get; }
         IDomicileRepository Domicile { get; }
+        IShiftRepository Shift { get; }
+        IBatchRepository Batch { get; }
 
         Task SaveAsync();
         void CreateTransaction();
