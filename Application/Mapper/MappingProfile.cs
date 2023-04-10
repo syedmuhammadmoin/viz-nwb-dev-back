@@ -722,6 +722,12 @@ namespace Application.Mapper
             CreateMap<CreateBatchDto, BatchMaster>();
             CreateMap<CreateBatchLinesDto, BatchLines>();
 
+            //AdmissionCriteria
+            CreateMap<AdmissionCriteria, AdmissionCriteriaDto>()
+                   .ForMember(dto => dto.Program, core => core.MapFrom(d => d.Program.Name))
+                   .ForMember(dto => dto.Qualification, core => core.MapFrom(d => d.Qualification.Name))
+                   .ForMember(dto => dto.Subject, core => core.MapFrom(d => d.Subject.Name));
+            CreateMap<CreateAdmissionCriteriaDto, AdmissionCriteria>();
 
         }
     }

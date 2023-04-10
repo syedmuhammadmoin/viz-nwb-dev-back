@@ -117,6 +117,7 @@ namespace Infrastructure.Context
         public DbSet<Shift> Shifts { get; set; }
         public DbSet<BatchMaster> BatchMaster { get; set; }
         public DbSet<BatchLines> BatchLines { get; set; }
+        public DbSet<AdmissionCriteria> AdmissionCriteria { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

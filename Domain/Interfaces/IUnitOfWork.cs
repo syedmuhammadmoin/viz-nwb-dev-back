@@ -87,6 +87,7 @@ namespace Domain.Interfaces
         IDomicileRepository Domicile { get; }
         IShiftRepository Shift { get; }
         IBatchRepository Batch { get; }
+        IAdmissionCriteriaRepository AdmissionCriteria { get; }
 
         Task SaveAsync();
         void CreateTransaction();
