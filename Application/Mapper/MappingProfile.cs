@@ -729,6 +729,21 @@ namespace Application.Mapper
                    .ForMember(dto => dto.Subject, core => core.MapFrom(d => d.Subject.Name));
             CreateMap<CreateAdmissionCriteriaDto, AdmissionCriteria>();
 
+            //Applicant
+            CreateMap<Applicant, ApplicantDto>()
+                   .ForMember(dto => dto.PlaceOfBirth, core => core.MapFrom(d => d.PlaceOfBirth.Name))
+                   .ForMember(dto => dto.Domicile, core => core.MapFrom(d => d.Domicile.Name))
+                   .ForMember(dto => dto.Nationality, core => core.MapFrom(d => d.Nationality.Name));
+            CreateMap<CreateApplicantDto, Applicant>();
+            CreateMap<RegisterApplicantDto, Applicant>();
+
+            CreateMap<ApplicantQualification, ApplicantQualificationDto>()
+                  .ForMember(dto => dto.Qualification, core => core.MapFrom(d => d.Qualification.Name))
+                  .ForMember(dto => dto.Subject, core => core.MapFrom(d => d.Subject.Name));
+
+
+            CreateMap<ApplicantRelative, ApplicantRelativeDto>();
+
         }
     }
 }

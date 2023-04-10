@@ -536,6 +536,14 @@
             public const string Delete = "Admission.AdmissionCriteria.Delete";
         }
 
+        public static class ApplicantClaims
+        {
+            public const string View = "Admission.Applicant.View";
+            public const string Create = "Admission.Applicant.Create";
+            public const string Edit = "Admission.Applicant.Edit";
+            public const string Delete = "Admission.Applicant.Delete";
+        }
+
         //Reporting Form
         public static class ChartOfAccountClaims
         {

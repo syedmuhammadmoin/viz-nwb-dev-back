@@ -94,6 +94,7 @@ namespace Infrastructure.Uow
         public IShiftRepository Shift { get; private set; }
         public IBatchRepository Batch { get; private set; }
         public IAdmissionCriteriaRepository AdmissionCriteria { get; private set; }
+        public IApplicantRepository Applicant { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -176,6 +177,7 @@ namespace Infrastructure.Uow
             Shift = new ShiftRepository(context);
             Batch = new BatchRepository(context);
             AdmissionCriteria = new AdmissionCriteriaRepository(context);
+            Applicant = new ApplicantRepository(context);
         }
 
         public async Task SaveAsync()
