@@ -9,7 +9,8 @@ namespace Domain.Constants
     public enum Roles
     {
         SuperAdmin = 0,
-        Admin = 1
+        Admin = 1,
+        Applicant = 2
     }
     public enum BusinessPartnerType 
     {
