@@ -19,7 +19,8 @@ namespace Domain.Constants
         Employee = 2,
         Supplier = 3, 
         Consultant = 4, 
-        Contractor = 5
+        Contractor = 5,
+        Student = 6,
     }
     public enum ProductType
     {
@@ -149,4 +150,35 @@ namespace Domain.Constants
         Spring = 1,
         Summer = 2,
     }
+    public enum Gender
+    {
+        Male = 0,
+        Female = 1,
+        Other = 2
+    }
+    public enum Religion
+    {
+        Muslim = 0,
+        Hindu = 1,
+        Christian = 2,
+        Other = 3
+    }
+    public enum MaritalStatus
+    {
+        Unmarried = 0,
+        Married = 1,
+    }
+
+    public enum Relationship
+    {
+        Mother = 0,
+        Father = 1,
+        Brother = 2,
+        Sister = 3,
+        Spouse = 4,
+        Grandparent = 5,
+        Uncle = 6,
+        Other = 7,
+    }
+
 }

@@ -154,6 +154,19 @@ namespace Infrastructure.Context
             .WithMany(c => c.BatchLines)
             .OnDelete(DeleteBehavior.Cascade);
 
+
+            //Applicant
+            modelBuilder.Entity<ApplicantQualification>()
+            .HasOne(tc => tc.Applicant)
+            .WithMany(c => c.Qualifications)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ApplicantRelative>()
+            .HasOne(tc => tc.Applicant)
+            .WithMany(c => c.Relatives)
+            .OnDelete(DeleteBehavior.Cascade);
+
+
             //Composite key for Same payroll
             modelBuilder.Entity<PayrollTransactionMaster>()
             .HasAlternateKey(p => new { p.Month, p.Year, p.EmployeeId });
