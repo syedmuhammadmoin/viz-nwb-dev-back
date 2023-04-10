@@ -31,6 +31,8 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Campus);
                 AddInclude(i => i.Shift);
                 AddInclude("BatchLines.Program");
+                AddInclude("Criteria.Criteria.Qualification");
+                AddInclude("Criteria.Criteria.Subject");
             }
         }
     }

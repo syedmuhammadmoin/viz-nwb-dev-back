@@ -76,5 +76,16 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
         }
 
+        [ClaimRequirement("Permission", new string[] { Permissions.BatchClaims.Edit })]
+        [HttpPost("AddCriteria")]
+        public async Task<ActionResult<Response<BatchDto>>> CreateAsync(AddCriteriaDto entity)
+        {
+            var result = await _batchService.AddCriteria(entity);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
+
     }
 }

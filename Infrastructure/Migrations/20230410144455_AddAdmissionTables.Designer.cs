@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230406211337_AddAdmissionTables")]
+    [Migration("20230410144455_AddAdmissionTables")]
     partial class AddAdmissionTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,6 +61,73 @@ namespace Infrastructure.Migrations
                     b.HasIndex("FacultyId");
 
                     b.ToTable("AcademicDepartments");
+                });
+
+            modelBuilder.Entity("Domain.Entities.AdmissionCriteria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("EntryTestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("EntryTestRequriedMarks")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("InterviewDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsEntryTestRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsInterviewRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProgramId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QualificationId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("QualificationRequriedMarks")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProgramId");
+
+                    b.HasIndex("QualificationId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("AdmissionCriteria");
                 });
 
             modelBuilder.Entity("Domain.Entities.BankAccount", b =>
@@ -291,6 +358,46 @@ namespace Infrastructure.Migrations
                     b.HasIndex("BankAccountId");
 
                     b.ToTable("BankStmtMaster");
+                });
+
+            modelBuilder.Entity("Domain.Entities.BatchAdmissionCriteria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("BatchId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CriteriaId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BatchId");
+
+                    b.HasIndex("CriteriaId");
+
+                    b.ToTable("BatchAdmissionCriteria");
                 });
 
             modelBuilder.Entity("Domain.Entities.BatchLines", b =>
@@ -6946,6 +7053,33 @@ namespace Infrastructure.Migrations
                     b.Navigation("Faculty");
                 });
 
+            modelBuilder.Entity("Domain.Entities.AdmissionCriteria", b =>
+                {
+                    b.HasOne("Domain.Entities.Program", "Program")
+                        .WithMany()
+                        .HasForeignKey("ProgramId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Qualification", "Qualification")
+                        .WithMany()
+                        .HasForeignKey("QualificationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Program");
+
+                    b.Navigation("Qualification");
+
+                    b.Navigation("Subject");
+                });
+
             modelBuilder.Entity("Domain.Entities.BankAccount", b =>
                 {
                     b.HasOne("Domain.Entities.Campus", "Campus")
@@ -7020,6 +7154,25 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("BankAccount");
+                });
+
+            modelBuilder.Entity("Domain.Entities.BatchAdmissionCriteria", b =>
+                {
+                    b.HasOne("Domain.Entities.BatchMaster", "Batch")
+                        .WithMany("Criteria")
+                        .HasForeignKey("BatchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.AdmissionCriteria", "Criteria")
+                        .WithMany()
+                        .HasForeignKey("CriteriaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Batch");
+
+                    b.Navigation("Criteria");
                 });
 
             modelBuilder.Entity("Domain.Entities.BatchLines", b =>
@@ -9251,6 +9404,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.BatchMaster", b =>
                 {
                     b.Navigation("BatchLines");
+
+                    b.Navigation("Criteria");
                 });
 
             modelBuilder.Entity("Domain.Entities.BidEvaluationMaster", b =>

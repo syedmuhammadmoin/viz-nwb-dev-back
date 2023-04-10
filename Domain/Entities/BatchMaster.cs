@@ -23,8 +23,8 @@ namespace Domain.Entities
         public Shift Shift { get; private set; }
 
         public bool IsAdmissionOpen { get; private set; }
-
         public virtual List<BatchLines> BatchLines { get; private set; }
+        public virtual List<BatchAdmissionCriteria> Criteria { get; private set; }
 
         protected BatchMaster()
         {

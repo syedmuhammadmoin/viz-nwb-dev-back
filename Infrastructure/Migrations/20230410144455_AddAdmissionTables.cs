@@ -367,6 +367,51 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AdmissionCriteria",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProgramId = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    QualificationId = table.Column<int>(type: "int", nullable: false),
+                    SubjectId = table.Column<int>(type: "int", nullable: false),
+                    QualificationRequriedMarks = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    IsEntryTestRequired = table.Column<bool>(type: "bit", nullable: true),
+                    EntryTestDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EntryTestRequriedMarks = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    InterviewDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsInterviewRequired = table.Column<bool>(type: "bit", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdmissionCriteria", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AdmissionCriteria_Programs_ProgramId",
+                        column: x => x.ProgramId,
+                        principalTable: "Programs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AdmissionCriteria_Qualifications_QualificationId",
+                        column: x => x.QualificationId,
+                        principalTable: "Qualifications",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AdmissionCriteria_Subjects_SubjectId",
+                        column: x => x.SubjectId,
+                        principalTable: "Subjects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BatchLines",
                 columns: table => new
                 {
@@ -454,10 +499,66 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "BatchAdmissionCriteria",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BatchId = table.Column<int>(type: "int", nullable: false),
+                    CriteriaId = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BatchAdmissionCriteria", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BatchAdmissionCriteria_AdmissionCriteria_CriteriaId",
+                        column: x => x.CriteriaId,
+                        principalTable: "AdmissionCriteria",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BatchAdmissionCriteria_BatchMaster_BatchId",
+                        column: x => x.BatchId,
+                        principalTable: "BatchMaster",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AcademicDepartments_FacultyId",
                 table: "AcademicDepartments",
                 column: "FacultyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdmissionCriteria_ProgramId",
+                table: "AdmissionCriteria",
+                column: "ProgramId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdmissionCriteria_QualificationId",
+                table: "AdmissionCriteria",
+                column: "QualificationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdmissionCriteria_SubjectId",
+                table: "AdmissionCriteria",
+                column: "SubjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BatchAdmissionCriteria_BatchId",
+                table: "BatchAdmissionCriteria",
+                column: "BatchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BatchAdmissionCriteria_CriteriaId",
+                table: "BatchAdmissionCriteria",
+                column: "CriteriaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BatchLines_MasterId",
@@ -538,6 +639,9 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "BatchAdmissionCriteria");
+
+            migrationBuilder.DropTable(
                 name: "BatchLines");
 
             migrationBuilder.DropTable(
@@ -550,7 +654,7 @@ namespace Infrastructure.Migrations
                 name: "ProgramSemesterCourses");
 
             migrationBuilder.DropTable(
-                name: "Subjects");
+                name: "AdmissionCriteria");
 
             migrationBuilder.DropTable(
                 name: "BatchMaster");
@@ -565,7 +669,7 @@ namespace Infrastructure.Migrations
                 name: "Programs");
 
             migrationBuilder.DropTable(
-                name: "Qualifications");
+                name: "Subjects");
 
             migrationBuilder.DropTable(
                 name: "Semesters");
@@ -581,6 +685,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Degrees");
+
+            migrationBuilder.DropTable(
+                name: "Qualifications");
 
             migrationBuilder.DropTable(
                 name: "States");

@@ -113,6 +113,7 @@ namespace Application.Interfaces
         public DbSet<BatchMaster> BatchMaster { get; set; }
         public DbSet<BatchLines> BatchLines { get; set; }
         public DbSet<AdmissionCriteria> AdmissionCriteria { get; set; }
+        public DbSet<BatchAdmissionCriteria> BatchAdmissionCriteria { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

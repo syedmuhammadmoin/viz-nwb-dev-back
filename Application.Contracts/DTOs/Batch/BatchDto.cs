@@ -12,5 +12,6 @@
         public string Shift { get; set; }
         public bool IsAdmissionOpen { get; set; }
         public virtual List<BatchLinesDto> BatchLines { get; set; }
+        public virtual List<AdmissionCriteriaDto> AdmissionCriteria { get; set; }
     }
 }

@@ -35,8 +35,14 @@ namespace Application.Services
             var result = await _unitOfWork.Batch.GetById(id, new BatchSpecs(false));
             if (result == null)
                 return new Response<BatchDto>("Not found");
-
-            return new Response<BatchDto>(_mapper.Map<BatchDto>(result), "Returning value");
+            var batchDto = _mapper.Map<BatchDto>(result);
+            var batchCriteriaList = new List<AdmissionCriteriaDto>();
+            foreach (var item in result.Criteria)
+            {
+                batchCriteriaList.Add(_mapper.Map<AdmissionCriteriaDto>(item.Criteria));
+            }
+            batchDto.AdmissionCriteria = batchCriteriaList;
+            return new Response<BatchDto>(batchDto, "Returning value");
         }
 
         public async Task<Response<List<BatchDto>>> GetDropDown()
@@ -70,6 +76,32 @@ namespace Application.Services
             _mapper.Map(entity, result);
             await _unitOfWork.SaveAsync();
             return new Response<BatchDto>(_mapper.Map<BatchDto>(result), "Updated successfully");
+        }
+
+        public async Task<Response<int>> AddCriteria(AddCriteriaDto entity)
+        {
+            if (entity.CriteriaIds.Length != entity.CriteriaIds.Distinct().Count())
+                return new Response<int>("Duplicate Criteria found");
+
+            var batchCriteriaList = new List<BatchAdmissionCriteria>();
+
+            for (int i = 0; i < entity.CriteriaIds.Length; i++)
+            {
+                batchCriteriaList.Add(new BatchAdmissionCriteria((int)entity.BatchId, entity.CriteriaIds[i]));
+            }
+
+            _unitOfWork.CreateTransaction();
+            
+            //Removing all criteria from batch
+            await _unitOfWork.Batch.RemoveCriteriaFromBatch((int)entity.BatchId);
+            await _unitOfWork.SaveAsync();
+            
+            //Adding Criteria in batch
+            await _unitOfWork.Batch.AddCriteriaInBatch(batchCriteriaList);
+            await _unitOfWork.SaveAsync();
+            _unitOfWork.Commit();
+
+            return new Response<int>(1, "Added Successfully");
         }
 
     }
