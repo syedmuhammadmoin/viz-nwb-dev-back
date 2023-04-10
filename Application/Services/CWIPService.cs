@@ -174,6 +174,7 @@ namespace Application.Services
                             fix.CreateCode();
                             await _unitOfWork.SaveAsync();
                         }
+                        await AddToLedger(getCwip);
                         _unitOfWork.Commit();
                         return new Response<bool>(true, "Document Approved");
                     }
@@ -190,6 +191,44 @@ namespace Application.Services
             }
 
             return new Response<bool>("User does not have allowed role");
+        }
+        private async Task AddToLedger(CWIP cwip)
+        {
+            var transaction = new Transactions(cwip.Id, cwip.CwipCode, DocType.Disposal);
+            var AssetAccountId = cwip.AssetAccountId;
+            var CWIPAccountId = cwip.CWIPAccountId;
+            await _unitOfWork.Transaction.Add(transaction);
+            await _unitOfWork.SaveAsync();
+            cwip.SetTransactionId(transaction.Id);
+            await _unitOfWork.SaveAsync();
+            var drAssetAccount = new RecordLedger(
+                transaction.Id,
+                AssetAccountId.Value,
+                null,
+                cwip.WarehouseId,
+                "",
+                'D',
+                cwip.Cost,
+                null,
+                cwip.DateOfAcquisition,
+                null
+                );
+            await _unitOfWork.Ledger.Add(drAssetAccount);
+            await _unitOfWork.SaveAsync();
+            var crPayableAccount = new RecordLedger(
+               transaction.Id,
+               CWIPAccountId,
+               null,
+               cwip.WarehouseId,
+               "",
+               'C',
+               cwip.Cost,
+               null,
+               cwip.DateOfAcquisition,
+               null
+               );
+            await _unitOfWork.Ledger.Add(crPayableAccount);
+            await _unitOfWork.SaveAsync();
         }
 
         //Private methods

@@ -59,61 +59,71 @@ namespace Application.Services
             var userId = getUser.GetCurrentUserId();
             var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
             _unitOfWork.CreateTransaction();
-        
-                foreach (var role in currentUserRoles)
+
+            foreach (var role in currentUserRoles)
+            {
+                if (transition.AllowedRole.Name == role)
                 {
-                    if (transition.AllowedRole.Name == role)
+                    getIssuanceReturn.SetStatus(transition.NextStatusId);
+                    if (!String.IsNullOrEmpty(data.Remarks))
                     {
-                        getIssuanceReturn.SetStatus(transition.NextStatusId);
-                        if (!String.IsNullOrEmpty(data.Remarks))
+                        var addRemarks = new Remark()
                         {
-                            var addRemarks = new Remark()
+                            DocId = getIssuanceReturn.Id,
+                            DocType = DocType.IssuanceReturn,
+                            Remarks = data.Remarks,
+                            UserId = userId
+                        };
+                        await _unitOfWork.Remarks.Add(addRemarks);
+                    }
+                    if (transition.NextStatus.State == DocumentStatus.Unpaid)
+                    {
+                        foreach (var line in getIssuanceReturn.IssuanceReturnLines)
+                        {
+                            line.SetStatus(DocumentStatus.Unreconciled);
+
+                            if (line.FixedAssetId!=null)
                             {
-                                DocId = getIssuanceReturn.Id,
-                                DocType = DocType.IssuanceReturn,
-                                Remarks = data.Remarks,
-                                UserId = userId
-                            };
-                            await _unitOfWork.Remarks.Add(addRemarks);
+                                var fixedAsset = await _unitOfWork.FixedAsset.GetById(line.FixedAssetId.Value);
+                                fixedAsset.SetEmployeeId(null);
+                            }
                         }
-                        if (transition.NextStatus.State == DocumentStatus.Unpaid)
+
+                        var reconciled = await ReconcileIssuanceLines(getIssuanceReturn.Id, (int)getIssuanceReturn.IssuanceId, getIssuanceReturn.IssuanceReturnLines);
+                        if (!reconciled.IsSuccess)
                         {
-                            foreach (var line in getIssuanceReturn.IssuanceReturnLines)
-                            {
-                                line.SetStatus(DocumentStatus.Unreconciled);
-                            }
+                            _unitOfWork.Rollback();
+                            return new Response<bool>(reconciled.Message);
+                        }
 
-                            var reconciled = await ReconcileIssuanceLines(getIssuanceReturn.Id, (int)getIssuanceReturn.IssuanceId, getIssuanceReturn.IssuanceReturnLines);
-                            if (!reconciled.IsSuccess)
-                            {
-                                _unitOfWork.Rollback();
-                                return new Response<bool>(reconciled.Message);
-                            }
+                        await _unitOfWork.SaveAsync();
 
-                            await _unitOfWork.SaveAsync();
 
+                       
                             //Adding IssuanceReturn Line in Stock
                             await AddandUpdateStock(getIssuanceReturn);
 
+                        
 
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "IssuanceReturn Approved");
-                        }
-                        if (transition.NextStatus.State == DocumentStatus.Rejected)
-                        {
-                            await _unitOfWork.SaveAsync();
-                            _unitOfWork.Commit();
-                            return new Response<bool>(true, "IssuanceReturn Rejected");
-                        }
+
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "IssuanceReturn Approved");
+                    }
+                    if (transition.NextStatus.State == DocumentStatus.Rejected)
+                    {
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
-                        return new Response<bool>(true, "IssuanceReturn Reviewed");
+                        return new Response<bool>(true, "IssuanceReturn Rejected");
                     }
+                    await _unitOfWork.SaveAsync();
+                    _unitOfWork.Commit();
+                    return new Response<bool>(true, "IssuanceReturn Reviewed");
                 }
+            }
 
-                return new Response<bool>("User does not have allowed role");
+            return new Response<bool>("User does not have allowed role");
 
-          
+
         }
 
         public async Task<Response<IssuanceReturnDto>> CreateAsync(CreateIssuanceReturnDto entity)
@@ -259,21 +269,21 @@ namespace Application.Services
             issuanceReturn.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
-          
-                //Saving in table
-                var result = await _unitOfWork.IssuanceReturn.Add(issuanceReturn);
-                await _unitOfWork.SaveAsync();
 
-                //For creating docNo
-                issuanceReturn.CreateDocNo();
-                await _unitOfWork.SaveAsync();
+            //Saving in table
+            var result = await _unitOfWork.IssuanceReturn.Add(issuanceReturn);
+            await _unitOfWork.SaveAsync();
 
-                //Commiting the transaction 
-                _unitOfWork.Commit();
+            //For creating docNo
+            issuanceReturn.CreateDocNo();
+            await _unitOfWork.SaveAsync();
 
-                //returning response
-                return new Response<IssuanceReturnDto>(_mapper.Map<IssuanceReturnDto>(result), "Created successfully");
-           
+            //Commiting the transaction 
+            _unitOfWork.Commit();
+
+            //returning response
+            return new Response<IssuanceReturnDto>(_mapper.Map<IssuanceReturnDto>(result), "Created successfully");
+
         }
 
         private async Task<Response<IssuanceReturnDto>> UpdateIssuanceReturn(CreateIssuanceReturnDto entity, int status)
@@ -325,18 +335,18 @@ namespace Application.Services
             gRN.SetStatus(status);
 
             _unitOfWork.CreateTransaction();
-         
-                //For updating data
-                _mapper.Map<CreateIssuanceReturnDto, IssuanceReturnMaster>(entity, gRN);
 
-                await _unitOfWork.SaveAsync();
+            //For updating data
+            _mapper.Map<CreateIssuanceReturnDto, IssuanceReturnMaster>(entity, gRN);
 
-                //Commiting the transaction
-                _unitOfWork.Commit();
+            await _unitOfWork.SaveAsync();
 
-                //returning response
-                return new Response<IssuanceReturnDto>(_mapper.Map<IssuanceReturnDto>(gRN), "   z successfully");
-          
+            //Commiting the transaction
+            _unitOfWork.Commit();
+
+            //returning response
+            return new Response<IssuanceReturnDto>(_mapper.Map<IssuanceReturnDto>(gRN), "   z successfully");
+
         }
 
         public Response<bool> CheckValidation(int issuanceId, IssuanceLines issuanceLine, IssuanceReturnLines issuanceReturnLine)
@@ -355,8 +365,8 @@ namespace Application.Services
         }
 
         public async Task AddandUpdateStock(IssuanceReturnMaster issuanceReturn)
-        {
-            foreach (var line in issuanceReturn.IssuanceReturnLines)
+        {//only for non fixed asset
+            foreach (var line in issuanceReturn.IssuanceReturnLines.Where(x => x.FixedAssetId == null || x.FixedAssetId == 0))
             {
                 var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs(line.ItemId, line.WarehouseId)).FirstOrDefault();
 

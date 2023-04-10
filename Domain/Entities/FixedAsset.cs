@@ -66,6 +66,9 @@ namespace Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal AccumulatedDepreciationAmount { get; private set; }
         public int TotalActiveDays { get; private set; }
+        public int? EmployeeId { get; private set; }
+        [ForeignKey("EmployeeId")]
+        public Employee Employee { get; private set; }
         public virtual List<FixedAssetLines> FixedAssetlines { get; set; }
         public virtual List<DepreciationRegister> DepreciatonRegisterList { get; set; }
 
@@ -96,6 +99,10 @@ namespace Domain.Entities
         public void SetIsIssued(bool isIssued)
         {
             IsIssued = isIssued;
+        }
+        public void SetEmployeeId(int? employeeId)
+        {
+            EmployeeId = employeeId;
         }
         public void CreateCode()
         {
