@@ -544,6 +544,14 @@
             public const string Delete = "Admission.Applicant.Delete";
         }
 
+        public static class AdmissionApplicationClaims
+        {
+            public const string View = "Admission.AdmissionApplication.View";
+            public const string Create = "Admission.AdmissionApplication.Create";
+            public const string Edit = "Admission.AdmissionApplication.Edit";
+            public const string Delete = "Admission.AdmissionApplication.Delete";
+        }
+
         //Reporting Form
         public static class ChartOfAccountClaims
         {

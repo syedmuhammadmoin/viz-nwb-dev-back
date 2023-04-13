@@ -1,4 +1,5 @@
 ﻿using Domain.Base;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
@@ -16,6 +17,7 @@ namespace Domain.Entities
         public int PassingYear { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal MarksOrGPA { get; private set; }
+        [MaxLength(200)]
         public string InstituteOrBoard { get; private set; }
 
         public int MasterId { get; private set; }

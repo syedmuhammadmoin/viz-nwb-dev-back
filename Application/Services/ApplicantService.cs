@@ -75,16 +75,21 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public async Task<Response<ApplicantDto>> UpdateAsync(CreateApplicantDto entity)
-        {
-            var result = await _unitOfWork.Applicant.GetById((int)entity.Id, new ApplicantSpecs(true));
-            if (result == null)
-                return new Response<ApplicantDto>("Not found");
+        //public async Task<Response<ApplicantDto>> UpdateAsync(CreateApplicantDto entity)
+        //{
+        //    var result = await _unitOfWork.Applicant.GetById((int)entity.Id, new ApplicantSpecs(true));
+        //    if (result == null)
+        //        return new Response<ApplicantDto>("Not found");
 
-            //For updating data
-            _mapper.Map(entity, result);
-            await _unitOfWork.SaveAsync();
-            return new Response<ApplicantDto>(_mapper.Map<ApplicantDto>(result), "Updated successfully");
+        //    //For updating data
+        //    _mapper.Map(entity, result);
+        //    await _unitOfWork.SaveAsync();
+        //    return new Response<ApplicantDto>(_mapper.Map<ApplicantDto>(result), "Updated successfully");
+        //}
+
+        public Task<Response<ApplicantDto>> UpdateAsync(CreateApplicantDto entity)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<Response<string>> LoginApplicant(LoginDto entity)
@@ -99,8 +104,10 @@ namespace Application.Services
             if (!result)
                 return new Response<string>("Invalid Password");
 
-            var applicantName = _unitOfWork.Applicant.Find(new ApplicantSpecs(user.Id))
-                .Select(i => i.Name).FirstOrDefault();
+            if(user.ApplicantId == null)
+                return new Response<string>("This user is not applicant");
+
+            var applicantName = await _unitOfWork.Applicant.GetById((int)user.ApplicantId);
 
             //Getting user roles
             var userRoles = await _userManager.GetRolesAsync(user);
@@ -108,7 +115,7 @@ namespace Application.Services
             //Declaring claims list
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, applicantName == null ? "Naveed" : applicantName),
+                new Claim(ClaimTypes.Name, applicantName.Name == null ? "Naveed" : applicantName.Name),
                 new Claim("Email", entity.Email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
             };
@@ -204,9 +211,17 @@ namespace Application.Services
             //Creating Applicant
             var applicant = _mapper.Map<Applicant>(entity);
             applicant.SetBusinessPartnerId(businessPartner.Id);
-            applicant.SetUserId(user.Id);
             await _unitOfWork.Applicant.Add(applicant);
             await _unitOfWork.SaveAsync();
+
+            //Adding Applicant Id
+            user.ApplicantId = applicant.Id;
+            var updateUser = await _userManager.UpdateAsync(user);
+            if (!updateUser.Succeeded)
+            {
+                _unitOfWork.Rollback();
+                return new Response<int>(updateUser.Errors.Select(e => e.Description).FirstOrDefault());
+            }
 
             _unitOfWork.Commit();
             return new Response<int>(1, "Register Successfully");

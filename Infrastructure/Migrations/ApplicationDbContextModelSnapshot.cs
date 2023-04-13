@@ -61,6 +61,157 @@ namespace Infrastructure.Migrations
                     b.ToTable("AcademicDepartments");
                 });
 
+            modelBuilder.Entity("Domain.Entities.AdmissionApplication", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("AdmissionCriteriaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ApplicantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BatchId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CampusId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DocNo")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int?>("EntryTestAttendance")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EntryTestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("EntryTestMarks")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("EntryTestRequriedMarks")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("InterviewAttendance")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("InterviewDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("InterviewStatus")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsEntryTestRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsInterviewRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProgramId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("ShiftId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StudentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdmissionCriteriaId");
+
+                    b.HasIndex("ApplicantId");
+
+                    b.HasIndex("BatchId");
+
+                    b.HasIndex("CampusId");
+
+                    b.HasIndex("ProgramId");
+
+                    b.HasIndex("ShiftId");
+
+                    b.ToTable("AdmissionApplications");
+                });
+
+            modelBuilder.Entity("Domain.Entities.AdmissionApplicationHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AdmissionApplicationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BusinessPartnerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("HistoryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdmissionApplicationId");
+
+                    b.HasIndex("BusinessPartnerId");
+
+                    b.ToTable("AdmissionApplicationHistories");
+                });
+
             modelBuilder.Entity("Domain.Entities.AdmissionCriteria", b =>
                 {
                     b.Property<int>("Id")
@@ -205,9 +356,6 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("Religion")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BusinessPartnerId");
@@ -217,8 +365,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("NationalityId");
 
                     b.HasIndex("PlaceOfBirthId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Applicants");
                 });
@@ -239,7 +385,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("InstituteOrBoard")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
@@ -1886,6 +2033,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TransactionId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("UseFullLife")
                         .HasColumnType("int");
 
@@ -1907,6 +2057,8 @@ namespace Infrastructure.Migrations
                     b.HasIndex("ProductId");
 
                     b.HasIndex("StatusId");
+
+                    b.HasIndex("TransactionId");
 
                     b.HasIndex("WarehouseId");
 
@@ -2983,6 +3135,9 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("Doctype")
                         .HasColumnType("int");
 
+                    b.Property<int?>("EmployeeId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -3045,6 +3200,8 @@ namespace Infrastructure.Migrations
                     b.HasIndex("DepreciationExpenseId");
 
                     b.HasIndex("DepreciationModelId");
+
+                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("ProductId");
 
@@ -6814,6 +6971,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ApplicantId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -6862,6 +7022,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicantId");
 
                     b.HasIndex("EmployeeId");
 
@@ -7254,6 +7416,75 @@ namespace Infrastructure.Migrations
                     b.Navigation("Faculty");
                 });
 
+            modelBuilder.Entity("Domain.Entities.AdmissionApplication", b =>
+                {
+                    b.HasOne("Domain.Entities.AdmissionCriteria", "AdmissionCriteria")
+                        .WithMany()
+                        .HasForeignKey("AdmissionCriteriaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.Entities.Applicant", "Applicant")
+                        .WithMany()
+                        .HasForeignKey("ApplicantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.BatchMaster", "Batch")
+                        .WithMany()
+                        .HasForeignKey("BatchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Campus", "Campus")
+                        .WithMany()
+                        .HasForeignKey("CampusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Program", "Program")
+                        .WithMany()
+                        .HasForeignKey("ProgramId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Shift", "Shift")
+                        .WithMany()
+                        .HasForeignKey("ShiftId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AdmissionCriteria");
+
+                    b.Navigation("Applicant");
+
+                    b.Navigation("Batch");
+
+                    b.Navigation("Campus");
+
+                    b.Navigation("Program");
+
+                    b.Navigation("Shift");
+                });
+
+            modelBuilder.Entity("Domain.Entities.AdmissionApplicationHistory", b =>
+                {
+                    b.HasOne("Domain.Entities.AdmissionApplication", "AdmissionApplication")
+                        .WithMany()
+                        .HasForeignKey("AdmissionApplicationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.BusinessPartner", "BusinessPartner")
+                        .WithMany()
+                        .HasForeignKey("BusinessPartnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AdmissionApplication");
+
+                    b.Navigation("BusinessPartner");
+                });
+
             modelBuilder.Entity("Domain.Entities.AdmissionCriteria", b =>
                 {
                     b.HasOne("Domain.Entities.Program", "Program")
@@ -7304,11 +7535,6 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("PlaceOfBirthId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("BusinessPartner");
 
                     b.Navigation("Domicile");
@@ -7316,8 +7542,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Nationality");
 
                     b.Navigation("PlaceOfBirth");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.ApplicantQualification", b =>
@@ -7912,6 +8136,11 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.Transactions", "Transactions")
+                        .WithMany()
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.Warehouse", "Warehouse")
                         .WithMany()
                         .HasForeignKey("WarehouseId")
@@ -7931,6 +8160,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Status");
+
+                    b.Navigation("Transactions");
 
                     b.Navigation("Warehouse");
                 });
@@ -8291,6 +8522,11 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("DepreciationModelId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Domain.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
@@ -8316,6 +8552,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("DepreciationExpense");
 
                     b.Navigation("DepreciationModel");
+
+                    b.Navigation("Employee");
 
                     b.Navigation("Product");
 
@@ -9570,10 +9808,17 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
+                    b.HasOne("Domain.Entities.Applicant", "Applicant")
+                        .WithMany()
+                        .HasForeignKey("ApplicantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.Employee", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Applicant");
 
                     b.Navigation("Employee");
                 });

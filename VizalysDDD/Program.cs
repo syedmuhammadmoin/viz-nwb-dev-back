@@ -93,6 +93,7 @@ builder.Services.AddScoped<IShiftService, ShiftService>();
 builder.Services.AddScoped<IBatchService, BatchService>();
 builder.Services.AddScoped<IAdmissionCriteriaService, AdmissionCriteriaService>();
 builder.Services.AddScoped<IApplicantService, ApplicantService>();
+builder.Services.AddScoped<IAdmissionApplicationService, AdmissionApplicationService>();
 
 builder.Services.AddHostedService<DepreciationBackgroundService>();
 

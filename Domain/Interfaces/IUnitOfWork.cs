@@ -89,6 +89,7 @@ namespace Domain.Interfaces
         IBatchRepository Batch { get; }
         IAdmissionCriteriaRepository AdmissionCriteria { get; }
         IApplicantRepository Applicant { get; }
+        IAdmissionApplicationRepository AdmissionApplication { get; }
 
         Task SaveAsync();
         void CreateTransaction();

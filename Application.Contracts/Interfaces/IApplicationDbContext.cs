@@ -117,6 +117,8 @@ namespace Application.Interfaces
         public DbSet<Applicant> Applicants { get; set; }
         public DbSet<ApplicantQualification> ApplicantQualifications { get; set; }
         public DbSet<ApplicantRelative> ApplicantRelatives { get; set; }
+        public DbSet<AdmissionApplication> AdmissionApplications { get; set; }
+        public DbSet<AdmissionApplicationHistory> AdmissionApplicationHistories { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

@@ -122,6 +122,8 @@ namespace Infrastructure.Context
         public DbSet<Applicant> Applicants { get; set; }
         public DbSet<ApplicantQualification> ApplicantQualifications { get; set; }
         public DbSet<ApplicantRelative> ApplicantRelatives { get; set; }
+        public DbSet<AdmissionApplication> AdmissionApplications { get; set; }
+        public DbSet<AdmissionApplicationHistory> AdmissionApplicationHistories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

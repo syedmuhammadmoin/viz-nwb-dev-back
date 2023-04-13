@@ -42,9 +42,5 @@ namespace Infrastructure.Specifications
             : i.CNIC == emailOrCnic.Trim())
         { 
         }
-        
-        public ApplicantSpecs(string userId) : base (i => i.UserId == userId)
-        {
-        }
     }
 }

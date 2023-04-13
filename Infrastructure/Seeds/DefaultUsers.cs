@@ -25,8 +25,10 @@ namespace Infrastructure.Seeds
                     await userManager.AddToRoleAsync(defaultUser, Roles.SuperAdmin.ToString());
                 }
                 await roleManager.SeedClaimsForSuperAdmin();
+                await roleManager.SeedClaimsForApplicant();
             }
         }
+     
         private async static Task SeedClaimsForSuperAdmin(this RoleManager<IdentityRole> roleManager)
         {
             var superAdmin = await roleManager.FindByNameAsync("SuperAdmin");
@@ -100,6 +102,7 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaim(superAdmin, "Admission", "Batch");
             await roleManager.AddPermissionClaim(superAdmin, "Admission", "AdmissionCriteria");
             await roleManager.AddPermissionClaim(superAdmin, "Admission", "Applicant");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "AdmissionApplication");
 
 
             await roleManager.AddPermissionClaimReport(superAdmin, "Finance", "ChartOfAccount");
@@ -111,6 +114,11 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaimReport(superAdmin, "Budget", "BudgetReport");
             await roleManager.AddPermissionClaimReport(superAdmin, "Procurement", "Stock");
             await roleManager.AddPermissionClaimReport(superAdmin, "FixedAsset", "FixedAssetReport");
+        }
+        private async static Task SeedClaimsForApplicant(this RoleManager<IdentityRole> roleManager)
+        {
+            var applicant = await roleManager.FindByNameAsync(Roles.Applicant.ToString());
+            await roleManager.AddPermissionClaim(applicant, "Admission", "AdmissionApplication");
         }
         public static async Task AddPermissionClaim(this RoleManager<IdentityRole> roleManager, IdentityRole role, string module, string submodule)
         {

@@ -7,8 +7,8 @@ namespace Application.Contracts.DTOs
     {
         public int Id { get; set; }
         [Required]
-        public SemesterNumber? SemesterNumber { get; private set; }
+        public SemesterNumber? SemesterNumber { get; set; }
         [Required]
-        public int? CourseId { get; private set; }
+        public int? CourseId { get; set; }
     }
 }

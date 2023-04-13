@@ -14,6 +14,9 @@ namespace Domain.Entities
         public int? EmployeeId { get; set; }
         [ForeignKey("EmployeeId")]
         public Employee Employee { get; set; }
+        public int? ApplicantId { get; set; }
+        [ForeignKey("ApplicantId")]
+        public Applicant Applicant { get; set; }
 
         public User(int employeeId)
         {

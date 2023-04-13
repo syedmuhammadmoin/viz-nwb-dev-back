@@ -44,10 +44,6 @@ namespace Domain.Entities
         [ForeignKey("BusinessPartnerId")]
         public BusinessPartner BusinessPartner { get; private set; }
 
-        public string UserId { get; private set; }
-        [ForeignKey("UserId")]
-        public User User { get; private set; }
-
         public virtual List<ApplicantQualification> Qualifications { get; private set; }
         public virtual List<ApplicantRelative> Relatives { get; private set; }
 
@@ -58,11 +54,6 @@ namespace Domain.Entities
         public void SetBusinessPartnerId(int id)
         {
             BusinessPartnerId = id;
-        }
-
-        public void SetUserId(string id)
-        {
-            UserId = id;
         }
 
     }

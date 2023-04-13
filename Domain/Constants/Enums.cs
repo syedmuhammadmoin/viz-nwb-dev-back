@@ -180,5 +180,28 @@ namespace Domain.Constants
         Uncle = 6,
         Other = 7,
     }
+    public enum Attendance
+    {
+        P = 0,
+        A = 1
+    }
+    public enum InterviewStatus
+    {
+        Failed = 0,
+        Passed = 1
+    }
+    public enum ApplicationStatus
+    {
+        ApplicationSubmitted = 0,
+        ApplicantRegistered = 1,
+        EligibleForEntryTest = 2,
+        PassedEntryTest = 3,
+        FailedEntryTest = 4,
+        FailedInInterview = 5,
+        InWaitingList = 6,
+        StudentOnBoard = 7,
+        Shortlisted = 8,
+        Cancelled = 9,
+    }
 
 }
