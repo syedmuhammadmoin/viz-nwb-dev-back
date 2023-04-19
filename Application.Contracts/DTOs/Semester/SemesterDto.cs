@@ -10,14 +10,14 @@ namespace Application.Contracts.DTOs
         [MaxLength(100)]
         public string Name { get; set; }
         [Required]
-        public Season? Season { get; private set; }
+        public Season? Season { get; set; }
         [Required]
-        public DateTime? StartDate { get; private set; }
+        public DateTime? StartDate { get; set; }
         [Required]
-        public DateTime? EndDate { get; private set; }
+        public DateTime? EndDate { get; set; }
         [Required]
-        public bool? IsOpenForEnrollment { get; private set; }
+        public bool? IsOpenForEnrollment { get; set; }
         [Required]
-        public bool? IsActive { get; private set; }
+        public bool? IsActive { get; set; }
     }
 }
