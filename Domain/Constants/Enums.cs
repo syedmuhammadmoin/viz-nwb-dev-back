@@ -203,5 +203,13 @@ namespace Domain.Constants
         Shortlisted = 8,
         Cancelled = 9,
     }
+    public enum ProgramChallanType 
+    {
+        RegistrationFeeChallan = 0,
+        EntryTestChallan = 1,
+        AdmissionChallan = 2,
+        SemesterChallan = 3,
+        SupplementaryChallan = 4,
+    }
 
 }

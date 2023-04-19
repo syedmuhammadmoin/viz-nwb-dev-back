@@ -551,6 +551,13 @@
             public const string Edit = "Admission.AdmissionApplication.Edit";
             public const string Delete = "Admission.AdmissionApplication.Delete";
         }
+        public static class ProgramChallanTemplateClaims
+        {
+            public const string View = "Admission.ProgramChallanTemplate.View";
+            public const string Create = "Admission.ProgramChallanTemplate.Create";
+            public const string Edit = "Admission.ProgramChallanTemplate.Edit";
+            public const string Delete = "Admission.ProgramChallanTemplate.Delete";
+        }
 
         //Reporting Form
         public static class ChartOfAccountClaims

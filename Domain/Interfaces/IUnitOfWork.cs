@@ -90,6 +90,7 @@ namespace Domain.Interfaces
         IAdmissionCriteriaRepository AdmissionCriteria { get; }
         IApplicantRepository Applicant { get; }
         IAdmissionApplicationRepository AdmissionApplication { get; }
+        IProgramChallanTemplateRepository ProgramChallanTemplate { get; }
 
         Task SaveAsync();
         void CreateTransaction();

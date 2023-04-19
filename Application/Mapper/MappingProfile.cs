@@ -714,8 +714,7 @@ namespace Application.Mapper
                .ForMember(dto => dto.Semester, core => core.MapFrom(a => a.Semester.Name))
                .ForMember(dto => dto.Campus, core => core.MapFrom(d => d.Campus.Name))
                .ForMember(dto => dto.Shift, core => core.MapFrom(d => d.Shift.Name));
-
-
+            
             CreateMap<BatchLines, BatchLinesDto>()
                    .ForMember(dto => dto.Program, core => core.MapFrom(d => d.Program.Name));
 
@@ -741,8 +740,21 @@ namespace Application.Mapper
                   .ForMember(dto => dto.Qualification, core => core.MapFrom(d => d.Qualification.Name))
                   .ForMember(dto => dto.Subject, core => core.MapFrom(d => d.Subject.Name));
 
-
             CreateMap<ApplicantRelative, ApplicantRelativeDto>();
+
+            //ProgramChallanTemplate
+            CreateMap<ProgramChallanTemplateMaster, ProgramChallanTemplateDto>()
+               .ForMember(dto => dto.Program, core => core.MapFrom(a => a.Semester.Name))
+               .ForMember(dto => dto.Campus, core => core.MapFrom(d => d.Campus.Name))
+               .ForMember(dto => dto.Shift, core => core.MapFrom(d => d.Shift.Name))
+               .ForMember(dto => dto.Semester, core => core.MapFrom(a => a.Semester.Name))
+               .ForMember(dto => dto.BankAccount, core => core.MapFrom(a => a.BankAccount.Name));
+
+            CreateMap<ProgramChallanTemplateLines, ProgramChallanTemplateLinesDto>()
+                   .ForMember(dto => dto.FeeItem, core => core.MapFrom(d => d.FeeItem.Name));
+
+            CreateMap<CreateProgramChallanTemplateDto, ProgramChallanTemplateMaster>();
+            CreateMap<CreateProgramChallanTemplateLinesDto, ProgramChallanTemplateLines>();
 
         }
     }

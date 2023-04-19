@@ -166,6 +166,11 @@ namespace Infrastructure.Context
             .WithMany(c => c.Relatives)
             .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<ProgramChallanTemplateLines>()
+            .HasOne(tc => tc.ProgramChallanTemplateMaster)
+            .WithMany(c => c.ProgramChallanTemplateLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
 
             //Composite key for Same payroll
             modelBuilder.Entity<PayrollTransactionMaster>()

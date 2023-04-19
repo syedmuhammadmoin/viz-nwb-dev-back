@@ -96,6 +96,7 @@ namespace Infrastructure.Uow
         public IAdmissionCriteriaRepository AdmissionCriteria { get; private set; }
         public IApplicantRepository Applicant { get; private set; }
         public IAdmissionApplicationRepository AdmissionApplication { get; private set; }
+        public IProgramChallanTemplateRepository ProgramChallanTemplate { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -180,6 +181,7 @@ namespace Infrastructure.Uow
             AdmissionCriteria = new AdmissionCriteriaRepository(context);
             Applicant = new ApplicantRepository(context);
             AdmissionApplication = new AdmissionApplicationRepository(context);
+            ProgramChallanTemplate = new ProgramChallanTemplateRepository(context);
         }
 
         public async Task SaveAsync()
