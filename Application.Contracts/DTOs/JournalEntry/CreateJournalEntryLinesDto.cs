@@ -12,7 +12,7 @@ namespace Application.Contracts.DTOs
         public int Id { get; set; }
         [Required]
         public Guid? AccountId { get; set; }
-        [Required]
+       
         public int? BusinessPartnerId { get; set; }
         [Required]
         [MaxLength(500)]
