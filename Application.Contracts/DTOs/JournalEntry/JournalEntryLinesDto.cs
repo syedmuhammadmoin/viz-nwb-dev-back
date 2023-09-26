@@ -12,7 +12,7 @@ namespace Application.Contracts.DTOs
         public int Id { get; set; }
         public Guid AccountId { get; set; }
         public string AccountName { get; set; }
-        public int BusinessPartnerId { get; set; }
+        public int? BusinessPartnerId { get; set; }
         public string BusinessPartnerName { get; set; }
         public string Description { get; set; }
         public decimal Debit { get; set; }
