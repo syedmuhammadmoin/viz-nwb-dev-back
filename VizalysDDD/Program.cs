@@ -113,7 +113,7 @@ builder.Services.AddControllers(options => options.Filters.Add<ErrorHandlingFilt
         result.ContentTypes.Add(MediaTypeNames.Application.Json);
         return result;
     };
-});
+}).AddNewtonsoftJson();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

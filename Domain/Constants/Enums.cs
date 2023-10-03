@@ -21,6 +21,7 @@ namespace Domain.Constants
         Consultant = 4, 
         Contractor = 5,
         Student = 6,
+        ServiceProvider=7
     }
     public enum ProductType
     {

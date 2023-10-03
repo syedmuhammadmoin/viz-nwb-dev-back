@@ -35,5 +35,11 @@ namespace Application.Contracts.DTOs
         public bool IsShowCFQButton { get; set; } = false;
         public bool IsShowQuotationButton { get; set; } = false;
         public bool IsShowTenderButton { get; set; } = false;
+        public string CreatedBy { get; set; }
+        public string ModifiedBy { get; set; }
+        public string LastUser
+        {
+            get { return RemarksList?.LastOrDefault().UserName ?? ModifiedBy ?? CreatedBy; }
+        }
     }
 }

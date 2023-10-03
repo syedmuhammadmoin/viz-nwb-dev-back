@@ -27,5 +27,11 @@ namespace Application.Contracts.DTOs
         public IEnumerable<RemarksDto> RemarksList { get; set; }
         public IEnumerable<ReferncesDto> References { get; set; }
         public IEnumerable<FileUploadDto> FileUploadList { get; set; }
+        public string CreatedBy { get; set; }
+        public string ModifiedBy { get; set; }
+        public string LastUser
+        {
+            get { return RemarksList?.LastOrDefault().UserName ?? ModifiedBy ?? CreatedBy; }
+        }
     }
 }

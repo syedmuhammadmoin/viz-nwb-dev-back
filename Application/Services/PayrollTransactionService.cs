@@ -10,8 +10,11 @@ using Domain.Interfaces;
 using Infrastructure.Specifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml.Style;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -837,6 +840,125 @@ namespace Application.Services
                 response.Add(MapToValue(i));
             }
             return new Response<List<PayrollTransactionDto>>(response.OrderBy(i => i.Employee).ToList(), "Returning List");
+        }
+        public Response<object> GetPayrollDetailReport(PayrollDetailFilter filter) {
+
+            filter.FromDate = filter.FromDate?.Date;
+            filter.ToDate = filter.ToDate?.Date;
+            var employees = new List<int?>();
+            var months = new List<int?>();
+            var years = new List<int?>();
+
+            if (filter.EmployeeId != null)
+            {
+                employees.Add(filter.EmployeeId);
+            }
+            if (filter.Month != null)
+            {
+                months.Add(filter.Month);
+            }
+            if (filter.Year != null)
+            {
+                years.Add(filter.Year);
+            }
+
+            var payrollTransactions = _unitOfWork.PayrollTransaction
+                .Find(new PayrollTransactionSpecs(months, years, employees, (DateTime)filter.FromDate, (DateTime)filter.ToDate,
+                filter.Designation, filter.Department, filter.Campus))
+                .ToList();
+
+            if (payrollTransactions.Count() == 0)
+            {
+                return new Response<object>(null, "List is empty");
+            }
+
+            var allowanceDTO = new List<PayrollTransactionDto>();
+           
+
+
+
+            foreach (var payroll in payrollTransactions)
+            {
+                
+
+                if (payroll.PayrollTransactionLines.Count() > 0)
+                {
+                    foreach (var lines in payroll.PayrollTransactionLines)
+                    {
+                        allowanceDTO.Add(new PayrollTransactionDto
+                        {
+                            Employee = payroll.Employee.Name,
+                            Department = payroll.Department.Name,
+                            Campus = payroll.Campus.Name,
+                            Designation = payroll.Designation.Name,
+                            AccountName = lines.Account.Name,
+                            Amount = lines.Amount
+                        });
+                    }
+                }
+            }
+
+            allowanceDTO = allowanceDTO
+               .GroupBy(x => new { x.Employee, x.Department, x.Campus, x.Designation,  x.AccountName })
+               .Select(c => new PayrollTransactionDto
+               {
+                   Employee = c.Key.Employee,
+                   Department = c.Key.Department,
+                   Campus = c.Key.Campus,
+                   Designation = c.Key.Designation,
+                   AccountName = c.Key.AccountName,
+                   Amount = c.Sum(e => e.Amount)
+               })
+               .ToList();
+
+            var groups = from d in allowanceDTO
+                         group d by new { d.Employee, d.Department, d.Campus, d.Designation}
+                        into grp
+                         select new
+                         {
+                             Employee = grp.Key.Employee,
+                             Department = grp.Key.Department,
+                             Campus = grp.Key.Campus,
+                             Designation = grp.Key.Designation,
+                             Items = grp.Select(d2 => new { d2.AccountName, d2.Amount }).ToArray()
+                         };
+
+            /*get all possible subjects into a separate group*/
+            var itemNames = (from d in allowanceDTO
+                             select d.AccountName).Distinct();
+
+
+            DataTable dt = new DataTable();
+            /*for static cols*/
+            dt.Columns.Add("Employee");
+            dt.Columns.Add("Department");
+            dt.Columns.Add("Campus");
+            dt.Columns.Add("Designation");
+            /*for dynamic cols*/
+            foreach (var item in itemNames)
+            {
+                dt.Columns.Add(item.ToString());
+            }
+
+            /*pivot the data into a new datatable*/
+            foreach (var g in groups)
+            {
+                DataRow dr = dt.NewRow();
+                dr["Employee"] = g.Employee;
+                dr["Department"] = g.Department;
+                dr["Campus"] = g.Campus;
+                dr["Designation"] = g.Designation;
+
+                foreach (var item in g.Items)
+                {
+                    dr[item.AccountName] = item.Amount;
+                }
+                dt.Rows.Add(dr);
+            }
+
+
+            return new Response<Object>(dt, "Returning List");
+
         }
 
         private List<RemarksDto> ReturningRemarks(PayrollTransactionDto data, DocType docType)

@@ -191,6 +191,24 @@ namespace Vizalys.Api.Controllers
             }
         }
 
+        [HttpGet("DetailReport")]
+        public ActionResult<Response<Object>>GetPayrollReport([FromQuery] PayrollDetailFilter filter)
+        {
+            try
+            {
+                var result = _payrollTransactionService.GetPayrollDetailReport(filter);
+                if (result.IsSuccess)
+                    return Ok(result); // Status Code : 200
+
+                return BadRequest(result); // Status code : 400
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
+
         [HttpPost("PayrollExecutiveReport")]
         public ActionResult<Response<List<PayrollExecutiveReportDto>>> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter)
         {
