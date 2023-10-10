@@ -18,6 +18,8 @@ namespace Application.Contracts.DTOs
         [Required]
         [MaxLength(100)]
         public string EstimatedBudgetName { get; set; }
+        [Required]
+        public bool? isSubmit { get; set; }
         public virtual List<CreateEstimatedBudgetLinesDto> EstimatedBudgetLines { get; set; }
     }
 }

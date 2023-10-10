@@ -208,7 +208,15 @@ namespace Vizalys.Api.Controllers
                     e.Message);
             }
         }
+        [HttpGet("CampusReport")]
+        public ActionResult<Response<List<PayrollExecutiveReportDto>>> GetPayrollCampusReport([FromQuery] PayrollCampusReportFilter filter)
+        {
+            var result = _payrollTransactionService.GetPayrollCampusGroupReport(filter);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
 
+            return BadRequest(result); // Status code : 400
+        }
         [HttpPost("PayrollExecutiveReport")]
         public ActionResult<Response<List<PayrollExecutiveReportDto>>> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter)
         {

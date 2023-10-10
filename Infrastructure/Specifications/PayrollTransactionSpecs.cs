@@ -149,12 +149,29 @@ namespace Infrastructure.Specifications
         public PayrollTransactionSpecs(int?[] months, int year, List<int?> campus)
             : base(x =>
             (months.Count() > 0 ? months.Contains(x.Month) : true)
-            && (campus.Count() > 0 ? campus.Contains(x.CampusId) : true)
+            &&(campus.Count() > 0 ? campus.Contains(x.CampusId) : true)
             && (x.Status.State == DocumentStatus.Unpaid || x.Status.State == DocumentStatus.Paid || x.Status.State == DocumentStatus.Partial)
             && x.Year == year
             )
         {
             AddInclude(i => i.PayrollTransactionLines);
+            AddInclude("BasicPayItem.Account");
+            AddInclude("PayrollTransactionLines.Account");
+        }
+        public PayrollTransactionSpecs(List<int?> months, List<int?> years, List<int?> campus, List<DocumentStatus?>StatusIds)
+           : base(x =>
+           (
+           
+           months.Count() > 0 ? months.Contains(x.Month) : true)
+           && (campus.Count() > 0 ? campus.Contains(x.CampusId) : true)
+           && (StatusIds.Count()>0 ? StatusIds.Contains(x.Status.State):true)
+          // && (x.Status.State == DocumentStatus.Unpaid || x.Status.State == DocumentStatus.Paid || x.Status.State == DocumentStatus.Partial)
+           && (years.Count() > 0 ? years.Contains(x.Year) : true)
+           )
+        {
+            AddInclude(i => i.PayrollTransactionLines);
+            AddInclude(i => i.Campus);
+            AddInclude(i => i.Status);
             AddInclude("BasicPayItem.Account");
             AddInclude("PayrollTransactionLines.Account");
         }

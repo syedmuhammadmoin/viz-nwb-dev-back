@@ -19,5 +19,12 @@ namespace Domain.Entities
         public DateTime From { get; private set; }
         public DateTime To { get; private set; }
         public virtual List<BudgetLines> BudgetLines { get; private set; }
+        public int StatusId { get; private set; }
+        [ForeignKey("StatusId")]
+        public WorkFlowStatus Status { get; private set; }
+        public void SetStatus(int statusId)
+        {
+            StatusId = statusId;
+        }
     }
 }

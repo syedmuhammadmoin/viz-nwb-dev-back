@@ -841,7 +841,8 @@ namespace Application.Services
             }
             return new Response<List<PayrollTransactionDto>>(response.OrderBy(i => i.Employee).ToList(), "Returning List");
         }
-        public Response<object> GetPayrollDetailReport(PayrollDetailFilter filter) {
+        public Response<object> GetPayrollDetailReport(PayrollDetailFilter filter)
+        {
 
             filter.FromDate = filter.FromDate?.Date;
             filter.ToDate = filter.ToDate?.Date;
@@ -873,13 +874,13 @@ namespace Application.Services
             }
 
             var allowanceDTO = new List<PayrollTransactionDto>();
-           
+
 
 
 
             foreach (var payroll in payrollTransactions)
             {
-                
+
 
                 if (payroll.PayrollTransactionLines.Count() > 0)
                 {
@@ -899,7 +900,7 @@ namespace Application.Services
             }
 
             allowanceDTO = allowanceDTO
-               .GroupBy(x => new { x.Employee, x.Department, x.Campus, x.Designation,  x.AccountName })
+               .GroupBy(x => new { x.Employee, x.Department, x.Campus, x.Designation, x.AccountName })
                .Select(c => new PayrollTransactionDto
                {
                    Employee = c.Key.Employee,
@@ -912,7 +913,7 @@ namespace Application.Services
                .ToList();
 
             var groups = from d in allowanceDTO
-                         group d by new { d.Employee, d.Department, d.Campus, d.Designation}
+                         group d by new { d.Employee, d.Department, d.Campus, d.Designation }
                         into grp
                          select new
                          {
@@ -960,7 +961,73 @@ namespace Application.Services
             return new Response<Object>(dt, "Returning List");
 
         }
+        public Response<List<PayrollCampusTransactionDto>> GetPayrollCampusGroupReport(PayrollCampusReportFilter filter)
+        {
+            var months = new List<int?>();
+            var years = new List<int?>();
+            var campusIds = new List<int?>();
+            var documentStatus = new List<DocumentStatus?>();
 
+            if (filter.Month != null)
+            {
+                months.Add(filter.Month);
+            }
+            if (filter.Year != null)
+            {
+                years.Add(filter.Year);
+            }
+
+            if (filter.DocumentStatus != null)
+            {
+                documentStatus.Add(filter.DocumentStatus);
+            }
+            if (filter.CampusId != null)
+            {
+                campusIds.Add(filter.CampusId);
+            }
+
+            var payrollTransactions = _unitOfWork.PayrollTransaction
+                .Find(new PayrollTransactionSpecs(months, years, campusIds, documentStatus))
+                .ToList();
+
+
+            if (payrollTransactions.Count() == 0)
+            {
+                return new Response<List<PayrollCampusTransactionDto>>(null, "List is empty");
+            }
+
+           
+
+            var GroupByCampus = payrollTransactions.GroupBy(x => new { x.CampusId ,x.Campus.Name,  x.Month, x.Year, x.StatusId,x.Status.Status, x.Status.State });
+
+
+            List<PayrollCampusTransactionDto> payrollCampusTransactionDto = new List<PayrollCampusTransactionDto>();
+            foreach (var item in GroupByCampus)
+            {
+                payrollCampusTransactionDto.Add(new PayrollCampusTransactionDto { 
+                
+                
+                CampusId= item.Key.CampusId,
+                Campus= item.Key.Name,
+                    Month = item.Key.Month,
+                Year= item.Key.Year,
+                AdvancesAndDeductions= item.Sum(x => x.PayrollTransactionLines.Where(p => p.PayrollType == PayrollType.Deduction)
+                                 .Sum(e => e.Amount)),
+                IncomeTax= item.Sum(x => x.PayrollTransactionLines.Where(p => p.PayrollType == PayrollType.TaxDeduction)
+                                 .Sum(e => e.Amount)),
+                GrossSalary= item.Sum(x => x.GrossSalary),
+                NetAmount= item.Sum(x => x.NetSalary),
+                Status=item.Key.Status,
+                State = item.Key.State
+
+                });
+            }
+
+
+
+            return new Response<List<PayrollCampusTransactionDto>>(payrollCampusTransactionDto, "Returning List");
+
+        }
         private List<RemarksDto> ReturningRemarks(PayrollTransactionDto data, DocType docType)
         {
             var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.PayrollTransaction))
@@ -1016,7 +1083,7 @@ namespace Application.Services
             }
 
             //Fetching payroll as per the filters
-            var getPayrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(filter.Month, 
+            var getPayrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(filter.Month,
                 (int)filter.Year, campuses)).ToList();
 
             //if (getPayrollTransaction.Count() == 0)
@@ -1031,7 +1098,7 @@ namespace Application.Services
 
                 itemList.Add(new PayrollItemsDto()
                 {
-                    AccountId = payroll.BPSAccountId, 
+                    AccountId = payroll.BPSAccountId,
                     AccountName = payroll.BasicPayItem.Account.Name,
                     PayrollType = PayrollType.BasicPay,
                     Amount = payroll.BasicSalary,
@@ -1058,7 +1125,7 @@ namespace Application.Services
                     }
                 }
             }
-            
+
             itemList = itemList.Where(e => (
                     filter.AccountId == null ? true :
                     filter.AccountId != null ? (e.AccountId == filter.AccountId) : false))
@@ -1108,7 +1175,7 @@ namespace Application.Services
             }
 
             //Fetching payroll as per the filters
-            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)filter.Month,(int)filter.Year, campuses)).ToList();
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)filter.Month, (int)filter.Year, campuses)).ToList();
 
             if (payrollTransactions.Count() == 0)
             {

@@ -21,6 +21,10 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Campus);
             }
         }
+        public BudgetSpecs()
+        {
+        
+        }
 
         public BudgetSpecs(bool forEdit)
         {

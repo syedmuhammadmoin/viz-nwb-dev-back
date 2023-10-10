@@ -83,7 +83,9 @@ namespace Domain.Constants
         CWIP = 26,
         Disposal = 27,
         BudgetReappropriation = 28,
-        DepreciationAdjustment = 29
+        DepreciationAdjustment = 29,
+        EstimatedBudget=30,
+            Budget=31
     }
     public enum ActionButton
     {

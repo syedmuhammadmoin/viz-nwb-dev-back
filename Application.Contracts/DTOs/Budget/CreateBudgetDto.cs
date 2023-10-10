@@ -20,6 +20,9 @@ namespace Application.Contracts.DTOs
         public DateTime? From { get; set; }
         [Required]
         public DateTime? To { get; set; }
+        [Required]
+        public bool? isSubmit { get; set; }
         public virtual List<CreateBudgetLinesDto> BudgetLines { get; set; }
+        
     }
 }

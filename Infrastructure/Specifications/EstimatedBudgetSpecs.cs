@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Filters;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,11 @@ namespace Infrastructure.Specifications
                 ApplyOrderByDescending(i => i.Id);
             }
         }
-            public EstimatedBudgetSpecs(bool forEdit)
+        public EstimatedBudgetSpecs()
+        {
+         
+        }
+        public EstimatedBudgetSpecs(bool forEdit)
             {
                 if (forEdit)
                 {
@@ -34,5 +39,10 @@ namespace Infrastructure.Specifications
                     AddInclude("EstimatedBudgetLines.Account");
                 }
             }
+        public EstimatedBudgetSpecs(string workflow)
+          : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
+        {
+            AddInclude(i => i.Status);
         }
+    }
     }
