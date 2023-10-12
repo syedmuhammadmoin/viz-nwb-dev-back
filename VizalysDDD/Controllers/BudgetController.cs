@@ -3,6 +3,7 @@ using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Application.Services;
 using Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -83,6 +84,14 @@ namespace Vizalys.Api.Controllers
                 return Ok(budget); // Status Code : 200
 
             return BadRequest(budget); // Status code : 400
+        }
+        [HttpPost("workflow")]
+        public async Task<ActionResult<Response<bool>>> CheckWorkFlow([FromBody] ApprovalDto data)
+        {
+            var result = await _budgetService.CheckWorkFlow(data);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+            return BadRequest(result);
         }
     }
 }

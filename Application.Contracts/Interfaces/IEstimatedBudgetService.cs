@@ -11,6 +11,9 @@ namespace Application.Contracts.Interfaces
 {
     public interface IEstimatedBudgetService : ICrudService<CreateEstimatedBudgetDto, EstimatedBudgetDto, int, TransactionFormFilter>
     {
+        Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
+
         Task<Response<List<EstimatedBudgetDto>>> GetEstimatedBudgetDropDown();
+
     }
 }

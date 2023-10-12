@@ -105,11 +105,11 @@ namespace Application.Services
                 });
 
             var genLedger = generalLedgerView.ToList();
-            BudgetDto result = new BudgetDto();
+            BudgetDto budgetDto = new BudgetDto();
 
-            result = _mapper.Map<BudgetDto>(budget);
+            budgetDto = _mapper.Map<BudgetDto>(budget);
 
-            result.BudgetLines.Clear(); 
+            budgetDto.BudgetLines.Clear(); 
 
             foreach (var budgetLine in budget.BudgetLines)
             {
@@ -128,12 +128,51 @@ namespace Application.Services
                     IncurredAmount = new BudgetService().getIncomeAccount(budgetLine.Account.Level1_id) ?
                     x.Sum(s => s.Credit - s.Debit) : x.Sum(s => s.Debit - s.Credit),
                 }).FirstOrDefault();
-                glWithBudgetFilter.Amount = budgetLine.Amount;
-                glWithBudgetFilter.AccountName = budgetLine.Account.Name;
-                glWithBudgetFilter.MasterId = budgetLine.MasterId;
-                result.BudgetLines.Add(glWithBudgetFilter);
+                if (glWithBudgetFilter!=null)
+                {
+                    glWithBudgetFilter.Id = budgetLine.Id;
+                    glWithBudgetFilter.Amount = budgetLine.Amount;
+                    glWithBudgetFilter.AccountName = budgetLine.Account.Name;
+                    glWithBudgetFilter.MasterId = budgetLine.MasterId;
+                    
+                    budgetDto.BudgetLines.Add(glWithBudgetFilter);
+                }
+                else
+                {
+                    var budgetLinetoSave = _mapper.Map<BudgetLinesDto>(budgetLine);
+                    budgetDto.BudgetLines.Add(budgetLinetoSave);
+                }
+
+
             }
-            return new Response<BudgetDto>(_mapper.Map<BudgetDto>(result), "Returning value");
+
+            if (budgetDto.State == DocumentStatus.Unpaid || budgetDto.State == DocumentStatus.Partial || budgetDto.State == DocumentStatus.Paid)
+            {
+                return new Response<BudgetDto>(budgetDto, "Returning value");
+            }
+
+            budgetDto.IsAllowedRole = false;
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.Budget)).FirstOrDefault();
+            if (workflow != null)
+            {
+                var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == budgetDto.StatusId));
+
+                if (transition != null)
+                {
+                    var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+                    foreach (var role in currentUserRoles)
+                    {
+                        if (transition.AllowedRole.Name == role)
+                        {
+                            budgetDto.IsAllowedRole = true;
+                        }
+                    }
+                }
+            }
+
+
+            return new Response<BudgetDto>(budgetDto, "Returning value");
         }
 
         public async Task<Response<BudgetDto>> UpdateAsync(CreateBudgetDto entity)
@@ -351,7 +390,7 @@ namespace Application.Services
         }
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
-            var budget = await _unitOfWork.Budget.GetById(data.DocId, new BudgetSpecs());
+            var budget = await _unitOfWork.Budget.GetById(data.DocId, new BudgetSpecs(false));
 
             if (budget == null)
             {

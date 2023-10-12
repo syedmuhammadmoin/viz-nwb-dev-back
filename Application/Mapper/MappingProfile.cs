@@ -287,7 +287,9 @@ namespace Application.Mapper
             // Budget Mapping
             CreateMap<BudgetMaster, BudgetDto>()
               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
-                ;
+            .ForMember(dto => dto.Status, core => core.MapFrom(d => d.Status.State == DocumentStatus.Unpaid ? "Approved" : d.Status.Status))
+               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+
             CreateMap<BudgetLines, BudgetLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
 
@@ -371,7 +373,10 @@ namespace Application.Mapper
             // EstimatedBudget Mapping
             CreateMap<EstimatedBudgetMaster, EstimatedBudgetDto>()
                 .ForMember(dto => dto.From, core => core.MapFrom(a => a.PreviousBudget.From))
-                .ForMember(dto => dto.To, core => core.MapFrom(a => a.PreviousBudget.To));
+                .ForMember(dto => dto.To, core => core.MapFrom(a => a.PreviousBudget.To))
+                .ForMember(dto => dto.CampusId, core => core.MapFrom(a => a.PreviousBudget.CampusId))
+               .ForMember(dto => dto.Status, core => core.MapFrom(d => d.Status.State == DocumentStatus.Unpaid ? "Approved" : d.Status.Status))
+               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
             CreateMap<EstimatedBudgetLines, EstimatedBudgetLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
 
@@ -714,7 +719,7 @@ namespace Application.Mapper
                .ForMember(dto => dto.Semester, core => core.MapFrom(a => a.Semester.Name))
                .ForMember(dto => dto.Campus, core => core.MapFrom(d => d.Campus.Name))
                .ForMember(dto => dto.Shift, core => core.MapFrom(d => d.Shift.Name));
-            
+
             CreateMap<BatchLines, BatchLinesDto>()
                    .ForMember(dto => dto.Program, core => core.MapFrom(d => d.Program.Name));
 

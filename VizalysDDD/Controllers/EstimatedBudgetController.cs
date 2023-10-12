@@ -73,5 +73,13 @@ namespace Vizalys.Api.Controllers
         {
             return Ok(await _budgetService.GetEstimatedBudgetDropDown()); // Status Code : 200
         }
+        [HttpPost("workflow")]
+        public async Task<ActionResult<Response<bool>>> CheckWorkFlow([FromBody] ApprovalDto data)
+        {
+            var result = await _budgetService.CheckWorkFlow(data);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+            return BadRequest(result);
+        }
     }
 }

@@ -123,7 +123,34 @@ namespace Application.Services
             if (estimatedBudget == null)
                 return new Response<EstimatedBudgetDto>("Not found");
 
-            return new Response<EstimatedBudgetDto>(_mapper.Map<EstimatedBudgetDto>(estimatedBudget), "Returning value");
+            var estimatedBudgetDto = _mapper.Map<EstimatedBudgetDto>(estimatedBudget);
+
+            if (estimatedBudgetDto.State == DocumentStatus.Unpaid || estimatedBudgetDto.State == DocumentStatus.Partial || estimatedBudgetDto.State == DocumentStatus.Paid)
+            {
+                return new Response<EstimatedBudgetDto>(estimatedBudgetDto, "Returning value");
+            }
+
+            estimatedBudgetDto.IsAllowedRole = false;
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.EstimatedBudget)).FirstOrDefault();
+            if (workflow != null)
+            {
+                var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == estimatedBudgetDto.StatusId));
+
+                if (transition != null)
+                {
+                    var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+                    foreach (var role in currentUserRoles)
+                    {
+                        if (transition.AllowedRole.Name == role)
+                        {
+                            estimatedBudgetDto.IsAllowedRole = true;
+                        }
+                    }
+                }
+            }
+
+            return new Response<EstimatedBudgetDto>(estimatedBudgetDto, "Returning value");
         }
 
         public async Task<Response<List<EstimatedBudgetDto>>> GetEstimatedBudgetDropDown()
@@ -154,7 +181,7 @@ namespace Application.Services
 
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
-            var getEstimatedBudget = await _unitOfWork.EstimatedBudget.GetById(data.DocId, new EstimatedBudgetSpecs());
+            var getEstimatedBudget = await _unitOfWork.EstimatedBudget.GetById(data.DocId, new EstimatedBudgetSpecs(false));
 
             if (getEstimatedBudget == null)
             {
