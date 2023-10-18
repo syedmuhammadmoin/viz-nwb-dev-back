@@ -296,6 +296,10 @@ namespace Application.Mapper
             CreateMap<CreateBudgetDto, BudgetMaster>();
             CreateMap<CreateBudgetLinesDto, BudgetLines>();
 
+
+            CreateMap<BudgetMaster,CreateBudgetDto> ();
+            CreateMap<BudgetLines,CreateBudgetLinesDto> ();
+
             // PurchaseOrder Mapping
             CreateMap<PurchaseOrderMaster, PurchaseOrderDto>()
                .ForMember(dto => dto.VendorName, core => core.MapFrom(a => a.Vendor.Name))

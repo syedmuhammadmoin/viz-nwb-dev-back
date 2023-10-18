@@ -16,9 +16,16 @@ namespace Domain.Entities
         public Level4 Account { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Amount { get; private set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal RevisedAmount { get; private set; }
         public int MasterId { get; private set; }
         [ForeignKey("MasterId")]
         [JsonIgnore]
         public BudgetMaster BudgetMaster { get; private set; }
+
+        public void SetAmount(decimal ammount)
+        {
+            RevisedAmount = ammount;
+        }
     }
 }
