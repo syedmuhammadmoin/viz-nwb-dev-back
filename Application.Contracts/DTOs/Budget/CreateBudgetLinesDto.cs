@@ -19,5 +19,7 @@ namespace Application.Contracts.DTOs
         [Column(TypeName = "decimal(18,2)")]
         [Range(0.00, float.MaxValue, ErrorMessage = "Please enter a positive value")]
         public decimal? Amount { get; set; }
+        public decimal? RevisedAmount { get { return Amount; } }
+
     }
 }

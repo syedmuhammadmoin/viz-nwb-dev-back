@@ -6,10 +6,10 @@
         {
             return new List<string>()
             {
-                $"Permissions.{module}.{submodule}.Create",
-                $"Permissions.{module}.{submodule}.View",
-                $"Permissions.{module}.{submodule}.Edit",
-                $"Permissions.{module}.{submodule}.Delete",
+                $"{module}.{submodule}.CR",
+                $"{module}.{submodule}.VW",
+                $"{module}.{submodule}.ED",
+                $"{module}.{submodule}.DL",
             };
         }
 
@@ -17,446 +17,581 @@
         {
             return new List<string>()
             {
-                $"Permissions.{module}.{submodule}.View",
+                $"{module}.{submodule}.VW",
             };
         }
 
         //Profiling forms
         public static class AuthClaims
         {
-            public const string View = "Permissions.AccessManagement.AuthClaims.View";
-            public const string Create = "Permissions.AccessManagement.AuthClaims.Create";
-            public const string Edit = "Permissions.AccessManagement.AuthClaims.Edit";
-            public const string Delete = "Permissions.AccessManagement.AuthClaims.Delete";
+            public const string View = "AccessManagement.Auth.VW";
+            public const string Create = "AccessManagement.Auth.CR";
+            public const string Edit = "AccessManagement.Auth.ED";
+            public const string Delete = "AccessManagement.Auth.DL";
         }
         public static class BusinessPartnerClaims
         {
-            public const string View = "Permissions.Profiling.BusinessPartnerClaims.View";
-            public const string Create = "Permissions.Profiling.BusinessPartnerClaims.Create";
-            public const string Edit = "Permissions.Profiling.BusinessPartnerClaims.Edit";
-            public const string Delete = "Permissions.Profiling.BusinessPartnerClaims.Delete";
+            public const string View = "Profiling.BusinessPartner.VW";
+            public const string Create = "Profiling.BusinessPartner.CR";
+            public const string Edit = "Profiling.BusinessPartner.ED";
+            public const string Delete = "Profiling.BusinessPartner.DL";
         }
 
         public static class OrganizationClaims
         {
-            public const string View = "Permissions.Profiling.OrganizationClaims.View";
-            public const string Create = "Permissions.Profiling.OrganizationClaims.Create";
-            public const string Edit = "Permissions.Profiling.OrganizationClaims.Edit";
-            public const string Delete = "Permissions.Profiling.OrganizationClaims.Delete";
+            public const string View = "Profiling.Organization.VW";
+            public const string Create = "Profiling.Organization.CR";
+            public const string Edit = "Profiling.Organization.ED";
+            public const string Delete = "Profiling.Organization.DL";
         }
         public static class DepartmentClaims
         {
-            public const string View = "Permissions.Payroll.DepartmentClaims.View";
-            public const string Create = "Permissions.Payroll.DepartmentClaims.Create";
-            public const string Edit = "Permissions.Payroll.DepartmentClaims.Edit";
-            public const string Delete = "Permissions.Payroll.DepartmentClaims.Delete";
+            public const string View = "Payroll.Department.VW";
+            public const string Create = "Payroll.Department.CR";
+            public const string Edit = "Payroll.Department.ED";
+            public const string Delete = "Payroll.Department.DL";
         }
         public static class DesignationClaims
         {
-            public const string View = "Permissions.Payroll.DesignationClaims.View";
-            public const string Create = "Permissions.Payroll.DesignationClaims.Create";
-            public const string Edit = "Permissions.Payroll.DesignationClaims.Edit";
-            public const string Delete = "Permissions.Payroll.DesignationClaims.Delete";
+            public const string View = "Payroll.Designation.VW";
+            public const string Create = "Payroll.Designation.CR";
+            public const string Edit = "Payroll.Designation.ED";
+            public const string Delete = "Payroll.Designation.DL";
         }
         public static class EmployeeClaims
         {
-            public const string View = "Permissions.Payroll.EmployeeClaims.View";
-            public const string Create = "Permissions.Payroll.EmployeeClaims.Create";
-            public const string Edit = "Permissions.Payroll.EmployeeClaims.Edit";
-            public const string Delete = "Permissions.Payroll.EmployeeClaims.Delete";
+            public const string View = "Payroll.Employee.VW";
+            public const string Create = "Payroll.Employee.CR";
+            public const string Edit = "Payroll.Employee.ED";
+            public const string Delete = "Payroll.Employee.DL";
         }
 
         public static class LocationClaims
         {
-            public const string View = "Permissions.Profiling.LocationClaims.View";
-            public const string Create = "Permissions.Profiling.LocationClaims.Create";
-            public const string Edit = "Permissions.Profiling.LocationClaims.Edit";
-            public const string Delete = "Permissions.Profiling.LocationClaims.Delete";
+            public const string View = "Profiling.Location.VW";
+            public const string Create = "Profiling.Location.CR";
+            public const string Edit = "Profiling.Location.ED";
+            public const string Delete = "Profiling.Location.DL";
         }
 
         public static class WarehouseClaims
         {
-            public const string View = "Permissions.Profiling.WarehouseClaims.View";
-            public const string Create = "Permissions.Profiling.WarehouseClaims.Create";
-            public const string Edit = "Permissions.Profiling.WarehouseClaims.Edit";
-            public const string Delete = "Permissions.Profiling.WarehouseClaims.Delete";
+            public const string View = "Profiling.Warehouse.VW";
+            public const string Create = "Profiling.Warehouse.CR";
+            public const string Edit = "Profiling.Warehouse.ED";
+            public const string Delete = "Profiling.Warehouse.DL";
         }
 
         public static class BankAccountClaims
         {
-            public const string View = "Permissions.Finance.BankAccountClaims.View";
-            public const string Create = "Permissions.Finance.BankAccountClaims.Create";
-            public const string Edit = "Permissions.Finance.BankAccountClaims.Edit";
-            public const string Delete = "Permissions.Finance.BankAccountClaims.Delete";
+            public const string View = "Finance.BankAccount.VW";
+            public const string Create = "Finance.BankAccount.CR";
+            public const string Edit = "Finance.BankAccount.ED";
+            public const string Delete = "Finance.BankAccount.DL";
         }
 
         public static class BankStatementClaims
         {
-            public const string View = "Permissions.Finance.BankStatementClaims.View";
-            public const string Create = "Permissions.Finance.BankStatementClaims.Create";
-            public const string Edit = "Permissions.Finance.BankStatementClaims.Edit";
-            public const string Delete = "Permissions.Finance.BankStatementClaims.Delete";
+            public const string View = "Finance.BankStatement.VW";
+            public const string Create = "Finance.BankStatement.CR";
+            public const string Edit = "Finance.BankStatement.ED";
+            public const string Delete = "Finance.BankStatement.DL";
         }
 
         public static class CashAccountClaims
         {
-            public const string View = "Permissions.Finance.CashAccountClaims.View";
-            public const string Create = "Permissions.Finance.CashAccountClaims.Create";
-            public const string Edit = "Permissions.Finance.CashAccountClaims.Edit";
-            public const string Delete = "Permissions.Finance.CashAccountClaims.Delete";
+            public const string View = "Finance.CashAccount.VW";
+            public const string Create = "Finance.CashAccount.CR";
+            public const string Edit = "Finance.CashAccount.ED";
+            public const string Delete = "Finance.CashAccount.DL";
         }
         public static class PurchaseOrderClaims
         {
-            public const string View = "Permissions.Procurement.PurchaseOrderClaims.View";
-            public const string Create = "Permissions.Procurement.PurchaseOrderClaims.Create";
-            public const string Edit = "Permissions.Procurement.PurchaseOrderClaims.Edit";
-            public const string Delete = "Permissions.Procurement.PurchaseOrderClaims.Delete";
+            public const string View = "Procurement.PurchaseOrder.VW";
+            public const string Create = "Procurement.PurchaseOrder.CR";
+            public const string Edit = "Procurement.PurchaseOrder.ED";
+            public const string Delete = "Procurement.PurchaseOrder.DL";
         }
 
         public static class GRNClaims
         {
-            public const string View = "Permissions.Procurement.GRNClaims.View";
-            public const string Create = "Permissions.Procurement.GRNClaims.Create";
-            public const string Edit = "Permissions.Procurement.GRNClaims.Edit";
-            public const string Delete = "Permissions.Procurement.GRNClaims.Delete";
+            public const string View = "Procurement.GRN.VW";
+            public const string Create = "Procurement.GRN.CR";
+            public const string Edit = "Procurement.GRN.ED";
+            public const string Delete = "Procurement.GRN.DL";
         }
         public static class RequisitionClaims
         {
-            public const string View = "Permissions.Procurement.RequisitionClaims.View";
-            public const string Create = "Permissions.Procurement.RequisitionClaims.Create";
-            public const string Edit = "Permissions.Procurement.RequisitionClaims.Edit";
-            public const string Delete = "Permissions.Procurement.RequisitionClaims.Delete";
+            public const string View = "Procurement.Requisition.VW";
+            public const string Create = "Procurement.Requisition.CR";
+            public const string Edit = "Procurement.Requisition.ED";
+            public const string Delete = "Procurement.Requisition.DL";
         }
 
         public static class CategoriesClaims
         {
-            public const string View = "Permissions.Profiling.CategoriesClaims.View";
-            public const string Create = "Permissions.Profiling.CategoriesClaims.Create";
-            public const string Edit = "Permissions.Profiling.CategoriesClaims.Edit";
-            public const string Delete = "Permissions.Profiling.CategoriesClaims.Delete";
+            public const string View = "Profiling.Categories.VW";
+            public const string Create = "Profiling.Categories.CR";
+            public const string Edit = "Profiling.Categories.ED";
+            public const string Delete = "Profiling.Categories.DL";
         }
 
         public static class ProductsClaims
         {
-            public const string View = "Permissions.Profiling.ProductsClaims.View";
-            public const string Create = "Permissions.Profiling.ProductsClaims.Create";
-            public const string Edit = "Permissions.Profiling.ProductsClaims.Edit";
-            public const string Delete = "Permissions.Profiling.ProductsClaims.Delete";
+            public const string View = "Profiling.Products.VW";
+            public const string Create = "Profiling.Products.CR";
+            public const string Edit = "Profiling.Products.ED";
+            public const string Delete = "Profiling.Products.DL";
         }
 
         public static class Level4Claims
         {
-            public const string View = "Permissions.Finance.Level4Claims.View";
-            public const string Create = "Permissions.Finance.Level4Claims.Create";
-            public const string Edit = "Permissions.Finance.Level4Claims.Edit";
-            public const string Delete = "Permissions.Finance.Level4Claims.Delete";
+            public const string View = "Finance.Level4.VW";
+            public const string Create = "Finance.Level4.CR";
+            public const string Edit = "Finance.Level4.ED";
+            public const string Delete = "Finance.Level4.DL";
         }
         public static class BankReconClaims
         {
-            public const string View = "Permissions.Finance.BankReconClaims.View";
-            public const string Create = "Permissions.Finance.BankReconClaims.Create";
-            public const string Edit = "Permissions.Finance.BankReconClaims.Edit";
-            public const string Delete = "Permissions.Finance.BankReconClaims.Delete";
+            public const string View = "Finance.BankRecon.VW";
+            public const string Create = "Finance.BankRecon.CR";
+            public const string Edit = "Finance.BankRecon.ED";
+            public const string Delete = "Finance.BankRecon.DL";
         }
         public static class TransactionReconClaims
         {
-            public const string View = "Permissions.Finance.TransactionReconClaims.View";
-            public const string Create = "Permissions.Finance.TransactionReconClaims.Create";
-            public const string Edit = "Permissions.Finance.TransactionReconClaims.Edit";
-            public const string Delete = "Permissions.Finance.TransactionReconClaims.Delete";
+            public const string View = "Finance.TransactionRecon.VW";
+            public const string Create = "Finance.TransactionRecon.CR";
+            public const string Edit = "Finance.TransactionRecon.ED";
+            public const string Delete = "Finance.TransactionRecon.DL";
         }
         public static class WorkflowClaims
         {
-            public const string View = "Permissions.Workflow.WorkflowClaims.View";
-            public const string Create = "Permissions.Workflow.WorkflowClaims.Create";
-            public const string Edit = "Permissions.Workflow.WorkflowClaims.Edit";
-            public const string Delete = "Permissions.Workflow.WorkflowClaims.Delete";
+            public const string View = "Workflow.Workflow.VW";
+            public const string Create = "Workflow.Workflow.CR";
+            public const string Edit = "Workflow.Workflow.ED";
+            public const string Delete = "Workflow.Workflow.DL";
         }
 
         public static class WorkflowStatusClaims
         {
-            public const string View = "Permissions.Workflow.WorkflowStatusClaims.View";
-            public const string Create = "Permissions.Workflow.WorkflowStatusClaims.Create";
-            public const string Edit = "Permissions.Workflow.WorkflowStatusClaims.Edit";
-            public const string Delete = "Permissions.Workflow.WorkflowStatusClaims.Delete";
+            public const string View = "Workflow.WorkflowStatus.VW";
+            public const string Create = "Workflow.WorkflowStatus.CR";
+            public const string Edit = "Workflow.WorkflowStatus.ED";
+            public const string Delete = "Workflow.WorkflowStatus.DL";
         }
         public static class BudgetClaims
         {
-            public const string View = "Permissions.Budget.BudgetClaims.View";
-            public const string Create = "Permissions.Budget.BudgetClaims.Create";
-            public const string Edit = "Permissions.Budget.BudgetClaims.Edit";
-            public const string Delete = "Permissions.Budget.BudgetClaims.Delete";
+            public const string View = "Budget.Budget.VW";
+            public const string Create = "Budget.Budget.CR";
+            public const string Edit = "Budget.Budget.ED";
+            public const string Delete = "Budget.Budget.DL";
         }
         public static class EstimatedBudgetClaims
         {
-            public const string View = "Permissions.Budget.EstimatedBudgetClaims.View";
-            public const string Create = "Permissions.Budget.EstimatedBudgetClaims.Create";
-            public const string Edit = "Permissions.Budget.EstimatedBudgetClaims.Edit";
-            public const string Delete = "Permissions.Budget.EstimatedBudgetClaims.Delete";
+            public const string View = "Budget.EstimatedBudget.VW";
+            public const string Create = "Budget.EstimatedBudget.CR";
+            public const string Edit = "Budget.EstimatedBudget.ED";
+            public const string Delete = "Budget.EstimatedBudget.DL";
         }
         public static class TaxesClaims
         {
-            public const string View = "Permissions.Profiling.TaxesClaims.View";
-            public const string Create = "Permissions.Profiling.TaxesClaims.Create";
-            public const string Edit = "Permissions.Profiling.TaxesClaims.Edit";
-            public const string Delete = "Permissions.Profiling.TaxesClaims.Delete";
+            public const string View = "Profiling.Taxes.VW";
+            public const string Create = "Profiling.Taxes.CR";
+            public const string Edit = "Profiling.Taxes.ED";
+            public const string Delete = "Profiling.Taxes.DL";
         }
         public static class UnitOfMeasurementClaims
         {
-            public const string View = "Permissions.Profiling.UnitOfMeasurementClaims.View";
-            public const string Create = "Permissions.Profiling.UnitOfMeasurementClaims.Create";
-            public const string Edit = "Permissions.Profiling.UnitOfMeasurementClaims.Edit";
-            public const string Delete = "Permissions.Profiling.UnitOfMeasurementClaims.Delete";
+            public const string View = "Profiling.UnitOfMeasurement.VW";
+            public const string Create = "Profiling.UnitOfMeasurement.CR";
+            public const string Edit = "Profiling.UnitOfMeasurement.ED";
+            public const string Delete = "Profiling.UnitOfMeasurement.DL";
         }
 
         //Transaction Forms
         public static class InvoiceClaims
         {
-            public const string View = "Permissions.Finance.InvoiceClaims.View";
-            public const string Create = "Permissions.Finance.InvoiceClaims.Create";
-            public const string Edit = "Permissions.Finance.InvoiceClaims.Edit";
-            public const string Delete = "Permissions.Finance.InvoiceClaims.Delete";
+            public const string View = "Finance.Invoice.VW";
+            public const string Create = "Finance.Invoice.CR";
+            public const string Edit = "Finance.Invoice.ED";
+            public const string Delete = "Finance.Invoice.DL";
         }
 
         public static class BillClaims
         {
-            public const string View = "Permissions.Finance.BillClaims.View";
-            public const string Create = "Permissions.Finance.BillClaims.Create";
-            public const string Edit = "Permissions.Finance.BillClaims.Edit";
-            public const string Delete = "Permissions.Finance.BillClaims.Delete";
+            public const string View = "Finance.Bill.VW";
+            public const string Create = "Finance.Bill.CR";
+            public const string Edit = "Finance.Bill.ED";
+            public const string Delete = "Finance.Bill.DL";
         }
 
         public static class PaymentClaims
         {
-            public const string View = "Permissions.Finance.PaymentClaims.View";
-            public const string Create = "Permissions.Finance.PaymentClaims.Create";
-            public const string Edit = "Permissions.Finance.PaymentClaims.Edit";
-            public const string Delete = "Permissions.Finance.PaymentClaims.Delete";
+            public const string View = "Finance.Payment.VW";
+            public const string Create = "Finance.Payment.CR";
+            public const string Edit = "Finance.Payment.ED";
+            public const string Delete = "Finance.Payment.DL";
         }
 
         public static class ReceiptClaims
         {
-            public const string View = "Permissions.Finance.ReceiptClaims.View";
-            public const string Create = "Permissions.Finance.ReceiptClaims.Create";
-            public const string Edit = "Permissions.Finance.ReceiptClaims.Edit";
-            public const string Delete = "Permissions.Finance.ReceiptClaims.Delete";
+            public const string View = "Finance.Receipt.VW";
+            public const string Create = "Finance.Receipt.CR";
+            public const string Edit = "Finance.Receipt.ED";
+            public const string Delete = "Finance.Receipt.DL";
         }
 
         public static class CampusClaims
         {
-            public const string View = "Permissions.Profiling.CampusClaims.View";
-            public const string Create = "Permissions.Profiling.CampusClaims.Create";
-            public const string Edit = "Permissions.Profiling.CampusClaims.Edit";
-            public const string Delete = "Permissions.Profiling.CampusClaims.Delete";
+            public const string View = "Profiling.Campus.VW";
+            public const string Create = "Profiling.Campus.CR";
+            public const string Edit = "Profiling.Campus.ED";
+            public const string Delete = "Profiling.Campus.DL";
         }
 
         public static class CreditNoteClaims
         {
-            public const string View = "Permissions.Finance.CreditNoteClaims.View";
-            public const string Create = "Permissions.Finance.CreditNoteClaims.Create";
-            public const string Edit = "Permissions.Finance.CreditNoteClaims.Edit";
-            public const string Delete = "Permissions.Finance.CreditNoteClaims.Delete";
+            public const string View = "Finance.CreditNote.VW";
+            public const string Create = "Finance.CreditNote.CR";
+            public const string Edit = "Finance.CreditNote.ED";
+            public const string Delete = "Finance.CreditNote.DL";
         }
 
         public static class DebitNoteClaims
         {
-            public const string View = "Permissions.Finance.DebitNoteClaims.View";
-            public const string Create = "Permissions.Finance.DebitNoteClaims.Create";
-            public const string Edit = "Permissions.Finance.DebitNoteClaims.Edit";
-            public const string Delete = "Permissions.Finance.DebitNoteClaims.Delete";
+            public const string View = "Finance.DebitNote.VW";
+            public const string Create = "Finance.DebitNote.CR";
+            public const string Edit = "Finance.DebitNote.ED";
+            public const string Delete = "Finance.DebitNote.DL";
         }
 
         public static class JournalEntryClaims
         {
-            public const string View = "Permissions.Finance.JournalEntryClaims.View";
-            public const string Create = "Permissions.Finance.JournalEntryClaims.Create";
-            public const string Edit = "Permissions.Finance.JournalEntryClaims.Edit";
-            public const string Delete = "Permissions.Finance.JournalEntryClaims.Delete";
+            public const string View = "Finance.JournalEntry.VW";
+            public const string Create = "Finance.JournalEntry.CR";
+            public const string Edit = "Finance.JournalEntry.ED";
+            public const string Delete = "Finance.JournalEntry.DL";
         }
         public static class PayrollItemClaims
         {
-            public const string View = "Permissions.Payroll.PayrollItemClaims.View";
-            public const string Create = "Permissions.Payroll.PayrollItemClaims.Create";
-            public const string Edit = "Permissions.Payroll.PayrollItemClaims.Edit";
-            public const string Delete = "Permissions.Payroll.PayrollItemClaims.Delete";
+            public const string View = "Payroll.PayrollItem.VW";
+            public const string Create = "Payroll.PayrollItem.CR";
+            public const string Edit = "Payroll.PayrollItem.ED";
+            public const string Delete = "Payroll.PayrollItem.DL";
         }
         public static class PayrollItemEmployeeClaims
         {
-            public const string View = "Permissions.Payroll.PayrollItemEmployeeClaims.View";
-            public const string Create = "Permissions.Payroll.PayrollItemEmployeeClaims.Create";
-            public const string Edit = "Permissions.Payroll.PayrollItemEmployeeClaims.Edit";
-            public const string Delete = "Permissions.Payroll.PayrollItemEmployeeClaims.Delete";
+            public const string View = "Payroll.PayrollItemEmployee.VW";
+            public const string Create = "Payroll.PayrollItemEmployee.CR";
+            public const string Edit = "Payroll.PayrollItemEmployee.ED";
+            public const string Delete = "Payroll.PayrollItemEmployee.DL";
         }
         public static class PayrollTransactionClaims
         {
-            public const string View = "Permissions.Payroll.PayrollTransactionClaims.View";
-            public const string Create = "Permissions.Payroll.PayrollTransactionClaims.Create";
-            public const string Edit = "Permissions.Payroll.PayrollTransactionClaims.Edit";
-            public const string Delete = "Permissions.Payroll.PayrollTransactionClaims.Delete";
+            public const string View = "Payroll.PayrollTransaction.VW";
+            public const string Create = "Payroll.PayrollTransaction.CR";
+            public const string Edit = "Payroll.PayrollTransaction.ED";
+            public const string Delete = "Payroll.PayrollTransaction.DL";
         }
         public static class PayrollPaymentClaims
         {
-            public const string View = "Permissions.Payroll.PayrollPaymentClaims.View";
-            public const string Create = "Permissions.Payroll.PayrollPaymentClaims.Create";
-            public const string Edit = "Permissions.Payroll.PayrollPaymentClaims.Edit";
-            public const string Delete = "Permissions.Payroll.PayrollPaymentClaims.Delete";
+            public const string View = "Payroll.PayrollPayment.VW";
+            public const string Create = "Payroll.PayrollPayment.CR";
+            public const string Edit = "Payroll.PayrollPayment.ED";
+            public const string Delete = "Payroll.PayrollPayment.DL";
         }
         public static class IssuanceClaims
         {
-            public const string View = "Permissions.Procurement.IssuanceClaims.View";
-            public const string Create = "Permissions.Procurement.IssuanceClaims.Create";
-            public const string Edit = "Permissions.Procurement.IssuanceClaims.Edit";
-            public const string Delete = "Permissions.Procurement.IssuanceClaims.Delete";
+            public const string View = "Procurement.Issuance.VW";
+            public const string Create = "Procurement.Issuance.CR";
+            public const string Edit = "Procurement.Issuance.ED";
+            public const string Delete = "Procurement.Issuance.DL";
         }
         public static class GoodsReturnNoteClaims
         {
-            public const string View = "Permissions.Procurement.GoodsReturnNoteClaims.View";
-            public const string Create = "Permissions.Procurement.GoodsReturnNoteClaims.Create";
-            public const string Edit = "Permissions.Procurement.GoodsReturnNoteClaims.Edit";
-            public const string Delete = "Permissions.Procurement.GoodsReturnNoteClaims.Delete";
+            public const string View = "Procurement.GoodsReturnNote.VW";
+            public const string Create = "Procurement.GoodsReturnNote.CR";
+            public const string Edit = "Procurement.GoodsReturnNote.ED";
+            public const string Delete = "Procurement.GoodsReturnNote.DL";
         }
         public static class IssuanceReturnClaims
         {
-            public const string View = "Permissions.Procurement.IssuanceReturnClaims.View";
-            public const string Create = "Permissions.Procurement.IssuanceReturnClaims.Create";
-            public const string Edit = "Permissions.Procurement.IssuanceReturnClaims.Edit";
-            public const string Delete = "Permissions.Procurement.IssuanceReturnClaims.Delete";
+            public const string View = "Procurement.IssuanceReturn.VW";
+            public const string Create = "Procurement.IssuanceReturn.CR";
+            public const string Edit = "Procurement.IssuanceReturn.ED";
+            public const string Delete = "Procurement.IssuanceReturn.DL";
         }
         public static class RequestClaims
         {
-            public const string View = "Permissions.Procurement.RequestClaims.View";
-            public const string Create = "Permissions.Procurement.RequestClaims.Create";
-            public const string Edit = "Permissions.Procurement.RequestClaims.Edit";
-            public const string Delete = "Permissions.Procurement.RequestClaims.Delete";
+            public const string View = "Procurement.Request.VW";
+            public const string Create = "Procurement.Request.CR";
+            public const string Edit = "Procurement.Request.ED";
+            public const string Delete = "Procurement.Request.DL";
         }
         public static class BidEvaluationClaims
         {
-            public const string View = "Permissions.Procurement.BidEvaluationClaims.View";
-            public const string Create = "Permissions.Procurement.BidEvaluationClaims.Create";
-            public const string Edit = "Permissions.Procurement.BidEvaluationClaims.Edit";
-            public const string Delete = "Permissions.Procurement.BidEvaluationClaims.Delete";
+            public const string View = "Procurement.BidEvaluation.VW";
+            public const string Create = "Procurement.BidEvaluation.CR";
+            public const string Edit = "Procurement.BidEvaluation.ED";
+            public const string Delete = "Procurement.BidEvaluation.DL";
         }
         public static class QuotationClaims
         {
-            public const string View = "Permissions.Procurement.QuotationClaims.View";
-            public const string Create = "Permissions.Procurement.QuotationClaims.Create";
-            public const string Edit = "Permissions.Procurement.QuotationClaims.Edit";
-            public const string Delete = "Permissions.Procurement.QuotationClaims.Delete";
+            public const string View = "Procurement.Quotation.VW";
+            public const string Create = "Procurement.Quotation.CR";
+            public const string Edit = "Procurement.Quotation.ED";
+            public const string Delete = "Procurement.Quotation.DL";
         }
         public static class CallForQuotationClaims
         {
-            public const string View = "Permissions.Procurement.CallForQuotationClaims.View";
-            public const string Create = "Permissions.Procurement.CallForQuotationClaims.Create";
-            public const string Edit = "Permissions.Procurement.CallForQuotationClaims.Edit";
-            public const string Delete = "Permissions.Procurement.CallForQuotationClaims.Delete";
+            public const string View = "Procurement.CallForQuotation.VW";
+            public const string Create = "Procurement.CallForQuotation.CR";
+            public const string Edit = "Procurement.CallForQuotation.ED";
+            public const string Delete = "Procurement.CallForQuotation.DL";
         }
         public static class QuotationComparativeClaims
         {
-            public const string View = "Permissions.Procurement.QuotationComparativeClaims.View";
-            public const string Create = "Permissions.Procurement.QuotationComparativeClaims.Create";
-            public const string Edit = "Permissions.Procurement.QuotationComparativeClaims.Edit";
-            public const string Delete = "Permissions.Procurement.QuotationComparativeClaims.Delete";
+            public const string View = "Procurement.QuotationComparative.VW";
+            public const string Create = "Procurement.QuotationComparative.CR";
+            public const string Edit = "Procurement.QuotationComparative.ED";
+            public const string Delete = "Procurement.QuotationComparative.DL";
         }
         public static class DepreciationModelClaims
         {
-            public const string View = "Permissions.FixedAsset.DepreciationModelClaims.View";
-            public const string Create = "Permissions.FixedAsset.DepreciationModelClaims.Create";
-            public const string Edit = "Permissions.FixedAsset.DepreciationModelClaims.Edit";
-            public const string Delete = "Permissions.FixedAsset.DepreciationModelClaims.Delete";
+            public const string View = "FixedAsset.DepreciationModel.VW";
+            public const string Create = "FixedAsset.DepreciationModel.CR";
+            public const string Edit = "FixedAsset.DepreciationModel.ED";
+            public const string Delete = "FixedAsset.DepreciationModel.DL";
         }
         public static class FixedAssetClaims
         {
-            public const string View = "Permissions.FixedAsset.FixedAssetClaims.View";
-            public const string Create = "Permissions.FixedAsset.FixedAssetClaims.Create";
-            public const string Edit = "Permissions.FixedAsset.FixedAssetClaims.Edit";
-            public const string Delete = "Permissions.FixedAsset.FixedAssetClaims.Delete";
+            public const string View = "FixedAsset.FixedAsset.VW";
+            public const string Create = "FixedAsset.FixedAsset.CR";
+            public const string Edit = "FixedAsset.FixedAsset.ED";
+            public const string Delete = "FixedAsset.FixedAsset.DL";
         }
         public static class CWIPClaims
         {
-            public const string View = "Permissions.FixedAsset.CWIPClaims.View";
-            public const string Create = "Permissions.FixedAsset.CWIPClaims.Create";
-            public const string Edit = "Permissions.FixedAsset.CWIPClaims.Edit";
-            public const string Delete = "Permissions.FixedAsset.CWIPClaims.Delete";
+            public const string View = "FixedAsset.CWIP.VW";
+            public const string Create = "FixedAsset.CWIP.CR";
+            public const string Edit = "FixedAsset.CWIP.ED";
+            public const string Delete = "FixedAsset.CWIP.DL";
         }
         public static class DisposalClaims
         {
-            public const string View = "Permissions.FixedAsset.DisposalClaims.View";
-            public const string Create = "Permissions.FixedAsset.DisposalClaims.Create";
-            public const string Edit = "Permissions.FixedAsset.DisposalClaims.Edit";
-            public const string Delete = "Permissions.FixedAsset.DisposalClaims.Delete";
+            public const string View = "FixedAsset.Disposal.VW";
+            public const string Create = "FixedAsset.Disposal.CR";
+            public const string Edit = "FixedAsset.Disposal.ED";
+            public const string Delete = "FixedAsset.Disposal.DL";
         }
         public static class BudgetReappropriationClaims
         {
-            public const string View = "Permissions.Budget.BudgetReappropriationClaims.View";
-            public const string Create = "Permissions.Budget.BudgetReappropriationClaims.Create";
-            public const string Edit = "Permissions.Budget.BudgetReappropriationClaims.Edit";
-            public const string Delete = "Permissions.Budget.BudgetReappropriationClaims.Delete";
+            public const string View = "Budget.BudgetReappropriation.VW";
+            public const string Create = "Budget.BudgetReappropriation.CR";
+            public const string Edit = "Budget.BudgetReappropriation.ED";
+            public const string Delete = "Budget.BudgetReappropriation.DL";
         }
         public static class DepreciationAdjustmentClaims
         {
-            public const string View = "Permissions.FixedAsset.DepreciationAdjustmentClaims.View";
-            public const string Create = "Permissions.FixedAsset.DepreciationAdjustmentClaims.Create";
-            public const string Edit = "Permissions.FixedAsset.DepreciationAdjustmentClaims.Edit";
-            public const string Delete = "Permissions.FixedAsset.DepreciationAdjustmentClaims.Delete";
+            public const string View = "FixedAsset.DepreciationAdjustment.VW";
+            public const string Create = "FixedAsset.DepreciationAdjustment.CR";
+            public const string Edit = "FixedAsset.DepreciationAdjustment.ED";
+            public const string Delete = "FixedAsset.DepreciationAdjustment.DL";
         }
 
         public static class FacultyClaims
         {
-            public const string View = "Permissions.Admission.FacultyClaims.View";
-            public const string Create = "Permissions.Admission.FacultyClaims.Create";
-            public const string Edit = "Permissions.Admission.FacultyClaims.Edit";
-            public const string Delete = "Permissions.Admission.FacultyClaims.Delete";
+            public const string View = "Admission.Faculty.VW";
+            public const string Create = "Admission.Faculty.CR";
+            public const string Edit = "Admission.Faculty.ED";
+            public const string Delete = "Admission.Faculty.DL";
         }
 
         public static class AcademicDepartmentClaims
         {
-            public const string View = "Permissions.Admission.AcademicDepartmentClaims.View";
-            public const string Create = "Permissions.Admission.AcademicDepartmentClaims.Create";
-            public const string Edit = "Permissions.Admission.AcademicDepartmentClaims.Edit";
-            public const string Delete = "Permissions.Admission.AcademicDepartmentClaims.Delete";
+            public const string View = "Admission.AcademicDepartment.VW";
+            public const string Create = "Admission.AcademicDepartment.CR";
+            public const string Edit = "Admission.AcademicDepartment.ED";
+            public const string Delete = "Admission.AcademicDepartment.DL";
         }
 
         public static class DegreeClaims
         {
-            public const string View = "Permissions.Admission.DegreeClaims.View";
-            public const string Create = "Permissions.Admission.DegreeClaims.Create";
-            public const string Edit = "Permissions.Admission.DegreeClaims.Edit";
-            public const string Delete = "Permissions.Admission.DegreeClaims.Delete";
+            public const string View = "Admission.Degree.VW";
+            public const string Create = "Admission.Degree.CR";
+            public const string Edit = "Admission.Degree.ED";
+            public const string Delete = "Admission.Degree.DL";
+        }
+
+        public static class ProgramClaims
+        {
+            public const string View = "Admission.Program.VW";
+            public const string Create = "Admission.Program.CR";
+            public const string Edit = "Admission.Program.ED";
+            public const string Delete = "Admission.Program.DL";
+        }
+
+        public static class SemesterClaims
+        {
+            public const string View = "Admission.Semester.VW";
+            public const string Create = "Admission.Semester.CR";
+            public const string Edit = "Admission.Semester.ED";
+            public const string Delete = "Admission.Semester.DL";
+        }
+
+        public static class CourseClaims
+        {
+            public const string View = "Admission.Course.VW";
+            public const string Create = "Admission.Course.CR";
+            public const string Edit = "Admission.Course.ED";
+            public const string Delete = "Admission.Course.DL";
+        }
+
+        public static class QualificationClaims
+        {
+            public const string View = "Admission.Qualification.VW";
+            public const string Create = "Admission.Qualification.CR";
+            public const string Edit = "Admission.Qualification.ED";
+            public const string Delete = "Admission.Qualification.DL";
+        }
+
+        public static class SubjectClaims
+        {
+            public const string View = "Admission.Subject.VW";
+            public const string Create = "Admission.Subject.CR";
+            public const string Edit = "Admission.Subject.ED";
+            public const string Delete = "Admission.Subject.DL";
+        }
+
+        public static class FeeItemClaims
+        {
+            public const string View = "Admission.FeeItem.VW";
+            public const string Create = "Admission.FeeItem.CR";
+            public const string Edit = "Admission.FeeItem.ED";
+            public const string Delete = "Admission.FeeItem.DL";
+        }
+
+        public static class CountryClaims
+        {
+            public const string View = "Admission.Country.VW";
+            public const string Create = "Admission.Country.CR";
+            public const string Edit = "Admission.Country.ED";
+            public const string Delete = "Admission.Country.DL";
+        }
+
+        public static class StateClaims
+        {
+            public const string View = "Admission.State.VW";
+            public const string Create = "Admission.State.CR";
+            public const string Edit = "Admission.State.ED";
+            public const string Delete = "Admission.State.DL";
+        }
+
+        public static class CityClaims
+        {
+            public const string View = "Admission.City.VW";
+            public const string Create = "Admission.City.CR";
+            public const string Edit = "Admission.City.ED";
+            public const string Delete = "Admission.City.DL";
+        }
+
+        public static class DistrictClaims
+        {
+            public const string View = "Admission.District.VW";
+            public const string Create = "Admission.District.CR";
+            public const string Edit = "Admission.District.ED";
+            public const string Delete = "Admission.District.DL";
+        }
+
+        public static class DomicileClaims
+        {
+            public const string View = "Admission.Domicile.VW";
+            public const string Create = "Admission.Domicile.CR";
+            public const string Edit = "Admission.Domicile.ED";
+            public const string Delete = "Admission.Domicile.DL";
+        }
+
+        public static class ShiftClaims
+        {
+            public const string View = "Admission.Shift.VW";
+            public const string Create = "Admission.Shift.CR";
+            public const string Edit = "Admission.Shift.ED";
+            public const string Delete = "Admission.Shift.DL";
+        }
+
+        public static class BatchClaims
+        {
+            public const string View = "Admission.Batch.VW";
+            public const string Create = "Admission.Batch.CR";
+            public const string Edit = "Admission.Batch.ED";
+            public const string Delete = "Admission.Batch.DL";
+        }
+
+        public static class AdmissionCriteriaClaims
+        {
+            public const string View = "Admission.AdmissionCriteria.VW";
+            public const string Create = "Admission.AdmissionCriteria.CR";
+            public const string Edit = "Admission.AdmissionCriteria.ED";
+            public const string Delete = "Admission.AdmissionCriteria.DL";
+        }
+
+        public static class ApplicantClaims
+        {
+            public const string View = "Admission.Applicant.VW";
+            public const string Create = "Admission.Applicant.CR";
+            public const string Edit = "Admission.Applicant.ED";
+            public const string Delete = "Admission.Applicant.DL";
+        }
+
+        public static class AdmissionApplicationClaims
+        {
+            public const string View = "Admission.AdmissionApplication.VW";
+            public const string Create = "Admission.AdmissionApplication.CR";
+            public const string Edit = "Admission.AdmissionApplication.ED";
+            public const string Delete = "Admission.AdmissionApplication.DL";
+        }
+        public static class ProgramChallanTemplateClaims
+        {
+            public const string View = "Admission.ProgramChallanTemplate.VW";
+            public const string Create = "Admission.ProgramChallanTemplate.CR";
+            public const string Edit = "Admission.ProgramChallanTemplate.ED";
+            public const string Delete = "Admission.ProgramChallanTemplate.DL";
         }
 
         //Reporting Form
         public static class ChartOfAccountClaims
         {
-            public const string View = "Permissions.Finance.ChartOfAccountClaims.View";
+            public const string View = "Finance.ChartOfAccount.VW";
         }
         public static class GeneralLedgerClaims
         {
-            public const string View = "Permissions.Report.GeneralLedgerClaims.View";
+            public const string View = "Report.GeneralLedger.VW";
         }
         public static class TrialBalanceClaims
         {
-            public const string View = "Permissions.Report.TrialBalanceClaims.View";
+            public const string View = "Report.TrialBalance.VW";
         }
         public static class BalanceSheetClaims
         {
-            public const string View = "Permissions.Report.BalanceSheetClaims.View";
+            public const string View = "Report.BalanceSheet.VW";
         }
         public static class ProfitLossClaims
         {
-            public const string View = "Permissions.Report.ProfitLossClaims.View";
+            public const string View = "Report.ProfitLoss.VW";
         }
         public static class BudgetReportClaims
         {
-            public const string View = "Permissions.Budget.BudgetReportClaims.View";
+            public const string View = "Budget.BudgetReport.VW";
         }
         public static class StockClaims
         {
-            public const string View = "Permissions.Procurement.StockClaims.View";
+            public const string View = "Procurement.Stock.VW";
         }
 
         public static class FixedAssetReportClaims
         {
-            public const string View = "Permissions.FixedAsset.FixedAssetReportClaims.View";
+            public const string View = "FixedAsset.FixedAssetReport.VW";
         }
     }
 }

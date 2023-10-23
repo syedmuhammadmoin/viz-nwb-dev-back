@@ -10,8 +10,11 @@ using Domain.Interfaces;
 using Infrastructure.Specifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml.Style;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,30 +27,6 @@ namespace Application.Services
         private readonly IEmployeeService _employeeService;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public PayrollTransactionService(IUnitOfWork unitOfWork, IMapper mapper, IEmployeeService employeeService, IHttpContextAccessor httpContextAccessor)
-        {
-            _unitOfWork = unitOfWork;
-            _employeeService = employeeService;
-            _mapper = mapper;
-            _httpContextAccessor = httpContextAccessor;
-        }
-
-        public async Task<Response<PayrollTransactionDto>> CreateAsync(CreatePayrollTransactionDto[] entity)
-        {
-
-            foreach (var item in entity)
-            {
-                var result = await CreatePayroll(item);
-                if (!result.IsSuccess)
-                {
-                    return result;
-                }
-            }
-            return new Response<PayrollTransactionDto>(null, "Records populated successfully");
-
-        }
-
         private async Task<Response<PayrollTransactionDto>> CreatePayroll(CreatePayrollTransactionDto item)
         {
             if (item.WorkingDays < item.PresentDays
@@ -193,79 +172,6 @@ namespace Application.Services
                 return new Response<PayrollTransactionDto>(ex.Message);
             }
         }
-
-
-        public Task<Response<int>> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<PaginationResponse<List<PayrollTransactionDto>>> GetAllAsync(TransactionFormFilter filter)
-        {
-            var docDate = new List<DateTime?>();
-            var states = new List<DocumentStatus?>();
-            if (filter.DocDate != null)
-            {
-                docDate.Add(filter.DocDate);
-            }
-            if (filter.State != null)
-            {
-                states.Add(filter.State);
-            }
-            var payrollTransactions = await _unitOfWork.PayrollTransaction.GetAll(new PayrollTransactionSpecs(docDate, states, filter, false));
-            var response = new List<PayrollTransactionDto>();
-
-            if (payrollTransactions.Count() == 0)
-                return new PaginationResponse<List<PayrollTransactionDto>>(_mapper.Map<List<PayrollTransactionDto>>(response), "List is empty");
-
-            var totalRecords = await _unitOfWork.PayrollTransaction.TotalRecord(new PayrollTransactionSpecs(docDate, states, filter, true));
-
-
-            foreach (var i in payrollTransactions)
-            {
-                response.Add(MapToValue(i));
-            }
-            return new PaginationResponse<List<PayrollTransactionDto>>(_mapper.Map<List<PayrollTransactionDto>>(response),
-                filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
-        }
-
-        public async Task<Response<PayrollTransactionDto>> GetByIdAsync(int id)
-        {
-            var specification = new PayrollTransactionSpecs(false);
-            var payrollTransaction = await _unitOfWork.PayrollTransaction.GetById(id, specification);
-            if (payrollTransaction == null)
-                return new Response<PayrollTransactionDto>("Not found");
-
-            var payrollTransactionDto = _mapper.Map<PayrollTransactionDto>(payrollTransaction);
-
-            payrollTransactionDto.IsAllowedRole = false;
-            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
-
-
-            if (workflow != null)
-            {
-                var transition = workflow.WorkflowTransitions
-                    .FirstOrDefault(x => (x.CurrentStatusId == payrollTransactionDto.StatusId));
-
-                if (transition != null)
-                {
-                    var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
-                    foreach (var role in currentUserRoles)
-                    {
-                        if (transition.AllowedRole.Name == role)
-                        {
-                            payrollTransactionDto.IsAllowedRole = true;
-                        }
-                    }
-                }
-            }
-
-
-            var result = MapToValue(payrollTransaction);
-
-            return new Response<PayrollTransactionDto>(result, "Returning value");
-        }
-
         private async Task<Response<PayrollTransactionDto>> UpdatePayroll(int id, CreatePayrollTransactionDto entity, int status)
         {
             var emp = _employeeService.GetEmpByCNIC(entity.EmployeeCNIC);
@@ -360,7 +266,6 @@ namespace Application.Services
             //returning response
             return new Response<PayrollTransactionDto>(_mapper.Map<PayrollTransactionDto>(getPayrollTransaction), "Updated successfully");
         }
-
         private async Task<Response<PayrollTransactionDto>> UpdatePayrollTransaction(UpdatePayrollTransactionDto entity, int status)
         {
             var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById((int)entity.Id);
@@ -375,7 +280,6 @@ namespace Application.Services
             //returning response
             return new Response<PayrollTransactionDto>(null, "Updated successfully");
         }
-
         private async Task<Response<PayrollTransactionDto>> SubmitPayrollTransaction(UpdatePayrollTransactionDto entity)
         {
             var checkingActiveWorkFlows = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
@@ -386,7 +290,6 @@ namespace Application.Services
 
             return await this.UpdatePayrollTransaction(entity, 6);
         }
-
         private decimal CalculateAllowance(PayrollItemDto line, int workingDays, int presentDays, int leaveDays)
         {
 
@@ -408,7 +311,6 @@ namespace Application.Services
             }
             return line.Value;
         }
-
         private async Task AddToLedger(PayrollTransactionMaster payrollTransaction)
         {
             var transaction = new Transactions(payrollTransaction.Id, payrollTransaction.DocNo, DocType.PayrollTransaction);
@@ -498,7 +400,255 @@ namespace Application.Services
             await _unitOfWork.SaveAsync();
 
         }
+        private List<RemarksDto> ReturningRemarks(PayrollTransactionDto data, DocType docType)
+        {
+            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.PayrollTransaction))
+                    .Select(e => new RemarksDto()
+                    {
+                        Remarks = e.Remarks,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
 
+            if (remarks.Count() > 0)
+            {
+                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+            }
+
+            return remarks;
+        }
+        private List<FileUploadDto> ReturningFiles(PayrollTransactionDto data, DocType docType)
+        {
+
+            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.PayrollTransaction))
+                    .Select(e => new FileUploadDto()
+                    {
+                        Id = e.Id,
+                        Name = e.Name,
+                        DocType = DocType.PayrollTransaction,
+                        Extension = e.Extension,
+                        UserName = e.User.UserName,
+                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
+                    }).ToList();
+
+            if (files.Count() > 0)
+            {
+                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+            }
+            return files;
+        }
+        private DataTable PayrollItemDetailReport(PayrollDetailFilter filter)
+        {
+
+            filter.FromDate = filter.FromDate?.Date;
+            filter.ToDate = filter.ToDate?.Date;
+            var employees = new List<int?>();
+            var months = new List<int?>();
+            var years = new List<int?>();
+
+            if (filter.EmployeeId != null)
+            {
+                employees.Add(filter.EmployeeId);
+            }
+            if (filter.Month != null)
+            {
+                months.Add(filter.Month);
+            }
+            if (filter.Year != null)
+            {
+                years.Add(filter.Year);
+            }
+
+            var payrollTransactions = _unitOfWork.PayrollTransaction
+                .Find(new PayrollTransactionSpecs(months, years, employees, (DateTime)filter.FromDate, (DateTime)filter.ToDate,
+                filter.Designation, filter.Department, filter.Campus))
+                .ToList();
+
+            if (payrollTransactions.Count() == 0)
+            {
+                return null;
+            }
+
+            var allowanceDTO = new List<PayrollTransactionDto>();
+
+
+
+
+            foreach (var payroll in payrollTransactions)
+            {
+
+
+                if (payroll.PayrollTransactionLines.Count() > 0)
+                {
+                    foreach (var lines in payroll.PayrollTransactionLines)
+                    {
+                        allowanceDTO.Add(new PayrollTransactionDto
+                        {
+                            Employee = payroll.Employee.Name,
+                            CNIC = payroll.CNIC,
+                            Department = payroll.Department.Name,
+                            Campus = payroll.Campus.Name,
+                            Designation = payroll.Designation.Name,
+                            AccountName = lines.Account.Name,
+                            Amount = lines.Amount
+                        });
+                    }
+                }
+            }
+
+            allowanceDTO = allowanceDTO
+               .GroupBy(x => new { x.Employee, x.CNIC, x.Department, x.Campus, x.Designation, x.AccountName })
+               .Select(c => new PayrollTransactionDto
+               {
+                   Employee = c.Key.Employee,
+                   CNIC = c.Key.CNIC,
+                   Department = c.Key.Department,
+                   Campus = c.Key.Campus,
+                   Designation = c.Key.Designation,
+                   AccountName = c.Key.AccountName,
+                   Amount = c.Sum(e => e.Amount)
+               })
+               .ToList();
+
+            var groups = from d in allowanceDTO
+                         group d by new { d.Employee, d.CNIC, d.Department, d.Campus, d.Designation }
+                        into grp
+                         select new
+                         {
+                             Employee = grp.Key.Employee,
+                             CNIC = grp.Key.CNIC,
+                             Department = grp.Key.Department,
+                             Campus = grp.Key.Campus,
+                             Designation = grp.Key.Designation,
+                             Items = grp.Select(d2 => new { d2.AccountName, d2.Amount }).ToArray()
+                         };
+
+            /*get all possible subjects into a separate group*/
+            var itemNames = (from d in allowanceDTO
+                             select d.AccountName).Distinct();
+
+
+            DataTable dt = new DataTable();
+            /*for static cols*/
+            dt.Columns.Add("Employee");
+            dt.Columns.Add("CNIC");
+            dt.Columns.Add("Department");
+            dt.Columns.Add("Campus");
+            dt.Columns.Add("Designation");
+            /*for dynamic cols*/
+            foreach (var item in itemNames)
+            {
+                dt.Columns.Add(item.ToString());
+            }
+
+            /*pivot the data into a new datatable*/
+            foreach (var g in groups)
+            {
+                DataRow dr = dt.NewRow();
+                dr["Employee"] = g.Employee;
+                dr["CNIC"] = g.CNIC;
+                dr["Department"] = g.Department;
+                dr["Campus"] = g.Campus;
+                dr["Designation"] = g.Designation;
+
+                foreach (var item in g.Items)
+                {
+                    dr[item.AccountName] = item.Amount;
+                }
+                dt.Rows.Add(dr);
+            }
+            return dt;
+
+        }
+        public PayrollTransactionService(IUnitOfWork unitOfWork, IMapper mapper, IEmployeeService employeeService, IHttpContextAccessor httpContextAccessor)
+        {
+            _unitOfWork = unitOfWork;
+            _employeeService = employeeService;
+            _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
+        }
+        public async Task<Response<PayrollTransactionDto>> CreateAsync(CreatePayrollTransactionDto[] entity)
+        {
+
+            foreach (var item in entity)
+            {
+                var result = await CreatePayroll(item);
+                if (!result.IsSuccess)
+                {
+                    return result;
+                }
+            }
+            return new Response<PayrollTransactionDto>(null, "Records populated successfully");
+
+        }
+        public async Task<Response<PayrollTransactionDto>> GetByIdAsync(int id)
+        {
+            var specification = new PayrollTransactionSpecs(false);
+            var payrollTransaction = await _unitOfWork.PayrollTransaction.GetById(id, specification);
+            if (payrollTransaction == null)
+                return new Response<PayrollTransactionDto>("Not found");
+
+            var payrollTransactionDto = _mapper.Map<PayrollTransactionDto>(payrollTransaction);
+
+            payrollTransactionDto.IsAllowedRole = false;
+            var workflow = _unitOfWork.WorkFlow.Find(new WorkFlowSpecs(DocType.PayrollTransaction)).FirstOrDefault();
+
+
+            if (workflow != null)
+            {
+                var transition = workflow.WorkflowTransitions
+                    .FirstOrDefault(x => (x.CurrentStatusId == payrollTransactionDto.StatusId));
+
+                if (transition != null)
+                {
+                    var currentUserRoles = new GetUser(this._httpContextAccessor).GetCurrentUserRoles();
+                    foreach (var role in currentUserRoles)
+                    {
+                        if (transition.AllowedRole.Name == role)
+                        {
+                            payrollTransactionDto.IsAllowedRole = true;
+                        }
+                    }
+                }
+            }
+
+
+            var result = MapToValue(payrollTransaction);
+
+            return new Response<PayrollTransactionDto>(result, "Returning value");
+        }
+        public Task<Response<int>> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<PaginationResponse<List<PayrollTransactionDto>>> GetAllAsync(TransactionFormFilter filter)
+        {
+            var docDate = new List<DateTime?>();
+            var states = new List<DocumentStatus?>();
+            if (filter.DocDate != null)
+            {
+                docDate.Add(filter.DocDate);
+            }
+            if (filter.State != null)
+            {
+                states.Add(filter.State);
+            }
+            var payrollTransactions = await _unitOfWork.PayrollTransaction.GetAll(new PayrollTransactionSpecs(docDate, states, filter, false));
+            var response = new List<PayrollTransactionDto>();
+
+            if (payrollTransactions.Count() == 0)
+                return new PaginationResponse<List<PayrollTransactionDto>>(_mapper.Map<List<PayrollTransactionDto>>(response), "List is empty");
+
+            var totalRecords = await _unitOfWork.PayrollTransaction.TotalRecord(new PayrollTransactionSpecs(docDate, states, filter, true));
+
+
+            foreach (var i in payrollTransactions)
+            {
+                response.Add(MapToValue(i));
+            }
+            return new PaginationResponse<List<PayrollTransactionDto>>(_mapper.Map<List<PayrollTransactionDto>>(response),
+                filter.PageStart, filter.PageEnd, totalRecords, "Returing list");
+        }
         public async Task<Response<bool>> CheckWorkFlow(ApprovalDto data)
         {
             var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById(data.DocId, new PayrollTransactionSpecs(true));
@@ -567,12 +717,10 @@ namespace Application.Services
 
             return new Response<bool>("User does not have allowed role");
         }
-
         public async Task<Response<PayrollTransactionDto>> UpdateAsync(UpdatePayrollTransactionDto entity)
         {
             return await this.SubmitPayrollTransaction(entity);
         }
-
         public PayrollTransactionDto MapToValue(PayrollTransactionMaster data)
         {
             //For Payroll transaction Lines
@@ -683,7 +831,6 @@ namespace Application.Services
             }
             return payrollTransactionDto;
         }
-
         public async Task<Response<bool>> ProcessForEdit(int[] id)
         {
             _unitOfWork.CreateTransaction();
@@ -714,7 +861,6 @@ namespace Application.Services
 
 
         }
-
         public async Task<Response<bool>> ProcessForApproval(CreateApprovalProcessDto data)
         {
             foreach (var docId in data.docId)
@@ -732,7 +878,6 @@ namespace Application.Services
             }
             return new Response<bool>(true, "Payroll approval process completed successfully");
         }
-
         public async Task<Response<List<PayrollTransactionDto>>> GetEmployeesByDept(DeptFilter data)
         {
             if (data.AccountPayableId == new Guid("00000000-0000-0000-0000-000000000000"))
@@ -780,7 +925,6 @@ namespace Application.Services
 
             return new Response<List<PayrollTransactionDto>>(response, "Returning Payroll Transactions");
         }
-
         public Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data)
         {
             var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)data.Month, (int)data.Year, data.DepartmentId, (int)data.CampusId, false)).ToList();
@@ -798,7 +942,6 @@ namespace Application.Services
 
             return new Response<List<PayrollTransactionDto>>(result, "Returning Payroll Transactions");
         }
-
         public Response<List<PayrollTransactionDto>> GetPayrollReport(PayrollFilter filter)
         {
             filter.FromDate = filter.FromDate?.Date;
@@ -838,46 +981,113 @@ namespace Application.Services
             }
             return new Response<List<PayrollTransactionDto>>(response.OrderBy(i => i.Employee).ToList(), "Returning List");
         }
-
-        private List<RemarksDto> ReturningRemarks(PayrollTransactionDto data, DocType docType)
+        public Response<DataTable> GetPayrollDetailReport(PayrollDetailFilter filter)
         {
-            var remarks = _unitOfWork.Remarks.Find(new RemarksSpecs(data.Id, DocType.PayrollTransaction))
-                    .Select(e => new RemarksDto()
-                    {
-                        Remarks = e.Remarks,
-                        UserName = e.User.UserName,
-                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
-                    }).ToList();
-
-            if (remarks.Count() > 0)
+            DataTable dataTable = PayrollItemDetailReport(filter);
+            if (dataTable == null)
             {
-                data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
+                return new Response<DataTable>(null, "List is empty");
+            }
+            return new Response<DataTable>(dataTable, "Returning List");
+        }
+        public async Task<MemoryStream> ExportPayrollDetailedReport(PayrollDetailFilter filter)
+        {
+            DataTable dataTable = PayrollItemDetailReport(filter);
+            if (dataTable == null)
+            {
+                return null;
+            }
+            var stream = new MemoryStream();
+            using (var package = new ExcelPackage(stream))
+            {
+                var workSheet = package.Workbook.Worksheets.Add("Sheet1");
+                workSheet.Cells.LoadFromDataTable(dataTable, PrintHeaders: true);
+                // Setting the properties
+                for (var col = 5; col < dataTable.Columns.Count + 1; col++)
+                {
+                    workSheet.Column(col).Style.Numberformat.Format = "0.00";//apply the number formatting you need
+                }
+
+                //Make all text fit the cells
+                workSheet.Cells[workSheet.Dimension.Address].AutoFitColumns();
+
+                // of the first row
+                workSheet.Row(1).Height = 20;
+                workSheet.Row(1).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                workSheet.Row(1).Style.Font.Bold = true;
+                package.Save();
+            }
+            stream.Position = 0;
+            return stream;
+        }
+        public Response<List<PayrollCampusTransactionDto>> GetPayrollCampusGroupReport(PayrollCampusReportFilter filter)
+        {
+            var months = new List<int?>();
+            var years = new List<int?>();
+            var campusIds = new List<int?>();
+            var documentStatus = new List<DocumentStatus?>();
+
+            if (filter.Month != null)
+            {
+                months.Add(filter.Month);
+            }
+            if (filter.Year != null)
+            {
+                years.Add(filter.Year);
             }
 
-            return remarks;
-        }
-
-        private List<FileUploadDto> ReturningFiles(PayrollTransactionDto data, DocType docType)
-        {
-
-            var files = _unitOfWork.Fileupload.Find(new FileUploadSpecs(data.Id, DocType.PayrollTransaction))
-                    .Select(e => new FileUploadDto()
-                    {
-                        Id = e.Id,
-                        Name = e.Name,
-                        DocType = DocType.PayrollTransaction,
-                        Extension = e.Extension,
-                        UserName = e.User.UserName,
-                        CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
-                    }).ToList();
-
-            if (files.Count() > 0)
+            if (filter.DocumentStatus != null)
             {
-                data.FileUploadList = _mapper.Map<List<FileUploadDto>>(files);
+                documentStatus.Add(filter.DocumentStatus);
             }
-            return files;
-        }
+            if (filter.CampusId != null)
+            {
+                campusIds.Add(filter.CampusId);
+            }
 
+            var payrollTransactions = _unitOfWork.PayrollTransaction
+                .Find(new PayrollTransactionSpecs(months, years, campusIds, documentStatus))
+                .ToList();
+
+
+            if (payrollTransactions.Count() == 0)
+            {
+                return new Response<List<PayrollCampusTransactionDto>>(null, "List is empty");
+            }
+
+
+
+            var GroupByCampus = payrollTransactions.GroupBy(x => new { x.CampusId, x.Campus.Name, x.Month, x.Year, x.StatusId, x.Status.Status, x.Status.State });
+
+
+            List<PayrollCampusTransactionDto> payrollCampusTransactionDto = new List<PayrollCampusTransactionDto>();
+            foreach (var item in GroupByCampus)
+            {
+                payrollCampusTransactionDto.Add(new PayrollCampusTransactionDto
+                {
+
+
+                    CampusId = item.Key.CampusId,
+                    Campus = item.Key.Name,
+                    Month = item.Key.Month,
+                    Year = item.Key.Year,
+                    AdvancesAndDeductions = item.Sum(x => x.PayrollTransactionLines.Where(p => p.PayrollType == PayrollType.Deduction)
+                                     .Sum(e => e.Amount)),
+                    IncomeTax = item.Sum(x => x.PayrollTransactionLines.Where(p => p.PayrollType == PayrollType.TaxDeduction)
+                                     .Sum(e => e.Amount)),
+                    GrossSalary = item.Sum(x => x.GrossSalary),
+                    NetAmount = item.Sum(x => x.NetSalary),
+                    Status = item.Key.Status,
+                    State = item.Key.State
+
+                });
+            }
+
+
+
+            return new Response<List<PayrollCampusTransactionDto>>(payrollCampusTransactionDto, "Returning List");
+
+        }
         public Response<PayrollExecutiveReportDto> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter)
         {
             var months = new List<int?>();
@@ -894,7 +1104,7 @@ namespace Application.Services
             }
 
             //Fetching payroll as per the filters
-            var getPayrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(filter.Month, 
+            var getPayrollTransaction = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs(filter.Month,
                 (int)filter.Year, campuses)).ToList();
 
             //if (getPayrollTransaction.Count() == 0)
@@ -909,7 +1119,7 @@ namespace Application.Services
 
                 itemList.Add(new PayrollItemsDto()
                 {
-                    AccountId = payroll.BPSAccountId, 
+                    AccountId = payroll.BPSAccountId,
                     AccountName = payroll.BasicPayItem.Account.Name,
                     PayrollType = PayrollType.BasicPay,
                     Amount = payroll.BasicSalary,
@@ -936,7 +1146,7 @@ namespace Application.Services
                     }
                 }
             }
-            
+
             itemList = itemList.Where(e => (
                     filter.AccountId == null ? true :
                     filter.AccountId != null ? (e.AccountId == filter.AccountId) : false))
@@ -975,7 +1185,6 @@ namespace Application.Services
 
             return new Response<PayrollExecutiveReportDto>(result, "Payroll found");
         }
-
         public Response<List<BankAdviceReportDto>> GetBankAdviceReportReport(BankAdviceReportFilter filter)
         {
             var campuses = new List<int?>();
@@ -986,7 +1195,7 @@ namespace Application.Services
             }
 
             //Fetching payroll as per the filters
-            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)filter.Month,(int)filter.Year, campuses)).ToList();
+            var payrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)filter.Month, (int)filter.Year, campuses)).ToList();
 
             if (payrollTransactions.Count() == 0)
             {

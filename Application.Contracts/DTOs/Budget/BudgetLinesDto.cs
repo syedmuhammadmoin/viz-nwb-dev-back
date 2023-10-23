@@ -12,6 +12,8 @@ namespace Application.Contracts.DTOs
         public Guid AccountId { get; set; }
         public string AccountName { get; set; }
         public decimal Amount { get; set; }
+        public decimal RevisedAmount { get;  set; }
+        public decimal IncurredAmount { get; set; }
         public int MasterId { get; set; }
     }
 }

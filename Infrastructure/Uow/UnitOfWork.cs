@@ -80,6 +80,23 @@ namespace Infrastructure.Uow
         public IFacultyRepository Faculty { get; private set; }
         public IAcademicDepartmentRepository AcademicDepartment { get; private set; }
         public IDegreeRepository Degree { get; private set; }
+        public IProgramRepository Program { get; private set; }
+        public ISemesterRepository Semester { get; private set; }
+        public ICourseRepository Course { get; private set; }
+        public IQualificationRepository Qualification { get; private set; }
+        public ISubjectRepository Subject { get; private set; }
+        public IFeeItemRepository FeeItem { get; private set; }
+        public ICountryRepository Country { get; private set; }
+        public IStateRepository State { get; private set; }
+        public ICityRepository City { get; private set; }
+        public IDistrictRepository District { get; private set; }
+        public IDomicileRepository Domicile { get; private set; }
+        public IShiftRepository Shift { get; private set; }
+        public IBatchRepository Batch { get; private set; }
+        public IAdmissionCriteriaRepository AdmissionCriteria { get; private set; }
+        public IApplicantRepository Applicant { get; private set; }
+        public IAdmissionApplicationRepository AdmissionApplication { get; private set; }
+        public IProgramChallanTemplateRepository ProgramChallanTemplate { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -146,7 +163,25 @@ namespace Infrastructure.Uow
             FixedAssetLines = new FixedAssetLinesRepository(context);
             DepreciationRegister = new DepreciationRegisterRepository(context);
             Faculty = new FacultyRepository(context);
+            AcademicDepartment = new AcademicDepartmentRepository(context);
             Degree = new DegreeRepository(context);
+            Program = new ProgramRepository(context);
+            Semester = new SemesterRepository(context);
+            Course = new CourseRepository(context);
+            Qualification = new QualificationRepository(context);
+            Subject = new SubjectRepository(context);
+            FeeItem = new FeeItemRepository(context);
+            Country = new CountryRepository(context);
+            State = new StateRepository(context);
+            City = new CityRepository(context);
+            District = new DistrictRepository(context);
+            Domicile = new DomicileRepository(context);
+            Shift = new ShiftRepository(context);
+            Batch = new BatchRepository(context);
+            AdmissionCriteria = new AdmissionCriteriaRepository(context);
+            Applicant = new ApplicantRepository(context);
+            AdmissionApplication = new AdmissionApplicationRepository(context);
+            ProgramChallanTemplate = new ProgramChallanTemplateRepository(context);
         }
 
         public async Task SaveAsync()

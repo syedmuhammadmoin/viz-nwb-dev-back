@@ -67,11 +67,30 @@ namespace Domain.Interfaces
         IFixedAssetRepository FixedAsset { get; }
         ICWIPRepository CWIP { get; }
         IDisposalRepository Disposal { get; }
+        IFixedAssetLinesRepository FixedAssetLines { get; }
+        IDepreciationRegisterRepository DepreciationRegister { get; }
         IBudgetReappropriationRepository BudgetReappropriation { get; } 
         IDepreciationAdjustmentRepository DepreciationAdjustment { get; }
         IFacultyRepository Faculty { get; }
         IAcademicDepartmentRepository AcademicDepartment { get; }
         IDegreeRepository Degree { get; }
+        IProgramRepository Program { get; }
+        ISemesterRepository Semester { get; }
+        ICourseRepository Course { get; }
+        IQualificationRepository Qualification { get; }
+        ISubjectRepository Subject { get; }
+        IFeeItemRepository FeeItem { get; }
+        ICountryRepository Country { get; }
+        IStateRepository State { get; }
+        ICityRepository City { get; }
+        IDistrictRepository District { get; }
+        IDomicileRepository Domicile { get; }
+        IShiftRepository Shift { get; }
+        IBatchRepository Batch { get; }
+        IAdmissionCriteriaRepository AdmissionCriteria { get; }
+        IApplicantRepository Applicant { get; }
+        IAdmissionApplicationRepository AdmissionApplication { get; }
+        IProgramChallanTemplateRepository ProgramChallanTemplate { get; }
 
         Task SaveAsync();
         void CreateTransaction();

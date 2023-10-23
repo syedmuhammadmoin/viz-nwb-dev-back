@@ -1,12 +1,7 @@
 ﻿using Domain.Constants;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Seeds
 {
@@ -30,77 +25,101 @@ namespace Infrastructure.Seeds
                     await userManager.AddToRoleAsync(defaultUser, Roles.SuperAdmin.ToString());
                 }
                 await roleManager.SeedClaimsForSuperAdmin();
+                await roleManager.SeedClaimsForApplicant();
             }
         }
+     
         private async static Task SeedClaimsForSuperAdmin(this RoleManager<IdentityRole> roleManager)
         {
             var superAdmin = await roleManager.FindByNameAsync("SuperAdmin");
-            await roleManager.AddPermissionClaim(superAdmin, "AccessManagement", "AuthClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "BusinessPartnerClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "OrganizationClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Payroll", "DepartmentClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Payroll", "DesignationClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "CampusClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "WarehouseClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "LocationClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Finance", "BankAccountClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Finance", "BankStatementClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Finance", "CashAccountClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "CampusClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "CategoriesClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "ProductsClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Workflow", "WorkflowStatusClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Workflow", "WorkflowClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Finance", "Level4Claims");
-            await roleManager.AddPermissionClaim(superAdmin, "Finance", "BankReconClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Finance", "TransactionReconClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Finance", "InvoiceClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Finance", "BillClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Finance", "PaymentClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Finance", "CreditNoteClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Finance", "DebitNoteClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Finance", "JournalEntryClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Budget", "BudgetClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Finance", "ReceiptClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "RequisitionClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "PurchaseOrderClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "GRNClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Budget", "EstimatedBudgetClaims");
-            await roleManager.AddPermissionClaim(superAdmin,"Payroll", "EmployeeClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Payroll", "PayrollItemClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Payroll", "PayrollItemEmployeeClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Payroll", "PayrollTransactionClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Payroll", "PayrollPaymentClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "TaxesClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "UnitOfMeasurementClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "IssuanceClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "GoodsReturnNoteClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "IssuanceReturnClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "RequestClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "BidEvaluationClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "QuotationClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "CallForQuotationClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "QuotationComparativeClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "FixedAsset", "FixedAssetClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "FixedAsset", "DepreciationModelClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "FixedAsset", "CWIPClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "FixedAsset", "DisposalClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Budget", "BudgetReappropriationClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "FixedAsset", "DepreciationAdjustmentClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Admission", "FacultyClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Admission", "AcademicDepartmentClaims");
-            await roleManager.AddPermissionClaim(superAdmin, "Admission", "DegreeClaims");
+            await roleManager.AddPermissionClaim(superAdmin, "AccessManagement", "Auth");
+            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "BusinessPartner");
+            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "Organization");
+            await roleManager.AddPermissionClaim(superAdmin, "Payroll", "Department");
+            await roleManager.AddPermissionClaim(superAdmin, "Payroll", "Designation");
+            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "Campus");
+            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "Warehouse");
+            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "Location");
+            await roleManager.AddPermissionClaim(superAdmin, "Finance", "BankAccount");
+            await roleManager.AddPermissionClaim(superAdmin, "Finance", "BankStatement");
+            await roleManager.AddPermissionClaim(superAdmin, "Finance", "CashAccount");
+            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "Campus");
+            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "Categories");
+            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "Products");
+            await roleManager.AddPermissionClaim(superAdmin, "Workflow", "WorkflowStatus");
+            await roleManager.AddPermissionClaim(superAdmin, "Workflow", "Workflow");
+            await roleManager.AddPermissionClaim(superAdmin, "Finance", "Level4");
+            await roleManager.AddPermissionClaim(superAdmin, "Finance", "BankRecon");
+            await roleManager.AddPermissionClaim(superAdmin, "Finance", "TransactionRecon");
+            await roleManager.AddPermissionClaim(superAdmin, "Finance", "Invoice");
+            await roleManager.AddPermissionClaim(superAdmin, "Finance", "Bill");
+            await roleManager.AddPermissionClaim(superAdmin, "Finance", "Payment");
+            await roleManager.AddPermissionClaim(superAdmin, "Finance", "CreditNote");
+            await roleManager.AddPermissionClaim(superAdmin, "Finance", "DebitNote");
+            await roleManager.AddPermissionClaim(superAdmin, "Finance", "JournalEntry");
+            await roleManager.AddPermissionClaim(superAdmin, "Budget", "Budget");
+            await roleManager.AddPermissionClaim(superAdmin, "Finance", "Receipt");
+            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "Requisition");
+            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "PurchaseOrder");
+            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "GRN");
+            await roleManager.AddPermissionClaim(superAdmin, "Budget", "EstimatedBudget");
+            await roleManager.AddPermissionClaim(superAdmin,"Payroll", "Employee");
+            await roleManager.AddPermissionClaim(superAdmin, "Payroll", "PayrollItem");
+            await roleManager.AddPermissionClaim(superAdmin, "Payroll", "PayrollItemEmployee");
+            await roleManager.AddPermissionClaim(superAdmin, "Payroll", "PayrollTransaction");
+            await roleManager.AddPermissionClaim(superAdmin, "Payroll", "PayrollPayment");
+            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "Taxes");
+            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "UnitOfMeasurement");
+            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "Issuance");
+            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "GoodsReturnNote");
+            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "IssuanceReturn");
+            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "Request");
+            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "BidEvaluation");
+            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "Quotation");
+            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "CallForQuotation");
+            await roleManager.AddPermissionClaim(superAdmin, "Procurement", "QuotationComparative");
+            await roleManager.AddPermissionClaim(superAdmin, "FixedAsset", "FixedAsset");
+            await roleManager.AddPermissionClaim(superAdmin, "FixedAsset", "DepreciationModel");
+            await roleManager.AddPermissionClaim(superAdmin, "FixedAsset", "CWIP");
+            await roleManager.AddPermissionClaim(superAdmin, "FixedAsset", "Disposal");
+            await roleManager.AddPermissionClaim(superAdmin, "Budget", "BudgetReappropriation");
+            await roleManager.AddPermissionClaim(superAdmin, "FixedAsset", "DepreciationAdjustment");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "Faculty");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "AcademicDepartment");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "Degree");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "Program");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "Semester");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "Course");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "Qualification");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "Subject");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "FeeItem");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "Country");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "State");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "City");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "District");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "Domicile");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "Shift");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "Batch");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "AdmissionCriteria");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "Applicant");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "AdmissionApplication");
+            await roleManager.AddPermissionClaim(superAdmin, "Admission", "ProgramChallanTemplate");
 
 
-            await roleManager.AddPermissionClaimReport(superAdmin, "Finance", "ChartOfAccountClaims");
-            await roleManager.AddPermissionClaimReport(superAdmin, "Report", "GeneralLedgerClaims");
-            await roleManager.AddPermissionClaimReport(superAdmin, "Report", "TrialBalanceClaims");
-            await roleManager.AddPermissionClaimReport(superAdmin, "Finance", "ChartOfAccountClaims");
-            await roleManager.AddPermissionClaimReport(superAdmin, "Report", "BalanceSheetClaims");
-            await roleManager.AddPermissionClaimReport(superAdmin, "Report", "ProfitLossClaims");
-            await roleManager.AddPermissionClaimReport(superAdmin, "Budget", "BudgetReportClaims");
-            await roleManager.AddPermissionClaimReport(superAdmin, "Procurement", "StockClaims");
-            await roleManager.AddPermissionClaimReport(superAdmin, "FixedAsset", "FixedAssetReportClaims");
+            await roleManager.AddPermissionClaimReport(superAdmin, "Finance", "ChartOfAccount");
+            await roleManager.AddPermissionClaimReport(superAdmin, "Report", "GeneralLedger");
+            await roleManager.AddPermissionClaimReport(superAdmin, "Report", "TrialBalance");
+            await roleManager.AddPermissionClaimReport(superAdmin, "Finance", "ChartOfAccount");
+            await roleManager.AddPermissionClaimReport(superAdmin, "Report", "BalanceSheet");
+            await roleManager.AddPermissionClaimReport(superAdmin, "Report", "ProfitLoss");
+            await roleManager.AddPermissionClaimReport(superAdmin, "Budget", "BudgetReport");
+            await roleManager.AddPermissionClaimReport(superAdmin, "Procurement", "Stock");
+            await roleManager.AddPermissionClaimReport(superAdmin, "FixedAsset", "FixedAssetReport");
+        }
+        private async static Task SeedClaimsForApplicant(this RoleManager<IdentityRole> roleManager)
+        {
+            var applicant = await roleManager.FindByNameAsync(Roles.Applicant.ToString());
+            await roleManager.AddPermissionClaim(applicant, "Admission", "AdmissionApplication");
         }
         public static async Task AddPermissionClaim(this RoleManager<IdentityRole> roleManager, IdentityRole role, string module, string submodule)
         {

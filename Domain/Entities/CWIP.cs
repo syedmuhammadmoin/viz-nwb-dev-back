@@ -59,7 +59,10 @@ namespace Domain.Entities
         public int StatusId { get; private set; }
         [ForeignKey("StatusId")]
         public WorkFlowStatus Status { get; private set; }
-        
+        public int? TransactionId { get; private set; }
+        [ForeignKey("TransactionId")]
+        public Transactions Transactions { get; private set; }
+
         protected CWIP()
         {
         }
@@ -68,7 +71,11 @@ namespace Domain.Entities
         {
             StatusId = statusId;
         }
-        
+        public void SetTransactionId(int transactionId)
+        {
+            TransactionId = transactionId;
+        }
+
         public void CreateCode()
         {
             //Creating doc no..

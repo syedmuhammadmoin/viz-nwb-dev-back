@@ -9,8 +9,10 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -133,6 +135,46 @@ namespace Application.Services
             if (entity.BudgetReappropriationLines.Count() == 0)
                 return new Response<BudgetReappropriationDto>("Lines are required");
 
+            var TotalAdditionAmount = entity.BudgetReappropriationLines.Sum(x => x.AdditionAmount);
+            var TotalDeletionAmount = entity.BudgetReappropriationLines.Sum(x => x.DeletionAmount);
+
+            if (TotalAdditionAmount != TotalDeletionAmount)
+                return new Response<BudgetReappropriationDto>("Addition and deletion amount must be equal");
+
+            foreach (var lines in entity.BudgetReappropriationLines)
+            {
+                if (lines.AdditionAmount > 0 && lines.DeletionAmount > 0)
+                    return new Response<BudgetReappropriationDto>("Addition and deletion amount should be in seperate lines");
+            }
+            var budgetSpecification = new BudgetSpecs(true);
+
+            var budget = await _unitOfWork.Budget.GetById((int)entity.BudgetId, budgetSpecification);
+
+            var subtractBudgetReappropriationLines = entity.BudgetReappropriationLines.Where(x => x.DeletionAmount > 0);
+
+
+
+            var nonBudgetLines = subtractBudgetReappropriationLines.Where(y => !budget.BudgetLines.Any(z => z.AccountId == y.Level4Id));
+
+            if (nonBudgetLines.Count() > 0)
+            {
+                return new Response<BudgetReappropriationDto>("The selected account(s) for deletion does not exist in the budget");
+
+            }
+
+            var list = subtractBudgetReappropriationLines.GroupBy(x => x.Level4Id);
+            var deletionGroupBylist = list.Select(y => new { AccountId = y.Key, DeleteAmount = y.Sum(z => z.DeletionAmount) });
+
+            foreach (var item in deletionGroupBylist)
+            {
+                if (item.DeleteAmount > budget.BudgetLines.Where(x => x.AccountId == item.AccountId).FirstOrDefault().Amount)
+                {
+                    return new Response<BudgetReappropriationDto>("The deletion amount of the selected account(s) is exceeded by the budget corresponding account amount");
+
+                }
+
+            }
+
             var budgetReappropriation = _mapper.Map<BudgetReappropriationMaster>(entity);
 
             //Setting status
@@ -158,9 +200,6 @@ namespace Application.Services
 
         private async Task<Response<BudgetReappropriationDto>> UpdateBudgetReappropriation(CreateBudgetReappropriationDto entity, int status)
         {
-            if (entity.BudgetReappropriationLines.Count() == 0)
-                return new Response<BudgetReappropriationDto>("Lines are required");
-
             var specification = new BudgetReappropriationSpecs(true);
             var budgetReappropriation = await _unitOfWork.BudgetReappropriation.GetById((int)entity.Id, specification);
 
@@ -169,6 +208,51 @@ namespace Application.Services
 
             if (budgetReappropriation.StatusId != 1 && budgetReappropriation.StatusId != 2)
                 return new Response<BudgetReappropriationDto>("Only draft document can be edited");
+
+
+            if (entity.BudgetReappropriationLines.Count() == 0)
+                return new Response<BudgetReappropriationDto>("Lines are required");
+
+            var TotalAdditionAmount = entity.BudgetReappropriationLines.Sum(x => x.AdditionAmount);
+            var TotalDeletionAmount = entity.BudgetReappropriationLines.Sum(x => x.DeletionAmount);
+
+            if (TotalAdditionAmount != TotalDeletionAmount)
+                return new Response<BudgetReappropriationDto>("Addition and deletion amount must be equal");
+
+            foreach (var lines in entity.BudgetReappropriationLines)
+            {
+                if (lines.AdditionAmount > 0 && lines.DeletionAmount > 0)
+                    return new Response<BudgetReappropriationDto>("Addition and deletion amount should be in seperate lines");
+            }
+            var budgetSpecification = new BudgetSpecs(true);
+
+            var budget = await _unitOfWork.Budget.GetById((int)entity.BudgetId, budgetSpecification);
+
+            var subtractBudgetReappropriationLines = entity.BudgetReappropriationLines.Where(x => x.DeletionAmount > 0);
+            
+
+
+            var nonBudgetLines = subtractBudgetReappropriationLines.Where(y => !budget.BudgetLines.Any(z => z.AccountId == y.Level4Id));
+
+            if (nonBudgetLines.Count() > 0)
+            {
+                return new Response<BudgetReappropriationDto>("The selected account(s) for deletion does not exist in the budget");
+
+            }
+
+            var list = subtractBudgetReappropriationLines.GroupBy(x => x.Level4Id);
+            var deletionGroupBylist = list.Select(y => new { AccountId = y.Key, DeleteAmount = y.Sum(z => z.DeletionAmount) });
+
+            foreach (var item in deletionGroupBylist)
+            {
+                if (item.DeleteAmount > budget.BudgetLines.Where(x => x.AccountId == item.AccountId).FirstOrDefault().Amount)
+                {
+                    return new Response<BudgetReappropriationDto>("The deletion amount of the selected account(s) is exceeded by the budget corresponding account amount");
+
+                }
+
+            }
+
 
             budgetReappropriation.SetStatus(status);
 
@@ -243,7 +327,85 @@ namespace Application.Services
 
                     if (transition.NextStatus.State == DocumentStatus.Unpaid)
                     {
-                        return new Response<bool>(true, "BudgetReappropriation Approved");
+
+                        var specification = new BudgetSpecs(true);
+                        var budget = await _unitOfWork.Budget.GetById((int)getBudgetReappropriation.BudgetId, specification);
+
+                        if (budget == null)
+                            return new Response<bool>("Budget Not found");
+
+                        var list = getBudgetReappropriation.BudgetReappropriationLines.GroupBy(x => x.Level4Id).Select(y => new { AccountId = y.Key, AdditionAmount = y.Sum(z => z.AdditionAmount), DeletionAmount = y.Sum(z => z.DeletionAmount) });
+
+                        var subtractionBudgetReappropriationLines = list.Where(x => x.DeletionAmount > 0);
+                        var AdditionBudgetReappropriationLines = list.Where(x => x.AdditionAmount > 0);
+
+                        //ines that not exist in budget
+                        var nonBudgetLines = list.Where(y => !budget.BudgetLines.Any(z => z.AccountId == y.AccountId));
+
+
+
+                        var invalidLinesToDeleteAmount = nonBudgetLines.Where(x => x.DeletionAmount > 0);
+                        if (invalidLinesToDeleteAmount.Count() > 0)
+                        {
+                            return new Response<bool>("The selected account(s) for deletion does not exist in the budget");
+
+                        }
+
+
+
+                        foreach (var item in subtractionBudgetReappropriationLines)
+                        {
+                            //To prevent over-deletion or negative values
+                            if (item.DeletionAmount > budget.BudgetLines.Where(x => x.AccountId == item.AccountId).FirstOrDefault().RevisedAmount)
+                            {
+                                return new Response<bool>("The deletion amount of the selected account(s) is exceeded by the budget corresponding account amount");
+
+                            }
+
+                        }
+
+                        CreateBudgetDto createBudgetDto = new CreateBudgetDto();
+
+                        _mapper.Map<BudgetMaster, CreateBudgetDto>(budget, createBudgetDto);
+
+
+                        var newlinesToAddInBudget = nonBudgetLines.Where(x => x.AdditionAmount > 0);
+
+                        //Add New Account in Budget
+                        foreach (var item in newlinesToAddInBudget)
+                        {
+                            var addNewBudgetLine = new CreateBudgetLinesDto { AccountId = item.AccountId, Amount = item.AdditionAmount };
+                            createBudgetDto.BudgetLines.Add(addNewBudgetLine);
+                        }
+
+                        _mapper.Map<CreateBudgetDto, BudgetMaster>(createBudgetDto, budget);
+
+                        //For subtract Amount
+                        foreach (var item in subtractionBudgetReappropriationLines)
+                        {
+                            foreach (var budgetLine in budget.BudgetLines)
+                            {
+                                if (budgetLine.AccountId == item.AccountId)
+                                {
+                                    budgetLine.SetAmount(budgetLine.RevisedAmount - item.DeletionAmount);
+                                }
+                            }
+                        }
+                        //For Addition Amount
+                        foreach (var item in AdditionBudgetReappropriationLines)
+                        {
+                            foreach (var budgetLine in budget.BudgetLines)
+                            {
+                                if (budgetLine.AccountId == item.AccountId)
+                                {
+                                    budgetLine.SetAmount(budgetLine.RevisedAmount + item.AdditionAmount);
+                                }
+
+                            }
+                        }
+                        await _unitOfWork.SaveAsync();
+                        _unitOfWork.Commit();
+                        return new Response<bool>(true, "Budget Reappropriation Approved");
                     }
                     if (transition.NextStatus.State == DocumentStatus.Rejected)
                     {

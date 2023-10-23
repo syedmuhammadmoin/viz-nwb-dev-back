@@ -14,9 +14,6 @@ namespace Domain.Entities
         public Guid Level4Id { get; private set; }
         [ForeignKey("Level4Id")]
         public Level4 Level4 { get; private set; }
-        public int CampusId { get; private set; }
-        [ForeignKey("CampusId")]
-        public Campus Campus { get; private set; }
         [MaxLength(500)]
         public string Description { get; private set; }
         [Column(TypeName = "decimal(18,2)")]

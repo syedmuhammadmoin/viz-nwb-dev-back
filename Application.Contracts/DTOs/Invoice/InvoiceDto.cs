@@ -2,6 +2,7 @@
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,5 +42,11 @@ namespace Application.Contracts.DTOs
         public int? LedgerId { get; set; }
         public virtual List<InvoiceLinesDto> InvoiceLines { get; set; }
         public bool IsAllowedRole { get; set; }
+        public string CreatedBy { get; set; }
+        public string ModifiedBy { get; set; }
+        public string LastUser { 
+
+            get { return RemarksList?.LastOrDefault().UserName?? ModifiedBy?? CreatedBy ; }
+        }
     }
 }

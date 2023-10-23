@@ -6,19 +6,14 @@ using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
-using Infrastructure.Context;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -114,24 +109,20 @@ namespace Application.Services
 
         public async Task<Response<bool>> RegisterUserAsync(RegisterUserDto model)
         {
-            // with rollback Transaction
-            _unitOfWork.CreateTransaction();
-            if (model == null)
-            {
-                return new Response<bool>("Model is empty");
-            }
-
-            var getEmployee = await _unitOfWork.Employee.GetById((int)model.EmployeeId);
-
-            if (model.EmployeeId != getEmployee.Id)
-            {
-                return new Response<bool>("Only Employees can be a user");
-            }
-
             //Checking password
             if (model.Password != model.ConfirmPassword)
                 return new Response<bool>("Confirm password doesn't match with the password");
 
+            var getEmployee = await _unitOfWork.Employee.GetById((int)model.EmployeeId);
+            if (model.EmployeeId != getEmployee.Id)
+                return new Response<bool>("Only Employees can be a user");
+            
+            //Checking if user alerady created for the employee
+            var getUser = await _userManager.Users
+                .FirstOrDefaultAsync(i => i.EmployeeId == model.EmployeeId);
+
+            if (getUser != null)
+                return new Response<bool>("User for this employee is already created");
 
             //Registering user
             var user = new User
@@ -140,17 +131,18 @@ namespace Application.Services
                 Email = model.Email,
                 UserName = model.Email
             };
-
+            
+            // with rollback Transaction
+            _unitOfWork.CreateTransaction();
             var userCreated = await _userManager.CreateAsync(user, model.Password);
-
             if (!userCreated.Succeeded)
             {
                 _unitOfWork.Rollback();
                 return new Response<bool>(userCreated.Errors.Select(e => e.Description).FirstOrDefault());
             }
+            
             //Adding roles for user
             var roles = await _userManager.GetRolesAsync(user);
-
             var rolesAdded = await _userManager.RemoveFromRolesAsync(user, roles);
 
             //Checking if user has selected any role
@@ -158,7 +150,6 @@ namespace Application.Services
                 return new Response<bool>("At least 1 role is required for creating User");
 
             rolesAdded = await _userManager.AddToRolesAsync(user, model.UserRoles.Where(x => x.Selected).Select(y => y.RoleName));
-
             if (!rolesAdded.Succeeded)
             {
                 _unitOfWork.Rollback();
@@ -167,7 +158,6 @@ namespace Application.Services
 
             _unitOfWork.Commit();
             return new Response<bool>(true, "User created successfully");
-
         }
 
         public async Task<Response<IEnumerable<UsersListDto>>> GetUsersAsync()
@@ -229,25 +219,24 @@ namespace Application.Services
 
         public async Task<Response<bool>> UpdateUserAsync(string id, EditUserDto model)
         {
-            // with rollback Transaction
-            _unitOfWork.CreateTransaction();
-
             //Finding user by id
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
-            {
                 return new Response<bool>("User not found");
-            }
+            
             //Updating user details
             user.Email = model.Email;
             user.UserName = model.UserName;
-
+            
+            // with rollback Transaction
+            _unitOfWork.CreateTransaction();
             var updateUser = await _userManager.UpdateAsync(user);
             if (!updateUser.Succeeded)
             {
                 _unitOfWork.Rollback();
                 return new Response<bool>(updateUser.Errors.Select(e => e.Description).FirstOrDefault());
             }
+            
             //Getting roles of user
             var roles = await _userManager.GetRolesAsync(user);
             // Removing all roles from user
@@ -259,7 +248,6 @@ namespace Application.Services
 
             //Updating roles for user
             updateRole = await _userManager.AddToRolesAsync(user, model.UserRoles.Where(x => x.Selected).Select(y => y.RoleName));
-
             if (!updateRole.Succeeded)
             {
                 _unitOfWork.Rollback();
@@ -268,7 +256,6 @@ namespace Application.Services
 
             _unitOfWork.Commit();
             return new Response<bool>(true, "User updated successfully");
-
         }
 
         public async Task<Response<bool>> ResetUserPassword(string id, ResetPasswordDto model)
@@ -404,7 +391,9 @@ namespace Application.Services
 
         public async Task<Response<IEnumerable<IdentityRole>>> GetRolesAsync()
         {
-            IEnumerable<IdentityRole> roles = await _roleManager.Roles.ToListAsync();
+            IEnumerable<IdentityRole> roles = await _roleManager.Roles
+                .Where(i => i.Name != Roles.Applicant.ToString())
+                .ToListAsync();
             if (roles == null)
             {
                 return new Response<IEnumerable<IdentityRole>>("Role list cannot be found");
@@ -416,7 +405,7 @@ namespace Application.Services
         {
             //Getting role by id
             var role = await _roleManager.FindByIdAsync(id);
-            if (role == null)
+            if (role == null || role.Name == Roles.Applicant.ToString())
                 return new Response<RegisterRoleDto>("Cannot find role with the input id");
 
             var allPermissions = new List<RegisterRoleClaimsDto>();
@@ -478,7 +467,20 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.BudgetReappropriationClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.FixedAssetReportClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.DepreciationAdjustmentClaims), id);
-            
+            allPermissions.GetPermissions(typeof(Permissions.FacultyClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.AcademicDepartmentClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DegreeClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.ProgramClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.SemesterClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.CourseClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.QualificationClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.SubjectClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.FeeItemClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.CountryClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.StateClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.CityClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DistrictClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DomicileClaims), id);
 
 
             //Getting all claims for this role
@@ -509,7 +511,7 @@ namespace Application.Services
             //Getting role by id
             var role = await _roleManager.FindByIdAsync(id);
 
-            if (role == null)
+            if (role == null || role.Name == Roles.Applicant.ToString())
                 return new Response<RegisterRoleDto>("Role not found");
 
             // with rollback Transaction
@@ -545,7 +547,9 @@ namespace Application.Services
 
         public async Task<Response<IEnumerable<IdentityRole>>> GetRolesDropDown()
         {
-            IEnumerable<IdentityRole> roles = await _roleManager.Roles.ToListAsync();
+            IEnumerable<IdentityRole> roles = await _roleManager.Roles
+                .Where(i => i.Name != Roles.Applicant.ToString())
+                .ToListAsync();
             if (roles == null)
             {
                 return new Response<IEnumerable<IdentityRole>>("Role list cannot be found");
@@ -614,6 +618,20 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.DisposalClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.BudgetReappropriationClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.DepreciationAdjustmentClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.FacultyClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.AcademicDepartmentClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.DegreeClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.ProgramClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.SemesterClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.CourseClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.QualificationClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.SubjectClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.FeeItemClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.CountryClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.StateClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.CityClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.DistrictClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.DomicileClaims), "12");
 
             var allClaimValues = allPermissions.Select(a => a.Value).ToList();
             return new Response<List<string>>(allClaimValues, "Returning all claims");

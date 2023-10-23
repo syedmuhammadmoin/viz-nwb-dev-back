@@ -16,8 +16,6 @@ namespace Application.Contracts.DTOs
         [Required]
         public Guid? Level4Id { get; set; }
         [Required]
-        public int? CampusId { get; set; }
-        [Required]
         [MaxLength(500)]
         public string Description { get; set; }
         [Required]

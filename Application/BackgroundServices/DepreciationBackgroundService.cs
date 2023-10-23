@@ -61,7 +61,7 @@ namespace Application.BackgroundServices
              
 
             // Set the timer to run the task at 3PM every day
-            _timer = new Timer(DoWork, null, (int)delay.TotalMilliseconds, Timeout.Infinite);
+            _timer = new Timer(DoWork, null, Convert.ToInt64(delay.TotalMilliseconds), Timeout.Infinite);
             return Task.CompletedTask;
         }
         

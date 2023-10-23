@@ -9,7 +9,8 @@ namespace Domain.Constants
     public enum Roles
     {
         SuperAdmin = 0,
-        Admin = 1
+        Admin = 1,
+        Applicant = 2
     }
     public enum BusinessPartnerType 
     {
@@ -18,7 +19,9 @@ namespace Domain.Constants
         Employee = 2,
         Supplier = 3, 
         Consultant = 4, 
-        Contractor = 5
+        Contractor = 5,
+        Student = 6,
+        ServiceProvider=7
     }
     public enum ProductType
     {
@@ -80,7 +83,9 @@ namespace Domain.Constants
         CWIP = 26,
         Disposal = 27,
         BudgetReappropriation = 28,
-        DepreciationAdjustment = 29
+        DepreciationAdjustment = 29,
+        EstimatedBudget=30,
+            Budget=31
     }
     public enum ActionButton
     {
@@ -131,4 +136,83 @@ namespace Domain.Constants
         StraightLine = 0,
         Declining = 1 
     }
+    public enum SemesterNumber
+    {
+        First = 1,
+        Second = 2,
+        Third = 3,
+        Fourth = 4,
+        Fifth = 5,
+        Sixth = 6,
+        Seventh = 7,
+        Eighth = 8,
+    }
+    public enum Season 
+    {
+        Fall = 0,
+        Spring = 1,
+        Summer = 2,
+    }
+    public enum Gender
+    {
+        Male = 0,
+        Female = 1,
+        Other = 2
+    }
+    public enum Religion
+    {
+        Muslim = 0,
+        Hindu = 1,
+        Christian = 2,
+        Other = 3
+    }
+    public enum MaritalStatus
+    {
+        Unmarried = 0,
+        Married = 1,
+    }
+
+    public enum Relationship
+    {
+        Mother = 0,
+        Father = 1,
+        Brother = 2,
+        Sister = 3,
+        Spouse = 4,
+        Grandparent = 5,
+        Uncle = 6,
+        Other = 7,
+    }
+    public enum Attendance
+    {
+        P = 0,
+        A = 1
+    }
+    public enum InterviewStatus
+    {
+        Failed = 0,
+        Passed = 1
+    }
+    public enum ApplicationStatus
+    {
+        ApplicationSubmitted = 0,
+        ApplicantRegistered = 1,
+        EligibleForEntryTest = 2,
+        PassedEntryTest = 3,
+        FailedEntryTest = 4,
+        FailedInInterview = 5,
+        InWaitingList = 6,
+        StudentOnBoard = 7,
+        Shortlisted = 8,
+        Cancelled = 9,
+    }
+    public enum ProgramChallanType 
+    {
+        RegistrationFeeChallan = 0,
+        EntryTestChallan = 1,
+        AdmissionChallan = 2,
+        SemesterChallan = 3,
+        SupplementaryChallan = 4,
+    }
+
 }

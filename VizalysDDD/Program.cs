@@ -1,4 +1,3 @@
-
 using Application.BackgroundServices;
 using Application.Contracts.Interfaces;
 using Application.Services;
@@ -7,6 +6,8 @@ using Infrastructure;
 using Infrastructure.GlobalExceptionFilter;
 using Infrastructure.Seeds;
 using Infrastructure.Uow;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using System.Net.Mime;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -77,6 +78,23 @@ builder.Services.AddScoped<IFixedAssetReportService, FixedAssetReportService>();
 builder.Services.AddScoped<IFacultyService, FacultyService>();
 builder.Services.AddScoped<IAcademicDepartmentService, AcademicDepartmentService>();
 builder.Services.AddScoped<IDegreeService, DegreeService>();
+builder.Services.AddScoped<IProgramService, ProgramService>();
+builder.Services.AddScoped<ISemesterService, SemesterService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IQualificationService, QualificationService>();
+builder.Services.AddScoped<ISubjectService, SubjectService>();
+builder.Services.AddScoped<IFeeItemService, FeeItemService>();
+builder.Services.AddScoped<ICountryService, CountryService>();
+builder.Services.AddScoped<IStateService, StateService>();
+builder.Services.AddScoped<ICityService, CityService>();
+builder.Services.AddScoped<IDistrictService, DistrictService>();
+builder.Services.AddScoped<IDomicileService, DomicileService>();
+builder.Services.AddScoped<IShiftService, ShiftService>();
+builder.Services.AddScoped<IBatchService, BatchService>();
+builder.Services.AddScoped<IAdmissionCriteriaService, AdmissionCriteriaService>();
+builder.Services.AddScoped<IApplicantService, ApplicantService>();
+builder.Services.AddScoped<IAdmissionApplicationService, AdmissionApplicationService>();
+builder.Services.AddScoped<IProgramChallanTemplateService, ProgramChallanTemplateService>();
 
 builder.Services.AddHostedService<DepreciationBackgroundService>();
 
@@ -95,10 +113,19 @@ builder.Services.AddControllers(options => options.Filters.Add<ErrorHandlingFilt
         result.ContentTypes.Add(MediaTypeNames.Application.Json);
         return result;
     };
-});
+}).AddNewtonsoftJson();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//For global authorize filter
+builder.Services.AddMvc(options =>
+{
+    var policy = new AuthorizationPolicyBuilder()
+    .RequireAuthenticatedUser()
+    .Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
+});
 
 builder.Services.AddCors(options =>
 {

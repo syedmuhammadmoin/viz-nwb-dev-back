@@ -53,6 +53,10 @@ namespace Application.Contracts.DTOs
         public DateTime TransDate { get; set; }
         public IEnumerable<FileUploadDto> FileUploadList { get; set; }
         public virtual List<PayrollTransactionLinesDto> PayrollTransactionLines { get; set; }
+        public string AccountName { get; set; }
+        public decimal Amount { get; set; }
+
+
 
     }
 }

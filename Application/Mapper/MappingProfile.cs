@@ -3,11 +3,6 @@ using Application.Contracts.DTOs.FixedAsset;
 using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Mapper
 {
@@ -292,12 +287,18 @@ namespace Application.Mapper
             // Budget Mapping
             CreateMap<BudgetMaster, BudgetDto>()
               .ForMember(dto => dto.CampusName, core => core.MapFrom(a => a.Campus.Name))
-                ;
+            .ForMember(dto => dto.Status, core => core.MapFrom(d => d.Status.State == DocumentStatus.Unpaid ? "Approved" : d.Status.Status))
+               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+
             CreateMap<BudgetLines, BudgetLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
 
             CreateMap<CreateBudgetDto, BudgetMaster>();
             CreateMap<CreateBudgetLinesDto, BudgetLines>();
+
+
+            CreateMap<BudgetMaster,CreateBudgetDto> ();
+            CreateMap<BudgetLines,CreateBudgetLinesDto> ();
 
             // PurchaseOrder Mapping
             CreateMap<PurchaseOrderMaster, PurchaseOrderDto>()
@@ -362,7 +363,7 @@ namespace Application.Mapper
               .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
               .ForMember(dto => dto.Item, core => core.MapFrom(a => a.Item.ProductName))
               .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity))
-              .ForMember(dto => dto.IsFixedAsset , core => core.MapFrom(a => a.Item.ProductType == ProductType.FixedAsset ? true : false))
+              .ForMember(dto => dto.IsFixedAsset, core => core.MapFrom(a => a.Item.ProductType == ProductType.FixedAsset ? true : false))
               ;
 
             CreateMap<CreateGRNDto, GRNMaster>()
@@ -376,7 +377,10 @@ namespace Application.Mapper
             // EstimatedBudget Mapping
             CreateMap<EstimatedBudgetMaster, EstimatedBudgetDto>()
                 .ForMember(dto => dto.From, core => core.MapFrom(a => a.PreviousBudget.From))
-                .ForMember(dto => dto.To, core => core.MapFrom(a => a.PreviousBudget.To));
+                .ForMember(dto => dto.To, core => core.MapFrom(a => a.PreviousBudget.To))
+                .ForMember(dto => dto.CampusId, core => core.MapFrom(a => a.PreviousBudget.CampusId))
+               .ForMember(dto => dto.Status, core => core.MapFrom(d => d.Status.State == DocumentStatus.Unpaid ? "Approved" : d.Status.Status))
+               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
             CreateMap<EstimatedBudgetLines, EstimatedBudgetLinesDto>()
               .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
 
@@ -573,7 +577,7 @@ namespace Application.Mapper
             CreateMap<FixedAssetLines, FixedAssetLinesDto>();
 
             CreateMap<DepreciationRegister, DepreciationRegisterDto>();
-            
+
             CreateMap<CreateDepreciationRegisterDto, DepreciationRegister>();
 
             CreateMap<CreateFixedAssetDto, FixedAsset>();
@@ -581,7 +585,7 @@ namespace Application.Mapper
             CreateMap<FixedAssetLinesDto, FixedAssetLines>();
 
             CreateMap<UpdateFixedAssetDto, FixedAsset>();
-            
+
             CreateMap<UpdateSalvageValueDto, FixedAsset>();
 
             CreateMap<CWIP, CreateFixedAssetDto>()
@@ -623,15 +627,14 @@ namespace Application.Mapper
 
             CreateMap<CreateBudgetReappropriationDto, BudgetReappropriationMaster>();
             CreateMap<BudgetReappropriationLines, BudgetReappropriationLinesDto>()
-                   .ForMember(dto => dto.Level4, core => core.MapFrom(d => d.Level4.Name))
-                   .ForMember(dto => dto.Campus, core => core.MapFrom(d => d.Campus.Name));
+                   .ForMember(dto => dto.Level4, core => core.MapFrom(d => d.Level4.Name));
             CreateMap<CreateBudgetReappropriationLinesDto, BudgetReappropriationLines>();
-            
+
             //DepreciationAdjustment
             CreateMap<DepreciationAdjustmentMaster, DepreciationAdjustmentDto>()
                .ForMember(dto => dto.Status, core => core.MapFrom(d => d.Status.Status))
                .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
-            
+
             CreateMap<DepreciationAdjustmentLines, DepreciationAdjustmentLinesDto>()
                    .ForMember(dto => dto.Level4, core => core.MapFrom(d => d.Level4.Name))
                    .ForMember(dto => dto.FixedAsset, core => core.MapFrom(d => d.FixedAsset.Name));
@@ -651,6 +654,115 @@ namespace Application.Mapper
             //Degree
             CreateMap<DegreeDto, Degree>();
             CreateMap<Degree, DegreeDto>();
+
+            //Program
+            CreateMap<Program, ProgramDto>()
+                   .ForMember(dto => dto.Degree, core => core.MapFrom(d => d.Degree.Name))
+                   .ForMember(dto => dto.AcademicDepartment, core => core.MapFrom(d => d.AcademicDepartment.Name));
+            CreateMap<CreateProgramDto, Program>();
+
+            CreateMap<ProgramSemesterCourse, SemesterCourseDto>()
+                   .ForMember(dto => dto.Course, core => core.MapFrom(d => d.Course.Name));
+            CreateMap<CreateSemesterCourseDto, ProgramSemesterCourse>();
+
+            //Semester
+            CreateMap<SemesterDto, Semester>();
+            CreateMap<Semester, SemesterDto>();
+
+            //Course
+            CreateMap<CourseDto, Course>();
+            CreateMap<Course, CourseDto>();
+
+            //Qualification
+            CreateMap<QualificationDto, Qualification>();
+            CreateMap<Qualification, QualificationDto>();
+
+            //Subject
+            CreateMap<CreateSubjectDto, Subject>();
+            CreateMap<Subject, SubjectDto>()
+                .ForMember(dto => dto.Qualification, core => core.MapFrom(d => d.Qualification.Name)); ;
+
+
+            //FeeItem
+            CreateMap<FeeItem, FeeItemDto>()
+                   .ForMember(dto => dto.Account, core => core.MapFrom(d => d.Account.Name));
+            CreateMap<CreateFeeItemDto, FeeItem>();
+
+            //Country
+            CreateMap<CountryDto, Country>();
+            CreateMap<Country, CountryDto>();
+
+            //State
+            CreateMap<State, StateDto>()
+                   .ForMember(dto => dto.Country, core => core.MapFrom(d => d.Country.Name));
+            CreateMap<CreateStateDto, State>();
+
+            //City
+            CreateMap<City, CityDto>()
+                   .ForMember(dto => dto.State, core => core.MapFrom(d => d.State.Name))
+                   .ForMember(dto => dto.Country, core => core.MapFrom(d => d.State.Country.Name));
+            CreateMap<CreateCityDto, City>();
+
+            //District
+            CreateMap<District, DistrictDto>()
+                   .ForMember(dto => dto.City, core => core.MapFrom(d => d.City.Name));
+            CreateMap<CreateDistrictDto, District>();
+
+            //Domicile
+            CreateMap<Domicile, DomicileDto>()
+                   .ForMember(dto => dto.District, core => core.MapFrom(d => d.District.Name));
+            CreateMap<CreateDomicileDto, Domicile>();
+
+            //Shift
+            CreateMap<ShiftDto, Shift>();
+            CreateMap<Shift, ShiftDto>();
+
+            //Batch
+            CreateMap<BatchMaster, BatchDto>()
+               .ForMember(dto => dto.Semester, core => core.MapFrom(a => a.Semester.Name))
+               .ForMember(dto => dto.Campus, core => core.MapFrom(d => d.Campus.Name))
+               .ForMember(dto => dto.Shift, core => core.MapFrom(d => d.Shift.Name));
+
+            CreateMap<BatchLines, BatchLinesDto>()
+                   .ForMember(dto => dto.Program, core => core.MapFrom(d => d.Program.Name));
+
+            CreateMap<CreateBatchDto, BatchMaster>();
+            CreateMap<CreateBatchLinesDto, BatchLines>();
+
+            //AdmissionCriteria
+            CreateMap<AdmissionCriteria, AdmissionCriteriaDto>()
+                   .ForMember(dto => dto.Program, core => core.MapFrom(d => d.Program.Name))
+                   .ForMember(dto => dto.Qualification, core => core.MapFrom(d => d.Qualification.Name))
+                   .ForMember(dto => dto.Subject, core => core.MapFrom(d => d.Subject.Name));
+            CreateMap<CreateAdmissionCriteriaDto, AdmissionCriteria>();
+
+            //Applicant
+            CreateMap<Applicant, ApplicantDto>()
+                   .ForMember(dto => dto.PlaceOfBirth, core => core.MapFrom(d => d.PlaceOfBirth.Name))
+                   .ForMember(dto => dto.Domicile, core => core.MapFrom(d => d.Domicile.Name))
+                   .ForMember(dto => dto.Nationality, core => core.MapFrom(d => d.Nationality.Name));
+            CreateMap<CreateApplicantDto, Applicant>();
+            CreateMap<RegisterApplicantDto, Applicant>();
+
+            CreateMap<ApplicantQualification, ApplicantQualificationDto>()
+                  .ForMember(dto => dto.Qualification, core => core.MapFrom(d => d.Qualification.Name))
+                  .ForMember(dto => dto.Subject, core => core.MapFrom(d => d.Subject.Name));
+
+            CreateMap<ApplicantRelative, ApplicantRelativeDto>();
+
+            //ProgramChallanTemplate
+            CreateMap<ProgramChallanTemplateMaster, ProgramChallanTemplateDto>()
+               .ForMember(dto => dto.Program, core => core.MapFrom(a => a.Semester.Name))
+               .ForMember(dto => dto.Campus, core => core.MapFrom(d => d.Campus.Name))
+               .ForMember(dto => dto.Shift, core => core.MapFrom(d => d.Shift.Name))
+               .ForMember(dto => dto.Semester, core => core.MapFrom(a => a.Semester.Name))
+               .ForMember(dto => dto.BankAccount, core => core.MapFrom(a => a.BankAccount.Name));
+
+            CreateMap<ProgramChallanTemplateLines, ProgramChallanTemplateLinesDto>()
+                   .ForMember(dto => dto.FeeItem, core => core.MapFrom(d => d.FeeItem.Name));
+
+            CreateMap<CreateProgramChallanTemplateDto, ProgramChallanTemplateMaster>();
+            CreateMap<CreateProgramChallanTemplateLinesDto, ProgramChallanTemplateLines>();
 
         }
     }

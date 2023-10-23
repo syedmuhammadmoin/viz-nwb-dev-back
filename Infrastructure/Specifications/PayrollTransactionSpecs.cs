@@ -68,7 +68,7 @@ namespace Infrastructure.Specifications
             AddInclude("PayrollTransactionLines.Account");
         }
 
-        public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, int campusId) 
+        public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, int campusId)
             : base(x => x.Month == month && x.Year == year
                 && (departmentIds.Count() > 0 ? departmentIds.Contains(x.DepartmentId) : true)
                 && (x.CampusId == campusId && x.Campus.IsActive == true)
@@ -77,7 +77,7 @@ namespace Infrastructure.Specifications
 
         }
 
-        public PayrollTransactionSpecs(int month, int year, int?[] departmentIds,int campusId, string getPayrollPayment) 
+        public PayrollTransactionSpecs(int month, int year, int?[] departmentIds, int campusId, string getPayrollPayment)
             : base(x => x.Month == month && x.Year == year
                 && (departmentIds.Count() > 0 ? departmentIds.Contains(x.DepartmentId) : true)
                 && (x.Status.State == DocumentStatus.Unpaid)
@@ -146,10 +146,10 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Status);
         }
 
-        public PayrollTransactionSpecs(int?[] months, int year, List<int?> campus) 
+        public PayrollTransactionSpecs(int?[] months, int year, List<int?> campus)
             : base(x =>
             (months.Count() > 0 ? months.Contains(x.Month) : true)
-            && (campus.Count() > 0 ? campus.Contains(x.CampusId) : true)
+            &&(campus.Count() > 0 ? campus.Contains(x.CampusId) : true)
             && (x.Status.State == DocumentStatus.Unpaid || x.Status.State == DocumentStatus.Paid || x.Status.State == DocumentStatus.Partial)
             && x.Year == year
             )
@@ -158,7 +158,24 @@ namespace Infrastructure.Specifications
             AddInclude("BasicPayItem.Account");
             AddInclude("PayrollTransactionLines.Account");
         }
-        
+        public PayrollTransactionSpecs(List<int?> months, List<int?> years, List<int?> campus, List<DocumentStatus?>StatusIds)
+           : base(x =>
+           (
+           
+           months.Count() > 0 ? months.Contains(x.Month) : true)
+           && (campus.Count() > 0 ? campus.Contains(x.CampusId) : true)
+           && (StatusIds.Count()>0 ? StatusIds.Contains(x.Status.State):true)
+          // && (x.Status.State == DocumentStatus.Unpaid || x.Status.State == DocumentStatus.Paid || x.Status.State == DocumentStatus.Partial)
+           && (years.Count() > 0 ? years.Contains(x.Year) : true)
+           )
+        {
+            AddInclude(i => i.PayrollTransactionLines);
+            AddInclude(i => i.Campus);
+            AddInclude(i => i.Status);
+            AddInclude("BasicPayItem.Account");
+            AddInclude("PayrollTransactionLines.Account");
+        }
+
         public PayrollTransactionSpecs(int month, int year, List<int?> campuses)
             : base(x =>
             (x.Month == month)
@@ -168,7 +185,32 @@ namespace Infrastructure.Specifications
             )
         {
             AddInclude(a => a.Employee);
-            
+
         }
+
+        public PayrollTransactionSpecs(List<int?> months, List<int?> years, List<int?> employees,
+          DateTime fromDate, DateTime toDate, string designation, string department, string campus)
+          : base(x =>
+              ((((DateTime)x.ModifiedDate).Date >= fromDate && ((DateTime)x.ModifiedDate).Date <= toDate))
+              && (months.Count() > 0 ? months.Contains(x.Month) : true)
+              && (years.Count() > 0 ? years.Contains(x.Year) : true)
+              && (employees.Count() > 0 ? employees.Contains(x.EmployeeId) : true)
+              && x.Designation.Name.Contains(designation != null ? designation : "")
+              && x.Department.Name.Contains(department != null ? department : "")
+              && x.Campus.Name.Contains(campus != null ? campus : "")
+              && (x.Status.State != DocumentStatus.Draft && x.Status.State != DocumentStatus.Cancelled && x.Status.State != DocumentStatus.Rejected)
+              )
+        {
+            AddInclude(a => a.AccountPayable);
+            AddInclude(a => a.Department);
+            AddInclude(a => a.Designation);
+            AddInclude(a => a.Campus);
+            AddInclude(a => a.Employee);
+            AddInclude(i => i.Status);
+            AddInclude("PayrollTransactionLines.PayrollItem");
+            AddInclude("PayrollTransactionLines.Account");
+            ApplyOrderByDescending(i => i.Id);
+        }
+
     }
 }

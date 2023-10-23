@@ -18,18 +18,25 @@ namespace Infrastructure.Specifications
                 var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
                 ApplyOrderByDescending(i => i.Id);
+                AddInclude(i => i.Status);
                 AddInclude(i => i.Campus);
             }
+        }
+        public BudgetSpecs()
+        {
+        
         }
 
         public BudgetSpecs(bool forEdit)
         {
             if (forEdit)
             {
+                AddInclude(i => i.Status);
                 AddInclude(i => i.BudgetLines);
             }
             else
             {
+                AddInclude(i => i.Status);
                 AddInclude(i => i.Campus);
                 AddInclude("BudgetLines.Account");
             }

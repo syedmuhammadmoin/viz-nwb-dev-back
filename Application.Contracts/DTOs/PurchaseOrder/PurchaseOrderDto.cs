@@ -30,6 +30,12 @@ namespace Application.Contracts.DTOs
         public IEnumerable <FileUploadDto> FileUploadList { get; set; }
         public bool IsAllowedRole { get; set; }
         public int? RequisitionId { get; private set; }
+        public string CreatedBy { get; set; }
+        public string ModifiedBy { get; set; }
+        public string LastUser
+        {
+            get { return RemarksList?.LastOrDefault().UserName ?? ModifiedBy ?? CreatedBy; }
+        }
 
     }
 }

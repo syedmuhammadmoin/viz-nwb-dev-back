@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vizalys.Api", "VizalysDDD\Vizalys.Api.csproj", "{9909E6F1-3893-4E2F-8591-2D3C40B983F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vizalys.Api", "VizalysDDD\Vizalys.Api.csproj", "{9909E6F1-3893-4E2F-8591-2D3C40B983F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{5F5CB9F0-9EC2-44B4-B5F6-BB508F71B7D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{5F5CB9F0-9EC2-44B4-B5F6-BB508F71B7D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{7C1E3469-605F-44BA-BBE8-7F0C135B18D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{7C1E3469-605F-44BA-BBE8-7F0C135B18D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{674E8733-351D-4408-ACE0-E0551DA04E78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{674E8733-351D-4408-ACE0-E0551DA04E78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Contracts", "Application.Contracts\Application.Contracts.csproj", "{DCC4BBC8-A4A6-49A7-B100-5FA8627CAB38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.Contracts", "Application.Contracts\Application.Contracts.csproj", "{DCC4BBC8-A4A6-49A7-B100-5FA8627CAB38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTests", "ApplicationTests\ApplicationTests.csproj", "{3C9707AB-FAA4-45D0-9DC7-37ED1E657737}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{DCC4BBC8-A4A6-49A7-B100-5FA8627CAB38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCC4BBC8-A4A6-49A7-B100-5FA8627CAB38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCC4BBC8-A4A6-49A7-B100-5FA8627CAB38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C9707AB-FAA4-45D0-9DC7-37ED1E657737}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C9707AB-FAA4-45D0-9DC7-37ED1E657737}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C9707AB-FAA4-45D0-9DC7-37ED1E657737}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C9707AB-FAA4-45D0-9DC7-37ED1E657737}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

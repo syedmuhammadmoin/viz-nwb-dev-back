@@ -56,5 +56,12 @@ namespace Application.Contracts.DTOs
         public string BankName { get; set; }
         public string AccountTitle { get; set; }
         public string AccountNumber { get; set; }
+        public string CreatedBy { get; set; }
+        public string ModifiedBy { get; set; }
+        public string LastUser
+        {
+
+            get { return RemarksList?.LastOrDefault().UserName ?? ModifiedBy ?? CreatedBy; }
+        }
     }
 }

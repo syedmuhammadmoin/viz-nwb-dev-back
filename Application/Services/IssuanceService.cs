@@ -181,16 +181,8 @@ namespace Application.Services
                         }
                         foreach (var line in getIssuance.IssuanceLines)
                         {
-                            //non fixed asset
-                            if (line.FixedAssetId == null)
-                            {
-                                //updating reserved quantity in stock
-                                var updateStockOnApproveOrReject = await UpdateStockOnApproveOrReject(getIssuance);
-                                if (!updateStockOnApproveOrReject.IsSuccess)
-                                    return new Response<bool>(updateStockOnApproveOrReject.Message);
-                            }
-                            //fixed Asset
-                            else
+                            // fixed asset
+                            if (line.FixedAssetId != null)
                             {
                                 var fixedAsset = await _unitOfWork.FixedAsset.GetById(line.FixedAssetId.Value);
                                 if (fixedAsset.IsReserved)
@@ -198,10 +190,19 @@ namespace Application.Services
                                     fixedAsset.SetIsReserved(false);
                                     fixedAsset.SetIsIssued(true);
                                 }
-
-
+                                fixedAsset.SetEmployeeId(getIssuance.EmployeeId);
                             }
+
                         }
+
+
+                        //updating reserved quantity in stock
+                        var updateStockOnApproveOrReject = await UpdateStockOnApproveOrReject(getIssuance);
+                        if (!updateStockOnApproveOrReject.IsSuccess)
+                            return new Response<bool>(updateStockOnApproveOrReject.Message);
+
+
+
 
                         await _unitOfWork.SaveAsync();
                         _unitOfWork.Commit();
@@ -248,8 +249,8 @@ namespace Application.Services
                     var checkValidation = CheckValidation((int)entity.RequisitionId, getrequisitionLine, _mapper.Map<IssuanceLines>(issuanceLine));
                     if (!checkValidation.IsSuccess)
                         return new Response<IssuanceDto>(checkValidation.Message);
-                    
-                    if (issuanceLine.FixedAssetId!=null)
+
+                    if (issuanceLine.FixedAssetId != null)
                     {
                         var currentDate = DateTime.Now;
                         var fixedAssetLines = await _unitOfWork.FixedAssetLines.GetByMonthAndYear(entity.Id.Value, currentDate.Month, currentDate.Year);
@@ -272,7 +273,7 @@ namespace Application.Services
                             else
                             {
                                 var createFixedAssetlineDto2 = new FixedAssetLinesDto() { ActiveDate = currentDate, MasterId = entity.Id.Value };
-                               await _unitOfWork.FixedAssetLines.Add(_mapper.Map<FixedAssetLines>(createFixedAssetlineDto2));
+                                await _unitOfWork.FixedAssetLines.Add(_mapper.Map<FixedAssetLines>(createFixedAssetlineDto2));
                             }
                         }
                     }
@@ -489,8 +490,8 @@ namespace Application.Services
 
             if (getState == null)
                 return new Response<bool>("Invalid Status");
-
-            foreach (var line in issuance.IssuanceLines)
+            //only for non fixed asset
+            foreach (var line in issuance.IssuanceLines.Where(x => x.FixedAssetId == null || x.FixedAssetId == 0))
             {
                 var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs(line.ItemId, line.WarehouseId)).FirstOrDefault();
 

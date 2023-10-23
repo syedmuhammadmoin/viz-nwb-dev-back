@@ -273,6 +273,12 @@ namespace Application.Contracts.DTOs
             }
             return 0;
         }
+        public string CreatedBy { get; set; }
+        public string ModifiedBy { get; set; }
+        public string LastUser
+        {
+            get { return RemarksList?.LastOrDefault().UserName ?? ModifiedBy ?? CreatedBy; }
+        }
         //public void CalculateLast_MonthAndYearofUseFul_Life()
         //{
 

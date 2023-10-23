@@ -18,11 +18,19 @@ namespace Domain.Entities
         public BudgetMaster PreviousBudget { get; private set; }
         public DateTime From { get; private set; }
         public DateTime To { get; private set; }
+        public int StatusId { get; private set; }
+        [ForeignKey("StatusId")]
+        public WorkFlowStatus Status { get; private set; }
         public virtual List<EstimatedBudgetLines> EstimatedBudgetLines { get; private set; }
+
 
         protected EstimatedBudgetMaster()
         {
 
+        }
+        public void SetStatus(int statusId)
+        {
+            StatusId = statusId;
         }
     }
 }

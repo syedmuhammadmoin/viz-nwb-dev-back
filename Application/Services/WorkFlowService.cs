@@ -84,7 +84,7 @@ namespace Application.Services
             if (entity.DocType == DocType.Invoice)
             {
                 var checkingInvoice = _unitOfWork.Invoice.Find(new InvoiceSpecs()).ToList();
-                
+
                 if (checkingInvoice.Count != 0)
                 {
                     return new Response<WorkFlowDto>("Invoice is pending for this workflow");
@@ -150,7 +150,7 @@ namespace Application.Services
                     return new Response<WorkFlowDto>("Receipt is pending for this workflow");
                 }
             }
-            
+
             if (entity.DocType == DocType.PayrollPayment)
             {
                 var checkingWorkFlow = _unitOfWork.Payment.Find(new PaymentSpecs("")).ToList();
@@ -273,6 +273,24 @@ namespace Application.Services
                 if (checking.Count != 0)
                 {
                     return new Response<WorkFlowDto>("Budget Reappropriation is pending for this workflow");
+                }
+            }
+            if (entity.DocType == DocType.EstimatedBudget)
+            {
+                var checking = _unitOfWork.EstimatedBudget.Find(new EstimatedBudgetSpecs("")).ToList();
+
+                if (checking.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Estimated Budget is pending for this workflow");
+                }
+            }
+            if (entity.DocType == DocType.Budget)
+            {
+                var checking = _unitOfWork.Budget.Find(new BudgetSpecs("")).ToList();
+
+                if (checking.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Budget is pending for this workflow");
                 }
             }
             //For updating data

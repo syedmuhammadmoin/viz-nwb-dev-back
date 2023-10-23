@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Filters;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -17,22 +18,36 @@ namespace Infrastructure.Specifications
             {
                 var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
+                AddInclude(i => i.Status);
                 AddInclude(i => i.PreviousBudget);
                 ApplyOrderByDescending(i => i.Id);
             }
         }
-            public EstimatedBudgetSpecs(bool forEdit)
+        public EstimatedBudgetSpecs()
+        {
+
+        }
+        public EstimatedBudgetSpecs(bool forEdit)
+        {
+            if (forEdit)
             {
-                if (forEdit)
-                {
-                    AddInclude(i => i.PreviousBudget);
-                    AddInclude(i => i.EstimatedBudgetLines);
-                }
-                else
-                {
-                    AddInclude(i => i.PreviousBudget);
-                    AddInclude("EstimatedBudgetLines.Account");
-                }
+                AddInclude(i => i.Status);
+                AddInclude(i => i.PreviousBudget);
+                AddInclude(i => i.PreviousBudget.BudgetLines);
+                AddInclude(i => i.EstimatedBudgetLines);
+            }
+            else
+            {
+                AddInclude(i => i.Status);
+                AddInclude(i => i.PreviousBudget);
+                AddInclude(i => i.PreviousBudget.BudgetLines);
+                AddInclude("EstimatedBudgetLines.Account");
             }
         }
+        public EstimatedBudgetSpecs(string workflow)
+          : base(e => (e.Status.State != DocumentStatus.Unpaid && e.Status.State != DocumentStatus.Partial && e.Status.State != DocumentStatus.Paid && e.Status.State != DocumentStatus.Draft && e.Status.State != DocumentStatus.Cancelled))
+        {
+            AddInclude(i => i.Status);
+        }
     }
+}
