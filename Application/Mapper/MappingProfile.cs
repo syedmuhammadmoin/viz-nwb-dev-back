@@ -627,8 +627,7 @@ namespace Application.Mapper
 
             CreateMap<CreateBudgetReappropriationDto, BudgetReappropriationMaster>();
             CreateMap<BudgetReappropriationLines, BudgetReappropriationLinesDto>()
-                   .ForMember(dto => dto.Level4, core => core.MapFrom(d => d.Level4.Name))
-                   .ForMember(dto => dto.Campus, core => core.MapFrom(d => d.Campus.Name));
+                   .ForMember(dto => dto.Level4, core => core.MapFrom(d => d.Level4.Name));
             CreateMap<CreateBudgetReappropriationLinesDto, BudgetReappropriationLines>();
 
             //DepreciationAdjustment

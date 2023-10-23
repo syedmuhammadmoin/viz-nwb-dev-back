@@ -22,7 +22,6 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.BudgetReappropriationLines);
                 AddInclude(i => i.Budget);
                 AddInclude(i => i.Status);
-                AddInclude("BudgetReappropriationLines.Campus");
                 AddInclude("BudgetReappropriationLines.Level4");
             }
         }
@@ -38,7 +37,6 @@ namespace Infrastructure.Specifications
                 AddInclude(i => i.Status);
                 AddInclude(i => i.Budget);
                 AddInclude(i => i.BudgetReappropriationLines);
-                AddInclude("BudgetReappropriationLines.Campus");
                 AddInclude("BudgetReappropriationLines.Level4");
             }
         }

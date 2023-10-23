@@ -3,6 +3,7 @@ using Application.Contracts.Filters;
 using Application.Contracts.Response;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,8 @@ namespace Application.Contracts.Interfaces
         Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data);
         Response<List<PayrollTransactionDto>> GetPayrollReport(PayrollFilter filter);
         Response<List<PayrollCampusTransactionDto>> GetPayrollCampusGroupReport(PayrollCampusReportFilter filter);
-        Response<object> GetPayrollDetailReport(PayrollDetailFilter filter);
+        Response<DataTable> GetPayrollDetailReport(PayrollDetailFilter filter);
+        Task<MemoryStream> ExportPayrollDetailedReport(PayrollDetailFilter filter);
         Response<PayrollExecutiveReportDto> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter);
         Response<List<BankAdviceReportDto>> GetBankAdviceReportReport(BankAdviceReportFilter filter);
     }

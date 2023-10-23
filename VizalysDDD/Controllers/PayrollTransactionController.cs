@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 
 namespace Vizalys.Api.Controllers
 {
@@ -208,6 +209,25 @@ namespace Vizalys.Api.Controllers
                     e.Message);
             }
         }
+        [HttpGet("ExportPayrollDetailedReport")]
+        public async Task<ActionResult> ExportPayrollDetailedReport([FromQuery] PayrollDetailFilter filter)
+        {
+            try
+            {
+                var stream = await _payrollTransactionService.ExportPayrollDetailedReport(filter);
+                string fromDate = filter.FromDate.Value.Date.ToString("dd MMMM yyyy");
+                string toDate = filter.FromDate.Value.Date.ToString("dd MMMM yyyy");
+                string excelName = $"PayrollDetailedReport-{fromDate}-till-{toDate}.xlsx";
+                return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    e.Message);
+            }
+        }
+
+        
         [HttpGet("CampusReport")]
         public ActionResult<Response<List<PayrollExecutiveReportDto>>> GetPayrollCampusReport([FromQuery] PayrollCampusReportFilter filter)
         {

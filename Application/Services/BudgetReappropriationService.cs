@@ -135,7 +135,6 @@ namespace Application.Services
             if (entity.BudgetReappropriationLines.Count() == 0)
                 return new Response<BudgetReappropriationDto>("Lines are required");
 
-
             var TotalAdditionAmount = entity.BudgetReappropriationLines.Sum(x => x.AdditionAmount);
             var TotalDeletionAmount = entity.BudgetReappropriationLines.Sum(x => x.DeletionAmount);
 
@@ -146,6 +145,34 @@ namespace Application.Services
             {
                 if (lines.AdditionAmount > 0 && lines.DeletionAmount > 0)
                     return new Response<BudgetReappropriationDto>("Addition and deletion amount should be in seperate lines");
+            }
+            var budgetSpecification = new BudgetSpecs(true);
+
+            var budget = await _unitOfWork.Budget.GetById((int)entity.BudgetId, budgetSpecification);
+
+            var subtractBudgetReappropriationLines = entity.BudgetReappropriationLines.Where(x => x.DeletionAmount > 0);
+
+
+
+            var nonBudgetLines = subtractBudgetReappropriationLines.Where(y => !budget.BudgetLines.Any(z => z.AccountId == y.Level4Id));
+
+            if (nonBudgetLines.Count() > 0)
+            {
+                return new Response<BudgetReappropriationDto>("The selected account(s) for deletion does not exist in the budget");
+
+            }
+
+            var list = subtractBudgetReappropriationLines.GroupBy(x => x.Level4Id);
+            var deletionGroupBylist = list.Select(y => new { AccountId = y.Key, DeleteAmount = y.Sum(z => z.DeletionAmount) });
+
+            foreach (var item in deletionGroupBylist)
+            {
+                if (item.DeleteAmount > budget.BudgetLines.Where(x => x.AccountId == item.AccountId).FirstOrDefault().Amount)
+                {
+                    return new Response<BudgetReappropriationDto>("The deletion amount of the selected account(s) is exceeded by the budget corresponding account amount");
+
+                }
+
             }
 
             var budgetReappropriation = _mapper.Map<BudgetReappropriationMaster>(entity);
@@ -173,6 +200,16 @@ namespace Application.Services
 
         private async Task<Response<BudgetReappropriationDto>> UpdateBudgetReappropriation(CreateBudgetReappropriationDto entity, int status)
         {
+            var specification = new BudgetReappropriationSpecs(true);
+            var budgetReappropriation = await _unitOfWork.BudgetReappropriation.GetById((int)entity.Id, specification);
+
+            if (budgetReappropriation == null)
+                return new Response<BudgetReappropriationDto>("Not found");
+
+            if (budgetReappropriation.StatusId != 1 && budgetReappropriation.StatusId != 2)
+                return new Response<BudgetReappropriationDto>("Only draft document can be edited");
+
+
             if (entity.BudgetReappropriationLines.Count() == 0)
                 return new Response<BudgetReappropriationDto>("Lines are required");
 
@@ -192,9 +229,10 @@ namespace Application.Services
             var budget = await _unitOfWork.Budget.GetById((int)entity.BudgetId, budgetSpecification);
 
             var subtractBudgetReappropriationLines = entity.BudgetReappropriationLines.Where(x => x.DeletionAmount > 0);
+            
 
 
-            var nonBudgetLines = subtractBudgetReappropriationLines.Where(y => budget.BudgetLines.Any(z => z.AccountId == y.Level4Id));
+            var nonBudgetLines = subtractBudgetReappropriationLines.Where(y => !budget.BudgetLines.Any(z => z.AccountId == y.Level4Id));
 
             if (nonBudgetLines.Count() > 0)
             {
@@ -215,15 +253,6 @@ namespace Application.Services
 
             }
 
-
-            var specification = new BudgetReappropriationSpecs(true);
-            var budgetReappropriation = await _unitOfWork.BudgetReappropriation.GetById((int)entity.Id, specification);
-
-            if (budgetReappropriation == null)
-                return new Response<BudgetReappropriationDto>("Not found");
-
-            if (budgetReappropriation.StatusId != 1 && budgetReappropriation.StatusId != 2)
-                return new Response<BudgetReappropriationDto>("Only draft document can be edited");
 
             budgetReappropriation.SetStatus(status);
 
