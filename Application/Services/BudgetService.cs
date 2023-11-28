@@ -132,6 +132,7 @@ namespace Application.Services
                 {
                     glWithBudgetFilter.Id = budgetLine.Id;
                     glWithBudgetFilter.Amount = budgetLine.Amount;
+                    glWithBudgetFilter.RevisedAmount = budgetLine.RevisedAmount;
                     glWithBudgetFilter.AccountName = budgetLine.Account.Name;
                     glWithBudgetFilter.MasterId = budgetLine.MasterId;
                     
