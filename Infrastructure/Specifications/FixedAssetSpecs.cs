@@ -47,8 +47,13 @@ namespace Infrastructure.Specifications
         }
 
         public FixedAssetSpecs(int ProductId)
-            : base(e => e.ProductId == ProductId && e.IsHeldforSaleOrDisposal == false)
+            : base(e => (
+            e.ProductId == ProductId
+            && e.IsHeldforSaleOrDisposal == false
+            && e.Status.State == DocumentStatus.Unpaid))
+            
         {
+            AddInclude(i => i.Status);
         }
 
         public FixedAssetSpecs(bool isDisposed, bool isHeldforSaleOrDisposal,

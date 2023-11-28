@@ -188,8 +188,8 @@ namespace Application.Services
                                 if (fixedAsset.IsReserved)
                                 {
                                     fixedAsset.SetIsReserved(false);
-                                    fixedAsset.SetIsIssued(true);
                                 }
+                                fixedAsset.SetIsIssued(true);
                                 fixedAsset.SetEmployeeId(getIssuance.EmployeeId);
                             }
 
