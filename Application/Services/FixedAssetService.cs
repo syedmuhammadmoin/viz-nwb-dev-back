@@ -346,7 +346,7 @@ namespace Application.Services
 
         }
 
-        public async Task<Response<List<FixedAssetDto>>> GetAssetByProductIdDropDown(int ProductId)
+        public async Task<Response<List<FixedAssetDto>>> GetAssetInStockByProductIdDropDown(int ProductId)
         {
             var fixedAsset = await _unitOfWork.FixedAsset.GetAll(new FixedAssetSpecs(ProductId));
             if (!fixedAsset.Any())

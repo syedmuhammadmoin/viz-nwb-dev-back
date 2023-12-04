@@ -297,8 +297,8 @@ namespace Application.Mapper
             CreateMap<CreateBudgetLinesDto, BudgetLines>();
 
 
-            CreateMap<BudgetMaster,CreateBudgetDto> ();
-            CreateMap<BudgetLines,CreateBudgetLinesDto> ();
+            CreateMap<BudgetMaster, CreateBudgetDto>();
+            CreateMap<BudgetLines, CreateBudgetLinesDto>();
 
             // PurchaseOrder Mapping
             CreateMap<PurchaseOrderMaster, PurchaseOrderDto>()
@@ -439,6 +439,10 @@ namespace Application.Mapper
               .ForMember(dto => dto.WarehouseName, core => core.MapFrom(a => a.Warehouse.Name))
               .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity));
 
+
+
+            CreateMap<IssuanceMaster, CreateIssuanceDto>();
+            CreateMap<IssuanceLines, CreateIssuanceLinesDto>();
             CreateMap<CreateIssuanceDto, IssuanceMaster>();
             CreateMap<CreateIssuanceLinesDto, IssuanceLines>();
 

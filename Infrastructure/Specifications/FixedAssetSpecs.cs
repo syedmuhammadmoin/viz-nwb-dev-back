@@ -50,6 +50,7 @@ namespace Infrastructure.Specifications
             : base(e => (
             e.ProductId == ProductId
             && e.IsHeldforSaleOrDisposal == false
+            && e.IsIssued== false
             && e.Status.State == DocumentStatus.Unpaid))
             
         {

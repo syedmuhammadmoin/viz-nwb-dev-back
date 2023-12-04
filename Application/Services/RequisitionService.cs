@@ -287,6 +287,17 @@ namespace Application.Services
             if (duplicates.Any())
                 return new Response<RequisitionDto>("Duplicate Lines found");
 
+
+            foreach (var requisitionLines in entity.RequisitionLines)
+            {
+                if (requisitionLines.FixedAssetId != null)
+                {
+                    const int singleUnitOfAsset = 1;
+                    requisitionLines.Quantity = singleUnitOfAsset;
+                }
+            }
+
+
             var requisition = _mapper.Map<RequisitionMaster>(entity);
 
             //Setting status
@@ -328,6 +339,16 @@ namespace Application.Services
 
             if (requisition.StatusId != 1 && requisition.StatusId != 2)
                 return new Response<RequisitionDto>("Only draft document can be edited");
+
+            foreach (var requisitionLines in entity.RequisitionLines)
+            {
+                if (requisitionLines.FixedAssetId != null)
+                {
+                    const int singleUnitOfAsset = 1;
+                    requisitionLines.Quantity = singleUnitOfAsset;
+                }
+            }
+
 
             //Setting status
             requisition.SetStatus(status);

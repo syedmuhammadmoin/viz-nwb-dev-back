@@ -19,6 +19,9 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 //Add services
+builder.Services.AddScoped(provider => new Lazy<IEmployeeService>(() => provider.GetRequiredService<IEmployeeService>()));
+builder.Services.AddScoped(provider => new Lazy<IWarehouseService>(() => provider.GetRequiredService<IWarehouseService>()));
+
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 builder.Services.AddScoped<IWarehouseService, WarehouseService>();
 builder.Services.AddScoped<ICampusService, CampusService>();

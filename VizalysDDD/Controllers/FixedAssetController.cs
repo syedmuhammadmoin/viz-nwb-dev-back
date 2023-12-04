@@ -117,7 +117,7 @@ namespace Vizalys.Api.Controllers
         [HttpGet("Product/{ProductId:int}")]
         public async Task<ActionResult<Response<List<Level4Dto>>>> GetAssetByProductIdDropDown(int ProductId)
         {
-            var result = await _fixedAssetService.GetAssetByProductIdDropDown(ProductId);
+            var result = await _fixedAssetService.GetAssetInStockByProductIdDropDown(ProductId);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 
