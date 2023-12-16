@@ -98,8 +98,8 @@ builder.Services.AddScoped<IAdmissionCriteriaService, AdmissionCriteriaService>(
 builder.Services.AddScoped<IApplicantService, ApplicantService>();
 builder.Services.AddScoped<IAdmissionApplicationService, AdmissionApplicationService>();
 builder.Services.AddScoped<IProgramChallanTemplateService, ProgramChallanTemplateService>();
-
 builder.Services.AddHostedService<DepreciationBackgroundService>();
+
 
 //Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

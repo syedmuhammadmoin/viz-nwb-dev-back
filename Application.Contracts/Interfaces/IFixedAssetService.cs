@@ -2,6 +2,7 @@
 using Application.Contracts.DTOs.FixedAsset;
 using Application.Contracts.Filters;
 using Application.Contracts.Response;
+using Domain.Entities;
 
 namespace Application.Contracts.Interfaces
 {
@@ -13,5 +14,6 @@ namespace Application.Contracts.Interfaces
         Task<Response<List<FixedAssetDto>>> GetAssetInStockByProductIdDropDown(int ProductId);
         Task<Response<bool>> HeldAssetForDisposal(CreateHeldAssetForDisposal createHeldAssetForDisposal);
         Task<Response<FixedAssetDto>> UpdateAfterApproval(UpdateSalvageValueDto entity);
+        Task<Response<FixedAssetDto>> DepreciationSchedule(int fixedAssetId);
     }
 }

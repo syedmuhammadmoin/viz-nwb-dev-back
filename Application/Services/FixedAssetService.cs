@@ -10,6 +10,7 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
 using Microsoft.AspNetCore.Http;
+using System.Linq;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
 namespace Application.Services
@@ -434,6 +435,7 @@ namespace Application.Services
 
         }
 
+
         public async Task<Response<bool>> HeldAssetForDisposal(CreateHeldAssetForDisposal createHeldAssetForDisposal)
         {
 
@@ -477,7 +479,7 @@ namespace Application.Services
         }
         public async Task<Response<FixedAssetLinesDto>> CreateFixedAssetLinesAsync(FixedAssetLines entity)
         {
-            if (entity.Id == null || entity.Id == 0)
+            if (entity.Id == 0)
             {
                 await _unitOfWork.FixedAssetLines.Add(entity);
             }
@@ -488,19 +490,61 @@ namespace Application.Services
             return new Response<FixedAssetLinesDto>(null, "Created successfully");
 
         }
+        public async Task<Response<FixedAssetDto>> DepreciationSchedule(int fixedAssetId)
+        {
+            var fixedAsset = await GetByIdAsync(fixedAssetId);
+
+            var fixedAssetDto = fixedAsset.Result;
+            DateTime depreciationDate = new DateTime(fixedAssetDto.DateofAcquisition.Year, fixedAssetDto.DateofAcquisition.Month, DateTime.DaysInMonth(fixedAssetDto.DateofAcquisition.Year, fixedAssetDto.DateofAcquisition.Month));
+
+            fixedAssetDto.ConfigureDepreciation(depreciationDate, false, true);
+
+
+
+
+
+            if (!fixedAssetDto.IsDepreciable)
+            {
+                return new Response<FixedAssetDto>(fixedAssetDto, "Asset is not depreciable");
+
+            }
+            fixedAssetDto.DepriecaitonRegisterList = null;
+            List<DepreciationRegisterDto> DepriecaitonRegisterList = new List<DepreciationRegisterDto>();
+            while (fixedAssetDto.IsDepreciable)
+            {
+                var depreciationAmount = fixedAssetDto.CalculateDepreciationAmount();
+
+                DepriecaitonRegisterList.Add(new DepreciationRegisterDto
+                {
+                    BeginingBookValue = fixedAssetDto.AccumulatedDepreciationAmount,
+                    EndingBookValue = fixedAssetDto.AccumulatedDepreciationAmount + depreciationAmount,
+                    DepreciationAmount = depreciationAmount,
+                    Description = "Depreciation of month " + depreciationDate.Month.ToString() + " / " + depreciationDate.Year.ToString(),
+                    FixedAssetId = fixedAssetId,
+                    TransectionDate = depreciationDate,
+                });
+                fixedAssetDto.AccumulatedDepreciationAmount += depreciationAmount;
+                depreciationDate = depreciationDate.AddMonths(1);
+                fixedAssetDto.ConfigureDepreciation(depreciationDate, false, true);
+
+            }
+
+
+
+            fixedAssetDto.DepriecaitonRegisterList = DepriecaitonRegisterList;
+            return new Response<FixedAssetDto>(fixedAssetDto, "Depreciation Scheduled Successfully");
+
+
+        }
         public async Task<Response<FixedAssetDto>> Depreciate(CreateDepreciationRegisterDto createDepreciationRegisterDto)
         {
 
             var fixedAsset = await GetByIdAsync(createDepreciationRegisterDto.FixedAssetId, createDepreciationRegisterDto.TransactionDate.Month, createDepreciationRegisterDto.TransactionDate.Year);
 
             var fixedAssetDto = fixedAsset.Result;
-            fixedAssetDto.CurrentDate = createDepreciationRegisterDto.TransactionDate;
-            fixedAssetDto.IsGoingtoDisposeAsset = createDepreciationRegisterDto.IsGoingtoDispose;
+            fixedAssetDto.ConfigureDepreciation(createDepreciationRegisterDto.TransactionDate, createDepreciationRegisterDto.IsGoingtoDispose, false);
 
-            if (_unitOfWork.Transaction == null)
-            {
-                _unitOfWork.CreateTransaction();
-            }
+
 
             try
             {
@@ -508,10 +552,16 @@ namespace Application.Services
                 {
                     if (fixedAssetDto.IsDepreciable)
                     {
+
+                        if (_unitOfWork.Transaction == null)
+                        {
+                            _unitOfWork.CreateTransaction();
+                        }
+
                         //1a. entry in Fixed Lines 
 
                         //Getting fixed asset lines
-                        var fixedAssetLines = await _unitOfWork.FixedAssetLines.GetByMonthAndYear(fixedAssetDto.Id, fixedAssetDto.CurrentDate.Month, fixedAssetDto.CurrentDate.Year);
+                        var fixedAssetLines = await _unitOfWork.FixedAssetLines.GetByMonthAndYear(fixedAssetDto.Id, createDepreciationRegisterDto.TransactionDate.Month, createDepreciationRegisterDto.TransactionDate.Year);
 
                         var maxActiveRecord = fixedAssetLines.OrderByDescending(r => r.ActiveDate).FirstOrDefault();
 
@@ -519,7 +569,7 @@ namespace Application.Services
                         {
                             if (maxActiveRecord.InactiveDate == null)
                             {
-                                maxActiveRecord.SetInactiveDate(fixedAssetDto.CurrentDate);
+                                maxActiveRecord.SetInactiveDate(createDepreciationRegisterDto.TransactionDate);
                                 TimeSpan timeSpan = maxActiveRecord.InactiveDate.Value - maxActiveRecord.ActiveDate;
                                 maxActiveRecord.SetActiveDays(timeSpan.Days + 1); // add 1 to include both start and end dates
                                 var createFixedAssetlineDto = _mapper.Map<FixedAssetLines>(maxActiveRecord);
@@ -532,20 +582,20 @@ namespace Application.Services
                         // but No need in case of Held for Disposal 
                         if (createDepreciationRegisterDto.IsGoingtoDispose == false)
                         {
-                            var createFixedAssetlineDto2 = new FixedAssetLinesDto() { ActiveDate = fixedAssetDto.CurrentDate.AddDays(1), MasterId = fixedAssetDto.Id };
+                            var createFixedAssetlineDto2 = new FixedAssetLinesDto() { ActiveDate = createDepreciationRegisterDto.TransactionDate.AddDays(1), MasterId = fixedAssetDto.Id };
                             await CreateFixedAssetLinesAsync(_mapper.Map<FixedAssetLines>(createFixedAssetlineDto2));
 
                         }
                         // 2.entry in Depreciation Register						
-                        createDepreciationRegisterDto.Description = "Depreciation of month " + fixedAssetDto.CurrentDate.Month.ToString() + " / " + fixedAssetDto.CurrentDate.Year.ToString();
-                        createDepreciationRegisterDto.DepreciationAmount = fixedAssetDto.DepreciationAmount;
+                        createDepreciationRegisterDto.Description = "Depreciation of month " + createDepreciationRegisterDto.TransactionDate.Month.ToString() + " / " + createDepreciationRegisterDto.TransactionDate.Year.ToString();
+                        createDepreciationRegisterDto.DepreciationAmount = fixedAssetDto.CalculateDepreciationAmount();
                         await CreateDepreciationRegisterAsync(createDepreciationRegisterDto);
 
 
                         // 3.entry in the ledger
                         List<RecordLedger> recordLedgers = new List<RecordLedger>() {
-                    new RecordLedger(0, fixedAssetDto.AccumulatedDepreciationId.Value, null, fixedAssetDto.WarehouseId, "Asset" + fixedAssetDto.Id, 'C', fixedAssetDto.DepreciationAmount, null, fixedAssetDto.CurrentDate,fixedAssetDto.Id),
-                    new RecordLedger(0, fixedAssetDto.DepreciationExpenseId.Value, null, fixedAssetDto.WarehouseId, "Asset" + fixedAssetDto.Id, 'D', fixedAssetDto.DepreciationAmount, null, fixedAssetDto.CurrentDate,fixedAssetDto.Id)
+                    new RecordLedger(0, fixedAssetDto.AccumulatedDepreciationId.Value, null, fixedAssetDto.WarehouseId, "Asset" + fixedAssetDto.Id, 'C', fixedAssetDto.CalculateDepreciationAmount(), null, createDepreciationRegisterDto.TransactionDate,fixedAssetDto.Id),
+                    new RecordLedger(0, fixedAssetDto.DepreciationExpenseId.Value, null, fixedAssetDto.WarehouseId, "Asset" + fixedAssetDto.Id, 'D', fixedAssetDto.CalculateDepreciationAmount(), null, createDepreciationRegisterDto.TransactionDate,fixedAssetDto.Id)
                     };
 
                         await AddToLedger(recordLedgers);
@@ -554,9 +604,9 @@ namespace Application.Services
                         var result = await _unitOfWork.FixedAsset.GetById((int)createDepreciationRegisterDto.FixedAssetId);
                         if (result == null)
                             return new Response<FixedAssetDto>("Not found");
-                        result.SetAccumulatedDepreciationAmount(fixedAssetDto.AccumulatedDepreciationAmount + fixedAssetDto.DepreciationAmount);
+                        result.SetAccumulatedDepreciationAmount(fixedAssetDto.AccumulatedDepreciationAmount + fixedAssetDto.CalculateDepreciationAmount());
                         //5.Update Active Days in FixedAsset 
-                        result.SetTotalActiveDays(fixedAssetDto.TotalActiveDays + fixedAssetDto.ActiveDaysofMonth());
+                        result.SetTotalActiveDays(fixedAssetDto.TotalActiveDays + fixedAssetDto.CalculateActiveDaysofMonth());
 
 
 
@@ -672,7 +722,7 @@ namespace Application.Services
                         CreatedAt = e.CreatedDate == null ? "N/A" : ((DateTime)e.CreatedDate).ToString("ddd, dd MMM yyyy")
                     }).ToList();
 
-            if (remarks.Count() > 0)
+            if (remarks.Count > 0)
             {
                 data.RemarksList = _mapper.Map<List<RemarksDto>>(remarks);
             }

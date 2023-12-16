@@ -10,6 +10,8 @@ namespace Application.Contracts.DTOs
     public class DepreciationRegisterDto
     {
         public int FixedAssetId { get; set; }
+        public decimal BeginingBookValue { get; set; }
+        public decimal EndingBookValue { get; set; }
         public DateTime TransectionDate { get; set; }
         public bool IsAutomatedCalculation { get; set; }
         public decimal DepreciationAmount { get; set; }
