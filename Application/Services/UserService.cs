@@ -584,6 +584,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.CreditNoteClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.DebitNoteClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.JournalEntryClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.PettyCashClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.WorkflowStatusClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.WorkflowClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.ReceiptClaims), "12");

@@ -32,6 +32,7 @@ builder.Services.AddScoped<ICOAService, COAService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IJournalEntryService, JournalEntryService>();
+builder.Services.AddScoped<IPettyCashService, PettyCashService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IBillService, BillService>();
 builder.Services.AddScoped<ICreditNoteService, CreditNoteService>();

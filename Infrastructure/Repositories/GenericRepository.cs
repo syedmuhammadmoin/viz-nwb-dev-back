@@ -66,5 +66,11 @@ namespace Infrastructure.Repositories
             return SpecificationEvaluator<T, TKey>.GetQuery(_context.Set<T>()
                                     .AsQueryable(), specification);
         }
+        public async Task<bool> Any(ISpecification<T> specification = null)
+        {
+            return await SpecificationEvaluator<T, TKey>.GetQuery(_context.Set<T>()
+                                    .AsQueryable(), specification)
+                                    .AnyAsync();
+        }
     }
 }

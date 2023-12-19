@@ -85,7 +85,8 @@ namespace Domain.Constants
         BudgetReappropriation = 28,
         DepreciationAdjustment = 29,
         EstimatedBudget=30,
-            Budget=31
+        Budget=31,
+        PettyCash=32
     }
     public enum ActionButton
     {

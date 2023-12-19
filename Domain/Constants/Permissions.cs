@@ -273,6 +273,13 @@
             public const string Edit = "Finance.JournalEntry.ED";
             public const string Delete = "Finance.JournalEntry.DL";
         }
+        public static class PettyCashClaims
+        {
+            public const string View = "Finance.PettyCash.VW";
+            public const string Create = "Finance.PettyCash.CR";
+            public const string Edit = "Finance.PettyCash.ED";
+            public const string Delete = "Finance.PettyCash.DL";
+        }
         public static class PayrollItemClaims
         {
             public const string View = "Payroll.PayrollItem.VW";

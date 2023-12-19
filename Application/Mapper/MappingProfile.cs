@@ -97,7 +97,7 @@ namespace Application.Mapper
             CreateMap<CreateProductDto, Product>();
 
             // JournalEntry Mapping
-            CreateMap<JournalEntryMaster, JournalEntryDto>()
+            CreateMap<JournalEntryMaster, PettyCashDto>()
                  .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
@@ -107,9 +107,25 @@ namespace Application.Mapper
 
             CreateMap<CreateJournalEntryDto, JournalEntryMaster>()
                .ForMember(core => core.TotalDebit, dto => dto.MapFrom(a => a.JournalEntryLines.Sum(i => i.Debit)))
-               .ForMember(core => core.TotalCredit, dto => dto.MapFrom(a => a.JournalEntryLines.Sum(i => i.Credit))); ;
+               .ForMember(core => core.TotalCredit, dto => dto.MapFrom(a => a.JournalEntryLines.Sum(i => i.Credit)));
 
             CreateMap<CreateJournalEntryLinesDto, JournalEntryLines>();
+
+            // PettyCash Mapping
+            CreateMap<PettyCashMaster, PettyCashDto>()
+                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+                .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
+                .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
+
+            CreateMap<PettyCashLines, PettyCashLinesDto>()
+              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
+              .ForMember(dto => dto.BusinessPartnerName, core => core.MapFrom(a => a.BusinessPartner.Name));
+
+            CreateMap<CreatePettyCashDto, PettyCashMaster>()
+               .ForMember(core => core.TotalDebit, dto => dto.MapFrom(a => a.PettyCashLines.Sum(i => i.Debit)))
+               .ForMember(core => core.TotalCredit, dto => dto.MapFrom(a => a.PettyCashLines.Sum(i => i.Credit)));
+
+            CreateMap<CreatePettyCashLinesDto, PettyCashLines>();
 
             // Invoice Mapping
             CreateMap<InvoiceMaster, InvoiceDto>()

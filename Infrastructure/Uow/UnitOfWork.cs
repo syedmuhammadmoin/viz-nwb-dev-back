@@ -24,6 +24,7 @@ namespace Infrastructure.Uow
         public ILevel2Repository Level2 { get; private set; }
         public ILevel3Repository Level3 { get; private set; }
         public IJournalEntryRepository JournalEntry { get; private set; }
+        public IPettyCashRepository PettyCash { get; private set; }
         public IInvoiceRepository Invoice { get; private set; }
         public IBillRepository Bill{ get; private set; }
         public ICreditNoteRepository CreditNote { get; private set; }
@@ -109,6 +110,7 @@ namespace Infrastructure.Uow
             Level3 = new Level3Repository(context);
             Product = new ProductRepository(context);
             JournalEntry = new JournalEntryRepository(context);
+            PettyCash = new PettyCashRepository(context);
             Invoice = new InvoiceRepository(context);
             Bill = new BillRepository(context);
             CreditNote = new CreditNoteRepository(context);

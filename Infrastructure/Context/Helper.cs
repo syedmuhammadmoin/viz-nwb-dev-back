@@ -22,6 +22,12 @@ namespace Infrastructure.Context
             .WithMany(c => c.JournalEntryLines)
             .OnDelete(DeleteBehavior.Cascade);
 
+            //PettyCash
+            modelBuilder.Entity<PettyCashLines>()
+            .HasOne(tc => tc.PettyCashMaster)
+            .WithMany(c => c.PettyCashLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
             //Invoice
             modelBuilder.Entity<InvoiceLines>()
             .HasOne(tc => tc.InvoiceMaster)

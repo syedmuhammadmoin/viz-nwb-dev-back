@@ -18,6 +18,7 @@ namespace Domain.Interfaces
         ILevel4Repository Level4 { get; }
         IProductRepository Product { get; }
         IJournalEntryRepository JournalEntry { get; }
+        IPettyCashRepository PettyCash { get; }
         IInvoiceRepository Invoice { get; }
         IBillRepository Bill { get; }
         ICreditNoteRepository CreditNote { get; }
@@ -91,7 +92,6 @@ namespace Domain.Interfaces
         IApplicantRepository Applicant { get; }
         IAdmissionApplicationRepository AdmissionApplication { get; }
         IProgramChallanTemplateRepository ProgramChallanTemplate { get; }
-
         Task SaveAsync();
         void CreateTransaction();
         void Commit();

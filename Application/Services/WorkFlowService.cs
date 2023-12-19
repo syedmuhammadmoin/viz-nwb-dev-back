@@ -117,7 +117,7 @@ namespace Application.Services
 
                 if (checkingInvoice.Count != 0)
                 {
-                    return new Response<WorkFlowDto>("DebitNote is pending for this workflow");
+                    return new Response<WorkFlowDto>("Debit Note is pending for this workflow");
                 }
             }
 
@@ -127,7 +127,15 @@ namespace Application.Services
 
                 if (checkingInvoice.Count != 0)
                 {
-                    return new Response<WorkFlowDto>("JournalEntry is pending for this workflow");
+                    return new Response<WorkFlowDto>("Journal Entry is pending for this workflow");
+                }
+            }
+
+            if (entity.DocType == DocType.PettyCash)
+            {
+                if (await _unitOfWork.PettyCash.Any(new PettyCashSpecs()))
+                {
+                    return new Response<WorkFlowDto>("Petty Cash is pending for this workflow");
                 }
             }
 
