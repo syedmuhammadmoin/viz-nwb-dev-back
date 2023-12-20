@@ -1,4 +1,5 @@
 ﻿using Domain.Constants;
+using Newtonsoft.Json;
 
 namespace Application.Contracts.DTOs
 {
@@ -179,7 +180,7 @@ namespace Application.Contracts.DTOs
 
                 if (IsSchedule && IsFirstMonthDepreciation())
                 {
-                    TimeSpan timeSpan = DepreciationDate- DateofAcquisition;
+                    TimeSpan timeSpan = DepreciationDate - DateofAcquisition;
                     return timeSpan.Days + currentDay;
                 }
                 else
@@ -223,6 +224,7 @@ namespace Application.Contracts.DTOs
             IsGoingtoDisposeAsset = isGoingtoDisposeAsset;
             IsDepreciationConfigured = true;
         }
+        [JsonIgnore]
         public bool IsDepreciable
         {
             get
