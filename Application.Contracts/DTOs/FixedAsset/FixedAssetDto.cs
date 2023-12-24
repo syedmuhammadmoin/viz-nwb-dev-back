@@ -235,7 +235,7 @@ namespace Application.Contracts.DTOs
                 bool hasAmountToDepreciate = CalculateDepreciationAmount() >= 1;
                 bool isAssetDisposed = IsDisposed;
                 bool isAssetHeldForSaleOrDisposal = IsHeldforSaleOrDisposal;
-                bool isGoingToDisposeAssetWithProrataBasisEnabled = (IsGoingtoDisposeAsset && ProrataBasis) || ProrataBasis;
+                bool isGoingToDisposeAssetWithProrataBasisEnabled = (IsGoingtoDisposeAsset && ProrataBasis) || !IsGoingtoDisposeAsset;
                 bool isNotAutomatedDepreciatedBefore = !IsAlreadyAutomatedDepreciatedforCurrentMonth();
 
                 bool isDepreciable =

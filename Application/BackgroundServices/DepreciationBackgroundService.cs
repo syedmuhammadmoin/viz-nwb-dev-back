@@ -38,7 +38,7 @@ namespace Application.BackgroundServices
 
             int DepreciationMonth = DateTime.Now.Month;
             int DepreciationYear = DateTime.Now.Year;
-            int DepreciationDay = DateTime.DaysInMonth(DepreciationYear, DepreciationMonth); //DateTime.Now.Day; to run immediately
+            int DepreciationDay = depreciationTime.Day;// DateTime.DaysInMonth(DepreciationYear, DepreciationMonth); //DateTime.Now.Day; to run immediately
             int DepreciationHour = depreciationTime.Hour;
             int DepreciationMinute = depreciationTime.Minute;
 
@@ -52,7 +52,7 @@ namespace Application.BackgroundServices
             var scheduledTime = depreciationDate;
 
             if (now > scheduledTime)
-            {
+             {
                 
                 scheduledTime = scheduledTime.AddMonths(1);// Todo: add time to call next time AddSeconds(10); to run 10 second interval
             }

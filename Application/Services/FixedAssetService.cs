@@ -215,11 +215,16 @@ namespace Application.Services
                         {
                             //Operation Not Allow
                         }
-                        else
-                        {
-                            var createFixedAssetlineDto2 = new FixedAssetLinesDto() { ActiveDate = currentDate, MasterId = entity.Id.Value };
-                            await CreateFixedAssetLinesAsync(_mapper.Map<FixedAssetLines>(createFixedAssetlineDto2));
-                        }
+                        //else
+                        //{
+                        //    var createFixedAssetlineDto2 = new FixedAssetLinesDto() { ActiveDate = currentDate, MasterId = entity.Id.Value };
+                        //    await CreateFixedAssetLinesAsync(_mapper.Map<FixedAssetLines>(createFixedAssetlineDto2));
+                        //}
+                    }
+                    else
+                    {
+                        var createFixedAssetlineDto2 = new FixedAssetLinesDto() { ActiveDate = currentDate, MasterId = entity.Id.Value };
+                        await CreateFixedAssetLinesAsync(_mapper.Map<FixedAssetLines>(createFixedAssetlineDto2));
                     }
                 }
                 //Deactivation
@@ -269,10 +274,12 @@ namespace Application.Services
             var fixedAsset = await _unitOfWork.FixedAsset.GetById(id, new FixedAssetSpecs());
             if (fixedAsset == null)
                 return new Response<FixedAssetDto>("Not found");
-            var d = new DateTime();
+           // var d = new DateTime();
 
             //Getting fixed asset lines
-            var fixedAssetLines = await _unitOfWork.FixedAssetLines.GetByMonthAndYear(id, d.Month, d.Year);
+           // var fixedAssetLines = await _unitOfWork.FixedAssetLines.GetByMonthAndYear(id, d.Month, d.Year);
+            var fixedAssetLines = await _unitOfWork.FixedAssetLines.GetAll();
+           // new FixedAssetLineSpecs()
             var fixedAssetLinesDto = _mapper.Map<List<FixedAssetLinesDto>>(fixedAssetLines);
 
             //Mappiing fixed asset
@@ -281,15 +288,15 @@ namespace Application.Services
             //Mapping Lines
             fixedAssetDto.FixedAssetlines = fixedAssetLinesDto;
 
-            //Getting Depreciation register
-            var depreciationRegister = await _unitOfWork.DepreciationRegister.GetByMonthAndYear(id, d.Month, d.Year);
+            ////Getting Depreciation register
+            //var depreciationRegister = await _unitOfWork.DepreciationRegister.GetByMonthAndYear(id, d.Month, d.Year);
 
 
-            //Mappiing fixed asset
-            var DepreciationRegisterDto = _mapper.Map<List<DepreciationRegisterDto>>(depreciationRegister);
+            ////Mappiing fixed asset
+            //var DepreciationRegisterDto = _mapper.Map<List<DepreciationRegisterDto>>(depreciationRegister);
 
-            //Mapping Lines
-            fixedAssetDto.DepriecaitonRegisterList = DepreciationRegisterDto;
+            ////Mapping Lines
+            //fixedAssetDto.DepriecaitonRegisterList = DepreciationRegisterDto;
 
             ReturningRemarks(fixedAssetDto);
 

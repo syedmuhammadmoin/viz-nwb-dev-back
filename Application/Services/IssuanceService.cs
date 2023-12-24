@@ -181,6 +181,8 @@ namespace Application.Services
                             return new Response<bool>(validationAsset.Message);
                         }
 
+                       //Todo: sholuld be active asset here instead  of creation isssaunce
+                        
 
                         //Inventory
                         var validationInventory = await ValidateInventoryListToIssue(createIssuanceDto);
@@ -393,6 +395,7 @@ namespace Application.Services
             {
                 return new Response<IssuanceDto>(validation.Message);
             }
+            //Asset
             foreach (var issuanceLine in entity.IssuanceLines)
             {
                 if (issuanceLine.FixedAssetId != null)
@@ -422,11 +425,16 @@ namespace Application.Services
                             {
                                 //Operation Not Allow
                             }
-                            else
-                            {
-                                var createFixedAssetlineDto2 = new FixedAssetLinesDto() { ActiveDate = currentDate, MasterId = entity.Id.Value };
-                                await _unitOfWork.FixedAssetLines.Add(_mapper.Map<FixedAssetLines>(createFixedAssetlineDto2));
-                            }
+                            //else
+                            //{
+                            //    var createFixedAssetlineDto2 = new FixedAssetLinesDto() { ActiveDate = currentDate, MasterId = entity.Id.Value };
+                            //    await _unitOfWork.FixedAssetLines.Add(_mapper.Map<FixedAssetLines>(createFixedAssetlineDto2));
+                            //}
+                        }
+                        else
+                        {
+                            var createFixedAssetlineDto2 = new FixedAssetLinesDto() { ActiveDate = currentDate, MasterId = entity.Id.Value };
+                            await _unitOfWork.FixedAssetLines.Add(_mapper.Map<FixedAssetLines>(createFixedAssetlineDto2));
                         }
 
                     }
