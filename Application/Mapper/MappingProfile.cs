@@ -97,7 +97,7 @@ namespace Application.Mapper
             CreateMap<CreateProductDto, Product>();
 
             // JournalEntry Mapping
-            CreateMap<JournalEntryMaster, PettyCashDto>()
+            CreateMap<JournalEntryMaster, JournalEntryDto>()
                  .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
               .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
 
