@@ -4,7 +4,6 @@ using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
-using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using System;
 using System.Collections.Generic;
@@ -210,18 +209,6 @@ namespace Application.Services
             }
 
             return new Response<List<GeneralLedgerDto>>(filteredAccount, "Returning list");
-        }
-        public async Task<Response<GeneralLedgerDto>> GetOpeningBalance(GeneralLedgerFilters filters)
-        {
-            var getgroupData = await _context.RecordLedger
-           .Where(x => x.Level4_id == filters.AccountId)
-           .GroupBy(x => new { x.Amount, x.Sign })
-           .Select(group => new {
-               Amount = group.Key.Amount,
-               Sign = group.Key.Sign
-           })
-           .ToListAsync();
-            return getgroupData;
         }
     }
 }
