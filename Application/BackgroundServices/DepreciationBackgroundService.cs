@@ -33,7 +33,7 @@ namespace Application.BackgroundServices
         public Task StartAsync(CancellationToken cancellationToken)
         {
 
-            var OgranzationDepreciationDateTime = _configuration["Organization:DepreciationDateTime"];
+            var OgranzationDepreciationDateTime = _configuration["Organization:DepreciationScheduledDateTime"];
             var depreciationTime = Convert.ToDateTime(OgranzationDepreciationDateTime);
 
             int DepreciationMonth = DateTime.Now.Month;
@@ -55,6 +55,7 @@ namespace Application.BackgroundServices
              {
                 
                 scheduledTime = scheduledTime.AddMonths(1);// Todo: add time to call next time AddSeconds(10); to run 10 second interval
+                
             }
 
             TimeSpan delay = scheduledTime - now;

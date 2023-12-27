@@ -175,6 +175,15 @@ namespace Application.Services
             return new Response<FixedAssetDto>(_mapper.Map<FixedAssetDto>(result), "Updated successfully");
         }
 
+        public bool Activate()
+        {
+            return true;
+        }
+        public bool Deactivate()
+        {
+            return false;
+        }
+
         public async Task<Response<FixedAssetDto>> UpdateAfterApproval(UpdateSalvageValueDto entity)
         {
             //Getting fixed asset
@@ -441,8 +450,6 @@ namespace Application.Services
 
 
         }
-
-
         public async Task<Response<bool>> HeldAssetForDisposal(CreateHeldAssetForDisposal createHeldAssetForDisposal)
         {
 
