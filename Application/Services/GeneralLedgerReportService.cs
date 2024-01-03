@@ -4,8 +4,6 @@ using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
-using Microsoft.EntityFrameworkCore;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +20,7 @@ namespace Application.Services
         private decimal cummulativeCredit = 0;
         public GeneralLedgerReportService(IUnitOfWork unitOfWork)
         {
-             _unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
         decimal getCummulativeBalance(decimal e)
         {
@@ -54,7 +52,7 @@ namespace Application.Services
             {
                 accounts.Add(filters.AccountId);
             }
-            
+
             if (filters.WarehouseId != null)
             {
                 warehouses.Add(filters.WarehouseId);
@@ -109,7 +107,7 @@ namespace Application.Services
 
             //Getting Data for Opening Balance
             var forOpeningBalance = generalLedgerView
-            .Where(e => 
+            .Where(e =>
             (accounts.Count() > 0 ? accounts.Contains(e.AccountId) : true) &&
             (warehouses.Count() > 0 ? warehouses.Contains(e.WarehouseId) : true) &&
             (businessPartners.Count() > 0 ? businessPartners.Contains(e.BId) : true) &&
@@ -144,7 +142,7 @@ namespace Application.Services
 
             //Getting data for the given data range
             var glWithOutOpeningBalance = generalLedgerView
-          .Where(e => 
+          .Where(e =>
             (accounts.Count() > 0 ? accounts.Contains(e.AccountId) : true) &&
             (warehouses.Count() > 0 ? warehouses.Contains(e.WarehouseId) : true) &&
             (businessPartners.Count() > 0 ? businessPartners.Contains(e.BId) : true) &&
@@ -180,7 +178,7 @@ namespace Application.Services
                         ));
 
             var glWithOutOpeningBalance2 = glWithOutOpeningBalance
-             .Where(e => 
+             .Where(e =>
             (accounts.Count() > 0 ? accounts.Contains(e.AccountId) : true) &&
             (warehouses.Count() > 0 ? warehouses.Contains(e.WarehouseId) : true) &&
             (businessPartners.Count() > 0 ? businessPartners.Contains(e.BId) : true) &&
@@ -211,17 +209,29 @@ namespace Application.Services
 
             return new Response<List<GeneralLedgerDto>>(filteredAccount, "Returning list");
         }
-        public async Task<Response<GeneralLedgerDto>> GetOpeningBalance(GeneralLedgerFilters filters)
+        public Response<List<AggregatedRecordLedgerDto>> GetAccountBalance(Guid AccountId)
         {
-            var getgroupData = await _context.RecordLedger
-           .Where(x => x.Level4_id == filters.AccountId)
-           .GroupBy(x => new { x.Amount, x.Sign })
-           .Select(group => new {
-               Amount = group.Key.Amount,
-               Sign = group.Key.Sign
-           })
-           .ToListAsync();
-            return getgroupData;
+            
+            var aggregatedData = _unitOfWork.Ledger.Find(new LedgerSpecs("Accounts", AccountId))
+                                    .GroupBy(i => new
+                                    {
+                                        Level4Id = i.Level4_id,
+                                        Level4Name = i.Level4.Name,
+                                        Level1Id = i.Level4.Level1.Id,
+                                        Level1Name = i.Level4.Level1.Name,
+                                    })
+                                    .Select(group => new AggregatedRecordLedgerDto
+                                    {
+                                        Level4Id = group.Key.Level4Id,
+                                        Level1Id = group.Key.Level1Id,
+                                        Level4Name = group.Key.Level4Name,
+                                        Level1Name = group.Key.Level1Name,
+                                        Balance = group.Sum(i => i.Sign == 'D' ? i.Amount : -i.Amount)
+                                    })
+                                    .ToList();
+
+
+            return new Response<List<AggregatedRecordLedgerDto>>(aggregatedData, "Returning list");
         }
     }
 }

@@ -32,5 +32,15 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(generalLedger); // Status code : 400
         }
+        [ClaimRequirement("Permission", new string[] { Permissions.GeneralLedgerClaims.View })]
+        [HttpGet("Account/{AccountId:guid}/Balance")]
+        public ActionResult<Response<List<AggregatedRecordLedgerDto>>> GetOpeningBalance(Guid AccountId)
+        {
+            var aggregatedData = _generalLedgerReportService.GetAccountBalance(AccountId);
+            if (aggregatedData.IsSuccess)
+                return Ok(aggregatedData); // Status Code : 200
+
+            return BadRequest(aggregatedData); // Status code : 400
+        }
     }
 }

@@ -10,6 +10,19 @@ namespace Infrastructure.Specifications
 {
     public class LedgerSpecs : BaseSpecification<RecordLedger>
     {
+        public LedgerSpecs(string joingString, Guid AccountID) : base(i => i.Level4_id== AccountID)
+        {
+            switch (joingString)
+            {
+                case "Accounts":
+                    AddInclude(i => i.Level4);
+                    AddInclude("Level4.Level1");
+                    break; 
+                default:
+                    break;
+            }
+            
+        }
         public LedgerSpecs()
         {
             AddInclude(i => i.Level4);
