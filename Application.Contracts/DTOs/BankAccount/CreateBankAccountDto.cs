@@ -34,8 +34,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public DateTime? OpeningBalanceDate { get; set; }
         [MaxLength(200)]
-        public string Purpose { get; set; }
-        [Required]
+        public string Purpose { get; set; }       
         public int? CampusId { get; set; }
     }
 }

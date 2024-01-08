@@ -17,8 +17,7 @@ namespace Application.Contracts.DTOs
         public decimal? OpeningBalance { get; set; }
         public decimal? ClosingBalance { get; set; }
         [MaxLength(500)]
-        public string Description { get; set; }
-        [Required]
+        public string Description { get; set; }        
         public int? CampusId { get; set; }
         [Required]
         public bool? isSubmit { get; set; }
