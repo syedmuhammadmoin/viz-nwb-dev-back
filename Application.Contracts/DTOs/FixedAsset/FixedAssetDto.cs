@@ -62,23 +62,14 @@ namespace Application.Contracts.DTOs
         //Depreciation Related Stuff
         //---------------------------
 
-
-
-
         private bool IsSchedule { get; set; }
         private bool IsDepreciationConfigured { get; set; }
         private decimal RemainingDepreciationAmount => DepreciableAmount - AccumulatedDepreciationAmount;
         private decimal CalculatePerMonthDepreciation()
         {
-
-            //if (UseFullLife == null || UseFullLife.Value==0)
-            //{
-            //    return 0;
-            //}
-
             if (ModelType == DepreciationMethod.Declining)
             {
-                return RemainingDepreciationAmount * DecLiningRate;
+                return RemainingDepreciationAmount * (DecLiningRate /100);
             }
             else if (ModelType == DepreciationMethod.StraightLine)
             {
@@ -93,6 +84,7 @@ namespace Application.Contracts.DTOs
 
         }
         private decimal PerMonthDepreciation => CalculatePerMonthDepreciation();
+        
         private decimal PerDayDepreciation => PerMonthDepreciation / MonthDays;
         public decimal CalculateDepreciationAmount()
         {
