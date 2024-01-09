@@ -481,6 +481,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.CityClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.DistrictClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.DomicileClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DashboardProfitLossClaims), id);
 
 
             //Getting all claims for this role

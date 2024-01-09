@@ -21,6 +21,10 @@
             };
         }
 
+
+       
+
+
         //Profiling forms
         public static class AuthClaims
         {
@@ -599,6 +603,10 @@
         public static class FixedAssetReportClaims
         {
             public const string View = "FixedAsset.FixedAssetReport.VW";
+        }
+        public  struct DashboardProfitLossClaims
+        {
+            public const string View = "Dashboard.ProfitLossSummary.VW";
         }
     }
 }

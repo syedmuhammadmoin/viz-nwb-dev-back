@@ -2,6 +2,7 @@
 using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
 using Domain.Interfaces;
 using Infrastructure.Context;
 using Infrastructure.Specifications;
@@ -118,6 +119,25 @@ namespace Application.Services
                              Balance = iGroup.Key.Level1Id == new Guid("40000000-5566-7788-99AA-BBCCDDEEFF00") ? (iGroup.Sum(e => e.glv.Credit) - iGroup.Sum(e => e.glv.Debit)) : (iGroup.Sum(e => e.glv.Debit) - iGroup.Sum(e => e.glv.Credit))
                          };
             return new Response<List<PNLDto>>(result.ToList(), "Return Profit and Loss");
+        }
+       
+       
+        Response<List<PNLSummaryDTO>> IPNLReportService.GetProfitLossSummaryforLast12Month()
+        {
+           
+            var last12MonthsLedgerRecords = _unitOfWork.Ledger.Find(new LedgerSpecs(AccountTypes.Expenses, AccountTypes.Revenue))
+                .GroupBy(item => new { item.TransactionDate.Year, item.TransactionDate.Month, item.Level4.Level1_id, Nature = item.Level4.Level1.Name })
+                .Select(group => new PNLSummaryDTO()
+                {
+                    Level1Id = group.Key.Level1_id,
+                    Nature = group.Key.Nature,
+                    Month = group.Key.Month,
+                    year = group.Key.Year,
+                    Balance = group.Sum(i => i.Sign == 'D' ? i.Amount : -i.Amount)
+                });
+
+            return new Response<List<PNLSummaryDTO>>(last12MonthsLedgerRecords.ToList(), "Return Profit and Loss for Last 12 Month");
+
         }
     }
 }

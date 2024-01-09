@@ -12,5 +12,6 @@ namespace Application.Contracts.Interfaces
     public interface IPNLReportService
     {
         Response<List<PNLDto>> GetProfitLoss(PNLFilters pnl);
+        Response<List<PNLSummaryDTO>> GetProfitLossSummaryforLast12Month();
     }
 }
