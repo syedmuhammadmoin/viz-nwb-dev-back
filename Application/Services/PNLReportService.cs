@@ -125,7 +125,7 @@ namespace Application.Services
         Response<List<PNLSummaryDTO>> IPNLReportService.GetProfitLossSummaryforLast12Month()
         {
            
-            var last12MonthsLedgerRecords = _unitOfWork.Ledger.Find(new LedgerSpecs(AccountTypes.Expenses, AccountTypes.Revenue))
+            var last12MonthsLedgerRecords = _unitOfWork.Ledger.Find(new LedgerSpecs(FinanceAccountTypes.Expenses, FinanceAccountTypes.Revenue))
                 .GroupBy(item => new { item.TransactionDate.Year, item.TransactionDate.Month, item.Level4.Level1_id, Nature = item.Level4.Level1.Name })
                 .Select(group => new PNLSummaryDTO()
                 {
