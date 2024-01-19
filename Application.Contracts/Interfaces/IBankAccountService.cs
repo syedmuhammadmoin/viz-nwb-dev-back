@@ -12,5 +12,6 @@ namespace Application.Contracts.Interfaces
     public interface IBankAccountService : ICrudService<CreateBankAccountDto, UpdateBankAccountDto, BankAccountDto, int, TransactionFormFilter>
     {
         Task<Response<List<BankAccountDto>>> GetBankAccountDropDown();
+        Response<dynamic> GetBankAccountBalanceSummary();
     }
 }
