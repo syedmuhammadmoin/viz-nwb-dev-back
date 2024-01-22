@@ -23,6 +23,25 @@ namespace Infrastructure.Specifications
             }
             
         }
+        public LedgerSpecs(Guid AccountId1, Guid AccountId2) : base(i => (i.Level4.Level1_id== AccountId1|| i.Level4.Level1_id == AccountId2) && i.TransactionDate >= DateTime.Now.AddMonths(-12))
+        {
+                    AddInclude(i => i.Level4);
+                    AddInclude("Level4.Level1");
+        }
+        public LedgerSpecs(Guid AccountId1, Guid AccountId2,string NeedTobeFixed ) : base(i => (i.Level4.Level1_id == AccountId1 || i.Level4.Level1_id == AccountId2))
+        {
+            
+            AddInclude("Level4.Level1");
+            AddInclude("Level4.Level3");
+            AddInclude("Level4.Level3.Level2");
+        }
+        //public LedgerSpecs(string NeedTobeFixed) : base(i => (i.Level4.paymen))
+        //{
+
+        //    AddInclude("Level4.Payment");
+        //    AddInclude("Level4.Payment.BankAccount");
+            
+        //}
         public LedgerSpecs()
         {
             AddInclude(i => i.Level4);

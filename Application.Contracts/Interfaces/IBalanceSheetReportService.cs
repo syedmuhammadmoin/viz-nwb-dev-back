@@ -12,6 +12,7 @@ namespace Application.Contracts.Interfaces
     public interface IBalanceSheetReportService
     {
         Response<List<BalanceSheetDto>> GetBalanceSheet(BalanceSheetFilters balanceSheet);
+        Response<List<BalanceSheetSummaryDto>> GetBalanceSheetSummary();
 
 
     }

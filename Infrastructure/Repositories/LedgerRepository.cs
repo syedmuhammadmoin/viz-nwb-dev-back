@@ -27,7 +27,7 @@ namespace Infrastructure.Repositories
                 .Where(i => i.Id == entity.Level4_id)
                 .Select(i => i.Level3_id)
                 .FirstOrDefaultAsync();
-            
+
             // Setting isReconcilable true if account id is equal to payable or receivable
             if (getLevel3 == new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00")
                 || getLevel3 == new Guid("12100000-5566-7788-99AA-BBCCDDEEFF00")
@@ -83,5 +83,35 @@ namespace Infrastructure.Repositories
             return SpecificationEvaluator<RecordLedger, int>.GetQuery(_context.RecordLedger
                                     .AsQueryable(), specification).AsNoTracking();
         }
+        public IEnumerable<dynamic> GetBankAccountBalanceSummary()
+        {
+
+            var result = _context.RecordLedger
+                            .Join(_context.Level4, recordLedger => recordLedger.Level4_id, level4 => level4.Id, (rl, l4) => new { rl, l4 })
+                            .Join(_context.BankAccounts,
+                                 temp => temp.l4.Id,
+                                 ba => ba.ChAccountId ,
+                                 (temp, ba) => new { temp.rl, temp.l4, ba })
+                             .Union(_context.RecordLedger
+                                 .Join(_context.Level4, rl => rl.Level4_id, l4 => l4.Id, (rl, l4) => new { rl, l4 })
+                                 .Join(_context.BankAccounts,
+                                     temp => temp.l4.Id,
+                                     ba => ba.ClearingAccountId,
+                                     (temp, ba) => new { temp.rl, temp.l4, ba }))
+                         .GroupBy(joined => new { joined.ba.BankName, joined.ba.AccountTitle })
+                         .Select(grouped => new
+                         {
+                             BankName = grouped.Key.BankName,
+                             AccountTitle = grouped.Key.AccountTitle,
+                             ReconcileBalance = grouped.Sum(item => (item.l4.Id == item.ba.ChAccountId) ? (item.rl.Sign == 'D' ? item.rl.Amount : -item.rl.Amount) : 0),
+                             UnReconcileBalance = grouped.Sum(item => (item.l4.Id == item.ba.ClearingAccountId) ? (item.rl.Sign == 'D' ? item.rl.Amount : -item.rl.Amount) : 0),
+                             Balance = grouped.Sum(item => (item.rl.Sign == 'D' ? item.rl.Amount : -item.rl.Amount))
+                         });
+            return result.ToList();
+
+        }
+
+
+
     }
 }
