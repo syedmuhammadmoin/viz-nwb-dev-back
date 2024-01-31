@@ -30,7 +30,13 @@ namespace Application.Services
             List<Designation> designationtList = new List<Designation>();
             foreach (var item in entity)
             {
-                var getDesignation = await _unitOfWork.Designation.GetById((int)item.Id);
+                if(item.Id == null)
+                {
+                    designationtList.Add(_mapper.Map<Designation>(item));
+                }
+                else
+                {
+                     var getDesignation = await _unitOfWork.Designation.GetById((int)item.Id);
 
                 if (getDesignation != null)
                 {
@@ -41,6 +47,8 @@ namespace Application.Services
                 {
                     designationtList.Add(_mapper.Map<Designation>(item));
                 }
+                }
+               
             }
 
             if (designationtList.Any())

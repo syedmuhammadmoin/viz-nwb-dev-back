@@ -6,8 +6,6 @@ namespace Application.Contracts.DTOs
     public class FixedAssetDto
     {
 
-
-
         //  private int _totalActiveDays;
         public int Id { get; set; }
         public string AssetCode { get; set; }
@@ -44,6 +42,8 @@ namespace Application.Contracts.DTOs
         public int ProductId { get; set; }
         public string Product { get; set; }
         public int CampusId { get; set; }
+        public int EmployeeId { get; set; }
+        public string Employee { get; set; }    
         public string Campus { get; set; }
         public int TotalActiveDays { get; set; }
         public bool IsAllowedRole { get; set; }

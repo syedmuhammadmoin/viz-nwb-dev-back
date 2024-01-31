@@ -588,11 +588,13 @@ namespace Application.Mapper
                 .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
                 .ForMember(dto => dto.DepreciationModel, core => core.MapFrom(d => d.DepreciationModel.ModelName))
                 .ForMember(dto => dto.AssetAccount, core => core.MapFrom(a => a.AssetAccount.Name))
+                .ForMember(dto => dto.EmployeeId, core => core.MapFrom(a => a.EmployeeId))
+                .ForMember(dto => dto.Employee, core => core.MapFrom(a => a.Employee.Name))
                 .ForMember(dto => dto.DepreciationExpense, core => core.MapFrom(d => d.DepreciationExpense.Name))
                 .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(a => a.AccumulatedDepreciation.Name))
                 .ForMember(dto => dto.Status, core => core.MapFrom(a => a.StatusId == 3 ? "Approved"
                 : a.Status.Status))
-                .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+                .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));                
 
             CreateMap<FixedAssetLines, FixedAssetLinesDto>();
 

@@ -155,6 +155,10 @@ namespace Application.Services
 
             foreach (var lines in entity.PettyCashLines)
             {
+                if(lines.AccountId == entity.AccountId)
+                {
+                    return new Response<PettyCashDto>("Cannot select same account in lines");
+                }
                 if (lines.Debit > 0 && lines.Credit > 0)
                     return new Response<PettyCashDto>("Debit and Credit amount should be in seperate lines");
             }
