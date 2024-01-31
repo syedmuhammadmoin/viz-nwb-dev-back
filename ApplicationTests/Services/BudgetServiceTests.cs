@@ -9,13 +9,13 @@ using Xunit.Sdk;
 
 namespace Application.Services.Tests
 {
-    [TestClass()]
-    public class BudgetServiceTests
-    {
-        [TestMethod()]
-        public void GetBudgetReportTest()
-        {
-            Assert.Fail();
-        }
-    }
+    //[TestClass()]
+    //public class BudgetServiceTests
+    //{
+    //    [TestMethod()]
+    //    public void GetBudgetReportTest()
+    //    {
+    //        Assert.Fail();
+    //    }
+    //}
 }

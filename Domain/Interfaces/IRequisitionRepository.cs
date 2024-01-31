@@ -10,5 +10,6 @@ namespace Domain.Interfaces
     public interface IRequisitionRepository : IGenericRepository<RequisitionMaster, int>
     {
         IEnumerable<RequisitionLines> FindLines(ISpecification<RequisitionLines> specification);
+        dynamic SummarizedbyStatus();
     }
 }

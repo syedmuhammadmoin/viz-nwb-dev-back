@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231219101407_AddPettyCash")]
-    partial class AddPettyCash
+    [Migration("20240130104513_PettyCashAndCampusOptionalFinanceModule")]
+    partial class PettyCashAndCampusOptionalFinanceModule
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("ProductVersion", "6.0.26")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -507,7 +507,7 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("CampusId")
+                    b.Property<int?>("CampusId")
                         .HasColumnType("int");
 
                     b.Property<Guid>("ChAccountId")
@@ -1056,7 +1056,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("BillDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CampusId")
+                    b.Property<int?>("CampusId")
                         .HasColumnType("int");
 
                     b.Property<string>("Contact")
@@ -1888,7 +1888,7 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CampusId")
+                    b.Property<int?>("CampusId")
                         .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
@@ -2147,7 +2147,7 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CampusId")
+                    b.Property<int?>("CampusId")
                         .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
@@ -3671,7 +3671,7 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CampusId")
+                    b.Property<int?>("CampusId")
                         .HasColumnType("int");
 
                     b.Property<string>("Contact")
@@ -4113,7 +4113,7 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CampusId")
+                    b.Property<int?>("CampusId")
                         .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
@@ -5678,7 +5678,7 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("CampusId")
+                    b.Property<int?>("CampusId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("ClosingBalance")
@@ -7845,8 +7845,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
                         .HasForeignKey("CampusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Level4", "ChAccount")
                         .WithMany()
@@ -8030,8 +8029,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
                         .HasForeignKey("CampusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.GRNMaster", "GRN")
                         .WithMany()
@@ -8316,8 +8314,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
                         .HasForeignKey("CampusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.BusinessPartner", "Customer")
                         .WithMany()
@@ -8461,8 +8458,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
                         .HasForeignKey("CampusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Level4", "PayableAccount")
                         .WithMany()
@@ -9051,8 +9047,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
                         .HasForeignKey("CampusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.BusinessPartner", "Customer")
                         .WithMany()
@@ -9314,8 +9309,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
                         .HasForeignKey("CampusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
                         .WithMany()
@@ -9606,8 +9600,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
                         .HasForeignKey("CampusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
                         .WithMany()
