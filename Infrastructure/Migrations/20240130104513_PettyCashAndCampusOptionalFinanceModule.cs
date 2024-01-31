@@ -5,10 +5,58 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Migrations
 {
-    public partial class AddPettyCash : Migration
+    public partial class PettyCashAndCampusOptionalFinanceModule : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterColumn<int>(
+                name: "CampusId",
+                table: "JournalEntryMaster",
+                type: "int",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "int");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "CampusId",
+                table: "InvoiceMaster",
+                type: "int",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "int");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "CampusId",
+                table: "DebitNoteMaster",
+                type: "int",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "int");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "CampusId",
+                table: "CreditNoteMaster",
+                type: "int",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "int");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "CampusId",
+                table: "BillMaster",
+                type: "int",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "int");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "CampusId",
+                table: "BankAccounts",
+                type: "int",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "int");
+
             migrationBuilder.CreateTable(
                 name: "PettyCashMaster",
                 columns: table => new
@@ -24,7 +72,7 @@ namespace Infrastructure.Migrations
                     OpeningBalance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ClosingBalance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     StatusId = table.Column<int>(type: "int", nullable: false),
-                    CampusId = table.Column<int>(type: "int", nullable: false),
+                    CampusId = table.Column<int>(type: "int", nullable: true),
                     TransactionId = table.Column<int>(type: "int", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -146,6 +194,66 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "PettyCashMaster");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "CampusId",
+                table: "JournalEntryMaster",
+                type: "int",
+                nullable: false,
+                defaultValue: 0,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "CampusId",
+                table: "InvoiceMaster",
+                type: "int",
+                nullable: false,
+                defaultValue: 0,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "CampusId",
+                table: "DebitNoteMaster",
+                type: "int",
+                nullable: false,
+                defaultValue: 0,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "CampusId",
+                table: "CreditNoteMaster",
+                type: "int",
+                nullable: false,
+                defaultValue: 0,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "CampusId",
+                table: "BillMaster",
+                type: "int",
+                nullable: false,
+                defaultValue: 0,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "CampusId",
+                table: "BankAccounts",
+                type: "int",
+                nullable: false,
+                defaultValue: 0,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldNullable: true);
         }
     }
 }
