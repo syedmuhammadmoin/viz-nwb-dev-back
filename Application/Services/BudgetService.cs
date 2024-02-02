@@ -132,6 +132,7 @@ namespace Application.Services
                 {
                     glWithBudgetFilter.Id = budgetLine.Id;
                     glWithBudgetFilter.Amount = budgetLine.Amount;
+                    glWithBudgetFilter.RevisedAmount = budgetLine.RevisedAmount;
                     glWithBudgetFilter.AccountName = budgetLine.Account.Name;
                     glWithBudgetFilter.MasterId = budgetLine.MasterId;
                     
@@ -269,10 +270,10 @@ namespace Application.Services
                         To = filters.To,
                         AccountId = budgetLine.AccountId,
                         Account = budgetLine.Account.Name,
-                        BudgetAmount = budgetLine.Amount,
+                        BudgetAmount = budgetLine.RevisedAmount,
                         IncurredAmount = new BudgetService().getIncomeAccount(budgetLine.Account.Level1_id) ?
                         x.Sum(s => s.Credit - s.Debit) : x.Sum(s => s.Debit - s.Credit),
-                        BalanceRemaining = budgetLine.Amount - (new BudgetService().getIncomeAccount(budgetLine.Account.Level1_id) ?
+                        BalanceRemaining = budgetLine.RevisedAmount - (new BudgetService().getIncomeAccount(budgetLine.Account.Level1_id) ?
                         x.Sum(s => s.Credit - s.Debit) : x.Sum(s => s.Debit - s.Credit))
                     }).FirstOrDefault();
 
@@ -288,8 +289,8 @@ namespace Application.Services
                         To = filters.To,
                         AccountId = budgetLine.AccountId,
                         Account = budgetLine.Account.Name,
-                        BudgetAmount = budgetLine.Amount,
-                        BalanceRemaining = budgetLine.Amount - 0
+                        BudgetAmount = budgetLine.RevisedAmount,
+                        BalanceRemaining = budgetLine.RevisedAmount - 0
                     };
 
                     result.Add(budgetWithoutEntry);

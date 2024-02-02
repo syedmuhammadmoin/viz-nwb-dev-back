@@ -2,6 +2,7 @@
 using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Domain.Constants;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
 using System;
@@ -139,6 +140,37 @@ namespace Application.Services
             result.Add(pNl);
 
             return new Response<List<BalanceSheetDto>>(result, "Return Balance Sheet");
+        }
+
+        Response<List<BalanceSheetSummaryDto>> IBalanceSheetReportService.GetBalanceSheetSummary()
+        {
+
+            var balanceSheetSummary =_unitOfWork.Ledger.Find(new LedgerSpecs(FinanceAccountTypes.Assets, FinanceAccountTypes.Liability, ""))
+                                   .GroupBy(i => new 
+                                   {
+                                       Level1Id = i.Level4.Level1.Id,
+                                       Level2Id = i.Level4.Level3.Level2.Id,
+                                       Level3Id = i.Level4.Level3.Id,
+                                       Level1Name = i.Level4.Level1.Name,
+                                       Level2Name = i.Level4.Level3.Level2.Name,
+                                       Level3Name = i.Level4.Level3.Name,
+
+                                   })
+                                   .Select(group => new BalanceSheetSummaryDto
+                                   {
+                                       Level1Id = group.Key.Level1Id,
+                                       Level2Id = group.Key.Level2Id,
+                                       Level3Id = group.Key.Level3Id,
+                                       Level1Name = group.Key.Level1Name,
+                                       Level2Name = group.Key.Level2Name,
+                                       Level3Name = group.Key.Level3Name,
+                                       Balance = group.Sum(i => i.Sign == 'D' ? i.Amount : -i.Amount)
+                                   })
+                                   .ToList();
+
+
+
+            return new Response<List<BalanceSheetSummaryDto>>(balanceSheetSummary, "Return Balance Sheet Summary");
         }
     }
 }

@@ -29,6 +29,8 @@ namespace Application.Interfaces
         public DbSet<Campus> Campuses { get; set; }
         public DbSet<JournalEntryMaster> JournalEntryMaster { get; set; }
         public DbSet<JournalEntryLines> JournalEntryLines { get; set; }
+        public DbSet<PettyCashMaster> PettyCashMaster { get; set; }
+        public DbSet<PettyCashLines> PettyCashLines { get; set; }
         public DbSet<InvoiceMaster> InvoiceMaster { get; set; }
         public DbSet<InvoiceLines> InvoiceLines { get; set; }
         public DbSet<BillMaster> BillMaster { get; set; }

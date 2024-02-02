@@ -490,14 +490,16 @@ namespace Application.Services
                             Campus = payroll.Campus.Name,
                             Designation = payroll.Designation.Name,
                             AccountName = lines.Account.Name,
-                            Amount = lines.Amount
+                            Amount = lines.Amount,
+                            NetSalary = payroll.NetSalary,
+                            GrossPay = payroll.GrossSalary
                         });
                     }
                 }
             }
 
             allowanceDTO = allowanceDTO
-               .GroupBy(x => new { x.Employee, x.CNIC, x.Department, x.Campus, x.Designation, x.AccountName })
+               .GroupBy(x => new { x.Employee, x.NetSalary, x.GrossPay , x.CNIC, x.Department, x.Campus, x.Designation, x.AccountName })
                .Select(c => new PayrollTransactionDto
                {
                    Employee = c.Key.Employee,
@@ -506,12 +508,14 @@ namespace Application.Services
                    Campus = c.Key.Campus,
                    Designation = c.Key.Designation,
                    AccountName = c.Key.AccountName,
+                   NetSalary = c.Key.NetSalary,
+                   GrossPay = c.Key.GrossPay,
                    Amount = c.Sum(e => e.Amount)
                })
                .ToList();
 
             var groups = from d in allowanceDTO
-                         group d by new { d.Employee, d.CNIC, d.Department, d.Campus, d.Designation }
+                         group d by new { d.Employee, d.NetSalary, d.GrossPay,  d.CNIC, d.Department, d.Campus, d.Designation }
                         into grp
                          select new
                          {
@@ -519,6 +523,8 @@ namespace Application.Services
                              CNIC = grp.Key.CNIC,
                              Department = grp.Key.Department,
                              Campus = grp.Key.Campus,
+                             NetSalary = grp.Key.NetSalary,
+                             GrossPay = grp.Key.GrossPay,
                              Designation = grp.Key.Designation,
                              Items = grp.Select(d2 => new { d2.AccountName, d2.Amount }).ToArray()
                          };
@@ -532,6 +538,8 @@ namespace Application.Services
             /*for static cols*/
             dt.Columns.Add("Employee");
             dt.Columns.Add("CNIC");
+            dt.Columns.Add("NetSalary");
+            dt.Columns.Add("GrossPay");
             dt.Columns.Add("Department");
             dt.Columns.Add("Campus");
             dt.Columns.Add("Designation");
@@ -547,6 +555,8 @@ namespace Application.Services
                 DataRow dr = dt.NewRow();
                 dr["Employee"] = g.Employee;
                 dr["CNIC"] = g.CNIC;
+                dr["NetSalary"] = g.NetSalary;
+                dr["GrossPay"] = g.GrossPay;
                 dr["Department"] = g.Department;
                 dr["Campus"] = g.Campus;
                 dr["Designation"] = g.Designation;
@@ -990,6 +1000,15 @@ namespace Application.Services
             }
             return new Response<DataTable>(dataTable, "Returning List");
         }
+        public async Task<Response<DataTable>> GetPayrollReport(DeptFilter data)
+        {
+            DataTable dataTable =await PayrollItemReport(data);
+            if (dataTable == null)
+            {
+                return new Response<DataTable>(null, "List is empty");
+            }
+            return new Response<DataTable>(dataTable, "Returning List");
+        }
         public async Task<MemoryStream> ExportPayrollDetailedReport(PayrollDetailFilter filter)
         {
             DataTable dataTable = PayrollItemDetailReport(filter);
@@ -1217,6 +1236,137 @@ namespace Application.Services
             }
 
             return new Response<List<BankAdviceReportDto>>(response, "Returning Bank advice report");
+        }
+
+        private async Task<DataTable> PayrollItemReport(DeptFilter data)
+        {          
+
+            var payrollTransactions = _unitOfWork.PayrollTransaction
+                .Find(new PayrollTransactionSpecs((int)data.Month, (int)data.Year, data.DepartmentId, (int)data.CampusId))
+                .ToList();
+
+            if (payrollTransactions.Count() > 0)
+            {
+                foreach (var payrollTransaction in payrollTransactions)
+                {
+                    var payroll = new UpdatePayrollTransactionDto()
+                    {
+                        Id = payrollTransaction.Id,
+                        AccountPayableId = data.AccountPayableId,
+                        isSubmit = false,
+                    };
+
+                    var result = await this.UpdatePayrollTransaction(payroll, payrollTransaction.StatusId);
+                   
+                }
+            }
+
+            var getpayrollTransactions = _unitOfWork.PayrollTransaction.Find(new PayrollTransactionSpecs((int)data.Month, (int)data.Year, data.DepartmentId, (int)data.CampusId, true)).ToList();
+
+            if (getpayrollTransactions.Count() == 0)
+            {
+                return null;
+            }
+
+            var allowanceDTO = new List<PayrollTransactionDto>();
+
+
+            foreach (var payroll in payrollTransactions)
+            {
+
+
+                if (payroll.PayrollTransactionLines.Count() > 0)
+                {
+                    foreach (var lines in payroll.PayrollTransactionLines)
+                    {
+                        allowanceDTO.Add(new PayrollTransactionDto
+                        {
+                            Employee = payroll.Employee.Name,
+                            CNIC = payroll.CNIC,
+                            Department = payroll.Department.Name,
+                            Campus = payroll.Campus.Name,
+                            Designation = payroll.Designation.Name,
+                            AccountName = lines.Account.Name,
+                            Amount = lines.Amount,
+                            NetSalary = payroll.NetSalary,
+                            GrossPay = payroll.GrossSalary
+                            
+                        });
+                    }
+                }
+            }
+
+            allowanceDTO = allowanceDTO
+               .GroupBy(x => new { x.Employee, x.NetSalary, x.GrossPay, x.CNIC, x.Department, x.Campus, x.Designation, x.AccountName })
+               .Select(c => new PayrollTransactionDto
+               {
+                   Employee = c.Key.Employee,
+                   CNIC = c.Key.CNIC,
+                   Department = c.Key.Department,
+                   Campus = c.Key.Campus,
+                   Designation = c.Key.Designation,
+                   AccountName = c.Key.AccountName,
+                   Amount = c.Sum(e => e.Amount),
+                   NetSalary = c.Key.NetSalary,
+                   GrossPay = c.Key.GrossPay
+               })
+               .ToList();
+
+            var groups = from d in allowanceDTO
+                         group d by new { d.Employee, d.NetSalary, d.GrossPay, d.CNIC, d.Department, d.Campus, d.Designation }
+                        into grp
+                         select new
+                         {
+                             Employee = grp.Key.Employee,
+                             CNIC = grp.Key.CNIC,
+                             Department = grp.Key.Department,
+                             Campus = grp.Key.Campus,
+                             Designation = grp.Key.Designation,
+                             NetSalary = grp.Key.NetSalary,
+                             GrossPay = grp.Key.GrossPay,
+                             Items = grp.Select(d2 => new { d2.AccountName, d2.Amount }).ToArray()
+                         };
+
+            /*get all possible subjects into a separate group*/
+            var itemNames = (from d in allowanceDTO
+                             select d.AccountName).Distinct();
+
+
+            DataTable dt = new DataTable();
+            /*for static cols*/
+            dt.Columns.Add("Employee");
+            dt.Columns.Add("CNIC");
+            dt.Columns.Add("NetSalary");
+            dt.Columns.Add("GrossPay");
+            dt.Columns.Add("Department");
+            dt.Columns.Add("Campus");
+            dt.Columns.Add("Designation");
+            /*for dynamic cols*/
+            foreach (var item in itemNames)
+            {
+                dt.Columns.Add(item.ToString());
+            }
+
+            /*pivot the data into a new datatable*/
+            foreach (var g in groups)
+            {
+                DataRow dr = dt.NewRow();
+                dr["Employee"] = g.Employee;
+                dr["CNIC"] = g.CNIC;
+                dr["Department"] = g.Department;
+                dr["NetSalary"] = g.NetSalary;
+                dr["GrossPay"] = g.GrossPay;
+                dr["Campus"] = g.Campus;
+                dr["Designation"] = g.Designation;
+
+                foreach (var item in g.Items)
+                {
+                    dr[item.AccountName] = item.Amount;
+                }
+                dt.Rows.Add(dr);
+            }
+            return dt;
+
         }
     }
 }

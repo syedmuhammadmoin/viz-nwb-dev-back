@@ -107,9 +107,25 @@ namespace Application.Mapper
 
             CreateMap<CreateJournalEntryDto, JournalEntryMaster>()
                .ForMember(core => core.TotalDebit, dto => dto.MapFrom(a => a.JournalEntryLines.Sum(i => i.Debit)))
-               .ForMember(core => core.TotalCredit, dto => dto.MapFrom(a => a.JournalEntryLines.Sum(i => i.Credit))); ;
+               .ForMember(core => core.TotalCredit, dto => dto.MapFrom(a => a.JournalEntryLines.Sum(i => i.Credit)));
 
             CreateMap<CreateJournalEntryLinesDto, JournalEntryLines>();
+
+            // PettyCash Mapping
+            CreateMap<PettyCashMaster, PettyCashDto>()
+                .ForMember(dto => dto.Status, core => core.MapFrom(a => a.Status.Status))
+                .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State))
+                .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
+
+            CreateMap<PettyCashLines, PettyCashLinesDto>()
+              .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name))
+              .ForMember(dto => dto.BusinessPartnerName, core => core.MapFrom(a => a.BusinessPartner.Name));
+
+            CreateMap<CreatePettyCashDto, PettyCashMaster>()
+               .ForMember(core => core.TotalDebit, dto => dto.MapFrom(a => a.PettyCashLines.Sum(i => i.Debit)))
+               .ForMember(core => core.TotalCredit, dto => dto.MapFrom(a => a.PettyCashLines.Sum(i => i.Credit)));
+
+            CreateMap<CreatePettyCashLinesDto, PettyCashLines>();
 
             // Invoice Mapping
             CreateMap<InvoiceMaster, InvoiceDto>()
@@ -297,8 +313,8 @@ namespace Application.Mapper
             CreateMap<CreateBudgetLinesDto, BudgetLines>();
 
 
-            CreateMap<BudgetMaster,CreateBudgetDto> ();
-            CreateMap<BudgetLines,CreateBudgetLinesDto> ();
+            CreateMap<BudgetMaster, CreateBudgetDto>();
+            CreateMap<BudgetLines, CreateBudgetLinesDto>();
 
             // PurchaseOrder Mapping
             CreateMap<PurchaseOrderMaster, PurchaseOrderDto>()
@@ -439,6 +455,10 @@ namespace Application.Mapper
               .ForMember(dto => dto.WarehouseName, core => core.MapFrom(a => a.Warehouse.Name))
               .ForMember(dto => dto.PendingQuantity, core => core.MapFrom(a => a.Quantity));
 
+
+
+            CreateMap<IssuanceMaster, CreateIssuanceDto>();
+            CreateMap<IssuanceLines, CreateIssuanceLinesDto>();
             CreateMap<CreateIssuanceDto, IssuanceMaster>();
             CreateMap<CreateIssuanceLinesDto, IssuanceLines>();
 
@@ -568,11 +588,13 @@ namespace Application.Mapper
                 .ForMember(dto => dto.Warehouse, core => core.MapFrom(a => a.Warehouse.Name))
                 .ForMember(dto => dto.DepreciationModel, core => core.MapFrom(d => d.DepreciationModel.ModelName))
                 .ForMember(dto => dto.AssetAccount, core => core.MapFrom(a => a.AssetAccount.Name))
+                .ForMember(dto => dto.EmployeeId, core => core.MapFrom(a => a.EmployeeId))
+                .ForMember(dto => dto.Employee, core => core.MapFrom(a => a.Employee.Name))
                 .ForMember(dto => dto.DepreciationExpense, core => core.MapFrom(d => d.DepreciationExpense.Name))
                 .ForMember(dto => dto.AccumulatedDepreciation, core => core.MapFrom(a => a.AccumulatedDepreciation.Name))
                 .ForMember(dto => dto.Status, core => core.MapFrom(a => a.StatusId == 3 ? "Approved"
                 : a.Status.Status))
-                .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));
+                .ForMember(dto => dto.State, core => core.MapFrom(a => a.Status.State));                
 
             CreateMap<FixedAssetLines, FixedAssetLinesDto>();
 

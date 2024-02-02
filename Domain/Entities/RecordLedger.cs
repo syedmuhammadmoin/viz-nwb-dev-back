@@ -67,6 +67,18 @@ namespace Domain.Entities
             TransactionDate = transactionDate;
             ReconStatus = DocumentStatus.Unreconciled;
         }
+        public RecordLedger(int transactionId, Guid level4_id, int? businessPartnerId,  string description, char sign, decimal amount, int? campusId, DateTime transactionDate)
+        {
+            TransactionId = transactionId;
+            Level4_id = level4_id;
+            BusinessPartnerId = businessPartnerId;
+            Description = description;
+            Sign = sign;
+            Amount = amount;
+            CampusId = campusId;
+            TransactionDate = transactionDate;
+            ReconStatus = DocumentStatus.Unreconciled;
+        }
 
         public RecordLedger(int transactionId, Guid level4_id, int? businessPartnerId, int? warehouseId, string description, char sign, decimal amount, int? campusId, DateTime transactionDate, int? fixedAssetId)
         {

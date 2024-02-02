@@ -43,56 +43,56 @@ namespace Application.Services
                 return new Response<BankAccountDto>("Duplicate account code");
 
             _unitOfWork.CreateTransaction();
-          
-                var ChAccount = new Level4(
-                    entity.AccountTitle,
-                    entity.AccountCode,
-                    new Guid("12500000-5566-7788-99AA-BBCCDDEEFF00"),
-                    new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"));
 
-                await _unitOfWork.Level4.Add(ChAccount);
+            var ChAccount = new Level4(
+                entity.AccountTitle,
+                entity.AccountCode,
+                new Guid("12500000-5566-7788-99AA-BBCCDDEEFF00"),
+                new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"));
 
-                var ClAccount = new Level4(
-                    $"{entity.AccountTitle} Clearing Account",
-                    $"{entity.AccountCode}C",
-                    new Guid("12500000-5566-7788-99AA-BBCCDDEEFF00"),
-                    new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"));
+            await _unitOfWork.Level4.Add(ChAccount);
 
-                await _unitOfWork.Level4.Add(ClAccount);
+            var ClAccount = new Level4(
+                $"{entity.AccountTitle} Clearing Account",
+                $"{entity.AccountCode}C",
+                new Guid("12500000-5566-7788-99AA-BBCCDDEEFF00"),
+                new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"));
 
-                var transaction = new Transactions(0, "1", DocType.BankAccount);
-                await _unitOfWork.Transaction.Add(transaction);
-                await _unitOfWork.SaveAsync();
+            await _unitOfWork.Level4.Add(ClAccount);
 
-                var bankAccount = _mapper.Map<BankAccount>(entity);
+            var transaction = new Transactions(0, "1", DocType.BankAccount);
+            await _unitOfWork.Transaction.Add(transaction);
+            await _unitOfWork.SaveAsync();
 
-                bankAccount.SetChAccountId(ChAccount.Id);
-                bankAccount.SetClAccountId(ClAccount.Id);
-                bankAccount.setTransactionId(transaction.Id);
+            var bankAccount = _mapper.Map<BankAccount>(entity);
 
-                await _unitOfWork.BankAccount.Add(bankAccount);
-                await _unitOfWork.SaveAsync();
+            bankAccount.SetChAccountId(ChAccount.Id);
+            bankAccount.SetClAccountId(ClAccount.Id);
+            bankAccount.setTransactionId(transaction.Id);
 
-                bankAccount.CreateDocNo();
-                transaction.UpdateDocNo(bankAccount.Id, bankAccount.DocNo);
-                await _unitOfWork.SaveAsync();
+            await _unitOfWork.BankAccount.Add(bankAccount);
+            await _unitOfWork.SaveAsync();
 
-                //Adding BankAccount to Ledger
-                await AddToLedger(bankAccount);
+            bankAccount.CreateDocNo();
+            transaction.UpdateDocNo(bankAccount.Id, bankAccount.DocNo);
+            await _unitOfWork.SaveAsync();
 
-                //Commiting the transaction 
-                _unitOfWork.Commit();
+            //Adding BankAccount to Ledger
+            await AddToLedger(bankAccount);
 
-                //returning response
-                return new Response<BankAccountDto>(_mapper.Map<BankAccountDto>(bankAccount), "Created successfully");
+            //Commiting the transaction 
+            _unitOfWork.Commit();
 
-       
+            //returning response
+            return new Response<BankAccountDto>(_mapper.Map<BankAccountDto>(bankAccount), "Created successfully");
+
+
         }
 
         public async Task<PaginationResponse<List<BankAccountDto>>> GetAllAsync(TransactionFormFilter filter)
         {
             var backAccount = await _unitOfWork.BankAccount.GetAll(new BankAccountSpecs(filter, false));
-             
+
             if (!backAccount.Any())
                 return new PaginationResponse<List<BankAccountDto>>(_mapper.Map<List<BankAccountDto>>(backAccount), "List is empty");
 
@@ -128,30 +128,30 @@ namespace Application.Services
                 return new Response<BankAccountDto>("Duplicate code");
 
             _unitOfWork.CreateTransaction();
-           
-                //For updating data
-                _mapper.Map<UpdateBankAccountDto, BankAccount>(entity, bankAccount);
 
-                // Getting account detail in COA
-                var account = await _unitOfWork.Level4.GetById(bankAccount.ChAccountId);
-                if (account == null)
-                    return new Response<BankAccountDto>("Account not found in Chart Of Account");
+            //For updating data
+            _mapper.Map<UpdateBankAccountDto, BankAccount>(entity, bankAccount);
 
-                //Updating account name in chart of account
-                account.SetAccountName(entity.AccountTitle, entity.AccountCode);
+            // Getting account detail in COA
+            var account = await _unitOfWork.Level4.GetById(bankAccount.ChAccountId);
+            if (account == null)
+                return new Response<BankAccountDto>("Account not found in Chart Of Account");
 
-                // Getting clearing account detail in COA
-                var clearingAccount = await _unitOfWork.Level4.GetById(bankAccount.ClearingAccountId);
-                if (clearingAccount == null)
-                    return new Response<BankAccountDto>("Clearing account not found in Chart Of Account");
+            //Updating account name in chart of account
+            account.SetAccountName(entity.AccountTitle, entity.AccountCode);
 
-                //Updating clearing account name in chart of account
-                clearingAccount.SetAccountName($"{entity.AccountTitle} Clearing Account", $"{entity.AccountCode}C");
+            // Getting clearing account detail in COA
+            var clearingAccount = await _unitOfWork.Level4.GetById(bankAccount.ClearingAccountId);
+            if (clearingAccount == null)
+                return new Response<BankAccountDto>("Clearing account not found in Chart Of Account");
 
-                await _unitOfWork.SaveAsync();
-                _unitOfWork.Commit();
-                return new Response<BankAccountDto>(_mapper.Map<BankAccountDto>(bankAccount), "Updated successfully");
-            
+            //Updating clearing account name in chart of account
+            clearingAccount.SetAccountName($"{entity.AccountTitle} Clearing Account", $"{entity.AccountCode}C");
+
+            await _unitOfWork.SaveAsync();
+            _unitOfWork.Commit();
+            return new Response<BankAccountDto>(_mapper.Map<BankAccountDto>(bankAccount), "Updated successfully");
+
         }
 
         public Task<Response<int>> DeleteAsync(int id)
@@ -200,5 +200,12 @@ namespace Application.Services
 
             return new Response<List<BankAccountDto>>(_mapper.Map<List<BankAccountDto>>(bankAccounts), "Returning List");
         }
+
+        public  Response<dynamic>  GetBankAccountBalanceSummary()
+        {
+            var result =_unitOfWork.Ledger.GetBankAccountBalanceSummary();
+            return new Response<dynamic>(result, "Returning values");
+        }
+
     }
 }

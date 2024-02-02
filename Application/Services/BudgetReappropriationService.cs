@@ -167,7 +167,7 @@ namespace Application.Services
 
             foreach (var item in deletionGroupBylist)
             {
-                if (item.DeleteAmount > budget.BudgetLines.Where(x => x.AccountId == item.AccountId).FirstOrDefault().Amount)
+                if (item.DeleteAmount > budget.BudgetLines.Where(x => x.AccountId == item.AccountId).FirstOrDefault().RevisedAmount)
                 {
                     return new Response<BudgetReappropriationDto>("The deletion amount of the selected account(s) is exceeded by the budget corresponding account amount");
 
@@ -245,7 +245,7 @@ namespace Application.Services
 
             foreach (var item in deletionGroupBylist)
             {
-                if (item.DeleteAmount > budget.BudgetLines.Where(x => x.AccountId == item.AccountId).FirstOrDefault().Amount)
+                if (item.DeleteAmount > budget.BudgetLines.Where(x => x.AccountId == item.AccountId).FirstOrDefault().RevisedAmount)
                 {
                     return new Response<BudgetReappropriationDto>("The deletion amount of the selected account(s) is exceeded by the budget corresponding account amount");
 

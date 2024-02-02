@@ -13,8 +13,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? VendorId { get; set; }
         [Required]
-        public DateTime? NoteDate { get; set; }
-        [Required]
+        public DateTime? NoteDate { get; set; }        
         public int? CampusId { get; set; }
         [Required]
         public bool? isSubmit { get; set; }

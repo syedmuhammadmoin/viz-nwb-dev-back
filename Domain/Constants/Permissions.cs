@@ -21,6 +21,10 @@
             };
         }
 
+
+       
+
+
         //Profiling forms
         public static class AuthClaims
         {
@@ -272,6 +276,13 @@
             public const string Create = "Finance.JournalEntry.CR";
             public const string Edit = "Finance.JournalEntry.ED";
             public const string Delete = "Finance.JournalEntry.DL";
+        }
+        public static class PettyCashClaims
+        {
+            public const string View = "Finance.PettyCash.VW";
+            public const string Create = "Finance.PettyCash.CR";
+            public const string Edit = "Finance.PettyCash.ED";
+            public const string Delete = "Finance.PettyCash.DL";
         }
         public static class PayrollItemClaims
         {
@@ -592,6 +603,18 @@
         public static class FixedAssetReportClaims
         {
             public const string View = "FixedAsset.FixedAssetReport.VW";
+        }
+        public  struct DashboardProfitLossClaims
+        {
+            public const string View = "Dashboard.ProfitLossSummary.VW";
+        }
+        public struct DashboardBalanceSheetClaims
+        {
+            public const string View = "Dashboard.BalanceSheetSummary.VW";
+        }
+        public struct DashboardBankBalanceClaims
+        {
+            public const string View = "Dashboard.BankBalance.VW";
         }
     }
 }

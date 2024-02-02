@@ -17,8 +17,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public DateTime? DueDate { get; set; }
         [MaxLength(20)]
-        public string Contact { get; set; }
-        [Required]
+        public string Contact { get; set; }        
         public int? CampusId { get; set; }
         public int? GRNId { get; set; }
         [Required]

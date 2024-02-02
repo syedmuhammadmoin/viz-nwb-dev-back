@@ -32,5 +32,19 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(pnl); // Status code : 400
         }
+
+        [ClaimRequirement("Permission", new string[] { Permissions.DashboardProfitLossClaims.View })]
+        [HttpPost("SummaryforLast12Month")]
+        public ActionResult<Response<List<PNLSummaryDTO>>> GetProfitLossSummaryforLast12Month()
+        {
+            var pnl = _pnlReportService.GetProfitLossSummaryforLast12Month();
+            if (pnl.IsSuccess)
+                return Ok(pnl); // Status Code : 200
+
+            return BadRequest(pnl); // Status code : 400
+        }
+
+
+        
     }
 }

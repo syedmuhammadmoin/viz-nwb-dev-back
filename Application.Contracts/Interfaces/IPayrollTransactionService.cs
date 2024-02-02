@@ -20,6 +20,7 @@ namespace Application.Contracts.Interfaces
         Response<List<PayrollTransactionDto>> GetPayrollReport(PayrollFilter filter);
         Response<List<PayrollCampusTransactionDto>> GetPayrollCampusGroupReport(PayrollCampusReportFilter filter);
         Response<DataTable> GetPayrollDetailReport(PayrollDetailFilter filter);
+        Task<Response<DataTable>> GetPayrollReport(DeptFilter data);
         Task<MemoryStream> ExportPayrollDetailedReport(PayrollDetailFilter filter);
         Response<PayrollExecutiveReportDto> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter);
         Response<List<BankAdviceReportDto>> GetBankAdviceReportReport(BankAdviceReportFilter filter);

@@ -135,11 +135,11 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.EmployeeClaims.View, Permissions.PayrollTransactionClaims.Create, Permissions.PayrollTransactionClaims.Edit })]
         [HttpPost("GetforSubmit")]
-        public async Task<ActionResult<Response<List<PayrollTransactionDto>>>> GetEmployeeByDept(DeptFilter data)
+        public async Task<ActionResult<Response<Object>>> GetEmployeeByDept(DeptFilter data)
         {
             try
             {
-                var result = await _payrollTransactionService.GetEmployeesByDept(data);
+                var result = await _payrollTransactionService.GetPayrollReport(data);
                 if (result.IsSuccess)
                     return Ok(result); // Status Code : 200
 

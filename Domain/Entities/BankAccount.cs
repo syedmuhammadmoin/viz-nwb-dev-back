@@ -36,7 +36,7 @@ namespace Domain.Entities
         public Guid ClearingAccountId { get; private set; }
         [ForeignKey("ClearingAccountId")]
         public Level4 ClearingAccount { get; private set; }
-        public int CampusId { get; private set; }
+        public int? CampusId { get; private set; }
         [ForeignKey("CampusId")]
         public Campus Campus { get; private set; }
         public int TransactionId { get; private set; }

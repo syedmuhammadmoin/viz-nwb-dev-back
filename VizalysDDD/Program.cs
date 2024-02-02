@@ -19,6 +19,9 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 //Add services
+builder.Services.AddScoped(provider => new Lazy<IEmployeeService>(() => provider.GetRequiredService<IEmployeeService>()));
+builder.Services.AddScoped(provider => new Lazy<IWarehouseService>(() => provider.GetRequiredService<IWarehouseService>()));
+
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 builder.Services.AddScoped<IWarehouseService, WarehouseService>();
 builder.Services.AddScoped<ICampusService, CampusService>();
@@ -29,6 +32,7 @@ builder.Services.AddScoped<ICOAService, COAService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IJournalEntryService, JournalEntryService>();
+builder.Services.AddScoped<IPettyCashService, PettyCashService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IBillService, BillService>();
 builder.Services.AddScoped<ICreditNoteService, CreditNoteService>();
@@ -95,8 +99,8 @@ builder.Services.AddScoped<IAdmissionCriteriaService, AdmissionCriteriaService>(
 builder.Services.AddScoped<IApplicantService, ApplicantService>();
 builder.Services.AddScoped<IAdmissionApplicationService, AdmissionApplicationService>();
 builder.Services.AddScoped<IProgramChallanTemplateService, ProgramChallanTemplateService>();
-
 builder.Services.AddHostedService<DepreciationBackgroundService>();
+
 
 //Add auto mapper config
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

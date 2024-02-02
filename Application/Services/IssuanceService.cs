@@ -8,6 +8,7 @@ using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
+using Infrastructure.Uow;
 using Microsoft.AspNetCore.Http;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using System;
@@ -24,12 +25,18 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly Lazy<IWarehouseService> _warehouseService;
+        private readonly Lazy<IEmployeeService> _employeeService;
 
-        public IssuanceService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+
+
+        public IssuanceService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, Lazy<IWarehouseService> warehouseService, Lazy<IEmployeeService> employeeService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _warehouseService = warehouseService ?? throw new ArgumentNullException(nameof(warehouseService));
+            _employeeService = employeeService ?? throw new ArgumentNullException(nameof(employeeService)); ;
         }
 
         public async Task<Response<IssuanceDto>> CreateAsync(CreateIssuanceDto entity)
@@ -164,6 +171,26 @@ namespace Application.Services
 
                     if (transition.NextStatus.State == DocumentStatus.Unpaid)
                     {
+                     var createIssuanceDto = _mapper.Map<IssuanceMaster,CreateIssuanceDto>(getIssuance);
+
+
+                        //asset
+                        var validationAsset = await ValidateAssetListToIssue(createIssuanceDto);
+                        if (!validationAsset.IsSuccess)
+                        {
+                            return new Response<bool>(validationAsset.Message);
+                        }
+
+                       //Todo: sholuld be active asset here instead  of creation isssaunce
+                        
+
+                        //Inventory
+                        var validationInventory = await ValidateInventoryListToIssue(createIssuanceDto);
+                        if (!validationInventory.IsSuccess)
+                        {
+                            return new Response<bool>(validationAsset.Message);
+                        }
+
                         foreach (var line in getIssuance.IssuanceLines)
                         {
                             line.SetStatus(DocumentStatus.Unreconciled);
@@ -188,15 +215,15 @@ namespace Application.Services
                                 if (fixedAsset.IsReserved)
                                 {
                                     fixedAsset.SetIsReserved(false);
-                                    fixedAsset.SetIsIssued(true);
                                 }
+                                fixedAsset.SetIsIssued(true);
                                 fixedAsset.SetEmployeeId(getIssuance.EmployeeId);
                             }
 
                         }
 
 
-                        //updating reserved quantity in stock
+                        //updating reserved quantity in stock non fixed Asset item
                         var updateStockOnApproveOrReject = await UpdateStockOnApproveOrReject(getIssuance);
                         if (!updateStockOnApproveOrReject.IsSuccess)
                             return new Response<bool>(updateStockOnApproveOrReject.Message);
@@ -210,7 +237,7 @@ namespace Application.Services
                     }
                     if (transition.NextStatus.State == DocumentStatus.Rejected)
                     {
-                        //updating reserved quantity in stock
+                        //updating reserved quantity in stock non fixed Asset item
                         var updateStockOnApproveOrReject = await UpdateStockOnApproveOrReject(getIssuance);
                         if (!updateStockOnApproveOrReject.IsSuccess)
                             return new Response<bool>(updateStockOnApproveOrReject.Message);
@@ -227,35 +254,163 @@ namespace Application.Services
             return new Response<bool>("User does not have allowed role");
 
         }
+        private async Task<Response<bool>> ValidateInventoryListToIssue(CreateIssuanceDto entity)
+        {
+            var employeeDto = await _employeeService.Value.GetByIdAsync(entity.EmployeeId.Value);
+            var warehouseDto = await _warehouseService.Value.GetWarehouseByCampusDropDown(employeeDto.Result.CampusId);
 
+            foreach (var line in entity.IssuanceLines)
+            {
+                if (line.FixedAssetId == null)
+                {
+                    var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
+
+                    if (getStockRecord == null)
+                        return new Response<bool>("Item not found in stock");
+
+                    // verify whether the employee belongs to the warehouse of his respective campus.
+                    var warehouse = warehouseDto.Result.FirstOrDefault(x => x.Id == line.WarehouseId);
+
+                    if (warehouse == null)
+                    {
+                        return new Response<bool>("No item found in selected store");
+                    }
+
+                    if (entity.RequisitionId == null)
+                    {
+                        if (line.Quantity > getStockRecord.AvailableQuantity)
+                            return new Response<bool>("Selected item quantity exceeds available stock or the item is out of stock.");
+                    }
+                    else
+                    {
+                        if (line.Quantity > getStockRecord.ReservedRequisitionQuantity)
+                            return new Response<bool>("Selected item quantity is exceeding available quantity");
+
+                        //Getting Unreconciled Requisition lines
+                        var getrequisitionLine = _unitOfWork.Requisition
+                            .FindLines(new RequisitionLinesSpecs(line.ItemId, (int)entity.RequisitionId, (int)line.WarehouseId, true))
+                            .FirstOrDefault();
+
+                        if (getrequisitionLine == null)
+                            return new Response<bool>("Selected item is not in requisition");
+
+
+                        // Checking if given amount is greater than unreconciled document amount
+                        var reconciledRequistionQty = _unitOfWork.RequisitionToIssuanceLineReconcile
+                            .Find(new RequisitionToIssuanceLineReconcileSpecs(entity.RequisitionId.Value, getrequisitionLine.Id, getrequisitionLine.ItemId))
+                            .Sum(p => p.Quantity);
+                        var unreconciledRequisitionQty = getrequisitionLine.Quantity - reconciledRequistionQty;
+                        if (line.Quantity > unreconciledRequisitionQty)
+                            return new Response<bool>("Enter quantity is greater than pending quantity");
+
+                    }
+                }
+            }
+            return new Response<bool>(true, "No validation error found");
+
+        }
+        private async Task<Response<bool>> ValidateAssetListToIssue(CreateIssuanceDto entity)
+        {
+            var employeeDto = await _employeeService.Value.GetByIdAsync(entity.EmployeeId.Value);
+            var warehouseDto = await _warehouseService.Value.GetWarehouseByCampusDropDown(employeeDto.Result.CampusId);
+
+
+            foreach (var issuanceLine in entity.IssuanceLines)
+            {
+                if (issuanceLine.FixedAssetId != null)
+                {
+                    var fixedAsset = await _unitOfWork.FixedAsset.GetById(issuanceLine.FixedAssetId.Value);
+
+
+                    if (fixedAsset.IsIssued)
+                    {
+                        return new Response<bool>("This asset has already been issued");
+                    }
+
+                    // 1.verify whether the employee belongs to the warehouse of his respective campus.
+                    // 2.verify whether the asset belongs to the warehouse of the employee's respective campus.
+                    var warehouse = warehouseDto.Result.FirstOrDefault(x => x.Id == issuanceLine.WarehouseId && x.Id == fixedAsset.WarehouseId);
+
+                    if (warehouse == null)
+                    {
+                        return new Response<bool>("No item found in selected store");
+                    }
+                }
+            }
+            return new Response<bool>(true, "No validation error found");
+
+        }
+        private async Task<Response<bool>> ValidateIssuance(CreateIssuanceDto entity)
+        {
+
+            if (entity.IssuanceLines.Count() == 0)
+                return new Response<bool>("Lines are required");
+
+            //Checking duplicate Lines if any
+            var duplicates = entity.IssuanceLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
+             .Where(g => g.Count() > 1)
+             .Select(y => y.Key)
+             .ToList();
+
+            if (duplicates.Any())
+                return new Response<bool>("Duplicate Lines found");
+
+            var employeeDto = await _employeeService.Value.GetByIdAsync(entity.EmployeeId.Value);
+            var warehouseDto = await _warehouseService.Value.GetWarehouseByCampusDropDown(employeeDto.Result.CampusId);
+
+            //only for update
+            if (entity.Id != null && entity.Id != 0)
+            {
+                var specification = new IssuanceSpecs(true);
+                var issuance = await _unitOfWork.Issuance.GetById((int)entity.Id, specification);
+
+                if (issuance == null)
+                    return new Response<bool>("Not found");
+
+                if (issuance.StatusId != 1 && issuance.StatusId != 2)
+                    return new Response<bool>("Only draft document can be edited");
+            }
+
+            //asset
+            var validationAsset = await ValidateAssetListToIssue(entity);
+            if (!validationAsset.IsSuccess)
+            {
+                return new Response<bool>(validationAsset.Message);
+            }
+
+
+            //Inventory
+            var validationInventory = await ValidateInventoryListToIssue(entity);
+            if (!validationInventory.IsSuccess)
+            {
+                return new Response<bool>(validationInventory.Message);
+            }
+            return new Response<bool>(true, "No validation error found");
+        }
         //Private Methods for saving and updating Issuance
         private async Task<Response<IssuanceDto>> SaveIssuance(CreateIssuanceDto entity, int status)
         {
-            if (entity.IssuanceLines.Count() == 0)
-                return new Response<IssuanceDto>("Lines are required");
-
-            if (entity.RequisitionId != null)
+            var validation = await ValidateIssuance(entity);
+            if (!validation.IsSuccess)
             {
-                foreach (var issuanceLine in entity.IssuanceLines)
+                return new Response<IssuanceDto>(validation.Message);
+            }
+            //Asset
+            foreach (var issuanceLine in entity.IssuanceLines)
+            {
+                if (issuanceLine.FixedAssetId != null)
                 {
-                    //Getting Unreconciled Requisition lines
-                    var getrequisitionLine = _unitOfWork.Requisition
-                        .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, (int)entity.RequisitionId, (int)issuanceLine.WarehouseId, true))
-                        .FirstOrDefault();
+                    const int singleUnitOfAsset = 1;
+                    issuanceLine.Quantity = singleUnitOfAsset;
 
-                    if (getrequisitionLine == null)
-                        return new Response<IssuanceDto>("Selected item is not in requisition");
 
-                    var checkValidation = CheckValidation((int)entity.RequisitionId, getrequisitionLine, _mapper.Map<IssuanceLines>(issuanceLine));
-                    if (!checkValidation.IsSuccess)
-                        return new Response<IssuanceDto>(checkValidation.Message);
-
-                    if (issuanceLine.FixedAssetId != null)
+                    if (entity.RequisitionId != null)
                     {
                         var currentDate = DateTime.Now;
+                        var fixedAsset = await _unitOfWork.FixedAsset.GetById(issuanceLine.FixedAssetId.Value);
                         var fixedAssetLines = await _unitOfWork.FixedAssetLines.GetByMonthAndYear(entity.Id.Value, currentDate.Month, currentDate.Year);
-
                         var lastActiveRecord = fixedAssetLines.Where(p => p.ActiveDate <= currentDate && p.InactiveDate != null).OrderByDescending(x => x.ActiveDate).FirstOrDefault();
+                        //Only active Asset by can be issued
                         if (lastActiveRecord != null)
                         {
                             if (lastActiveRecord.InactiveDate.Value.Date.CompareTo(currentDate.Date) == 0 && currentDate.Day != DateTime.DaysInMonth(currentDate.Year, currentDate.Month))
@@ -270,46 +425,48 @@ namespace Application.Services
                             {
                                 //Operation Not Allow
                             }
-                            else
-                            {
-                                var createFixedAssetlineDto2 = new FixedAssetLinesDto() { ActiveDate = currentDate, MasterId = entity.Id.Value };
-                                await _unitOfWork.FixedAssetLines.Add(_mapper.Map<FixedAssetLines>(createFixedAssetlineDto2));
-                            }
+                            //else
+                            //{
+                            //    var createFixedAssetlineDto2 = new FixedAssetLinesDto() { ActiveDate = currentDate, MasterId = entity.Id.Value };
+                            //    await _unitOfWork.FixedAssetLines.Add(_mapper.Map<FixedAssetLines>(createFixedAssetlineDto2));
+                            //}
                         }
+                        else
+                        {
+                            var createFixedAssetlineDto2 = new FixedAssetLinesDto() { ActiveDate = currentDate, MasterId = entity.Id.Value };
+                            await _unitOfWork.FixedAssetLines.Add(_mapper.Map<FixedAssetLines>(createFixedAssetlineDto2));
+                        }
+
                     }
 
+
                 }
+
             }
 
+            //Inventory
+            foreach (var line in entity.IssuanceLines)
+            {
 
+                if (line.FixedAssetId == null)
+                {
+                    if (entity.RequisitionId == null)
+                    {  //Checking available quantity in stock
+                       //var checkOrUpdateQty = CheckOrUpdateQty(entity);
+                        var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
+                        getStockRecord.UpdateReservedQuantity(getStockRecord.ReservedQuantity + (int)line.Quantity);
+                        getStockRecord.UpdateAvailableQuantity(getStockRecord.AvailableQuantity - (int)line.Quantity);
 
-            if (entity.RequisitionId == null)
-            {  //Checking available quantity in stock
-                var checkOrUpdateQty = CheckOrUpdateQty(entity);
-                if (!checkOrUpdateQty.IsSuccess)
-                    return new Response<IssuanceDto>(checkOrUpdateQty.Message);
+                    }
+                    else
+                    {//Checking available quantity in stock
+                        var checkOrUpdateQty = CheckOrUpdateQtyforRequisition(entity);
+                        if (!checkOrUpdateQty.IsSuccess)
+                            return new Response<IssuanceDto>(checkOrUpdateQty.Message);
+                    }
+                }
+
             }
-            else
-            {//Checking available quantity in stock
-                var checkOrUpdateQty = CheckOrUpdateQtyforRequisition(entity);
-                if (!checkOrUpdateQty.IsSuccess)
-                    return new Response<IssuanceDto>(checkOrUpdateQty.Message);
-            }
-
-
-
-
-
-
-
-            //Checking duplicate Lines if any
-            var duplicates = entity.IssuanceLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
-             .Where(g => g.Count() > 1)
-             .Select(y => y.Key)
-             .ToList();
-
-            if (duplicates.Any())
-                return new Response<IssuanceDto>("Duplicate Lines found");
 
             var issuance = _mapper.Map<IssuanceMaster>(entity);
 
@@ -355,58 +512,24 @@ namespace Application.Services
 
         private async Task<Response<IssuanceDto>> UpdateIssuance(CreateIssuanceDto entity, int status)
         {
-            if (entity.IssuanceLines.Count() == 0)
-                return new Response<IssuanceDto>("Lines are required");
-            var getIssuance = await _unitOfWork.Issuance.GetById((int)entity.Id, new IssuanceSpecs(true));
-            if (entity.RequisitionId != null)
+
+            var validation = await ValidateIssuance(entity);
+            if (!validation.IsSuccess)
             {
+                return new Response<IssuanceDto>(validation.Message);
+            }
 
-                foreach (var issuanceLine in entity.IssuanceLines)
+            var getIssuance = await _unitOfWork.Issuance.GetById((int)entity.Id, new IssuanceSpecs(true));
+
+            foreach (var issuanceLine in entity.IssuanceLines)
+            {
+                if (issuanceLine.FixedAssetId != null)
                 {
-                    //Getting Unreconciled Requisition lines
-                    var getrequisitionLine = _unitOfWork.Requisition
-                         .FindLines(new RequisitionLinesSpecs(issuanceLine.ItemId, (int)entity.RequisitionId, (int)issuanceLine.WarehouseId, true))
-                         .FirstOrDefault();
-
-
-                    if (getrequisitionLine == null)
-                        return new Response<IssuanceDto>("Selected item is not in requisition");
-
-                    //var reconciled = await ReconcileReqLines(getIssuance.Id, (int)getIssuance.RequisitionId, getIssuance.IssuanceLines);
-
-                    //if (!reconciled.IsSuccess)
-                    //{
-                    //    _unitOfWork.Rollback();
-                    //    return new Response<IssuanceDto>(reconciled.Message);
-                    //}
-                    //await _unitOfWork.SaveAsync();
-                    var checkValidation = CheckValidation((int)entity.RequisitionId, getrequisitionLine, _mapper.Map<IssuanceLines>(issuanceLine));
-                    if (!checkValidation.IsSuccess)
-                        return new Response<IssuanceDto>(checkValidation.Message);
+                    const int singleUnitOfAsset = 1;
+                    issuanceLine.Quantity = singleUnitOfAsset;
                 }
             }
 
-            if (entity.RequisitionId == null)
-            {  //Checking available quantity in stock
-                var checkOrUpdateQty = CheckOrUpdateQty(entity);
-                if (!checkOrUpdateQty.IsSuccess)
-                    return new Response<IssuanceDto>(checkOrUpdateQty.Message);
-            }
-            else
-            {//Checking available quantity in stock
-                var checkOrUpdateQty = CheckOrUpdateQtyforRequisition(entity);
-                if (!checkOrUpdateQty.IsSuccess)
-                    return new Response<IssuanceDto>(checkOrUpdateQty.Message);
-            }
-
-            //Checking duplicate Lines if any
-            var duplicates = entity.IssuanceLines.GroupBy(x => new { x.ItemId, x.WarehouseId })
-             .Where(g => g.Count() > 1)
-             .Select(y => y.Key)
-             .ToList();
-
-            if (duplicates.Any())
-                return new Response<IssuanceDto>("Duplicate Lines found");
 
             var specification = new IssuanceSpecs(true);
             var issuance = await _unitOfWork.Issuance.GetById((int)entity.Id, specification);
@@ -414,8 +537,6 @@ namespace Application.Services
             if (issuance == null)
                 return new Response<IssuanceDto>("Not found");
 
-            if (issuance.StatusId != 1 && issuance.StatusId != 2)
-                return new Response<IssuanceDto>("Only draft document can be edited");
 
             issuance.SetStatus(status);
 
@@ -561,19 +682,6 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public Response<bool> CheckValidation(int requisitionId, RequisitionLines requisitionLine, IssuanceLines issuanceLine)
-        {
-            // Checking if given amount is greater than unreconciled document amount
-            var reconciledRequistionQty = _unitOfWork.RequisitionToIssuanceLineReconcile
-                .Find(new RequisitionToIssuanceLineReconcileSpecs(requisitionId, requisitionLine.Id, requisitionLine.ItemId))
-                .Sum(p => p.Quantity);
-            var unreconciledRequisitionQty = requisitionLine.Quantity - reconciledRequistionQty;
-            if (issuanceLine.Quantity > unreconciledRequisitionQty)
-                return new Response<bool>("Enter quantity is greater than pending quantity");
-
-            return new Response<bool>(true, "No validation error found");
-        }
-
         public async Task<Response<bool>> ReconcileReqLines(int issuanceId, int requisitionId, List<IssuanceLines> IssuanceLines)
         {
             foreach (var IssuanceLine in IssuanceLines)
@@ -585,9 +693,9 @@ namespace Application.Services
                 if (getRequisitionLine == null)
                     return new Response<bool>("No Requisition line found for reconciliaiton");
 
-                var checkValidation = CheckValidation(requisitionId, getRequisitionLine, IssuanceLine);
-                if (!checkValidation.IsSuccess)
-                    return new Response<bool>(checkValidation.Message);
+                //var checkValidation = CheckValidation(requisitionId, getRequisitionLine, IssuanceLine);
+                //if (!checkValidation.IsSuccess)
+                //    return new Response<bool>(checkValidation.Message);
 
                 //Adding in Reconcilation table
                 var recons = new RequisitionToIssuanceLineReconcile(IssuanceLine.ItemId, IssuanceLine.Quantity,

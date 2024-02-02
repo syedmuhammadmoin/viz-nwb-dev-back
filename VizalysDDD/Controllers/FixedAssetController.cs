@@ -5,12 +5,14 @@ using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Vizalys.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class FixedAssetController : ControllerBase
     {
         private readonly IFixedAssetService _fixedAssetService;
@@ -117,7 +119,7 @@ namespace Vizalys.Api.Controllers
         [HttpGet("Product/{ProductId:int}")]
         public async Task<ActionResult<Response<List<Level4Dto>>>> GetAssetByProductIdDropDown(int ProductId)
         {
-            var result = await _fixedAssetService.GetAssetByProductIdDropDown(ProductId);
+            var result = await _fixedAssetService.GetAssetInStockByProductIdDropDown(ProductId);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 
@@ -155,5 +157,16 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status Code : 400
         }
+        [ClaimRequirement("Permission", new string[] { Permissions.FixedAssetClaims.Create, Permissions.FixedAssetClaims.View, Permissions.FixedAssetClaims.Delete, Permissions.FixedAssetClaims.Edit })]
+        [HttpGet("DepreciationSchedule/{fixedAssetId:int}")]
+        public async Task<ActionResult<Response<bool>>> DepreciationSchedule(int fixedAssetId)
+        {
+            var result = await _fixedAssetService.DepreciationSchedule(fixedAssetId);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status Code : 400
+        }
+
     }
 }

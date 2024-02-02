@@ -13,13 +13,14 @@ namespace Infrastructure.Specifications
             {
                 var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
                 ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
-                AddInclude(i => i.Product);
+                AddInclude(i => i.Product);                
                 AddInclude(i => i.Warehouse);
                 AddInclude(i => i.DepreciationModel);
                 AddInclude(i => i.AssetAccount);
+                AddInclude(i => i.Employee);
                 AddInclude(i => i.DepreciationExpense);
                 AddInclude(i => i.AccumulatedDepreciation);
-                AddInclude(i => i.Status);
+                AddInclude(i => i.Status);               
                 ApplyOrderByDescending(i => i.Id);
             }
         }
@@ -47,8 +48,14 @@ namespace Infrastructure.Specifications
         }
 
         public FixedAssetSpecs(int ProductId)
-            : base(e => e.ProductId == ProductId && e.IsHeldforSaleOrDisposal == false)
+            : base(e => (
+            e.ProductId == ProductId
+            && e.IsHeldforSaleOrDisposal == false
+            && e.IsIssued== false
+            && e.Status.State == DocumentStatus.Unpaid))
+            
         {
+            AddInclude(i => i.Status);
         }
 
         public FixedAssetSpecs(bool isDisposed, bool isHeldforSaleOrDisposal,

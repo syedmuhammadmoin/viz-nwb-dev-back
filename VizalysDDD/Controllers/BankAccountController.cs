@@ -69,6 +69,11 @@ namespace Vizalys.Api.Controllers
         {
             return Ok(await _bankAccountService.GetBankAccountDropDown()); // Status Code : 200
         }
+        [HttpGet("Balance")]
+        public async Task<ActionResult<Response<List<BankAccountDto>>>> GetBankAccountBalanceSummary()
+        {
+            return Ok(_bankAccountService.GetBankAccountBalanceSummary()); 
+        }
 
     }
 }

@@ -481,6 +481,9 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.CityClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.DistrictClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.DomicileClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DashboardProfitLossClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DashboardBalanceSheetClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.DashboardBankBalanceClaims), id);
 
 
             //Getting all claims for this role
@@ -584,6 +587,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.CreditNoteClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.DebitNoteClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.JournalEntryClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.PettyCashClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.WorkflowStatusClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.WorkflowClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.ReceiptClaims), "12");

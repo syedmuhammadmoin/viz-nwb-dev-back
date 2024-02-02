@@ -13,8 +13,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public DateTime? Date { get; set; }
         [MaxLength(500)]
-        public string Description { get; set; }
-        [Required]
+        public string Description { get; set; }        
         public int? CampusId { get; set; }
         [Required]
         public bool? isSubmit { get; set; }

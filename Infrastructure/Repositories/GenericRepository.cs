@@ -42,10 +42,15 @@ namespace Infrastructure.Repositories
 
         public async Task<T> GetById(TKey id, ISpecification<T> specification = null)
         {
-            return await SpecificationEvaluator<T, TKey>.GetQuery(_context.Set<T>()
-                                    .Where(x => x.Id.Equals(id))
-                                    .AsQueryable(), specification)
-                                    .FirstOrDefaultAsync();
+
+            var query = SpecificationEvaluator<T, TKey>.GetQuery(_context.Set<T>()
+                            .Where(x => x.Id.Equals(id))
+                            .AsQueryable(), specification);
+
+            var rawSql = query.ToQueryString();
+
+            return await query.FirstOrDefaultAsync();
+
         }
 
         public async Task<int> TotalRecord(ISpecification<T> specification = null)
@@ -60,6 +65,12 @@ namespace Infrastructure.Repositories
         {
             return SpecificationEvaluator<T, TKey>.GetQuery(_context.Set<T>()
                                     .AsQueryable(), specification);
+        }
+        public async Task<bool> Any(ISpecification<T> specification = null)
+        {
+            return await SpecificationEvaluator<T, TKey>.GetQuery(_context.Set<T>()
+                                    .AsQueryable(), specification)
+                                    .AnyAsync();
         }
     }
 }

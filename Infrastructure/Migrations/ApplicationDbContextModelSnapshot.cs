@@ -17,7 +17,7 @@ namespace Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("ProductVersion", "6.0.26")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -505,7 +505,7 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("CampusId")
+                    b.Property<int?>("CampusId")
                         .HasColumnType("int");
 
                     b.Property<Guid>("ChAccountId")
@@ -1054,7 +1054,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("BillDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CampusId")
+                    b.Property<int?>("CampusId")
                         .HasColumnType("int");
 
                     b.Property<string>("Contact")
@@ -1886,7 +1886,7 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CampusId")
+                    b.Property<int?>("CampusId")
                         .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
@@ -2145,7 +2145,7 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CampusId")
+                    b.Property<int?>("CampusId")
                         .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
@@ -3669,7 +3669,7 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CampusId")
+                    b.Property<int?>("CampusId")
                         .HasColumnType("int");
 
                     b.Property<string>("Contact")
@@ -4111,7 +4111,7 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CampusId")
+                    b.Property<int?>("CampusId")
                         .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
@@ -5605,6 +5605,137 @@ namespace Infrastructure.Migrations
                     b.HasIndex("TransactionId");
 
                     b.ToTable("PayrollTransactionMaster");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PettyCashLines", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("BusinessPartnerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Credit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Debit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MasterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("BusinessPartnerId");
+
+                    b.HasIndex("MasterId");
+
+                    b.ToTable("PettyCashLines");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PettyCashMaster", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("CampusId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ClosingBalance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("DocNo")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("OpeningBalance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalCredit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalDebit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("TransactionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("CampusId");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("PettyCashMaster");
                 });
 
             modelBuilder.Entity("Domain.Entities.POToGRNLineReconcile", b =>
@@ -7712,8 +7843,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
                         .HasForeignKey("CampusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Level4", "ChAccount")
                         .WithMany()
@@ -7897,8 +8027,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
                         .HasForeignKey("CampusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.GRNMaster", "GRN")
                         .WithMany()
@@ -8183,8 +8312,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
                         .HasForeignKey("CampusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.BusinessPartner", "Customer")
                         .WithMany()
@@ -8328,8 +8456,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
                         .HasForeignKey("CampusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Level4", "PayableAccount")
                         .WithMany()
@@ -8918,8 +9045,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
                         .HasForeignKey("CampusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.BusinessPartner", "Customer")
                         .WithMany()
@@ -9181,8 +9307,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
                         .HasForeignKey("CampusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
                         .WithMany()
@@ -9430,6 +9555,65 @@ namespace Infrastructure.Migrations
                     b.Navigation("Employee");
 
                     b.Navigation("IncrementItem");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PettyCashLines", b =>
+                {
+                    b.HasOne("Domain.Entities.Level4", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.BusinessPartner", "BusinessPartner")
+                        .WithMany()
+                        .HasForeignKey("BusinessPartnerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.Entities.PettyCashMaster", "PettyCashMaster")
+                        .WithMany("PettyCashLines")
+                        .HasForeignKey("MasterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("BusinessPartner");
+
+                    b.Navigation("PettyCashMaster");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PettyCashMaster", b =>
+                {
+                    b.HasOne("Domain.Entities.Level4", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Campus", "Campus")
+                        .WithMany()
+                        .HasForeignKey("CampusId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Transactions", "Transactions")
+                        .WithMany()
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Campus");
 
                     b.Navigation("Status");
 
@@ -10236,6 +10420,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.PayrollTransactionMaster", b =>
                 {
                     b.Navigation("PayrollTransactionLines");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PettyCashMaster", b =>
+                {
+                    b.Navigation("PettyCashLines");
                 });
 
             modelBuilder.Entity("Domain.Entities.Program", b =>

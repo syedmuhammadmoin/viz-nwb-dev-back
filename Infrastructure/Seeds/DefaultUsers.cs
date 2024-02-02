@@ -57,6 +57,7 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaim(superAdmin, "Finance", "CreditNote");
             await roleManager.AddPermissionClaim(superAdmin, "Finance", "DebitNote");
             await roleManager.AddPermissionClaim(superAdmin, "Finance", "JournalEntry");
+            await roleManager.AddPermissionClaim(superAdmin, "Finance", "PettyCash");
             await roleManager.AddPermissionClaim(superAdmin, "Budget", "Budget");
             await roleManager.AddPermissionClaim(superAdmin, "Finance", "Receipt");
             await roleManager.AddPermissionClaim(superAdmin, "Procurement", "Requisition");
@@ -115,6 +116,9 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaimReport(superAdmin, "Budget", "BudgetReport");
             await roleManager.AddPermissionClaimReport(superAdmin, "Procurement", "Stock");
             await roleManager.AddPermissionClaimReport(superAdmin, "FixedAsset", "FixedAssetReport");
+            await roleManager.AddPermissionClaimReport(superAdmin, "Dashboard", "ProfitLossSummary");
+            await roleManager.AddPermissionClaimReport(superAdmin, "Dashboard", "BalanceSheetSummary");
+            await roleManager.AddPermissionClaimReport(superAdmin, "Dashboard", "BankBalance");
         }
         private async static Task SeedClaimsForApplicant(this RoleManager<IdentityRole> roleManager)
         {
