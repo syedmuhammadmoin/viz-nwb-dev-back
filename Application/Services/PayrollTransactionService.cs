@@ -490,14 +490,16 @@ namespace Application.Services
                             Campus = payroll.Campus.Name,
                             Designation = payroll.Designation.Name,
                             AccountName = lines.Account.Name,
-                            Amount = lines.Amount
+                            Amount = lines.Amount,
+                            NetSalary = payroll.NetSalary,
+                            GrossPay = payroll.GrossSalary
                         });
                     }
                 }
             }
 
             allowanceDTO = allowanceDTO
-               .GroupBy(x => new { x.Employee, x.CNIC, x.Department, x.Campus, x.Designation, x.AccountName })
+               .GroupBy(x => new { x.Employee, x.NetSalary, x.GrossPay , x.CNIC, x.Department, x.Campus, x.Designation, x.AccountName })
                .Select(c => new PayrollTransactionDto
                {
                    Employee = c.Key.Employee,
@@ -506,12 +508,14 @@ namespace Application.Services
                    Campus = c.Key.Campus,
                    Designation = c.Key.Designation,
                    AccountName = c.Key.AccountName,
+                   NetSalary = c.Key.NetSalary,
+                   GrossPay = c.Key.GrossPay,
                    Amount = c.Sum(e => e.Amount)
                })
                .ToList();
 
             var groups = from d in allowanceDTO
-                         group d by new { d.Employee, d.CNIC, d.Department, d.Campus, d.Designation }
+                         group d by new { d.Employee, d.NetSalary, d.GrossPay,  d.CNIC, d.Department, d.Campus, d.Designation }
                         into grp
                          select new
                          {
@@ -519,6 +523,8 @@ namespace Application.Services
                              CNIC = grp.Key.CNIC,
                              Department = grp.Key.Department,
                              Campus = grp.Key.Campus,
+                             NetSalary = grp.Key.NetSalary,
+                             GrossPay = grp.Key.GrossPay,
                              Designation = grp.Key.Designation,
                              Items = grp.Select(d2 => new { d2.AccountName, d2.Amount }).ToArray()
                          };
@@ -532,6 +538,8 @@ namespace Application.Services
             /*for static cols*/
             dt.Columns.Add("Employee");
             dt.Columns.Add("CNIC");
+            dt.Columns.Add("NetSalary");
+            dt.Columns.Add("GrossPay");
             dt.Columns.Add("Department");
             dt.Columns.Add("Campus");
             dt.Columns.Add("Designation");
@@ -547,6 +555,8 @@ namespace Application.Services
                 DataRow dr = dt.NewRow();
                 dr["Employee"] = g.Employee;
                 dr["CNIC"] = g.CNIC;
+                dr["NetSalary"] = g.NetSalary;
+                dr["GrossPay"] = g.GrossPay;
                 dr["Department"] = g.Department;
                 dr["Campus"] = g.Campus;
                 dr["Designation"] = g.Designation;
@@ -1261,8 +1271,6 @@ namespace Application.Services
             var allowanceDTO = new List<PayrollTransactionDto>();
 
 
-
-
             foreach (var payroll in payrollTransactions)
             {
 
@@ -1279,14 +1287,17 @@ namespace Application.Services
                             Campus = payroll.Campus.Name,
                             Designation = payroll.Designation.Name,
                             AccountName = lines.Account.Name,
-                            Amount = lines.Amount
+                            Amount = lines.Amount,
+                            NetSalary = payroll.NetSalary,
+                            GrossPay = payroll.GrossSalary
+                            
                         });
                     }
                 }
             }
 
             allowanceDTO = allowanceDTO
-               .GroupBy(x => new { x.Employee, x.CNIC, x.Department, x.Campus, x.Designation, x.AccountName })
+               .GroupBy(x => new { x.Employee, x.NetSalary, x.GrossPay, x.CNIC, x.Department, x.Campus, x.Designation, x.AccountName })
                .Select(c => new PayrollTransactionDto
                {
                    Employee = c.Key.Employee,
@@ -1295,12 +1306,14 @@ namespace Application.Services
                    Campus = c.Key.Campus,
                    Designation = c.Key.Designation,
                    AccountName = c.Key.AccountName,
-                   Amount = c.Sum(e => e.Amount)
+                   Amount = c.Sum(e => e.Amount),
+                   NetSalary = c.Key.NetSalary,
+                   GrossPay = c.Key.GrossPay
                })
                .ToList();
 
             var groups = from d in allowanceDTO
-                         group d by new { d.Employee, d.CNIC, d.Department, d.Campus, d.Designation }
+                         group d by new { d.Employee, d.NetSalary, d.GrossPay, d.CNIC, d.Department, d.Campus, d.Designation }
                         into grp
                          select new
                          {
@@ -1309,6 +1322,8 @@ namespace Application.Services
                              Department = grp.Key.Department,
                              Campus = grp.Key.Campus,
                              Designation = grp.Key.Designation,
+                             NetSalary = grp.Key.NetSalary,
+                             GrossPay = grp.Key.GrossPay,
                              Items = grp.Select(d2 => new { d2.AccountName, d2.Amount }).ToArray()
                          };
 
@@ -1321,6 +1336,8 @@ namespace Application.Services
             /*for static cols*/
             dt.Columns.Add("Employee");
             dt.Columns.Add("CNIC");
+            dt.Columns.Add("NetSalary");
+            dt.Columns.Add("GrossPay");
             dt.Columns.Add("Department");
             dt.Columns.Add("Campus");
             dt.Columns.Add("Designation");
@@ -1337,6 +1354,8 @@ namespace Application.Services
                 dr["Employee"] = g.Employee;
                 dr["CNIC"] = g.CNIC;
                 dr["Department"] = g.Department;
+                dr["NetSalary"] = g.NetSalary;
+                dr["GrossPay"] = g.GrossPay;
                 dr["Campus"] = g.Campus;
                 dr["Designation"] = g.Designation;
 
