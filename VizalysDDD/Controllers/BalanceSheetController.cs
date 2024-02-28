@@ -33,7 +33,7 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(balanceSheet); // Status code : 400
         }
-        [ClaimRequirement("Permission", new string[] { Permissions.DashboardBalanceSheetClaims.View })]
+       // [ClaimRequirement("Permission", new string[] { Permissions.DashboardBalanceSheetClaims.View })]
         [HttpGet("Summary")]
         public ActionResult<Response<List<BalanceSheetSummaryDto>>> GetBalanceSheetSummary()
         {
