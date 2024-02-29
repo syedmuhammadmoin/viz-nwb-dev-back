@@ -638,6 +638,7 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.DomicileClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.DashboardBalanceSheetClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.DashboardProfitLossClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.DashboardBankBalanceClaims), "12");
 
             var allClaimValues = allPermissions.Select(a => a.Value).ToList();
             return new Response<List<string>>(allClaimValues, "Returning all claims");
