@@ -188,7 +188,7 @@ namespace Application.Services
                         var validationInventory = await ValidateInventoryListToIssue(createIssuanceDto);
                         if (!validationInventory.IsSuccess)
                         {
-                            return new Response<bool>(validationAsset.Message);
+                            return new Response<bool>(validationInventory.Message);
                         }
 
                         foreach (var line in getIssuance.IssuanceLines)
@@ -278,7 +278,7 @@ namespace Application.Services
 
                     if (entity.RequisitionId == null)
                     {
-                        if (line.Quantity > getStockRecord.AvailableQuantity)
+                        if (line.Quantity > getStockRecord.ReservedQuantity)
                             return new Response<bool>("Selected item quantity exceeds available stock or the item is out of stock.");
                     }
                     else
