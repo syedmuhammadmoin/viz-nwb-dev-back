@@ -109,7 +109,7 @@ namespace Vizalys.Api.Controllers
 
         [HttpPost("submitProcess")]
         public async Task<ActionResult<Response<bool>>> ProcessForEdit([FromBody] int[] id)
-        {
+          {
             try
             {
                 if (ModelState.IsValid)

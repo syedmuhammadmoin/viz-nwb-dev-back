@@ -1318,6 +1318,7 @@ namespace Application.Services
                     {
                         allowanceDTO.Add(new PayrollTransactionDto
                         {
+                            EmployeeId = payroll.EmployeeId,
                             Employee = payroll.Employee.Name,
                             CNIC = payroll.CNIC,
                             Department = payroll.Department.Name,
@@ -1334,9 +1335,10 @@ namespace Application.Services
             }
 
             allowanceDTO = allowanceDTO
-               .GroupBy(x => new { x.Employee, x.NetSalary, x.GrossPay, x.CNIC, x.Department, x.Campus, x.Designation, x.AccountName })
+               .GroupBy(x => new { x.Employee, x.NetSalary, x.GrossPay, x.CNIC, x.Department, x.Campus, x.Designation, x.AccountName, x.EmployeeId })
                .Select(c => new PayrollTransactionDto
                {
+                   EmployeeId = c.Key.EmployeeId,
                    Employee = c.Key.Employee,
                    CNIC = c.Key.CNIC,
                    Department = c.Key.Department,
@@ -1350,10 +1352,11 @@ namespace Application.Services
                .ToList();
 
             var groups = from d in allowanceDTO
-                         group d by new { d.Employee, d.NetSalary, d.GrossPay, d.CNIC, d.Department, d.Campus, d.Designation }
+                         group d by new { d.Employee, d.NetSalary, d.GrossPay, d.CNIC, d.Department, d.Campus, d.Designation ,d.EmployeeId}
                         into grp
                          select new
-                         {
+                         {    
+                             EmployeeId = grp.Key.EmployeeId,
                              Employee = grp.Key.Employee,
                              CNIC = grp.Key.CNIC,
                              Department = grp.Key.Department,
@@ -1371,6 +1374,7 @@ namespace Application.Services
 
             DataTable dt = new DataTable();
             /*for static cols*/
+            dt.Columns.Add("EmployeeId");
             dt.Columns.Add("Employee");
             dt.Columns.Add("CNIC");
             dt.Columns.Add("NetSalary");
@@ -1388,6 +1392,7 @@ namespace Application.Services
             foreach (var g in groups)
             {
                 DataRow dr = dt.NewRow();
+                dr["EmployeeId"] = g.EmployeeId;
                 dr["Employee"] = g.Employee;
                 dr["CNIC"] = g.CNIC;
                 dr["Department"] = g.Department;
