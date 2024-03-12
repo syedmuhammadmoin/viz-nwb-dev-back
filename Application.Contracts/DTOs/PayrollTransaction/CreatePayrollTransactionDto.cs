@@ -28,5 +28,7 @@ namespace Application.Contracts.DTOs
         public int? LeaveDays { get; set; }
         [Required]
         public DateTime? TransDate { get; set; }
+        
+
     }
 }

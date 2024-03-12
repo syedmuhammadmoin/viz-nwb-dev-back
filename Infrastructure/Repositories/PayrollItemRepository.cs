@@ -19,19 +19,30 @@ namespace Infrastructure.Repositories
         {
             this._context = context;
         }
-        //public List<dynamic> GetAllPayrollItems(int id)
-        //{
-        //    var payrollQuery = from pi in _context.PayrollItems
-        //                       join pie in _context.PayrollItemEmployees on pi.Id equals pie.PayrollItemId
-        //                       where pie.EmployeeId == id
-        //                       select new
-        //                       {
-        //                           pi.ItemCode,
-        //                           pi.Name,
-        //                           pi.Value
-        //                       };
+        public List<PayrollResult> GetPayrollItemsByEmployeeId(int id)
+        {                                           
+            //var payrollQuery = from pe in _context.PayrollItems
+            //                   join pie in _context.PayrollItemEmployees on pi. equals pie.PayrollItemId
+            //                   where pie.EmployeeId == id
+            //                   select new PayrollResult
+            //                   {                                                                                                                                                
+            //                       Id = pie.PayrollItemId,
+            //                       ItemCode = pi.ItemCode,
+            //                       Name = pi.Name,
+            //                       Value = pi.Value 
+            //                   };
+            var query = from pe in _context.PayrollItemEmployees
+                        join pi in _context.PayrollItems on pe.PayrollItemId equals pi.Id
+                        where pe.EmployeeId == id
+                        select new PayrollResult
+                        {
+                            Id = pi.Id,
+                            ItemCode = pi.ItemCode,
+                            Value = pi.Value,
+                            Name = pi.Name,
+                        };
 
-        //    return payrollQuery.ToList();
-        //}
+            return query.ToList();
+        }
     }
 }

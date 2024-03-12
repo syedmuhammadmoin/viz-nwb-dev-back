@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.PayrollTransaction;
 using Application.Contracts.Filters;
 using Application.Contracts.Response;
 using System;
@@ -24,5 +25,6 @@ namespace Application.Contracts.Interfaces
         Task<MemoryStream> ExportPayrollDetailedReport(PayrollDetailFilter filter);
         Response<PayrollExecutiveReportDto> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter);
         Response<List<BankAdviceReportDto>> GetBankAdviceReportReport(BankAdviceReportFilter filter);
+        Task<Response<PayrollTransactionDto>> UpdatePayrollTransaction(int id, UpdateEmployeeTransactionDto entity, int status);
     }
 }

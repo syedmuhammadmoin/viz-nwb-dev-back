@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.PayrollTransaction;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -26,8 +27,7 @@ namespace Vizalys.Api.Controllers
             _payrollTransactionService = invoiceService;
             _fileUploadService = fileUploadService;
             _configuration = configuration;
-        }
-
+        }        
         [EnableCors("PayrollModule")]
         [AllowAnonymous]
         //[ClaimRequirement("Permission", new string[] { Permissions.PayrollTransactionClaims.Create })]
@@ -40,6 +40,22 @@ namespace Vizalys.Api.Controllers
             }
 
             var result = await _payrollTransactionService.CreateAsync(entity);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
+        [ClaimRequirement("Permission", new string[] { Permissions.PayrollTransactionClaims.Edit })]
+        [HttpPost("updateTransaction")]
+
+        public async Task<ActionResult<Response<PayrollTransactionDto>>> UpdateTransaction([FromHeader(Name = "key")] string key, UpdateEmployeeTransactionDto entity)
+        {                   
+            if (key != _configuration["ApiKey:Key"])
+            {
+                return BadRequest("Invalid Key");
+            }
+
+            var result = await _payrollTransactionService.UpdatePayrollTransaction(entity.Id,entity , 1);
             if (result.IsSuccess)
                 return Ok(result); // Status Code : 200
 

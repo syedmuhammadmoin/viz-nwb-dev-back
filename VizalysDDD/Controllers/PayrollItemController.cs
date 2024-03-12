@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.PayrollItem;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
@@ -80,10 +81,10 @@ namespace Vizalys.Api.Controllers
             return BadRequest(results); // Status code : 400
         }
 
-        [HttpGet("Dropdown")]
-        public ActionResult<Response<List<PayrollItemDto>>> GetPayrollItemDropDown()
+        [HttpGet("Dropdown/{Id:int}")]
+        public ActionResult<Response<List<PayrollResultDto>>> GetPayrollItemDropDown(int id)
         {
-            return Ok(_payrollItemService.GetPayrollItemDropDown()); // Status Code : 200
+            return Ok(_payrollItemService.GetPayrollItemDropDown(id)); // Status Code : 200
         }
     }
 }

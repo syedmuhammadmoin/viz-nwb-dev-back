@@ -129,28 +129,27 @@ namespace Domain.Entities
         public virtual List<PayrollTransactionLines> PayrollTransactionLines { get;private set; }
 
         //Construtors
-        //public PayrollTransactionMaster(int month, int year, int employeeId, Guid bpsAccountId, string bpsName, int designationId, int departmentId, int campusId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netIncrement, decimal netSalary, int statusId, string employeeType, List<PayrollTransactionLines> payrollTransactionLines)
-        //{
-        //    Month = month;
-        //    Year = year;
-        //    EmployeeId = employeeId;
-        //    BPSAccountId = bpsAccountId;
-        //    BPSName = bpsName;
-        //    DesignationId = designationId;
-        //    DepartmentId = departmentId;
-        //    CampusId = campusId;
-        //    WorkingDays = workingDays;
-        //    PresentDays = presentDays;
-        //    LeaveDays = leaveDays;
-        //    TransDate = transDate;
-        //    BasicSalary = basicSalary;
-        //    GrossSalary = grossSalary;
-        //    NetSalary = netSalary;
-        //    NetIncrement = netIncrement;
-        //    StatusId = statusId;
-        //    EmployeeType = employeeType;
-        //    PayrollTransactionLines = payrollTransactionLines;
-        //}
+        public void UpdatePayrollTransaction(string religion,string cnic,int month, int year, int employeeId, int designationId, int departmentId, int campusId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId, string employeeType, List<PayrollTransactionLines> payrollTransactionLines)
+        {
+            Month = month;
+            Year = year;
+            EmployeeId = employeeId;                      
+            DesignationId = designationId;
+            DepartmentId = departmentId;
+            CampusId = campusId;
+            WorkingDays = workingDays;
+            PresentDays = presentDays;
+            LeaveDays = leaveDays;
+            TransDate = transDate;
+            BasicSalary = basicSalary;
+            GrossSalary = grossSalary;
+            NetSalary = netSalary;            
+            StatusId = statusId;
+            CNIC = cnic;
+            Religion = religion;
+            EmployeeType = employeeType;
+            PayrollTransactionLines = payrollTransactionLines;
+        }
 
         public PayrollTransactionMaster(int month, int year, Guid bPSAccountId, string bPSName,
             int campusId, int workingDays, int presentDays, int leaveDays,

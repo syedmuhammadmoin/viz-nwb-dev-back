@@ -1,5 +1,7 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.DTOs.FixedAsset;
+using Application.Contracts.DTOs.PayrollItem;
+using Application.Contracts.DTOs.PayrollTransaction;
 using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
@@ -785,6 +787,13 @@ namespace Application.Mapper
 
             CreateMap<CreateProgramChallanTemplateDto, ProgramChallanTemplateMaster>();
             CreateMap<CreateProgramChallanTemplateLinesDto, ProgramChallanTemplateLines>();
+
+            CreateMap<PayrollResult, PayrollResultDto>();
+
+            CreateMap<PayrollTransactionMaster, UpdateEmployeeTransactionDto>();
+            CreateMap<UpdateEmployeeTransactionDto, PayrollTransactionMaster>();
+            CreateMap<PayrollTransactionLinesDto, PayrollTransactionLines>();
+            CreateMap<PayrollTransactionLines, PayrollTransactionLinesDto>();
 
         }
     }

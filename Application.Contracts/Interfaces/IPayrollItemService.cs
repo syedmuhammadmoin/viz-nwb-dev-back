@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.PayrollItem;
 using Application.Contracts.Filters;
 using Application.Contracts.Response;
 using System;
@@ -12,6 +13,6 @@ namespace Application.Contracts.Interfaces
     public interface IPayrollItemService : ICrudService<CreatePayrollItemDto, PayrollItemDto, int, PayrollItemFilter>
     {
         Task<Response<List<PayrollItemDto>>> GetBaicPayList();
-        Response<List<PayrollItemDto>> GetPayrollItemDropDown();
+        Response<List<PayrollResultDto>> GetPayrollItemDropDown(int id);
     }
 }

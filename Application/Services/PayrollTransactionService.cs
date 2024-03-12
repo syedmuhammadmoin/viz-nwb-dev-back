@@ -18,6 +18,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Contracts.DTOs.PayrollTransaction;
 
 namespace Application.Services
 {
@@ -258,6 +259,42 @@ namespace Application.Services
                     empDetails.IncrementName,
                     empDetails.IncrementAmount,
                     payrollTransactionLines
+                );
+
+            await _unitOfWork.SaveAsync();
+            //Commiting the transaction 
+            _unitOfWork.Commit();
+            //returning response
+            return new Response<PayrollTransactionDto>(_mapper.Map<PayrollTransactionDto>(getPayrollTransaction), "Updated successfully");
+        }        
+        public async Task<Response<PayrollTransactionDto>> UpdatePayrollTransaction(int id, UpdateEmployeeTransactionDto entity,int status)
+        {
+            _unitOfWork.CreateTransaction();
+
+            var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById(id, new PayrollTransactionSpecs(true));
+            if (getPayrollTransaction == null)
+                return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
+
+            //For updating data
+            getPayrollTransaction.UpdatePayrollTransaction(    
+                entity.Religion,
+                entity.CNIC,
+                entity.Month,
+                entity.Year,
+                entity.EmployeeId,
+                entity.DesignationId,
+                entity.DepartmentId,
+                entity.CampusId,
+                (int)entity.WorkingDays,
+                    (int)entity.PresentDays,
+                    (int)entity.LeaveDays,
+                    (DateTime)entity.TransDate,
+                    entity.BasicSalary,
+                    entity.grossPay,
+                    entity.NetSalary,                   
+                    1,
+                    entity.EmployeeType,                                        
+                    entity.payrollTransactionLines
                 );
 
             await _unitOfWork.SaveAsync();

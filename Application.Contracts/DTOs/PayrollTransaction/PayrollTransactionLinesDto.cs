@@ -18,5 +18,6 @@ namespace Application.Contracts.DTOs
         public Guid AccountId { get; set; }
         public string Account { get; set; }
         public int MasterId { get; set; }
+        public bool IsActive { get; set; }
     }
 }
