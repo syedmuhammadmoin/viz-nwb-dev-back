@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Application.Contracts.DTOs.FixedAsset
+namespace Application.Contracts.DTOs
 {
     public class UpdateSalvageValueDto
     {

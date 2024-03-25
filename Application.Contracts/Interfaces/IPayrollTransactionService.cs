@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.DTOs;
-using Application.Contracts.DTOs.PayrollTransaction;
 using Application.Contracts.Filters;
 using Application.Contracts.Response;
 using System;

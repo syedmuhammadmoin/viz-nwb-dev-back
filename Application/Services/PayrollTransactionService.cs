@@ -18,7 +18,6 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Application.Contracts.DTOs.PayrollTransaction;
 
 namespace Application.Services
 {
@@ -278,23 +277,25 @@ namespace Application.Services
             //For updating data
             getPayrollTransaction.UpdatePayrollTransaction(    
                 entity.Religion,
+                
                 entity.CNIC,
                 entity.Month,
                 entity.Year,
                 entity.EmployeeId,
+
                 entity.DesignationId,
                 entity.DepartmentId,
                 entity.CampusId,
                 (int)entity.WorkingDays,
-                    (int)entity.PresentDays,
-                    (int)entity.LeaveDays,
-                    (DateTime)entity.TransDate,
-                    entity.BasicSalary,
-                    entity.grossPay,
-                    entity.NetSalary,                   
-                    1,
-                    entity.EmployeeType,                                        
-                    entity.payrollTransactionLines
+                (int)entity.PresentDays,
+                (int)entity.LeaveDays,
+                (DateTime)entity.TransDate,
+                entity.BasicSalary,
+                entity.grossPay,
+                entity.NetSalary,                   
+                1,
+                entity.EmployeeType,                                        
+                entity.payrollTransactionLines
                 );
 
             await _unitOfWork.SaveAsync();

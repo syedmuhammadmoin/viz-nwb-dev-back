@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.DTOs;
-using Application.Contracts.DTOs.PayrollItem;
 using Application.Contracts.Filters;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
@@ -221,15 +220,7 @@ namespace Application.Services
             return new Response<List<PayrollItemDto>>(_mapper.Map<List<PayrollItemDto>>(result), "Returning List");
         }
 
-        //public Response<List<PayrollResultDto>> GetPayrollItemDropDown(int id)
-        //{
-
-        //    var result = _unitOfWork.PayrollItem.GetPayrollItemsByEmployeeId(id);                             
-        //    if (!result.Any())
-        //        return new Response<List<PayrollResultDto>>("List is empty");          
-
-        //    return new Response<List<PayrollResultDto>>(_mapper.Map<List<PayrollResultDto>>(result), "Returning List");
-        //}
+       
         public Response<List<PayrollResultDto>> GetPayrollItemDropDown(int id)
         {
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Contracts.DTOs.PayrollItem
+namespace Application.Contracts.DTOs
 {
     public class PayrollResultDto
     {

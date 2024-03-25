@@ -1,7 +1,4 @@
 ﻿using Application.Contracts.DTOs;
-using Application.Contracts.DTOs.FixedAsset;
-using Application.Contracts.DTOs.PayrollItem;
-using Application.Contracts.DTOs.PayrollTransaction;
 using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
