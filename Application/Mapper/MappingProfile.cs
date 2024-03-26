@@ -789,8 +789,7 @@ namespace Application.Mapper
 
             CreateMap<PayrollTransactionMaster, UpdateEmployeeTransactionDto>();
             CreateMap<UpdateEmployeeTransactionDto, PayrollTransactionMaster>();
-            CreateMap<PayrollTransactionLinesDto, PayrollTransactionLines>();
-            CreateMap<PayrollTransactionLines, PayrollTransactionLinesDto>();
+           
 
         }
     }

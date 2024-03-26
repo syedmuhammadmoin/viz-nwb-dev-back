@@ -268,41 +268,50 @@ namespace Application.Services
         }        
         public async Task<Response<PayrollTransactionDto>> UpdatePayrollTransaction(int id, UpdateEmployeeTransactionDto entity,int status)
         {
-            _unitOfWork.CreateTransaction();
+            //_unitOfWork.CreateTransaction();
 
-            var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById(id, new PayrollTransactionSpecs(true));
-            if (getPayrollTransaction == null)
-                return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
+            //var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById(id, new PayrollTransactionSpecs(true));
+            //if (getPayrollTransaction == null)
+            //    return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
+
+            ////For updating data
+            //getPayrollTransaction.UpdatePayrollTransaction(    
+            //    entity.Religion,
+
+            //    entity.CNIC,
+            //    entity.Month,
+            //    entity.Year,
+            //    entity.EmployeeId,
+
+            //    entity.DesignationId,
+            //    entity.DepartmentId,
+            //    entity.CampusId,
+            //    (int)entity.WorkingDays,
+            //    (int)entity.PresentDays,
+            //    (int)entity.LeaveDays,
+            //    (DateTime)entity.TransDate,
+            //    entity.BasicSalary,
+            //    entity.grossPay,
+            //    entity.NetSalary,                   
+            //    1,
+            //    entity.EmployeeType,                                        
+            //    entity.payrollTransactionLines
+            //    );
+
+            //await _unitOfWork.SaveAsync();
+            ////Commiting the transaction 
+            //_unitOfWork.Commit();
+            ////returning response
+            //return new Response<PayrollTransactionDto>(_mapper.Map<PayrollTransactionDto>(getPayrollTransaction), "Updated successfully");
+
+            var result = await _unitOfWork.PayrollTransaction.GetById((int)entity.Id);
+            if (result == null)
+                return new Response<PayrollTransactionDto>("Not found");
 
             //For updating data
-            getPayrollTransaction.UpdatePayrollTransaction(    
-                entity.Religion,
-                
-                entity.CNIC,
-                entity.Month,
-                entity.Year,
-                entity.EmployeeId,
-
-                entity.DesignationId,
-                entity.DepartmentId,
-                entity.CampusId,
-                (int)entity.WorkingDays,
-                (int)entity.PresentDays,
-                (int)entity.LeaveDays,
-                (DateTime)entity.TransDate,
-                entity.BasicSalary,
-                entity.grossPay,
-                entity.NetSalary,                   
-                1,
-                entity.EmployeeType,                                        
-                entity.payrollTransactionLines
-                );
-
+            _mapper.Map(entity, result);
             await _unitOfWork.SaveAsync();
-            //Commiting the transaction 
-            _unitOfWork.Commit();
-            //returning response
-            return new Response<PayrollTransactionDto>(_mapper.Map<PayrollTransactionDto>(getPayrollTransaction), "Updated successfully");
+            return new Response<PayrollTransactionDto>(_mapper.Map<PayrollTransactionDto>(result), "Updated successfully");
         }
         private async Task<Response<PayrollTransactionDto>> UpdatePayrollTransaction(UpdatePayrollTransactionDto entity, int status)
         {
