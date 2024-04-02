@@ -274,6 +274,7 @@ namespace Application.Services
 
             //For updating data
             _mapper.Map(entity, result);
+            result.SetStatus(6);
             await _unitOfWork.SaveAsync();
             return new Response<PayrollTransactionDto>(_mapper.Map<PayrollTransactionDto>(result), "Updated successfully");
         }
