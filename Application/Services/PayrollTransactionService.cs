@@ -760,6 +760,13 @@ namespace Application.Services
                                             .Where(p => p.PayrollType == PayrollType.TaxDeduction)
                                             .Sum(e => e.Amount);
 
+            decimal grossPay = data.BasicSalary + totalAllowances;
+            decimal NetPay = grossPay - totalDeductions;
+
+
+
+
+
             //mapping calculated value to employeedto
             var payrollTransactionDto = _mapper.Map<PayrollTransactionDto>(data);
 
@@ -770,8 +777,8 @@ namespace Application.Services
             payrollTransactionDto.TotalAllowances = totalAllowances;
             payrollTransactionDto.TotalDeductions = totalDeductions;
             payrollTransactionDto.TaxDeduction = taxDeduction;
-            payrollTransactionDto.GrossPay = data.GrossSalary;
-            payrollTransactionDto.NetSalary = data.NetSalary;
+            payrollTransactionDto.GrossPay = grossPay;
+            payrollTransactionDto.NetSalary = NetPay;
             payrollTransactionDto.CNIC = data.Employee.CNIC;
             payrollTransactionDto.Religion = data.Employee.Religion;
             payrollTransactionDto.TransDate = data.TransDate;
