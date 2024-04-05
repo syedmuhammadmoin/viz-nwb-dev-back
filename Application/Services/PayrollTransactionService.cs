@@ -760,8 +760,10 @@ namespace Application.Services
                                             .Where(p => p.PayrollType == PayrollType.TaxDeduction)
                                             .Sum(e => e.Amount);
 
+            decimal totalDeduction = totalDeductions + taxDeduction;
+
             decimal grossPay = data.BasicSalary + totalAllowances;
-            decimal NetPay = grossPay - totalDeductions;
+            decimal NetPay = grossPay - totalDeduction;
 
 
 
