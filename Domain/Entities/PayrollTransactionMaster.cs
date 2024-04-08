@@ -138,7 +138,7 @@ namespace Domain.Entities
             string placeofBirth, int designationId, int departmentId, string address, DateTime dateofJoining,
             DateTime dateofRetirment, DateTime dateofBirth, string faculty,
             string dutyShift, int? noOfIncrements, string email, int basicPayItemId, decimal bpsAmount, 
-            int? incrementItemId, string incrementName, decimal incrementAmount,
+            int? incrementItemId, string incrementName, decimal incrementAmount,Guid? accountpayableId,string accountpayableName,
             List<PayrollTransactionLines> payrollTransactionLines)
         {
             Month = month;
@@ -186,6 +186,7 @@ namespace Domain.Entities
             IncrementItemId = incrementItemId;
             IncrementName = incrementName;
             IncrementAmount = incrementAmount;
+            AccountPayableId = accountpayableId;          
             PayrollTransactionLines = payrollTransactionLines;
         }
 

@@ -141,6 +141,8 @@ namespace Application.Services
                     empDetails.IncrementItemId,
                     empDetails.IncrementName,
                     empDetails.IncrementAmount,
+                    empDetails.AccountPayableId,
+                    empDetails.AccountPayableName,
                     payrollTransactionLines
                     );
 
