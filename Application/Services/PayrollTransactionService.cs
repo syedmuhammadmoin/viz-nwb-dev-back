@@ -814,7 +814,7 @@ namespace Application.Services
                 }
 
                 //Getting Pending Invoice Amount
-                var pendingAmount = data.NetSalary - transactionReconciles.Sum(e => e.Amount);
+                var pendingAmount = NetPay - transactionReconciles.Sum(e => e.Amount);
 
                 if (data.Status.State != DocumentStatus.Paid)
                 {
