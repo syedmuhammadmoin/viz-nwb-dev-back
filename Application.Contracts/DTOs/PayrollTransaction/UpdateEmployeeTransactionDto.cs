@@ -17,8 +17,12 @@ namespace Application.Contracts.DTOs
         public int CampusId { get; set; }                            
         public DateTime TransDate { get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal BasicSalary { get; set; }           
-        public int EmployeeId { get; set; }                   
+        public decimal BasicSalary { get; set; }
+		[Column(TypeName = "decimal(18,2)")]
+		public decimal GrossSalary { get; set; }
+		[Column(TypeName = "decimal(18,2)")]
+		public decimal NetSalary { get; set; }
+		public int EmployeeId { get; set; }                   
         [MaxLength(40)]
         public string EmployeeType { get; set; }   
         [MaxLength(30)]      
@@ -26,7 +30,7 @@ namespace Application.Contracts.DTOs
         public int DesignationId { get; set; }      
         public int DepartmentId { get; set; }              
         public decimal NetIncrement { get; set; }
-        public virtual List<PayrollTransactionLines> payrollTransactionLines { get; set; } = new List<PayrollTransactionLines> { };
+        public virtual List<PayrollTransactionLinesDto> payrollTransactionLines { get; set; } = new List<PayrollTransactionLinesDto>();
 
     }
 }
