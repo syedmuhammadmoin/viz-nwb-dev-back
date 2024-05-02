@@ -90,9 +90,10 @@ namespace Application.Services
 
             if (netPay < 0)
                 return new Response<PayrollTransactionDto>($"Net salary for Employee with CNIC{item.EmployeeCNIC} shouldn't be less than deductions ");
+            var lastDayofMonth = LastDayOfMonth((int)item.Year, (int)item.Month);
 
 
-            _unitOfWork.CreateTransaction();
+			_unitOfWork.CreateTransaction();
             try
             {
                 var payrollTransaction = new PayrollTransactionMaster(
@@ -104,7 +105,7 @@ namespace Application.Services
                     (int)item.WorkingDays,
                     (int)item.PresentDays,
                     (int)item.LeaveDays,
-                    (DateTime)item.TransDate,
+                    (DateTime)lastDayofMonth.Date,
                     totalBasicPay,
                     grossPay,
                     netPay,
@@ -174,7 +175,12 @@ namespace Application.Services
                 return new Response<PayrollTransactionDto>(ex.Message);
             }
         }
-        private async Task<Response<PayrollTransactionDto>> UpdatePayroll(int id, CreatePayrollTransactionDto entity, int status)
+		private DateTime LastDayOfMonth(int year,int month)
+		{
+			var days = DateTime.DaysInMonth(year, month);
+			return new DateTime(year, month, days);
+		}
+		private async Task<Response<PayrollTransactionDto>> UpdatePayroll(int id, CreatePayrollTransactionDto entity, int status)
         {
             var emp = _employeeService.GetEmpByCNIC(entity.EmployeeCNIC);
 
@@ -270,63 +276,15 @@ namespace Application.Services
         }        
         public async Task<Response<PayrollTransactionDto>> UpdatePayrollTransaction(int id, UpdateEmployeeTransactionDto entity,int status)
         {
-			var payrollTransaction = await _unitOfWork.PayrollTransaction.GetById((int)entity.Id);           
-            List<PayrollTransactionLines> transactionLines = _mapper.Map<List<PayrollTransactionLines>>(entity.payrollTransactionLines);
-            
-			if (payrollTransaction == null)
+			var result = await _unitOfWork.PayrollTransaction.GetById((int)entity.Id);                    
+			if (result == null)
 			    return new Response<PayrollTransactionDto>("Not found");			
 
 			//For updating data
-			//_mapper.Map(entity, result);
-			//result.SetStatus(6);
-			//await _unitOfWork.SaveAsync();
-			//return new Response<PayrollTransactionDto>(_mapper.Map<PayrollTransactionDto>(result), "Updated successfully");
-			payrollTransaction.UpdatePayrollTransaction(
-					payrollTransaction.BPSAccountId,
-					payrollTransaction.BPSName,
-					payrollTransaction.CampusId,
-                    (int)payrollTransaction.WorkingDays,
-                    (int)payrollTransaction.PresentDays,
-                    (int)payrollTransaction.LeaveDays,
-                    (DateTime)entity.TransDate,
-                    entity.BasicSalary,
-					entity.GrossSalary,
-					entity.NetSalary,
-                    6,
-					payrollTransaction.Name,
-					payrollTransaction.FatherName,
-					payrollTransaction.EmployeeType,
-					payrollTransaction.BankName,
-					payrollTransaction.BranchName,
-					payrollTransaction.AccountTitle,
-					payrollTransaction.AccountNumber,
-					payrollTransaction.EmployeeCode,
-					payrollTransaction.Domicile,
-					payrollTransaction.Contact,
-					entity.Religion,
-					payrollTransaction.Nationality,
-                    payrollTransaction.Maritalstatus,
-					payrollTransaction.Gender,
-					payrollTransaction.PlaceofBirth,
-					entity.DesignationId,
-					entity.DepartmentId,
-					payrollTransaction.Address,
-					payrollTransaction.DateofJoining,
-					payrollTransaction.DateofRetirment,
-					payrollTransaction.DateofBirth,
-					payrollTransaction.Faculty,
-					payrollTransaction.DutyShift,
-					payrollTransaction.NoOfIncrements,
-					payrollTransaction.Email,
-					payrollTransaction.BasicPayItemId,
-					payrollTransaction.BasicSalary,
-					payrollTransaction.IncrementItemId,
-					payrollTransaction.IncrementName,
-					payrollTransaction.IncrementAmount,
-					transactionLines
-				);
+			_mapper.Map(entity, result);
+			result.SetStatus(6);
 			await _unitOfWork.SaveAsync();
-			return new Response<PayrollTransactionDto>(_mapper.Map<PayrollTransactionDto>(payrollTransaction), "Updated successfully");
+			return new Response<PayrollTransactionDto>(_mapper.Map<PayrollTransactionDto>(result), "Updated successfully");	
 		}
 		private async Task<Response<PayrollTransactionDto>> UpdatePayrollTransaction(UpdatePayrollTransactionDto entity, int status)
         {

@@ -126,7 +126,7 @@ namespace Domain.Entities
         public decimal IncrementAmount { get; private set; }
 
         // Payroll Lines
-        public virtual List<PayrollTransactionLines> PayrollTransactionLines { get;private set; }
+        public virtual List<PayrollTransactionLines> PayrollTransactionLines { get;set; }
 
         //Construtors        
         public PayrollTransactionMaster(int month, int year, Guid bPSAccountId, string bPSName,

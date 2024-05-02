@@ -30,7 +30,7 @@ namespace Application.Contracts.DTOs
         public int DesignationId { get; set; }      
         public int DepartmentId { get; set; }              
         public decimal NetIncrement { get; set; }
-        public virtual List<PayrollTransactionLinesDto> payrollTransactionLines { get; set; } = new List<PayrollTransactionLinesDto>();
+        public virtual List<PayrollTransactionLines> payrollTransactionLines { get; set; } = new List<PayrollTransactionLines>();
 
     }
 }
