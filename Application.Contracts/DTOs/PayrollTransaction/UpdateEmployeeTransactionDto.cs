@@ -29,8 +29,7 @@ namespace Application.Contracts.DTOs
         public string Religion { get; set; }         
         public int DesignationId { get; set; }      
         public int DepartmentId { get; set; }              
-        public decimal NetIncrement { get; set; }
-        public decimal TaxDeduction { get; set; }
+        public decimal NetIncrement { get; set; }      
         public virtual List<PayrollTransactionLines> payrollTransactionLines { get; set; } = new List<PayrollTransactionLines>();
 
     }
