@@ -90,9 +90,10 @@ namespace Application.Services
 
             if (netPay < 0)
                 return new Response<PayrollTransactionDto>($"Net salary for Employee with CNIC{item.EmployeeCNIC} shouldn't be less than deductions ");
+            var lastDayofMonth = LastDayOfMonth((int)item.Year, (int)item.Month);
 
 
-            _unitOfWork.CreateTransaction();
+			_unitOfWork.CreateTransaction();
             try
             {
                 var payrollTransaction = new PayrollTransactionMaster(
@@ -104,7 +105,7 @@ namespace Application.Services
                     (int)item.WorkingDays,
                     (int)item.PresentDays,
                     (int)item.LeaveDays,
-                    (DateTime)item.TransDate,
+                    (DateTime)lastDayofMonth.Date,
                     totalBasicPay,
                     grossPay,
                     netPay,
@@ -141,6 +142,8 @@ namespace Application.Services
                     empDetails.IncrementItemId,
                     empDetails.IncrementName,
                     empDetails.IncrementAmount,
+                    empDetails.AccountPayableId,
+                    empDetails.AccountPayableName,
                     payrollTransactionLines
                     );
 
@@ -172,7 +175,12 @@ namespace Application.Services
                 return new Response<PayrollTransactionDto>(ex.Message);
             }
         }
-        private async Task<Response<PayrollTransactionDto>> UpdatePayroll(int id, CreatePayrollTransactionDto entity, int status)
+		private DateTime LastDayOfMonth(int year,int month)
+		{
+			var days = DateTime.DaysInMonth(year, month);
+			return new DateTime(year, month, days);
+		}
+		private async Task<Response<PayrollTransactionDto>> UpdatePayroll(int id, CreatePayrollTransactionDto entity, int status)
         {
             var emp = _employeeService.GetEmpByCNIC(entity.EmployeeCNIC);
 
@@ -265,8 +273,20 @@ namespace Application.Services
             _unitOfWork.Commit();
             //returning response
             return new Response<PayrollTransactionDto>(_mapper.Map<PayrollTransactionDto>(getPayrollTransaction), "Updated successfully");
-        }
-        private async Task<Response<PayrollTransactionDto>> UpdatePayrollTransaction(UpdatePayrollTransactionDto entity, int status)
+        }        
+        public async Task<Response<PayrollTransactionDto>> UpdatePayrollTransaction(int id, UpdateEmployeeTransactionDto entity,int status)
+        {
+			var result = await _unitOfWork.PayrollTransaction.GetById((int)entity.Id);                    
+			if (result == null)
+			    return new Response<PayrollTransactionDto>("Not found");			
+
+			//For updating data
+			_mapper.Map(entity, result);
+			result.SetStatus(6);
+			await _unitOfWork.SaveAsync();
+			return new Response<PayrollTransactionDto>(_mapper.Map<PayrollTransactionDto>(result), "Updated successfully");	
+		}
+		private async Task<Response<PayrollTransactionDto>> UpdatePayrollTransaction(UpdatePayrollTransactionDto entity, int status)
         {
             var getPayrollTransaction = await _unitOfWork.PayrollTransaction.GetById((int)entity.Id);
 
@@ -748,6 +768,15 @@ namespace Application.Services
                                             .Where(p => p.PayrollType == PayrollType.TaxDeduction)
                                             .Sum(e => e.Amount);
 
+            decimal totalDeduction = totalDeductions + taxDeduction;
+
+            decimal grossPay = data.BasicSalary + totalAllowances;
+            decimal NetPay = grossPay - totalDeduction;
+
+
+
+
+
             //mapping calculated value to employeedto
             var payrollTransactionDto = _mapper.Map<PayrollTransactionDto>(data);
 
@@ -758,8 +787,8 @@ namespace Application.Services
             payrollTransactionDto.TotalAllowances = totalAllowances;
             payrollTransactionDto.TotalDeductions = totalDeductions;
             payrollTransactionDto.TaxDeduction = taxDeduction;
-            payrollTransactionDto.GrossPay = data.GrossSalary;
-            payrollTransactionDto.NetSalary = data.NetSalary;
+            payrollTransactionDto.GrossPay = grossPay;
+            payrollTransactionDto.NetSalary = NetPay;
             payrollTransactionDto.CNIC = data.Employee.CNIC;
             payrollTransactionDto.Religion = data.Employee.Religion;
             payrollTransactionDto.TransDate = data.TransDate;
@@ -791,7 +820,7 @@ namespace Application.Services
                 }
 
                 //Getting Pending Invoice Amount
-                var pendingAmount = data.NetSalary - transactionReconciles.Sum(e => e.Amount);
+                var pendingAmount = NetPay - transactionReconciles.Sum(e => e.Amount);
 
                 if (data.Status.State != DocumentStatus.Paid)
                 {
@@ -1281,6 +1310,8 @@ namespace Application.Services
                     {
                         allowanceDTO.Add(new PayrollTransactionDto
                         {
+                            Id = payroll.Id,
+                            EmployeeId = payroll.EmployeeId,
                             Employee = payroll.Employee.Name,
                             CNIC = payroll.CNIC,
                             Department = payroll.Department.Name,
@@ -1297,9 +1328,11 @@ namespace Application.Services
             }
 
             allowanceDTO = allowanceDTO
-               .GroupBy(x => new { x.Employee, x.NetSalary, x.GrossPay, x.CNIC, x.Department, x.Campus, x.Designation, x.AccountName })
+               .GroupBy(x => new { x.Employee, x.NetSalary, x.GrossPay, x.CNIC, x.Department, x.Campus, x.Designation, x.AccountName, x.EmployeeId, x.Id })
                .Select(c => new PayrollTransactionDto
                {
+                   Id = c.Key.Id,
+                   EmployeeId = c.Key.EmployeeId,
                    Employee = c.Key.Employee,
                    CNIC = c.Key.CNIC,
                    Department = c.Key.Department,
@@ -1313,10 +1346,12 @@ namespace Application.Services
                .ToList();
 
             var groups = from d in allowanceDTO
-                         group d by new { d.Employee, d.NetSalary, d.GrossPay, d.CNIC, d.Department, d.Campus, d.Designation }
+                         group d by new { d.Employee, d.NetSalary, d.GrossPay, d.CNIC, d.Department, d.Campus, d.Designation ,d.EmployeeId,d.Id}
                         into grp
                          select new
-                         {
+                         {    
+                             Id = grp.Key.Id,
+                             EmployeeId = grp.Key.EmployeeId,
                              Employee = grp.Key.Employee,
                              CNIC = grp.Key.CNIC,
                              Department = grp.Key.Department,
@@ -1334,6 +1369,9 @@ namespace Application.Services
 
             DataTable dt = new DataTable();
             /*for static cols*/
+
+            dt.Columns.Add("Id");
+            dt.Columns.Add("EmployeeId");
             dt.Columns.Add("Employee");
             dt.Columns.Add("CNIC");
             dt.Columns.Add("NetSalary");
@@ -1351,6 +1389,8 @@ namespace Application.Services
             foreach (var g in groups)
             {
                 DataRow dr = dt.NewRow();
+                dr["Id"] = g.Id;
+                dr["EmployeeId"] = g.EmployeeId;
                 dr["Employee"] = g.Employee;
                 dr["CNIC"] = g.CNIC;
                 dr["Department"] = g.Department;

@@ -185,10 +185,10 @@ namespace Application.Services
                         
 
                         //Inventory
-                        var validationInventory = await ValidateInventoryListToIssue(createIssuanceDto);
+                        var validationInventory = await ValidateInventoryListToIssueForApproval(createIssuanceDto);
                         if (!validationInventory.IsSuccess)
                         {
-                            return new Response<bool>(validationAsset.Message);
+                            return new Response<bool>(validationInventory.Message);
                         }
 
                         foreach (var line in getIssuance.IssuanceLines)
@@ -259,7 +259,7 @@ namespace Application.Services
             var employeeDto = await _employeeService.Value.GetByIdAsync(entity.EmployeeId.Value);
             var warehouseDto = await _warehouseService.Value.GetWarehouseByCampusDropDown(employeeDto.Result.CampusId);
 
-            foreach (var line in entity.IssuanceLines)
+           foreach (var line in entity.IssuanceLines)
             {
                 if (line.FixedAssetId == null)
                 {
@@ -279,6 +279,63 @@ namespace Application.Services
                     if (entity.RequisitionId == null)
                     {
                         if (line.Quantity > getStockRecord.AvailableQuantity)
+                            return new Response<bool>("Selected item quantity exceeds available stock or the item is out of stock.");
+                    }
+                    else
+                    {
+                        if (line.Quantity > getStockRecord.ReservedRequisitionQuantity)
+                            return new Response<bool>("Selected item quantity is exceeding available quantity");
+
+                        //Getting Unreconciled Requisition lines
+                        var getrequisitionLine = _unitOfWork.Requisition
+                            .FindLines(new RequisitionLinesSpecs(line.ItemId, (int)entity.RequisitionId, (int)line.WarehouseId, true))
+                            .FirstOrDefault();
+
+                        if (getrequisitionLine == null)
+                            return new Response<bool>("Selected item is not in requisition");
+
+
+                        // Checking if given amount is greater than unreconciled document amount
+                        var reconciledRequistionQty = _unitOfWork.RequisitionToIssuanceLineReconcile
+                            .Find(new RequisitionToIssuanceLineReconcileSpecs(entity.RequisitionId.Value, getrequisitionLine.Id, getrequisitionLine.ItemId))
+                            .Sum(p => p.Quantity);
+                        var unreconciledRequisitionQty = getrequisitionLine.Quantity - reconciledRequistionQty;
+                        if (line.Quantity > unreconciledRequisitionQty)
+                            return new Response<bool>("Enter quantity is greater than pending quantity");
+
+                    }
+                }
+            }
+            return new Response<bool>(true, "No validation error found");
+
+        }
+
+
+        private async Task<Response<bool>> ValidateInventoryListToIssueForApproval(CreateIssuanceDto entity)
+        {
+            var employeeDto = await _employeeService.Value.GetByIdAsync(entity.EmployeeId.Value);
+            var warehouseDto = await _warehouseService.Value.GetWarehouseByCampusDropDown(employeeDto.Result.CampusId);
+
+            foreach (var line in entity.IssuanceLines)
+            {
+                if (line.FixedAssetId == null)
+                {
+                    var getStockRecord = _unitOfWork.Stock.Find(new StockSpecs((int)line.ItemId, (int)line.WarehouseId)).FirstOrDefault();
+
+                    if (getStockRecord == null)
+                        return new Response<bool>("Item not found in stock");
+
+                    // verify whether the employee belongs to the warehouse of his respective campus.
+                    var warehouse = warehouseDto.Result.FirstOrDefault(x => x.Id == line.WarehouseId);
+
+                    if (warehouse == null)
+                    {
+                        return new Response<bool>("No item found in selected store");
+                    }
+
+                    if (entity.RequisitionId == null)
+                    {
+                        if (line.Quantity > getStockRecord.ReservedQuantity)
                             return new Response<bool>("Selected item quantity exceeds available stock or the item is out of stock.");
                     }
                     else

@@ -24,5 +24,6 @@ namespace Application.Contracts.Interfaces
         Task<MemoryStream> ExportPayrollDetailedReport(PayrollDetailFilter filter);
         Response<PayrollExecutiveReportDto> GetPayrollExecutiveReport(PayrollExecutiveReportFilter filter);
         Response<List<BankAdviceReportDto>> GetBankAdviceReportReport(BankAdviceReportFilter filter);
+        Task<Response<PayrollTransactionDto>> UpdatePayrollTransaction(int id, UpdateEmployeeTransactionDto entity, int status);
     }
 }

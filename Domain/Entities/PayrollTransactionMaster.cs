@@ -126,32 +126,9 @@ namespace Domain.Entities
         public decimal IncrementAmount { get; private set; }
 
         // Payroll Lines
-        public virtual List<PayrollTransactionLines> PayrollTransactionLines { get;private set; }
+        public virtual List<PayrollTransactionLines> PayrollTransactionLines { get;set; }
 
-        //Construtors
-        //public PayrollTransactionMaster(int month, int year, int employeeId, Guid bpsAccountId, string bpsName, int designationId, int departmentId, int campusId, int workingDays, int presentDays, int leaveDays, DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netIncrement, decimal netSalary, int statusId, string employeeType, List<PayrollTransactionLines> payrollTransactionLines)
-        //{
-        //    Month = month;
-        //    Year = year;
-        //    EmployeeId = employeeId;
-        //    BPSAccountId = bpsAccountId;
-        //    BPSName = bpsName;
-        //    DesignationId = designationId;
-        //    DepartmentId = departmentId;
-        //    CampusId = campusId;
-        //    WorkingDays = workingDays;
-        //    PresentDays = presentDays;
-        //    LeaveDays = leaveDays;
-        //    TransDate = transDate;
-        //    BasicSalary = basicSalary;
-        //    GrossSalary = grossSalary;
-        //    NetSalary = netSalary;
-        //    NetIncrement = netIncrement;
-        //    StatusId = statusId;
-        //    EmployeeType = employeeType;
-        //    PayrollTransactionLines = payrollTransactionLines;
-        //}
-
+        //Construtors        
         public PayrollTransactionMaster(int month, int year, Guid bPSAccountId, string bPSName,
             int campusId, int workingDays, int presentDays, int leaveDays,
             DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary,
@@ -161,7 +138,7 @@ namespace Domain.Entities
             string placeofBirth, int designationId, int departmentId, string address, DateTime dateofJoining,
             DateTime dateofRetirment, DateTime dateofBirth, string faculty,
             string dutyShift, int? noOfIncrements, string email, int basicPayItemId, decimal bpsAmount, 
-            int? incrementItemId, string incrementName, decimal incrementAmount,
+            int? incrementItemId, string incrementName, decimal incrementAmount,Guid? accountpayableId,string accountpayableName,
             List<PayrollTransactionLines> payrollTransactionLines)
         {
             Month = month;
@@ -209,6 +186,7 @@ namespace Domain.Entities
             IncrementItemId = incrementItemId;
             IncrementName = incrementName;
             IncrementAmount = incrementAmount;
+            AccountPayableId = accountpayableId;          
             PayrollTransactionLines = payrollTransactionLines;
         }
 

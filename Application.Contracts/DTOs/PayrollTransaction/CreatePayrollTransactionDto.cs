@@ -27,6 +27,8 @@ namespace Application.Contracts.DTOs
         [Range(0, 31, ErrorMessage = "Please enter leave days between 0 - 31")]
         public int? LeaveDays { get; set; }
         [Required]
-        public DateTime? TransDate { get; set; }
+        public DateTime TransDate { get; set; }
+        
+
     }
 }

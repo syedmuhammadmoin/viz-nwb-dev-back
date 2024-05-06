@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.DTOs;
-using Application.Contracts.DTOs.FixedAsset;
 using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;

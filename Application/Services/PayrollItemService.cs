@@ -6,6 +6,7 @@ using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
+using Infrastructure.Repositories;
 using Infrastructure.Specifications;
 using System;
 using System.Collections.Generic;
@@ -18,12 +19,12 @@ namespace Application.Services
     public class PayrollItemService : IPayrollItemService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly IMapper _mapper;      
 
         public PayrollItemService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            _mapper = mapper;            
         }
 
         public async Task<Response<PayrollItemDto>> CreateAsync(CreatePayrollItemDto entity)
@@ -219,13 +220,15 @@ namespace Application.Services
             return new Response<List<PayrollItemDto>>(_mapper.Map<List<PayrollItemDto>>(result), "Returning List");
         }
 
-        public Response<List<PayrollItemDto>> GetPayrollItemDropDown()
+       
+        public Response<List<PayrollResultDto>> GetPayrollItemDropDown(int id)
         {
-            var result =  _unitOfWork.PayrollItem.Find(new PayrollItemSpecs (1)).ToList();
-            if (!result.Any())
-                return new Response<List<PayrollItemDto>>("List is empty");
 
-            return new Response<List<PayrollItemDto>>(_mapper.Map<List<PayrollItemDto>>(result), "Returning List");
+            var result = _unitOfWork.PayrollItem.GetPayrollItemsByEmployeeId(id);
+            if (!result.Any())
+                return new Response<List<PayrollResultDto>>("List is empty");
+
+            return new Response<List<PayrollResultDto>>(_mapper.Map<List<PayrollResultDto>>(result), "Returning List");
         }
     }
 }

@@ -48,7 +48,9 @@ namespace Infrastructure.Specifications
         public EmployeeSpecs(string getCNIC) : base(e => e.CNIC == getCNIC)
         {
             AddInclude(i => i.Department);
+            AddInclude(i => i.BusinessPartner);
             AddInclude(i => i.Designation);
+            AddInclude("BusinessPartner.AccountPayable");
             AddInclude("Department.Campus");
         }
 

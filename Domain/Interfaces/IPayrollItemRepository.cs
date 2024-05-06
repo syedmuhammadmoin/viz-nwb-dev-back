@@ -9,5 +9,6 @@ namespace Domain.Interfaces
 {
     public interface IPayrollItemRepository : IGenericRepository<PayrollItem, int>
     {
+        public List<PayrollResult> GetPayrollItemsByEmployeeId(int id);
     }
 }

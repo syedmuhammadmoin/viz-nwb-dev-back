@@ -42,10 +42,9 @@ namespace Infrastructure.Repositories
 
         public async Task<T> GetById(TKey id, ISpecification<T> specification = null)
         {
-
             var query = SpecificationEvaluator<T, TKey>.GetQuery(_context.Set<T>()
-                            .Where(x => x.Id.Equals(id))
-                            .AsQueryable(), specification);
+                                    .Where(x => x.Id.Equals(id))
+                                    .AsQueryable(), specification);
 
             var rawSql = query.ToQueryString();
 

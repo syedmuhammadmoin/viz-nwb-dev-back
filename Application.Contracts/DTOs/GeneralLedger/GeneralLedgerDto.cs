@@ -1,4 +1,4 @@
-﻿using Domain.Constants;
+﻿ using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +29,6 @@ namespace Application.Contracts.DTOs
         public int? WarehouseId { get; set; }
         public string WarehouseName { get; set; }
         public string CampusName { get; set; }
-        public bool IsOpeningBalance { get; set; }
-    }
+        public bool IsOpeningBalance { get; set; }      
+	}
 }
