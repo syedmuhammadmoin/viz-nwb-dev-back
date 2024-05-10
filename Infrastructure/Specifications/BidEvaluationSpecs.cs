@@ -15,7 +15,10 @@ namespace Infrastructure.Specifications
         public BidEvaluationSpecs(List<DateTime?> OpeningDate,
         List<DocumentStatus?> states, TransactionFormFilter filter, bool isTotalRecord) : base(x => 
         (OpeningDate.Count() > 0 ? OpeningDate.Contains(x.DateOfOpeningBid) : true)
-         && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
+         && x.Name.Contains(filter.Name != null ? filter.Name : "") 
+        && x.Title.Contains(filter.Title != null ? filter.Title : "") 
+        && x.TendorInquiryNumber.Contains(filter.TendorInquiryNumber != null ? filter.TendorInquiryNumber : "") 
+        && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
         && (states.Count() > 0 ? states.Contains(x.State) : true))
         {
             if (!isTotalRecord)
