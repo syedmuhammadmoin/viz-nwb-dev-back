@@ -24,7 +24,7 @@ namespace Application.Contracts.Filters
         public string Category { get; set; }
         public string Description { get; set; }
         public DateTime? DocDate { get; set; }
-        public DateTime? CallForQoutationDate { get; set; }
+        public DateTime? CallForQuotationDate { get; set; }
         public DateTime? DueDate { get; set; }
         public DocumentStatus? State { get; set; }
         public bool? IsActive { get; set; }
