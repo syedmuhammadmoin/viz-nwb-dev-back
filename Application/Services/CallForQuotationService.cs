@@ -32,9 +32,9 @@ namespace Application.Services
         {
             var docDate = new List<DateTime?>();
             var states = new List<DocumentStatus?>();
-            if (filter.DocDate != null)
+            if (filter.CallForQuotationDate != null)
             {
-                docDate.Add(filter.DocDate);
+                docDate.Add(filter.CallForQuotationDate);
             }
             if (filter.State != null)
             {

@@ -15,9 +15,16 @@ namespace Application.Contracts.Filters
         public string Designation { get; set; }
         public string Warehouse { get; set; }
         public string Name { get; set; }
-        public string Account { get; set; }
+        public string Title { get; set; }       
+        public string TendorInquiryNumber { get; set; }		        	
+        public string UnitOfMeasurement { get; set; }		
+        public string AvailableQuantity { get; set; }		
+        public string ReservedQuantity { get; set; }		
+		public string Account { get; set; }
         public string Category { get; set; }
+        public string Description { get; set; }
         public DateTime? DocDate { get; set; }
+        public DateTime? CallForQuotationDate { get; set; }
         public DateTime? DueDate { get; set; }
         public DocumentStatus? State { get; set; }
         public bool? IsActive { get; set; }

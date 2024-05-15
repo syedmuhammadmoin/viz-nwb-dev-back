@@ -13,7 +13,11 @@ namespace Infrastructure.Specifications
         public StockSpecs(TransactionFormFilter filter, bool isTotalRecord)
             : base(c => c.Item.ProductName.Contains(filter.Name != null ? filter.Name : "")
             && c.Warehouse.Name.Contains(filter.Warehouse != null ? filter.Warehouse : "")
-            )
+            && (c.AvailableQuantity == Convert.ToInt32(filter.AvailableQuantity))
+			&& (c.ReservedQuantity == Convert.ToInt32(filter.ReservedQuantity))
+            && c.Item.Category.Name.Contains(filter.Category != null ? filter.Category : "")
+			&& c.Item.UnitOfMeasurement.Name.Contains(filter.UnitOfMeasurement != null ? filter.UnitOfMeasurement : "")
+			)
         {
             if (!isTotalRecord)
             {
