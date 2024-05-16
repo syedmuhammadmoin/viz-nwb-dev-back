@@ -7,7 +7,10 @@ namespace Infrastructure.Specifications
     public class FixedAssetSpecs : BaseSpecification<FixedAsset>
     {
         public FixedAssetSpecs(TransactionFormFilter filter, bool isTotalRecord)
-           : base(c => c.Product.ProductName.Contains(filter.Name != null ? filter.Name : ""))
+           : base(c => c.Product.ProductName.Contains(filter.Name != null ? filter.Name : "")
+			&& c.DateofAcquisition.Month == (filter.Month != null ? Convert.ToInt32(filter.Month) : c.DateofAcquisition.Month)
+			&& c.DateofAcquisition.Year == (filter.Year != null ? Convert.ToInt32(filter.Year) : c.DateofAcquisition.Year))
+
         {
             if (!isTotalRecord)
             {

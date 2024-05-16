@@ -47,6 +47,7 @@ namespace Vizalys.Api.Controllers
         [ClaimRequirement("Permission", new string[] { Permissions.DisposalClaims.Create, Permissions.DisposalClaims.View, Permissions.DisposalClaims.Delete, Permissions.DisposalClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<DisposalDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
+        
         {
             var results = await _disposalService.GetAllAsync(filter);
             if (results.IsSuccess)

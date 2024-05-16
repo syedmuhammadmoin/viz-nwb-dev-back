@@ -15,7 +15,9 @@ namespace Infrastructure.Specifications
             List<DocumentStatus?> states, TransactionFormFilter filter, bool isTotalRecord)
             : base(x => (docDate.Count() > 0 ? docDate.Contains(x.RequisitionDate) : true)
             && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
-            && x.Employee.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
+			&& x.RequisitionDate.Month == (filter.Month != null ? Convert.ToInt32(filter.Month) : x.RequisitionDate.Month)
+			&& x.RequisitionDate.Year == (filter.Year != null ? Convert.ToInt32(filter.Year) : x.RequisitionDate.Year)
+			&& x.Employee.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
             && (states.Count() > 0 ? states.Contains(x.Status.State) : true))
         {
             if (!isTotalRecord)

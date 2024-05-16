@@ -6,8 +6,10 @@ namespace Infrastructure.Specifications
 {
     public class CWIPSpecs : BaseSpecification<CWIP>
     {
-        public CWIPSpecs(TransactionFormFilter filter, bool isTotalRecord)
-        {
+        public CWIPSpecs(TransactionFormFilter filter, bool isTotalRecord) : base(c =>
+			c.DateOfAcquisition.Month == (filter.Month != null ? Convert.ToInt32(filter.Month) : c.DateOfAcquisition.Month)
+			&& c.DateOfAcquisition.Year == (filter.Year != null ? Convert.ToInt32(filter.Year) : c.DateOfAcquisition.Year))
+		{
             if (!isTotalRecord)
             {
                 var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);

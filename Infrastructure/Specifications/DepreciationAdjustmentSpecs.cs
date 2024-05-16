@@ -6,8 +6,10 @@ namespace Infrastructure.Specifications
 {
     public class DepreciationAdjustmentSpecs : BaseSpecification<DepreciationAdjustmentMaster>
     {
-        public DepreciationAdjustmentSpecs(TransactionFormFilter filter, bool isTotalRecord)
-        {
+        public DepreciationAdjustmentSpecs(TransactionFormFilter filter, bool isTotalRecord) : base(c => 			 
+			 c.CreatedDate.Value.Month == (filter.Month != null ? Convert.ToInt32(filter.Month) : c.CreatedDate.Value.Month)
+			&& c.CreatedDate.Value.Year == (filter.Year != null ? Convert.ToInt32(filter.Year) : c.CreatedDate.Value.Year))
+		{
             if (!isTotalRecord)
             {
                 var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);

@@ -14,7 +14,10 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Status);
         }
         public DisposalSpecs(TransactionFormFilter filter, bool isTotalRecord)
-             : base(c => c.Product.ProductName.Contains(filter.Name != null ? filter.Name : ""))
+             : base(c => c.Product.ProductName.Contains(filter.Name != null ? filter.Name : "")
+             &&
+			 c.DisposalDate.Month == (filter.Month != null ? Convert.ToInt32(filter.Month) : c.DisposalDate.Month)
+			&& c.DisposalDate.Year == (filter.Year != null ? Convert.ToInt32(filter.Year) : c.DisposalDate.Year))
         {
             if (!isTotalRecord)
             {
