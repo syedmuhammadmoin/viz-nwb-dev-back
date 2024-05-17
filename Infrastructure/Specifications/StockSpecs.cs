@@ -15,9 +15,7 @@ namespace Infrastructure.Specifications
             && c.Warehouse.Name.Contains(filter.Warehouse != null ? filter.Warehouse : "")
             && (c.AvailableQuantity == Convert.ToInt32(filter.AvailableQuantity))
 			&& (c.ReservedQuantity == Convert.ToInt32(filter.ReservedQuantity))
-            && c.Item.Category.Name.Contains(filter.Category != null ? filter.Category : "")
-			 && c.CreatedDate.Value.Month == (filter.Month != null ? Convert.ToInt32(filter.Month) : c.CreatedDate.Value.Month)
-			&& c.CreatedDate.Value.Year == (filter.Year != null ? Convert.ToInt32(filter.Year) : c.CreatedDate.Value.Year)
+            && c.Item.Category.Name.Contains(filter.Category != null ? filter.Category : "")			
 			&& c.Item.UnitOfMeasurement.Name.Contains(filter.UnitOfMeasurement != null ? filter.UnitOfMeasurement : "")            
 			)
         {

@@ -6,9 +6,9 @@ namespace Infrastructure.Specifications
 {
     public class DepreciationAdjustmentSpecs : BaseSpecification<DepreciationAdjustmentMaster>
     {
-        public DepreciationAdjustmentSpecs(TransactionFormFilter filter, bool isTotalRecord) : base(c => 			 
-			 c.CreatedDate.Value.Month == (filter.Month != null ? Convert.ToInt32(filter.Month) : c.CreatedDate.Value.Month)
-			&& c.CreatedDate.Value.Year == (filter.Year != null ? Convert.ToInt32(filter.Year) : c.CreatedDate.Value.Year))
+        public DepreciationAdjustmentSpecs(TransactionFormFilter filter, bool isTotalRecord) : base(c =>
+			 c.CreatedDate >= (filter.StartDate != null ? filter.StartDate : c.CreatedDate) && c.CreatedDate <= (filter.EndDate != null ? filter.EndDate : c.CreatedDate))
+			
 		{
             if (!isTotalRecord)
             {

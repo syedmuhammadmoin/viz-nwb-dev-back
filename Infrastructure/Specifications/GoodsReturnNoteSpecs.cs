@@ -16,8 +16,7 @@ namespace Infrastructure.Specifications
             : base(x => (docDate.Count() > 0 ? docDate.Contains(x.ReturnDate) : true)
             && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
             && x.Vendor.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
-			 && x.ReturnDate.Month == (filter.Month != null ? Convert.ToInt32(filter.Month) : x.ReturnDate.Month)
-			&& x.ReturnDate.Year == (filter.Year != null ? Convert.ToInt32(filter.Year) : x.ReturnDate.Year)
+			&& (x.ReturnDate >= (filter.StartDate != null ? filter.StartDate : x.ReturnDate) && x.ReturnDate <= (filter.EndDate != null ? filter.EndDate : x.ReturnDate))		
 			&& (states.Count() > 0 ? states.Contains(x.Status.State) : true))
         {
             if (!isTotalRecord)

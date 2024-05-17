@@ -18,8 +18,7 @@ namespace Infrastructure.Specifications
               ) : true)
              && (x.Description.Contains(filter.Description != null ? filter.Description : "")) && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
           && x.Vendor.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
-		  && x.CallForQuotationDate.Month == (filter.Month != null ? Convert.ToInt32(filter.Month) : x.CallForQuotationDate.Month)
-			&& x.CallForQuotationDate.Year == (filter.Year != null ? Convert.ToInt32(filter.Year) : x.CallForQuotationDate.Year)
+		 && (x.CallForQuotationDate >= (filter.StartDate != null ? filter.StartDate : x.CallForQuotationDate) && x.CallForQuotationDate <= (filter.EndDate != null ? filter.EndDate : x.CallForQuotationDate))			
 		  && (states.Count() > 0 ? states.Contains(x.State) : true))
         {
             if (!isTotalRecord)

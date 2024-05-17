@@ -8,8 +8,8 @@ namespace Infrastructure.Specifications
     {
         public FixedAssetSpecs(TransactionFormFilter filter, bool isTotalRecord)
            : base(c => c.Product.ProductName.Contains(filter.Name != null ? filter.Name : "")
-			&& c.DateofAcquisition.Month == (filter.Month != null ? Convert.ToInt32(filter.Month) : c.DateofAcquisition.Month)
-			&& c.DateofAcquisition.Year == (filter.Year != null ? Convert.ToInt32(filter.Year) : c.DateofAcquisition.Year))
+			&& (c.DateofAcquisition >= (filter.StartDate != null ? filter.StartDate : c.DateofAcquisition) && c.DateofAcquisition <= (filter.EndDate != null ? filter.EndDate : c.DateofAcquisition)))
+
 
         {
             if (!isTotalRecord)

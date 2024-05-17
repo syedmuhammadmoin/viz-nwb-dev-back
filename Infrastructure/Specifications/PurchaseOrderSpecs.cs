@@ -16,8 +16,7 @@ namespace Infrastructure.Specifications
             && (dueDate.Count() > 0 ? dueDate.Contains(x.DueDate) : true)
             && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
             && x.Vendor.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")	
-			&& x.PODate.Month == (filter.Month != null ? Convert.ToInt32(filter.Month) : x.PODate.Month)
-		    && x.PODate.Year == (filter.Year != null ? Convert.ToInt32(filter.Year) : x.PODate.Year)
+			&& (x.PODate >= (filter.StartDate != null ? filter.StartDate : x.PODate) && x.PODate <= (filter.EndDate != null ? filter.EndDate : x.PODate))		   
 			&& (states.Count() > 0 ? states.Contains(x.Status.State) : true))
         {
             if (!isTotalRecord)

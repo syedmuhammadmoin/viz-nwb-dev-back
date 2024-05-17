@@ -25,6 +25,8 @@ namespace Application.Contracts.Filters
         public string Description { get; set; }
         public string Year { get; set; }
         public string Month { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public DateTime? DocDate { get; set; }
         public DateTime? CallForQuotationDate { get; set; }
         public DateTime? DueDate { get; set; }

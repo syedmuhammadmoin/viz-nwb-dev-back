@@ -7,8 +7,8 @@ namespace Infrastructure.Specifications
     public class CWIPSpecs : BaseSpecification<CWIP>
     {
         public CWIPSpecs(TransactionFormFilter filter, bool isTotalRecord) : base(c =>
-			c.DateOfAcquisition.Month == (filter.Month != null ? Convert.ToInt32(filter.Month) : c.DateOfAcquisition.Month)
-			&& c.DateOfAcquisition.Year == (filter.Year != null ? Convert.ToInt32(filter.Year) : c.DateOfAcquisition.Year))
+			c.DateOfAcquisition >= (filter.StartDate != null ? filter.StartDate : c.DateOfAcquisition) && c.DateOfAcquisition <= (filter.EndDate != null ? filter.EndDate : c.DateOfAcquisition))
+		
 		{
             if (!isTotalRecord)
             {
