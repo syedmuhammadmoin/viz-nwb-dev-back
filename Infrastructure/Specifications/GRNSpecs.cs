@@ -16,7 +16,8 @@ namespace Infrastructure.Specifications
             : base(x => (docDate.Count() > 0 ? docDate.Contains(x.GrnDate) : true)
             && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
             && x.Vendor.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
-            && (states.Count() > 0 ? states.Contains(x.Status.State) : true))
+			 && (x.GrnDate >= (filter.StartDate != null ? filter.StartDate : x.GrnDate) && x.GrnDate <= (filter.EndDate != null ? filter.EndDate : x.GrnDate))			
+			&& (states.Count() > 0 ? states.Contains(x.Status.State) : true))
         {
             if (!isTotalRecord)
             {

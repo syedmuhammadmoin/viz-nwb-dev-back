@@ -14,8 +14,9 @@ namespace Infrastructure.Specifications
         public PettyCashSpecs(List<DateTime?> docDate, List<DateTime?> dueDate,
             List<DocumentStatus?> states, TransactionFormFilter filter, bool isTotalRecord)
             : base(c => (docDate.Count() > 0 ? docDate.Contains(c.Date) : true)
-                && c.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
-                && (states.Count() > 0 ? states.Contains(c.Status.State) : true))
+                && c.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")			
+			&& (c.Date >= (filter.StartDate != null ? filter.StartDate : c.Date) && c.Date <= (filter.EndDate != null ? filter.EndDate : c.Date))
+				&& (states.Count() > 0 ? states.Contains(c.Status.State) : true))
         {
             if (!isTotalRecord)
             {

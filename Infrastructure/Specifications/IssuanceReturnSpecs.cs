@@ -16,7 +16,8 @@ namespace Infrastructure.Specifications
             : base(x => (docDate.Count() > 0 ? docDate.Contains(x.IssuanceReturnDate) : true)
             && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
             && x.Employee.Name.Contains(filter.Name != null ? filter.Name : "")
-            && (states.Count() > 0 ? states.Contains(x.Status.State) : true))
+			&& (x.IssuanceReturnDate >= (filter.StartDate != null ? filter.StartDate : x.IssuanceReturnDate) && x.IssuanceReturnDate <= (filter.EndDate != null ? filter.EndDate : x.IssuanceReturnDate))
+			&& (states.Count() > 0 ? states.Contains(x.Status.State) : true))
         {
             if (!isTotalRecord)
             {

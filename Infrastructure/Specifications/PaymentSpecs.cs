@@ -16,7 +16,8 @@ namespace Infrastructure.Specifications
         && (docDate.Count() > 0 ? docDate.Contains(e.PaymentDate) : true)
                 && e.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
                 && e.BusinessPartner.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
-                && e.DeductionAccount.Name.Contains(filter.Name != null ? filter.Name : "")
+			&& (e.PaymentDate >= (filter.StartDate != null ? filter.StartDate : e.PaymentDate) && e.PaymentDate <= (filter.EndDate != null ? filter.EndDate : e.PaymentDate))
+				&& e.DeductionAccount.Name.Contains(filter.Name != null ? filter.Name : "")
                 && (states.Count() > 0 ? states.Contains(e.Status.State) : true)
         )
         {

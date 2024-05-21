@@ -38,7 +38,7 @@ namespace Vizalys.Api.Controllers
         [ClaimRequirement("Permission", new string[] { Permissions.PurchaseOrderClaims.Create, Permissions.PurchaseOrderClaims.View, Permissions.PurchaseOrderClaims.Delete, Permissions.PurchaseOrderClaims.Edit })]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<List<PurchaseOrderDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
-        {
+        {            
             var results = await _purchaseOrderService.GetAllAsync(filter);
             if (results.IsSuccess)
                 return Ok(results); // Status Code : 200

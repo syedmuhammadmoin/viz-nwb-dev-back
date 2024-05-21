@@ -17,8 +17,9 @@ namespace Infrastructure.Specifications
         (OpeningDate.Count() > 0 ? OpeningDate.Contains(x.DateOfOpeningBid) : true)
          && x.Name.Contains(filter.Name != null ? filter.Name : "") 
         && x.Title.Contains(filter.Title != null ? filter.Title : "") 
-        && x.TendorInquiryNumber.Contains(filter.TendorInquiryNumber != null ? filter.TendorInquiryNumber : "") 
-        && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
+        && x.TendorInquiryNumber.Contains(filter.TendorInquiryNumber != null ? filter.TendorInquiryNumber : "")
+		 && (x.DateOfOpeningBid >= (filter.StartDate != null ? filter.StartDate : x.DateOfOpeningBid) && x.DateOfOpeningBid <= (filter.EndDate != null ? filter.EndDate : x.DateOfOpeningBid))		
+		&& x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
         && (states.Count() > 0 ? states.Contains(x.State) : true))
         {
             if (!isTotalRecord)

@@ -15,7 +15,8 @@ namespace Infrastructure.Specifications
             List<DocumentStatus?> states, TransactionFormFilter filter, bool isTotalRecord) : base(x => (docDate.Count() > 0 ? docDate.Contains(x.InvoiceDate) : true) && (dueDate.Count() > 0 ? dueDate.Contains(x.DueDate) : true)
             && x.DocNo.Contains(filter.DocNo != null ? filter.DocNo : "")
             && x.Customer.Name.Contains(filter.BusinessPartner != null ? filter.BusinessPartner : "")
-            && (states.Count() > 0 ? states.Contains(x.Status.State) : true))
+			&& (x.InvoiceDate >= (filter.StartDate != null ? filter.StartDate : x.InvoiceDate) && x.InvoiceDate <= (filter.EndDate != null ? filter.EndDate : x.InvoiceDate))
+			&& (states.Count() > 0 ? states.Contains(x.Status.State) : true))
         {
             if (!isTotalRecord)
             {
