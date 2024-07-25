@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
-    <ProjectReference Include="..\VizalysDDD\Vizalys.Api.csproj" />
+    <ProjectReference Include="..\VizalysDDD\Vizalys.API.csproj" />
   </ItemGroup>
 
 </Project>
