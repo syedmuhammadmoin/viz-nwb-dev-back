@@ -21,7 +21,7 @@ namespace Domain.Entities
         public WorkFlowStatus NextStatus { get; private set; }
         public string AllowedRoleId { get; private set; }
         [ForeignKey("AllowedRoleId")]
-        public virtual IdentityRole AllowedRole { get; private set; }
+        public virtual Role AllowedRole { get; private set; }
         public int MasterId { get; private set; }
         [ForeignKey("MasterId")]
         public WorkFlowMaster WorkflowMaster { get; private set; }

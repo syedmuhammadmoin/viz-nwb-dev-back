@@ -7,7 +7,7 @@ namespace Application.Contracts.Interfaces
     public interface IApplicantService : ICrudService<CreateApplicantDto, ApplicantDto, int, TransactionFormFilter>
     {
         Task<Response<List<ApplicantDto>>> GetDropDown();
-        Task<Response<string>> LoginApplicant(LoginDto entity);
+        Task<Response<string>> LoginApplicant(LoginAPPDto entity);
         Task<Response<int>> RegisterApplicant(RegisterApplicantDto entity);
     }
 }

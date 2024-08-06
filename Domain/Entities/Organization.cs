@@ -2,12 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
+   
     public class Organization : BaseEntity<int>
     {
         [MaxLength(100)]
@@ -24,7 +26,7 @@ namespace Domain.Entities
         public string Phone { get; private set; }
         [MaxLength(20)]
         public string Fax { get; private set; }
-        [MaxLength(20)]
+        [MaxLength(50)]
         public string Email { get; private set; }
         [MaxLength(100)]
         public string Website { get; private set; }
@@ -37,13 +39,17 @@ namespace Domain.Entities
         [MaxLength(100)]
         public string IncomeTaxId { get; private set; }
         [MaxLength(100)]
-        public string GSTRegistrationNo{ get; private set; }
-        public DateTime? StartDate { get; private set; }
-        public DateTime? FiscalYear { get; private set; }
+        public string GSTRegistrationNo { get; private set; }
+        public DateTime? FiscalYearStart { get; private set; }
+        public DateTime? FiscalYearEnd { get; private set; }
+        public string Currency { get; private set; }
+        //public string UserId { get; private set; }
+        //[ForeignKey("UserId")]
+        //public User User { get; private set; }
+        public ICollection<User> Users { get; set; }
 
         protected Organization()
         {
-
         }
         public Organization(int id, string name)
         {

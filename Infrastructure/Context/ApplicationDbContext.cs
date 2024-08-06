@@ -1,14 +1,17 @@
 ﻿using Application.Interfaces;
 using Domain.Base;
+using Domain.Contracts;
 using Domain.Entities;
 using Infrastructure.Seeds;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Infrastructure.Context
 {
-    public class ApplicationDbContext : IdentityDbContext<User>, IApplicationDbContext
+    public class ApplicationDbContext : IdentityDbContext<User, Role,string>, IApplicationDbContext
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
@@ -116,6 +119,7 @@ namespace Infrastructure.Context
         public DbSet<City> Cities { get; set; }
         public DbSet<District> Districts { get; set; }
         public DbSet<Domicile> Domiciles { get; set; }
+        public DbSet<InviteUser> InviteUser { get; set; }
         public DbSet<Shift> Shifts { get; set; }
         public DbSet<BatchMaster> BatchMaster { get; set; }
         public DbSet<BatchLines> BatchLines { get; set; }
@@ -128,7 +132,9 @@ namespace Infrastructure.Context
         public DbSet<AdmissionApplicationHistory> AdmissionApplicationHistories { get; set; }
         public DbSet<ProgramChallanTemplateMaster> ProgramChallanTemplateMaster { get; set; }
         public DbSet<ProgramChallanTemplateLines> ProgramChallanTemplateLines { get; set; }
+        public DbSet<UsersOrganization> UsersOrganization { get; set; }
 
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -139,6 +145,9 @@ namespace Infrastructure.Context
                 foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
             }
 
+            modelBuilder.SetQueryFilterOnAllEntities<IMustHaveTenant>(p => p.OrganizationId == GetOrganizationId());
+
+          
             Helper.DataConfiguration(modelBuilder);
             Seeding.seeds(modelBuilder);
         }
@@ -181,6 +190,18 @@ namespace Infrastructure.Context
                 }
             }
         }
-
+        private int GetOrganizationId()
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext != null)
+            {
+                if (httpContext.User.Claims.Any())
+                {
+                    var orgId = httpContext.User.Claims.FirstOrDefault(i => i.Type == "Organization").Value;
+                    return Int32.Parse(orgId);
+                }
+            }
+            return 0;
+        }
     }
 }

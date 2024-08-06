@@ -23,7 +23,7 @@ namespace Application.Contracts.DTOs
         public string Phone { get; set; }
         [MaxLength(20)]
         public string Fax { get; set; }
-        [MaxLength(20)]
+        [MaxLength(50)]
         public string Email { get; set; }
         [MaxLength(100)]
         public string Website { get; set; }
@@ -38,8 +38,9 @@ namespace Application.Contracts.DTOs
         [MaxLength(100)]
         public string GSTRegistrationNo { get; set; }
         [Required]
-        public DateTime? StartDate { get; set; }
+        public DateTime? FiscalYearStart { get; set; }
         [Required]
-        public DateTime? EndDate { get; set; }
+        public DateTime? FiscalYearEnd { get; set; }
+        public string UserId { get; set; }
     }
 }

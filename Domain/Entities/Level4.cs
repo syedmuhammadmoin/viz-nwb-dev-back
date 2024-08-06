@@ -1,5 +1,6 @@
 ﻿using Domain.Base;
 using Domain.Constants;
+using Domain.Contracts;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Level4 : BaseEntity<Guid>
+    public class Level4 : BaseEntity<Guid>, IMustHaveTenant
     {
         [MaxLength(200)]
         public string Name { get; set; }
@@ -23,11 +24,21 @@ namespace Domain.Entities
         public Guid Level1_id { get; set; }
         [ForeignKey("Level1_id")]
         public Level1 Level1 { get; private set; }
-        
+        public int OrganizationId { get; set; }
+
         public Level4()
         {
         }
-        public Level4(string name, string accountCode, Guid level3_id, Guid level1_id)
+        public Level4(Guid id, string name, Guid level3_id, Guid level1_id, int orgId)
+        {
+            Id = id;
+            Name = name;
+            Level3_id = level3_id;
+            Level1_id = level1_id;
+            OrganizationId = orgId;
+            AccountType = AccountType.SystemDefined;
+        }
+        public Level4(string name, string accountCode, Guid level3_id, Guid level1_id, int orgId)
         {
             Name = name;
             Code = accountCode;
@@ -35,14 +46,19 @@ namespace Domain.Entities
             Level1_id = level1_id;
             AccountType = AccountType.SystemDefined;
         }
-
+        public Level4(string name, Guid level3_id)
+        {
+            Name = name;
+            Level3_id = level3_id;
+            AccountType = AccountType.UserDefined;
+        }
         public void SetAccountName(string name, string accountCode)
         {
             Name = name;
             Code = accountCode;
         }
 
-        public void SetLevel1Id(Guid level1Id) 
+        public void SetLevel1Id(Guid level1Id)
         {
             Level1_id = level1Id;
         }

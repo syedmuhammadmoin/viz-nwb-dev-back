@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -92,6 +93,10 @@ namespace Domain.Interfaces
         IApplicantRepository Applicant { get; }
         IAdmissionApplicationRepository AdmissionApplication { get; }
         IProgramChallanTemplateRepository ProgramChallanTemplate { get; }
+         IUsersOrganization UsersOrganization { get; }
+         IInviteUser InviteUser { get;  }
+
+
         Task SaveAsync();
         void CreateTransaction();
         void Commit();

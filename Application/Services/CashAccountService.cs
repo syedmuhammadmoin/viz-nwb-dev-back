@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
@@ -7,6 +8,7 @@ using Domain.Constants;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +21,14 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CashAccountService(IUnitOfWork unitOfWork, IMapper mapper)
+
+        public CashAccountService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Response<CashAccountDto>> CreateAsync(CreateCashAccountDto entity)
@@ -38,7 +43,9 @@ namespace Application.Services
                     entity.CashAccountName,
                     entity.AccountCode,
                     new Guid("12500000-5566-7788-99AA-BBCCDDEEFF00"),
-                    new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"));
+                    new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"),
+                    GetTenant.GetTenantId(_httpContextAccessor)
+                    );
 
                 await _unitOfWork.Level4.Add(ChAccount);
 

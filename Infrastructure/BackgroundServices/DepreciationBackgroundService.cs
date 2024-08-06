@@ -44,7 +44,7 @@ namespace Infrastructure.BackgroundServices
             using (var scope = _services.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
-                var unitOfWork = new UnitOfWork(dbContext);
+                var unitOfWork = new UnitOfWork(dbContext,null);
 
                 // Perform the user update logic here
                 // ...

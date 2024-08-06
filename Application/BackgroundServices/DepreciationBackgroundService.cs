@@ -309,7 +309,7 @@ namespace Application.BackgroundServices
 
                     var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
                     var mapper = scope.ServiceProvider.GetService<IMapper>();
-                    var unitOfWork = new UnitOfWork(dbContext);
+                    var unitOfWork = new UnitOfWork(dbContext,null);
 
                     var createDepreciationRegisterDto = dbContext.FixedAssets
                         .Where(i => i.IsDisposed == false && i.IsHeldforSaleOrDisposal == false
@@ -332,7 +332,7 @@ namespace Application.BackgroundServices
             {
                 var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
                 var mapper = scope.ServiceProvider.GetService<IMapper>();
-                var unitOfWork = new UnitOfWork(dbContext);
+                var unitOfWork = new UnitOfWork(dbContext, null);
 
                 var createDepreciationRegisterDto = dbContext.FixedAssets
                     .Where(i => i.IsDisposed == false && i.IsHeldforSaleOrDisposal == false

@@ -18,9 +18,9 @@ namespace Infrastructure.Seeds
             {
                 var ser = scope.ServiceProvider;
                 var userManager = ser.GetRequiredService<UserManager<User>>();
-                var roleManager = ser.GetRequiredService<RoleManager<IdentityRole>>();
-                await DefaultRoles.SeedAsync(userManager, roleManager);
-                await DefaultUsers.SeedSuperAdminAsync(userManager, roleManager, password);
+                var roleManager = ser.GetRequiredService<RoleManager<Role>>();
+                //await DefaultRoles.SeedAsync(userManager, roleManager);
+                //await DefaultUsers.SeedSuperAdminAsync(userManager, roleManager, password);
             }
         }
     }

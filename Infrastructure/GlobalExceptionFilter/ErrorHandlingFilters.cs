@@ -32,10 +32,12 @@ namespace Infrastructure.GlobalExceptionFilter
             _unitOfWork.Rollback();
             var exception = context.Exception;
             var responses = new Response<bool>("Something went wrong", StatusCodes.Status500InternalServerError, context.HttpContext.TraceIdentifier);
-            context.Result = new ObjectResult(responses)
-            {
-                StatusCode = 500
-            };
+
+            // commit for Development purpose only 
+            //context.Result = new ObjectResult(responses)
+            //{
+            //    StatusCode = 500
+            //};
 
             string result;
             if (exception.InnerException == null)
@@ -69,7 +71,8 @@ namespace Infrastructure.GlobalExceptionFilter
                 context2.SaveChanges();
                 transaction.Commit();
             }
-            context.ExceptionHandled = true;
+            // false for Development purpose only
+            context.ExceptionHandled = false;
         }
     }
 }

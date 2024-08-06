@@ -79,7 +79,7 @@ namespace Vizalys.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult<Response<string>>> LoginApplicant(LoginDto entity)
+        public async Task<ActionResult<Response<string>>> LoginApplicant(LoginAPPDto entity)
         {
             var result = await _applicantService.LoginApplicant(entity);
             if (result.IsSuccess)

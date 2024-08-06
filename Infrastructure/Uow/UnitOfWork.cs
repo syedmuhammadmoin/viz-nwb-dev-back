@@ -1,6 +1,8 @@
-﻿using Domain.Interfaces;
+﻿using Domain.Entities;
+using Domain.Interfaces;
 using Infrastructure.Context;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
@@ -98,16 +100,21 @@ namespace Infrastructure.Uow
         public IApplicantRepository Applicant { get; private set; }
         public IAdmissionApplicationRepository AdmissionApplication { get; private set; }
         public IProgramChallanTemplateRepository ProgramChallanTemplate { get; private set; }
+        public IUsersOrganization UsersOrganization { get; private set; }
+        public IInviteUser InviteUser { get; private set; }
 
-        public UnitOfWork(ApplicationDbContext context)
+
+        public UnitOfWork(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             Organization = new OrganizationRepository(context);
             Warehouse = new WarehouseRepository(context);
             Category = new CategoryRepository(context);
             BusinessPartner = new BusinessPartnerRepository(context);
-            Level4 = new Level4Repository(context);
+            Level4 = new Level4Repository(context, httpContextAccessor);
             Level3 = new Level3Repository(context);
+            Level2 = new Level2Repository(context);
+            Level1 = new Level1Repository(context);
             Product = new ProductRepository(context);
             JournalEntry = new JournalEntryRepository(context);
             PettyCash = new PettyCashRepository(context);
@@ -184,6 +191,9 @@ namespace Infrastructure.Uow
             Applicant = new ApplicantRepository(context);
             AdmissionApplication = new AdmissionApplicationRepository(context);
             ProgramChallanTemplate = new ProgramChallanTemplateRepository(context);
+            UsersOrganization = new UsersOrganizationRepository(context);
+            InviteUser = new InviteUserRepository(context);
+
         }
 
         public async Task SaveAsync()

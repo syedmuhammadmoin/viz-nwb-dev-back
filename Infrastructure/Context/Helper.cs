@@ -198,13 +198,37 @@ namespace Infrastructure.Context
                 .IsUnique();
 
             //Changing Identity users and roles tables name
+         
+            modelBuilder.Entity<Organization>(entity =>
+            {
+                entity.HasIndex(e => e.Name).IsUnique();
+
+                entity.HasMany(e => e.Users)
+                      .WithMany(e => e.Organizations)
+                      .UsingEntity<Dictionary<string, object>>(
+                          "UserOrganization",
+                          j => j.HasOne<User>().WithMany().HasForeignKey("UserId"),
+                          j => j.HasOne<Organization>().WithMany().HasForeignKey("OrganizationId"));
+            });
+            //Changing Identity users and roles tables name
             modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable(name: "Users");
             });
-            modelBuilder.Entity<IdentityRole>(entity =>
+
+            modelBuilder.Entity<Role>(entity =>
             {
-                entity.ToTable(name: "Roles");
+                entity.ToTable("Roles");
+
+                // Remove the existing index on NormalizedName if it exists
+                var index = entity.Metadata.FindIndex(new[] { entity.Property(r => r.NormalizedName).Metadata });
+                if (index != null)
+                {
+                    entity.Metadata.RemoveIndex(index.Properties);
+                }
+
+                // Create a composite index on NormalizedName and OrganizationId
+                entity.HasIndex(r => new { r.NormalizedName, r.OrganizationId }).HasDatabaseName("RoleNameIndex").IsUnique();
             });
             modelBuilder.Entity<IdentityUserRole<string>>(entity =>
             {
@@ -227,6 +251,14 @@ namespace Infrastructure.Context
                 entity.ToTable("UserTokens");
             });
 
+            modelBuilder.Entity<User>().OwnsMany(
+            p => p.RefreshTokens, a =>
+            {
+                a.WithOwner().HasForeignKey("UserId");
+                a.Property<int>("Id");
+                a.HasKey("Id");
+            });
+
             // Removing IdentityId for assistance in integeration
 
             modelBuilder.Entity<Department>()
@@ -240,7 +272,8 @@ namespace Infrastructure.Context
             modelBuilder.Entity<Campus>()
                 .Property(et => et.Id)
                 .ValueGeneratedNever();
-
+            
+           
         }
 
         public static string GetCurrentUser(IHttpContextAccessor httpContextAccessor)

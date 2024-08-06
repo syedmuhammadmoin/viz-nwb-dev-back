@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace Application.Contracts.Helper
                 allPermissions.Add(new RegisterRoleClaimsDto { Value = fi.GetValue(null).ToString(), Type = "Permission" });
             }
         }
-        public static async Task AddPermissionClaim(this RoleManager<IdentityRole> roleManager, IdentityRole role, string permission)
+        public static async Task AddPermissionClaim(this RoleManager<Role> roleManager, Role role, string permission)
         {
             var allClaims = await roleManager.GetClaimsAsync(role);
             if (!allClaims.Any(a => a.Type == "Permission" && a.Value == permission))
@@ -28,5 +29,6 @@ namespace Application.Contracts.Helper
                 await roleManager.AddClaimAsync(role, new Claim("Permission", permission));
             }
         }
+
     }
 }

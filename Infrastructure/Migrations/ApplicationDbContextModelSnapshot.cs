@@ -3595,6 +3595,52 @@ namespace Infrastructure.Migrations
                     b.ToTable("GRNToGoodsReturnNoteLineReconcile");
                 });
 
+            modelBuilder.Entity("Domain.Entities.InviteUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrgId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("isAccepted")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrgId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("InviteUser");
+                });
+
             modelBuilder.Entity("Domain.Entities.InvoiceLines", b =>
                 {
                     b.Property<int>("Id")
@@ -4196,46 +4242,12 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Level1");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F",
-                            IsDelete = false,
-                            Name = "Assets"
-                        },
-                        new
-                        {
-                            Id = new Guid("20000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "G",
-                            IsDelete = false,
-                            Name = "Liability"
-                        },
-                        new
-                        {
-                            Id = new Guid("30000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "P",
-                            IsDelete = false,
-                            Name = "Accumulated Fund"
-                        },
-                        new
-                        {
-                            Id = new Guid("40000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "C",
-                            IsDelete = false,
-                            Name = "Revenue"
-                        },
-                        new
-                        {
-                            Id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A",
-                            IsDelete = false,
-                            Name = "Expenses"
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Level2", b =>
@@ -4272,109 +4284,14 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Level1_id");
 
                     b.ToTable("Level2");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F03",
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Non - Current Assets"
-                        },
-                        new
-                        {
-                            Id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F02",
-                            IsDelete = false,
-                            Level1_id = new Guid("10000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Current Assets"
-                        },
-                        new
-                        {
-                            Id = new Guid("21000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "G02",
-                            IsDelete = false,
-                            Level1_id = new Guid("20000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Non - Current Liabilities"
-                        },
-                        new
-                        {
-                            Id = new Guid("22000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "G01",
-                            IsDelete = false,
-                            Level1_id = new Guid("20000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Current Liabilities"
-                        },
-                        new
-                        {
-                            Id = new Guid("31000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "P02",
-                            IsDelete = false,
-                            Level1_id = new Guid("30000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Grants"
-                        },
-                        new
-                        {
-                            Id = new Guid("32000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "P01",
-                            IsDelete = false,
-                            Level1_id = new Guid("30000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Surplus/(Deficit)"
-                        },
-                        new
-                        {
-                            Id = new Guid("41000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "C02",
-                            IsDelete = false,
-                            Level1_id = new Guid("40000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Onsite And Offsite Revenue"
-                        },
-                        new
-                        {
-                            Id = new Guid("51000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A01",
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Employee Related Expenses"
-                        },
-                        new
-                        {
-                            Id = new Guid("52000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A02",
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Project Pre-Investment Analysis"
-                        },
-                        new
-                        {
-                            Id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A03",
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Operating Expenses"
-                        },
-                        new
-                        {
-                            Id = new Guid("54000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A04",
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Employees Retirement Benefits"
-                        },
-                        new
-                        {
-                            Id = new Guid("55000000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A06",
-                            IsDelete = false,
-                            Level1_id = new Guid("50000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Transfers"
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Level3", b =>
@@ -4411,493 +4328,14 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Level2_id");
 
                     b.ToTable("Level3");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("11100000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F031",
-                            IsDelete = false,
-                            Level2_id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Property Plant And Equipment"
-                        },
-                        new
-                        {
-                            Id = new Guid("11200000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F032",
-                            IsDelete = false,
-                            Level2_id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Capital Work-In-Progress"
-                        },
-                        new
-                        {
-                            Id = new Guid("11300000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F033",
-                            IsDelete = false,
-                            Level2_id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Intangible Assets"
-                        },
-                        new
-                        {
-                            Id = new Guid("11400000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F034",
-                            IsDelete = false,
-                            Level2_id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Intangible Asset Under Development"
-                        },
-                        new
-                        {
-                            Id = new Guid("11500000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F035",
-                            IsDelete = false,
-                            Level2_id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Long Term Loan"
-                        },
-                        new
-                        {
-                            Id = new Guid("11600000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F036",
-                            IsDelete = false,
-                            Level2_id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Investment Property"
-                        },
-                        new
-                        {
-                            Id = new Guid("11700000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F037",
-                            IsDelete = false,
-                            Level2_id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Long Term Investment"
-                        },
-                        new
-                        {
-                            Id = new Guid("11800000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F038",
-                            IsDelete = false,
-                            Level2_id = new Guid("11000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Advance To Employees"
-                        },
-                        new
-                        {
-                            Id = new Guid("12100000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F021",
-                            IsDelete = false,
-                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Other Receivables"
-                        },
-                        new
-                        {
-                            Id = new Guid("12200000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F022",
-                            IsDelete = false,
-                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Receivable From Government Authorities"
-                        },
-                        new
-                        {
-                            Id = new Guid("12300000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F023",
-                            IsDelete = false,
-                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Affiliated Colleges Fee Receivable"
-                        },
-                        new
-                        {
-                            Id = new Guid("12400000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F024",
-                            IsDelete = false,
-                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Inventory"
-                        },
-                        new
-                        {
-                            Id = new Guid("12500000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F025",
-                            IsDelete = false,
-                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Cash balances with Banks "
-                        },
-                        new
-                        {
-                            Id = new Guid("12600000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F026",
-                            IsDelete = false,
-                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Petty Cash"
-                        },
-                        new
-                        {
-                            Id = new Guid("12700000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F027",
-                            IsDelete = false,
-                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Advances, Prepayments & Deposits"
-                        },
-                        new
-                        {
-                            Id = new Guid("12800000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F028",
-                            IsDelete = false,
-                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Short Term Investments"
-                        },
-                        new
-                        {
-                            Id = new Guid("12900000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F029",
-                            IsDelete = false,
-                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Receivable From Students"
-                        },
-                        new
-                        {
-                            Id = new Guid("12110000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F0210",
-                            IsDelete = false,
-                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Rent Receivable"
-                        },
-                        new
-                        {
-                            Id = new Guid("12120000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "F0211",
-                            IsDelete = false,
-                            Level2_id = new Guid("12000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Interest Receivable"
-                        },
-                        new
-                        {
-                            Id = new Guid("21100000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "G021",
-                            IsDelete = false,
-                            Level2_id = new Guid("21000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Long Term Borrowings"
-                        },
-                        new
-                        {
-                            Id = new Guid("21200000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "G022",
-                            IsDelete = false,
-                            Level2_id = new Guid("21000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Post Retirement Benefit Plan"
-                        },
-                        new
-                        {
-                            Id = new Guid("21300000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "G023",
-                            IsDelete = false,
-                            Level2_id = new Guid("21000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Long Term Compensated Absences"
-                        },
-                        new
-                        {
-                            Id = new Guid("21400000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "G024",
-                            IsDelete = false,
-                            Level2_id = new Guid("21000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Security Deposit-Non Current"
-                        },
-                        new
-                        {
-                            Id = new Guid("21500000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "G025",
-                            IsDelete = false,
-                            Level2_id = new Guid("21000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Deferred Capital Grant"
-                        },
-                        new
-                        {
-                            Id = new Guid("21600000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "G026",
-                            IsDelete = false,
-                            Level2_id = new Guid("21000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Others"
-                        },
-                        new
-                        {
-                            Id = new Guid("22100000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "G01",
-                            IsDelete = false,
-                            Level2_id = new Guid("22000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Accounts Payable"
-                        },
-                        new
-                        {
-                            Id = new Guid("22200000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "G02",
-                            IsDelete = false,
-                            Level2_id = new Guid("22000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Short Term Borrowings"
-                        },
-                        new
-                        {
-                            Id = new Guid("22300000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "G03",
-                            IsDelete = false,
-                            Level2_id = new Guid("22000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Other Liabilities"
-                        },
-                        new
-                        {
-                            Id = new Guid("22400000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "G04",
-                            IsDelete = false,
-                            Level2_id = new Guid("22000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Security Deposit-Short Term"
-                        },
-                        new
-                        {
-                            Id = new Guid("22500000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "G05",
-                            IsDelete = false,
-                            Level2_id = new Guid("22000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Financial Assistance/ Scholarships"
-                        },
-                        new
-                        {
-                            Id = new Guid("31100000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "P021",
-                            IsDelete = false,
-                            Level2_id = new Guid("31000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Federal Govt Grant"
-                        },
-                        new
-                        {
-                            Id = new Guid("31200000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "P022",
-                            IsDelete = false,
-                            Level2_id = new Guid("31000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Sindh Govt Grant"
-                        },
-                        new
-                        {
-                            Id = new Guid("32100000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "P011",
-                            IsDelete = false,
-                            Level2_id = new Guid("32000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Surplus/(Deficit) Of Comprehensive Income"
-                        },
-                        new
-                        {
-                            Id = new Guid("32200000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "P012",
-                            IsDelete = false,
-                            Level2_id = new Guid("32000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Retained Earning"
-                        },
-                        new
-                        {
-                            Id = new Guid("41100000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "CO21",
-                            IsDelete = false,
-                            Level2_id = new Guid("41000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Education General Fees "
-                        },
-                        new
-                        {
-                            Id = new Guid("41200000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "CO22",
-                            IsDelete = false,
-                            Level2_id = new Guid("41000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Hostel Fees / User Charges "
-                        },
-                        new
-                        {
-                            Id = new Guid("41300000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "CO23",
-                            IsDelete = false,
-                            Level2_id = new Guid("41000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Income From Endowments"
-                        },
-                        new
-                        {
-                            Id = new Guid("41400000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "CO24",
-                            IsDelete = false,
-                            Level2_id = new Guid("41000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Income From Services Rendered "
-                        },
-                        new
-                        {
-                            Id = new Guid("41500000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "CO25",
-                            IsDelete = false,
-                            Level2_id = new Guid("41000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Income From Intellectual Property "
-                        },
-                        new
-                        {
-                            Id = new Guid("41600000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "CO26",
-                            IsDelete = false,
-                            Level2_id = new Guid("41000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Others"
-                        },
-                        new
-                        {
-                            Id = new Guid("41700000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "CO27",
-                            IsDelete = false,
-                            Level2_id = new Guid("41000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Grant Revenue"
-                        },
-                        new
-                        {
-                            Id = new Guid("51100000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A011",
-                            IsDelete = false,
-                            Level2_id = new Guid("51000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Pay"
-                        },
-                        new
-                        {
-                            Id = new Guid("51200000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A012",
-                            IsDelete = false,
-                            Level2_id = new Guid("51000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Allowances"
-                        },
-                        new
-                        {
-                            Id = new Guid("52100000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A021",
-                            IsDelete = false,
-                            Level2_id = new Guid("52000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Feasibility Studies"
-                        },
-                        new
-                        {
-                            Id = new Guid("52200000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A022",
-                            IsDelete = false,
-                            Level2_id = new Guid("52000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Research Survey & Exploratory Operations"
-                        },
-                        new
-                        {
-                            Id = new Guid("53100000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A031",
-                            IsDelete = false,
-                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Fees"
-                        },
-                        new
-                        {
-                            Id = new Guid("53200000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A032",
-                            IsDelete = false,
-                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Communication Expense"
-                        },
-                        new
-                        {
-                            Id = new Guid("53300000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A033",
-                            IsDelete = false,
-                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Utilities Expense"
-                        },
-                        new
-                        {
-                            Id = new Guid("53400000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A034",
-                            IsDelete = false,
-                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Occupancy Cost"
-                        },
-                        new
-                        {
-                            Id = new Guid("53500000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A035",
-                            IsDelete = false,
-                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Operating Leases"
-                        },
-                        new
-                        {
-                            Id = new Guid("53600000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A036",
-                            IsDelete = false,
-                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Motor Vehicles"
-                        },
-                        new
-                        {
-                            Id = new Guid("53700000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A037",
-                            IsDelete = false,
-                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Consultancy & Contractual Work"
-                        },
-                        new
-                        {
-                            Id = new Guid("53800000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A038",
-                            IsDelete = false,
-                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Travel & Transportation"
-                        },
-                        new
-                        {
-                            Id = new Guid("53900000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A039",
-                            IsDelete = false,
-                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "General "
-                        },
-                        new
-                        {
-                            Id = new Guid("54100000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A041",
-                            IsDelete = false,
-                            Level2_id = new Guid("54000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Pension"
-                        },
-                        new
-                        {
-                            Id = new Guid("55100000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A061",
-                            IsDelete = false,
-                            Level2_id = new Guid("55000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Scholarships"
-                        },
-                        new
-                        {
-                            Id = new Guid("55200000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A062",
-                            IsDelete = false,
-                            Level2_id = new Guid("55000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Technical Assistance"
-                        },
-                        new
-                        {
-                            Id = new Guid("55300000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A063",
-                            IsDelete = false,
-                            Level2_id = new Guid("55000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Entertainment & Gifts"
-                        },
-                        new
-                        {
-                            Id = new Guid("55400000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A064",
-                            IsDelete = false,
-                            Level2_id = new Guid("55000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Other Transfer Payments"
-                        },
-                        new
-                        {
-                            Id = new Guid("53110000-5566-7788-99aa-bbccddeeff00"),
-                            Code = "A040",
-                            IsDelete = false,
-                            Level2_id = new Guid("53000000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Repair And Maintenance"
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Level4", b =>
@@ -4940,6 +4378,9 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Code")
@@ -4951,18 +4392,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("Level3_id");
 
                     b.ToTable("Level4");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("32110000-5566-7788-99aa-bbccddeeff00"),
-                            AccountType = 0,
-                            Code = "P01101",
-                            IsDelete = false,
-                            Level1_id = new Guid("30000000-5566-7788-99aa-bbccddeeff00"),
-                            Level3_id = new Guid("32100000-5566-7788-99aa-bbccddeeff00"),
-                            Name = "Opening Balance equity"
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.LogItem", b =>
@@ -5035,15 +4464,21 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Currency")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Fax")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<DateTime?>("FiscalYear")
+                    b.Property<DateTime?>("FiscalYearEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FiscalYearStart")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("GSTRegistrationNo")
@@ -5080,9 +4515,6 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("State")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -5093,15 +4525,11 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Organizations");
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasFilter("[Name] IS NOT NULL");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            IsDelete = false,
-                            Name = "SBBU"
-                        });
+                    b.ToTable("Organizations");
                 });
 
             modelBuilder.Entity("Domain.Entities.Payment", b =>
@@ -6806,6 +6234,54 @@ namespace Infrastructure.Migrations
                     b.ToTable("RequisitionToIssuanceLineReconcile");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Role", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<int>("OrganizationId")
+                        .HasMaxLength(100)
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName", "OrganizationId")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("Roles", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.Semester", b =>
                 {
                     b.Property<int>("Id")
@@ -7234,6 +6710,10 @@ namespace Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DateFormat")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -7242,6 +6722,13 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<int?>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("LastOrganizationAccess")
                         .HasColumnType("int");
 
                     b.Property<bool>("LockoutEnabled")
@@ -7270,6 +6757,10 @@ namespace Infrastructure.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Timezone")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -7292,6 +6783,46 @@ namespace Infrastructure.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.UsersOrganization", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrgId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrgId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UsersOrganization");
                 });
 
             modelBuilder.Entity("Domain.Entities.Warehouse", b =>
@@ -7528,33 +7059,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("WorkFlowTransitions");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("Roles", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -7659,6 +7163,21 @@ namespace Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("UserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("UserOrganization", b =>
+                {
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("OrganizationId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserOrganization");
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDepartment", b =>
@@ -9007,6 +8526,24 @@ namespace Infrastructure.Migrations
                     b.Navigation("Warehouse");
                 });
 
+            modelBuilder.Entity("Domain.Entities.InviteUser", b =>
+                {
+                    b.HasOne("Domain.Entities.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrgId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Organization");
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("Domain.Entities.InvoiceLines", b =>
                 {
                     b.HasOne("Domain.Entities.Level4", "Account")
@@ -10195,9 +9732,63 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.OwnsMany("Domain.Entities.RefreshToken", "RefreshTokens", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"), 1L, 1);
+
+                            b1.Property<DateTime>("Created")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<DateTime>("Expires")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<DateTime?>("Revoked")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<string>("Token")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("UserId")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(450)");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("UserId");
+
+                            b1.ToTable("RefreshToken");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
                     b.Navigation("Applicant");
 
                     b.Navigation("Employee");
+
+                    b.Navigation("RefreshTokens");
+                });
+
+            modelBuilder.Entity("Domain.Entities.UsersOrganization", b =>
+                {
+                    b.HasOne("Domain.Entities.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrgId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Organization");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.Warehouse", b =>
@@ -10213,7 +9804,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.WorkFlowTransition", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", "AllowedRole")
+                    b.HasOne("Domain.Entities.Role", "AllowedRole")
                         .WithMany()
                         .HasForeignKey("AllowedRoleId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -10247,7 +9838,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Domain.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -10274,7 +9865,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Domain.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -10293,6 +9884,21 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("UserOrganization", b =>
+                {
+                    b.HasOne("Domain.Entities.Organization", null)
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

@@ -18,15 +18,35 @@ namespace Vizalys.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly UserManager<User> _userManager;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(IUserService userService)
+        public AuthController(IUserService userService, UserManager<User> userManager, IConfiguration configuration)
         {
             _userService = userService;
+            _userManager = userManager;
+            _configuration = configuration;
         }
+
+        [AllowAnonymous]
+        [HttpPost("LoginSAAS")]
+        public async Task<ActionResult<Response<bool>>> LoginUserSAAS([FromBody] LoginSAASDto model)
+        {
+            var result = await _userService.LoginUserSAAS(model);
+            if (result.IsSuccess)
+            {
+                SetTokenInCookie("token", result.Result.SAASToken, DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["AuthSettings:SaaSJWTDurationInMinutes"])));
+                return Ok(result);// Status Code : 200
+            }
+
+            return BadRequest(result); // Status code : 400
+
+        }
+
         // /api/auth/login
         [AllowAnonymous]
         [HttpPost("Login")]
-        public async Task<ActionResult<Response<bool>>> LoginAsync([FromBody] LoginDto model)
+        public async Task<ActionResult<Response<bool>>> LoginAsync([FromBody] LoginAPPDto model)
         {
             var result = await _userService.LoginUserAsync(model);
 
@@ -36,9 +56,23 @@ namespace Vizalys.Api.Controllers
             return BadRequest(result); // Status code : 400
 
         }
+        [HttpPost("ChangeOrganization")]
+        public async Task<ActionResult<Response<AuthenticationDto>>> ChangeOrganization([FromBody] int orgId)
+        {
+            var result = await _userService.ChangeOrganization(orgId);
 
+            if (result.IsSuccess)
+            {
+                SetTokenInCookie("refresh-token", result.Result.RefreshToken, DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["AuthSettings:RefreshTokenDurationInMinutes"])));
+                return Ok(result);// Status Code : 200
+            }
+
+            return BadRequest(result); // Status code : 400
+
+        }
         //  /api/auth/RegisterUser
-        [ClaimRequirement("Permission", new string[] { Permissions.AuthClaims.Create })]
+
+        [AllowAnonymous]
         [HttpPost("Users")]
         public async Task<ActionResult<Response<bool>>> RegisterUserAsync([FromBody] RegisterUserDto model)
         {
@@ -164,7 +198,7 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpGet("Roles/Dropdown")]
-        public async Task<ActionResult<Response<IEnumerable<IdentityRole>>>> GetRolesDropDown()
+        public async Task<ActionResult<Response<IEnumerable<Role>>>> GetRolesDropDown()
         {
             return Ok(await _userService.GetRolesDropDown()); // Status Code : 200
         }
@@ -179,6 +213,17 @@ namespace Vizalys.Api.Controllers
                 return Ok(result); // Status Code : 200
 
             return BadRequest(result);// Status code : 400
+        }
+        private void SetTokenInCookie(string cookieName, string token, DateTime dateTime)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = dateTime,
+                SameSite = SameSiteMode.None,
+                Secure = true
+            };
+            Response.Cookies.Append(cookieName, token, cookieOptions);
         }
     }
 }

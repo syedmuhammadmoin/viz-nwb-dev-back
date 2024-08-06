@@ -11,8 +11,15 @@ namespace Infrastructure.Repositories
 {
     public class Level3Repository : GenericRepository<Level3, Guid>, ILevel3Repository
     {
+        private readonly ApplicationDbContext _context;
         public Level3Repository(ApplicationDbContext context) : base(context)
         {
+            _context = context;
+        }
+
+        public async Task AddRange(List<Level3> list)
+        {
+            await _context.Level3.AddRangeAsync(list);
         }
     }
 }

@@ -8,16 +8,43 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
+using Microsoft.AspNetCore.Http;
+using Application.Contracts.Helper;
 
 namespace Infrastructure.Repositories
 {
     public class Level4Repository : GenericRepository<Level4, Guid>, ILevel4Repository
     {
         private readonly ApplicationDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public Level4Repository(ApplicationDbContext context) : base(context)
+        public Level4Repository(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor) : base(context)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        public new async Task<Level4> Add(Level4 entity)
+        {
+            entity.Id = System.Guid.NewGuid();
+
+            var getLevel1Id = await _context.Level3
+                .Include(c => c.Level2)
+                .AsSplitQuery()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(i => i.Id == entity.Level3_id);
+
+            if (getLevel1Id == null)
+                throw new NullReferenceException("Level 3 account is null");
+
+            entity.Level1_id = getLevel1Id.Level2.Level1_id;
+            var result = await _context.Level4.AddAsync(entity);
+            return result.Entity;
+        }
+
+        public async Task AddRange(List<Level4> list)
+        {
+            await _context.Level4.AddRangeAsync(list);
         }
 
         public async Task<List<Level1>> GetCOA()
@@ -30,29 +57,25 @@ namespace Infrastructure.Repositories
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    Code = x.Code,
-                    Level2 = x.Level2
-                    .Select(y => new Level2
+                    Level2 = x.Level2.Select(y => new Level2
                     {
                         Id = y.Id,
                         Name = y.Name,
-                        Code = y.Code,
                         Level3 = y.Level3.Select(z => new Level3
                         {
                             Id = z.Id,
                             Name = z.Name,
-                            Code = z.Code,
                             Level4 = z.Level4.Select(a => new Level4
                             {
                                 Id = a.Id,
                                 Name = a.Name,
-                                AccountType = a.AccountType,
-                                Code = a.Code
-                            }).OrderBy(x => x.Code)
-                        }).OrderBy(x => x.Code)
+                                AccountType = a.AccountType
+                            })
+                        })
                     })
                 })
                 .ToListAsync();
         }
+
     }
 }

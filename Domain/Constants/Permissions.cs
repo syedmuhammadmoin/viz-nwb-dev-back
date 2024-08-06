@@ -12,7 +12,23 @@
                 $"{module}.{submodule}.DL",
             };
         }
-
+        public static List<string> GeneratePermissionsForModule(string module)
+        {
+            return new List<string>()
+            {
+                $"Permissions.{module}.CR",
+                $"Permissions.{module}.VW",
+                $"Permissions.{module}.ED",
+                $"Permissions.{module}.DL",
+            };
+        }
+        public static List<string> GeneratePermissionsForModuleReporting(string module)
+        {
+            return new List<string>()
+            {
+                $"Permissions.{module}.VW",
+            };
+        }
         public static List<string> GeneratePermissionsForModuleReporting(string module, string submodule)
         {
             return new List<string>()

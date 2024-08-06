@@ -9,6 +9,8 @@ namespace Domain.Interfaces
 {
     public interface ILevel4Repository : IGenericRepository<Level4, Guid>
     {
+        Task AddRange(List<Level4> list);
+
         Task<List<Level1>> GetCOA();
     }
 }

@@ -21,7 +21,6 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 //Add services
 builder.Services.AddScoped(provider => new Lazy<IEmployeeService>(() => provider.GetRequiredService<IEmployeeService>()));
 builder.Services.AddScoped(provider => new Lazy<IWarehouseService>(() => provider.GetRequiredService<IWarehouseService>()));
-
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 builder.Services.AddScoped<IWarehouseService, WarehouseService>();
 builder.Services.AddScoped<ICampusService, CampusService>();
@@ -96,9 +95,9 @@ builder.Services.AddScoped<IDomicileService, DomicileService>();
 builder.Services.AddScoped<IShiftService, ShiftService>();
 builder.Services.AddScoped<IBatchService, BatchService>();
 builder.Services.AddScoped<IAdmissionCriteriaService, AdmissionCriteriaService>();
-builder.Services.AddScoped<IApplicantService, ApplicantService>();
 builder.Services.AddScoped<IAdmissionApplicationService, AdmissionApplicationService>();
 builder.Services.AddScoped<IProgramChallanTemplateService, ProgramChallanTemplateService>();
+builder.Services.AddSingleton<IEmailSenderService, EmailSenderService>();
 builder.Services.AddHostedService<DepreciationBackgroundService>();
 
 
@@ -155,7 +154,10 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
-UserSeeding.Initialize(app.Services, builder.Configuration["UserCredentials:Password"]);
+
+//No need in saas
+//UserSeeding.Initialize(app.Services, builder.Configuration["UserCredentials:Password"]);
+
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{

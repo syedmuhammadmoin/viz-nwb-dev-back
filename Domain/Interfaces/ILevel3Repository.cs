@@ -9,5 +9,6 @@ namespace Domain.Interfaces
 {
     public interface ILevel3Repository : IGenericRepository<Level3, Guid>
     {
+        Task AddRange(List<Level3> list);
     }
 }
