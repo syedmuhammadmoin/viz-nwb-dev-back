@@ -14,7 +14,7 @@ namespace Application.Contracts.DTOs
         public string CampusName { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }
-        public Guid AccountId { get; set; }
+        public string AccountId { get; set; }
         public string Account { get; set; }
         public decimal BudgetAmount { get; set; }
         public decimal IncurredAmount { get; set; }

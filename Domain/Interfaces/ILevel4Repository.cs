@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface ILevel4Repository : IGenericRepository<Level4, Guid>
+    public interface ILevel4Repository : IGenericRepository<Level4, string>
     {
         Task AddRange(List<Level4> list);
 

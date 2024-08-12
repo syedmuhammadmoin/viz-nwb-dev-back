@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class Level2Repository : GenericRepository<Level2, Guid>, ILevel2Repository
+    public class Level2Repository : GenericRepository<Level2, string>, ILevel2Repository
     {
         
         private readonly ApplicationDbContext _context;

@@ -14,11 +14,11 @@ namespace Domain.Entities
         [MaxLength(100)]
         public string Name { get; private set; }
         //Will Restrict to Only Inventory Account
-        public Guid InventoryAccountId { get; private set; }
+        public string InventoryAccountId { get; private set; }
         //Will Restrict to Only Revenue Account
-        public Guid RevenueAccountId { get; private set; }
+        public string RevenueAccountId { get; private set; }
         //Will Restrict to Only Cost Account
-        public Guid CostAccountId { get; private set; }
+        public string CostAccountId { get; private set; }
         [ForeignKey("InventoryAccountId")]
         public Level4 InventoryAccount { get; private set; }
         [ForeignKey("RevenueAccountId")]

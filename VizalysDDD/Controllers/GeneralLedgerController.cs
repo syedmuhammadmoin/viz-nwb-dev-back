@@ -34,7 +34,7 @@ namespace Vizalys.Api.Controllers
         }
         [ClaimRequirement("Permission", new string[] { Permissions.GeneralLedgerClaims.View })]
         [HttpGet("Account/{AccountId:guid}/Balance")]
-        public ActionResult<Response<List<AggregatedRecordLedgerDto>>> GetOpeningBalance(Guid AccountId)
+        public ActionResult<Response<List<AggregatedRecordLedgerDto>>> GetOpeningBalance(string AccountId)
         {
             var aggregatedData = _generalLedgerReportService.GetAccountBalance(AccountId);
             if (aggregatedData.IsSuccess)

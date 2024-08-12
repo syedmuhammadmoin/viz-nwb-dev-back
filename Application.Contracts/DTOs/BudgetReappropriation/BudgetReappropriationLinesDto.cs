@@ -12,7 +12,7 @@ namespace Application.Contracts.DTOs
     public class BudgetReappropriationLinesDto
     {
         public int  Id { get; set; }
-        public Guid Level4Id { get; set; }
+        public string Level4Id { get; set; }
         public string Level4 { get; set; }
         public string Description { get; set; }
         public decimal AdditionAmount { get; set; }

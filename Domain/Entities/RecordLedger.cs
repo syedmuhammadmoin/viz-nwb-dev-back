@@ -13,7 +13,7 @@ namespace Domain.Entities
     public class RecordLedger : BaseEntity<int>
     {
         public int TransactionId { get; private set; }
-        public Guid Level4_id { get; private set; }
+        public string Level4_id { get; private set; }
         public int? BusinessPartnerId { get; private set; }
         public int? WarehouseId { get; private set; }
         public int? CampusId { get; private set; }
@@ -48,13 +48,21 @@ namespace Domain.Entities
         public DocumentStatus ReconStatus { get; private set; }
         public bool IsReconcilable { get; private set; }
 
+        
+        public int? LocationId { get; private set; }
+        
+
+        [ForeignKey("LocationId")]
+        public Location Location { get; private set; }
+        public int OrganizationId { get; set; }
+
 
         protected RecordLedger()
         {
 
         }
        
-        public RecordLedger(int transactionId, Guid level4_id, int? businessPartnerId, int? warehouseId, string description, char sign, decimal amount, int? campusId, DateTime transactionDate)
+        public RecordLedger(int transactionId, string level4_id, int? businessPartnerId, int? warehouseId, string description, char sign, decimal amount, int? campusId, DateTime transactionDate)
         {
             TransactionId = transactionId;
             Level4_id = level4_id;
@@ -67,7 +75,7 @@ namespace Domain.Entities
             TransactionDate = transactionDate;
             ReconStatus = DocumentStatus.Unreconciled;
         }
-        public RecordLedger(int transactionId, Guid level4_id, int? businessPartnerId,  string description, char sign, decimal amount, int? campusId, DateTime transactionDate)
+        public RecordLedger(int transactionId, string level4_id, int? businessPartnerId,  string description, char sign, decimal amount, int? campusId, DateTime transactionDate)
         {
             TransactionId = transactionId;
             Level4_id = level4_id;
@@ -80,7 +88,7 @@ namespace Domain.Entities
             ReconStatus = DocumentStatus.Unreconciled;
         }
 
-        public RecordLedger(int transactionId, Guid level4_id, int? businessPartnerId, int? warehouseId, string description, char sign, decimal amount, int? campusId, DateTime transactionDate, int? fixedAssetId)
+        public RecordLedger(int transactionId, string level4_id, int? businessPartnerId, int? warehouseId, string description, char sign, decimal amount, int? campusId, DateTime transactionDate, int? fixedAssetId)
         {
             TransactionId = transactionId;
             Level4_id = level4_id;

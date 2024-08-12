@@ -304,11 +304,11 @@ namespace Application.Services
             return new Response<List<BudgetReportDto>>(result, "Returning budget report");
         }
 
-        private bool getIncomeAccount(Guid id)
+        private bool getIncomeAccount(string id)
         {
-            const string IncomeAccountLevel1 = "40000000-5566-7788-99AA-BBCCDDEEFF00";
+             string IncomeAccountLevel1 = "40000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{GetTenant.GetTenantId(_httpContextAccessor)}";
 
-            if (id == new Guid(IncomeAccountLevel1))
+            if (id == IncomeAccountLevel1)
             {
                 return true;
             }

@@ -31,12 +31,13 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.ChAccount);
             AddInclude(i => i.ClearingAccount);
         }
-        public BankAccountSpecs(Guid clearingAccountId) : base(e => e.ClearingAccountId == clearingAccountId)
-        {
-        }
-        public BankAccountSpecs(string accountNumber) : base(e => e.AccountNumber == accountNumber)
-        {
+        //SBBU-Code
+        //public BankAccountSpecs(Guid clearingAccountId) : base(e => e.ClearingAccountId == clearingAccountId)
+        //{
+        //}
+        //public BankAccountSpecs(string accountNumber) : base(e => e.AccountNumber == accountNumber)
+        //{
 
-        }
+        //}
     }
 }

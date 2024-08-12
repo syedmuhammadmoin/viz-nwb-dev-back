@@ -29,71 +29,121 @@ namespace Application.Services
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
         }
-
         public async Task<Response<BankAccountDto>> CreateAsync(CreateBankAccountDto entity)
         {
-            // checking account number already exist or not
-            var checkExistingAccount = _unitOfWork.BankAccount.Find(new BankAccountSpecs(entity.AccountNumber)).FirstOrDefault();
-
-            if (checkExistingAccount != null)
-                return new Response<BankAccountDto>("Account number already exist");
-
-            var checkingCode = _unitOfWork.Level4.Find(new Level4Specs(entity.AccountCode)).FirstOrDefault();
-            if (checkingCode != null)
-                return new Response<BankAccountDto>("Duplicate account code");
-
-            var checkingCodeForClearingAccount = _unitOfWork.Level4.Find(new Level4Specs($"{entity.AccountCode}C")).FirstOrDefault();
-            if (checkingCodeForClearingAccount != null)
-                return new Response<BankAccountDto>("Duplicate account code");
-
             _unitOfWork.CreateTransaction();
+            try
+            {
+                var ChAccount = new Level4(
+                    entity.BankName,
+                    "12200000-5566-7788-99AA-BBCCDDEEFF00" + $"-{GetTenant.GetTenantId(_httpContextAccessor)}");
 
-            var ChAccount = new Level4(
-                entity.AccountTitle,
-                entity.AccountCode,
-                new Guid("12500000-5566-7788-99AA-BBCCDDEEFF00"),
-                new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"),
-                GetTenant.GetTenantId(_httpContextAccessor));
+                await _unitOfWork.Level4.Add(ChAccount);
 
-            await _unitOfWork.Level4.Add(ChAccount);
+                var ClAccount = new Level4(
+                    $"{entity.BankName} Clearing Account",
+                    "12200000-5566-7788-99AA-BBCCDDEEFF00" + $"-{GetTenant.GetTenantId(_httpContextAccessor)}");
 
-            var ClAccount = new Level4(
-                $"{entity.AccountTitle} Clearing Account",
-                $"{entity.AccountCode}C",
-                new Guid("12500000-5566-7788-99AA-BBCCDDEEFF00"),
-                new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"),
-                GetTenant.GetTenantId(_httpContextAccessor));
+                await _unitOfWork.Level4.Add(ClAccount);
 
-            await _unitOfWork.Level4.Add(ClAccount);
+                var transaction = new Transactions(0, "1", DocType.BankAccount);
+                await _unitOfWork.Transaction.Add(transaction);
+                await _unitOfWork.SaveAsync();
 
-            var transaction = new Transactions(0, "1", DocType.BankAccount);
-            await _unitOfWork.Transaction.Add(transaction);
-            await _unitOfWork.SaveAsync();
+                var bankAccount = _mapper.Map<BankAccount>(entity);
 
-            var bankAccount = _mapper.Map<BankAccount>(entity);
+                bankAccount.SetChAccountId(ChAccount.Id);
+                bankAccount.SetClAccountId(ClAccount.Id);
+                bankAccount.setTransactionId(transaction.Id);
 
-            bankAccount.SetChAccountId(ChAccount.Id);
-            bankAccount.SetClAccountId(ClAccount.Id);
-            bankAccount.setTransactionId(transaction.Id);
+                await _unitOfWork.BankAccount.Add(bankAccount);
+                await _unitOfWork.SaveAsync();
 
-            await _unitOfWork.BankAccount.Add(bankAccount);
-            await _unitOfWork.SaveAsync();
+                bankAccount.CreateDocNo();
+                transaction.UpdateDocNo(bankAccount.Id, bankAccount.DocNo);
+                await _unitOfWork.SaveAsync();
 
-            bankAccount.CreateDocNo();
-            transaction.UpdateDocNo(bankAccount.Id, bankAccount.DocNo);
-            await _unitOfWork.SaveAsync();
+                //Adding BankAccount to Ledger
+                await AddToLedger(bankAccount);
 
-            //Adding BankAccount to Ledger
-            await AddToLedger(bankAccount);
+                //Commiting the transaction 
+                _unitOfWork.Commit();
 
-            //Commiting the transaction 
-            _unitOfWork.Commit();
+                //returning response
+                return new Response<BankAccountDto>(_mapper.Map<BankAccountDto>(bankAccount), "Created successfully");
 
-            //returning response
-            return new Response<BankAccountDto>(_mapper.Map<BankAccountDto>(bankAccount), "Created successfully");
-
-
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                return new Response<BankAccountDto>(ex.Message);
+            }
         }
+        //SBBU-Code
+        //public async Task<Response<BankAccountDto>> CreateAsync(CreateBankAccountDto entity)
+        //{
+        //    // checking account number already exist or not
+        //    var checkExistingAccount = _unitOfWork.BankAccount.Find(new BankAccountSpecs(entity.AccountNumber)).FirstOrDefault();
+
+        //    if (checkExistingAccount != null)
+        //        return new Response<BankAccountDto>("Account number already exist");
+
+        //    var checkingCode = _unitOfWork.Level4.Find(new Level4Specs(entity.AccountCode)).FirstOrDefault();
+        //    if (checkingCode != null)
+        //        return new Response<BankAccountDto>("Duplicate account code");
+
+        //    var checkingCodeForClearingAccount = _unitOfWork.Level4.Find(new Level4Specs($"{entity.AccountCode}C")).FirstOrDefault();
+        //    if (checkingCodeForClearingAccount != null)
+        //        return new Response<BankAccountDto>("Duplicate account code");
+
+        //    _unitOfWork.CreateTransaction();
+
+        //    var ChAccount = new Level4(
+        //        entity.AccountTitle,
+        //        entity.AccountCode,
+        //        new Guid("12500000-5566-7788-99AA-BBCCDDEEFF00"),
+        //        new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"),
+        //        GetTenant.GetTenantId(_httpContextAccessor));
+
+        //    await _unitOfWork.Level4.Add(ChAccount);
+
+        //    var ClAccount = new Level4(
+        //        $"{entity.AccountTitle} Clearing Account",
+        //        $"{entity.AccountCode}C",
+        //        new Guid("12500000-5566-7788-99AA-BBCCDDEEFF00"),
+        //        new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"),
+        //        GetTenant.GetTenantId(_httpContextAccessor));
+
+        //    await _unitOfWork.Level4.Add(ClAccount);
+
+        //    var transaction = new Transactions(0, "1", DocType.BankAccount);
+        //    await _unitOfWork.Transaction.Add(transaction);
+        //    await _unitOfWork.SaveAsync();
+
+        //    var bankAccount = _mapper.Map<BankAccount>(entity);
+
+        //    bankAccount.SetChAccountId(ChAccount.Id);
+        //    bankAccount.SetClAccountId(ClAccount.Id);
+        //    bankAccount.setTransactionId(transaction.Id);
+
+        //    await _unitOfWork.BankAccount.Add(bankAccount);
+        //    await _unitOfWork.SaveAsync();
+
+        //    bankAccount.CreateDocNo();
+        //    transaction.UpdateDocNo(bankAccount.Id, bankAccount.DocNo);
+        //    await _unitOfWork.SaveAsync();
+
+        //    //Adding BankAccount to Ledger
+        //    await AddToLedger(bankAccount);
+
+        //    //Commiting the transaction 
+        //    _unitOfWork.Commit();
+
+        //    //returning response
+        //    return new Response<BankAccountDto>(_mapper.Map<BankAccountDto>(bankAccount), "Created successfully");
+
+
+        //}
 
         public async Task<PaginationResponse<List<BankAccountDto>>> GetAllAsync(TransactionFormFilter filter)
         {
@@ -184,7 +234,7 @@ namespace Application.Services
 
             var addBalanceInOpeningBalanceEquity = new RecordLedger(
                bankAccount.TransactionId,
-               new Guid("32110000-5566-7788-99AA-BBCCDDEEFF00"),
+              "31210000-5566-7788-99AA-BBCCDDEEFF00" + $"-{GetTenant.GetTenantId(_httpContextAccessor)}",
                null,
                null,
                "Opening Balance",

@@ -13,7 +13,7 @@ using Application.Contracts.Helper;
 
 namespace Infrastructure.Repositories
 {
-    public class Level4Repository : GenericRepository<Level4, Guid>, ILevel4Repository
+    public class Level4Repository : GenericRepository<Level4, string>, ILevel4Repository
     {
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -26,7 +26,7 @@ namespace Infrastructure.Repositories
 
         public new async Task<Level4> Add(Level4 entity)
         {
-            entity.Id = System.Guid.NewGuid();
+            entity.Id = System.Guid.NewGuid().ToString() + $"-{GetTenant.GetTenantId(_httpContextAccessor)}";
 
             var getLevel1Id = await _context.Level3
                 .Include(c => c.Level2)

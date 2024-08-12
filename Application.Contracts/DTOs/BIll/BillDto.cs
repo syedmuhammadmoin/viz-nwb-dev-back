@@ -18,7 +18,7 @@ namespace Application.Contracts.DTOs
         public string VendorAddress { get; set; }
         public string IncomeTaxId { get; set; }
         public string SalesTaxId { get; set; }
-        public Guid PayableAccountId { get; set; }
+        public string PayableAccountId { get; set; }
         public string PayableAccountName { get; set; }
         public DateTime BillDate { get; set; }
         public DateTime DueDate { get; set; }

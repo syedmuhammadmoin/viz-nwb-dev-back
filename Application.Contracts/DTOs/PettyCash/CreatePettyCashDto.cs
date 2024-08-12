@@ -13,7 +13,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public DateTime? Date { get; set; }
         [Required]
-        public Guid? AccountId { get; set; }
+        public string? AccountId { get; set; }
         public decimal? OpeningBalance { get; set; }
         public decimal? ClosingBalance { get; set; }
         [MaxLength(500)]

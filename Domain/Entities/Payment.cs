@@ -19,12 +19,12 @@ namespace Domain.Entities
         [ForeignKey("BusinessPartnerId")]
         public BusinessPartner BusinessPartner { get; private set; }
         public DocType PaymentFormType { get; private set; } 
-        public Guid AccountId { get; private set; }
+        public string AccountId { get; private set; }
         [ForeignKey("AccountId")]
         public Level4 Account { get; private set; }
         public DateTime PaymentDate { get; private set; }
         public PaymentRegisterType PaymentRegisterType { get; private set; } // 0 = CashAccount, 1 = BankAccount
-        public Guid PaymentRegisterId { get; private set; }
+        public string PaymentRegisterId { get; private set; }
         [ForeignKey("PaymentRegisterId")]
         public Level4 PaymentRegister { get; private set; }
         [MaxLength(500)]
@@ -44,7 +44,7 @@ namespace Domain.Entities
         public decimal Deduction { get; private set; }
         [MaxLength(20)]
         public string ChequeNo { get; private set; }
-        public Guid? DeductionAccountId { get; private set; }
+        public string? DeductionAccountId { get; private set; }
         [ForeignKey("OtherDeductionAccountId")]
         public Level4 DeductionAccount { get; private set; }
         [Column(TypeName = "decimal(18,2)")]

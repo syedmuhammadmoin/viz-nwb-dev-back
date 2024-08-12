@@ -42,8 +42,8 @@ namespace Application.Services
                 var ChAccount = new Level4(
                     entity.CashAccountName,
                     entity.AccountCode,
-                    new Guid("12500000-5566-7788-99AA-BBCCDDEEFF00"),
-                    new Guid("10000000-5566-7788-99AA-BBCCDDEEFF00"),
+                    "12500000-5566-7788-99AA-BBCCDDEEFF00",
+                    "10000000-5566-7788-99AA-BBCCDDEEFF00",
                     GetTenant.GetTenantId(_httpContextAccessor)
                     );
 
@@ -154,7 +154,7 @@ namespace Application.Services
 
             var addBalanceInOpeningBalanceEquity = new RecordLedger(
                cashAccount.TransactionId,
-               new Guid("32110000-5566-7788-99AA-BBCCDDEEFF00"),
+               "31210000-5566-7788-99AA-BBCCDDEEFF00" + $"-{GetTenant.GetTenantId(_httpContextAccessor)}",
                null,
                null,
                "Opening Balance",

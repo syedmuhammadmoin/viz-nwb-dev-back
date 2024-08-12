@@ -124,7 +124,7 @@ namespace Infrastructure.Uow
             DebitNote = new DebitNoteRepository(context);
             Payment = new PaymentRepository(context);
             Transaction = new TransactionRepository(context);
-            Ledger = new LedgerRepository(context);
+            Ledger = new LedgerRepository(context, httpContextAccessor);
             CashAccount = new CashAccountRepository(context);
             BankAccount = new BankAccountRepository(context);
             Bankstatement = new BankStmtRepository(context);

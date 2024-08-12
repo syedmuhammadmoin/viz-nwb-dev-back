@@ -11,7 +11,7 @@ namespace Application.Contracts.DTOs
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
-        public Guid AccountId { get; set; }
+        public string AccountId { get; set; }
         public string AccountName { get; set; }
         public int? BusinessPartnerId { get; set; }
         public string BusinessPartnerName { get; set; }

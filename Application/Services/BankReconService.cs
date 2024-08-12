@@ -91,9 +91,11 @@ namespace Application.Services
                 {
                     payment.SetReconStatus(DocumentStatus.Reconciled);
 
-                    var bankAccount = _unitOfWork.BankAccount.Find(new BankAccountSpecs(payment.PaymentRegisterId)).FirstOrDefault();
+                //SBBU-Code
+                    //var bankAccount = _unitOfWork.BankAccount.Find(new BankAccountSpecs(payment.PaymentRegisterId)).FirstOrDefault();
+                var bankAccount = await _unitOfWork.BankAccount.GetByClearingAccountId(payment.PaymentRegisterId);
 
-                    if (payment.PaymentType == PaymentType.Inflow)
+                if (payment.PaymentType == PaymentType.Inflow)
                     {
                         //Add total payment in originalBank Account Ledger
                         var addNetPaymentInRecordLedgerChAccount = new RecordLedger(

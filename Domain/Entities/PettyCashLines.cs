@@ -13,7 +13,7 @@ namespace Domain.Entities
     {
         public DateTime Date { get; private set; }
 
-        public Guid AccountId { get; private set; }
+        public string AccountId { get; private set; }
         [ForeignKey("AccountId")]
         public Level4 Account { get; private set; }
         public int? BusinessPartnerId { get; private set; }

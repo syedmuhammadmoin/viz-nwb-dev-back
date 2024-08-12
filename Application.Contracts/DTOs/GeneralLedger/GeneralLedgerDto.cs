@@ -11,9 +11,9 @@ namespace Application.Contracts.DTOs
     {
         public int LedgerId { get; set; }
         public int? CampusId { get; set; }
-        public Guid Level1Id { get; set; }
+        public string Level1Id { get; set; }
         public string Nature { get; set; }
-        public Guid AccountId { get; set; }
+        public string AccountId { get; set; }
         public string AccountName { get; set; }
         public int TransactionId { get; set; }
         public DateTime? DocDate { get; set; }
@@ -29,6 +29,12 @@ namespace Application.Contracts.DTOs
         public int? WarehouseId { get; set; }
         public string WarehouseName { get; set; }
         public string CampusName { get; set; }
-        public bool IsOpeningBalance { get; set; }      
-	}
+        public bool IsOpeningBalance { get; set; }
+
+        public int DepartmentId { get; set; }
+        public string DepartmentName { get; set; }
+        public int? LocationId { get; set; }
+        public string LocationName { get; set; }
+        public string Organization { get; set; }
+    }
 }

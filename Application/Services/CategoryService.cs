@@ -35,32 +35,34 @@ namespace Application.Services
                 return new Response<CategoryDto>("Account Cannot Be Same");
             }
             
-            //Validation for Payable and Receivable
-            var Inventorylevel4 = await _unitOfWork.Level4.GetById((Guid)entity.InventoryAccountId);
+            //SBBU-Code
+            ////Validation for Payable and Receivable
+            //var Inventorylevel4 = await _unitOfWork.Level4.GetById(entity.InventoryAccountId);
 
-            var InventoryAccountId = ReceivableAndPayable.Validate(Inventorylevel4.Level3_id);
+            //var InventoryAccountId = ReceivableAndPayable.Validate(Inventorylevel4.Level3_id);
 
-            if (InventoryAccountId == false)
-            {
-                return new Response<CategoryDto>("Inventory account Invalid");
-            }
+            //if (InventoryAccountId == false)
+            //{
+            //    return new Response<CategoryDto>("Inventory account Invalid");
+            //}
 
-            var Revenuelevel4 = await _unitOfWork.Level4.GetById((Guid)entity.RevenueAccountId);
+            var Revenuelevel4 = await _unitOfWork.Level4.GetById(entity.RevenueAccountId);
 
-            var RevenueAccountId = ReceivableAndPayable.Validate(Revenuelevel4.Level3_id);
+            //SBBU-Code
+            //var RevenueAccountId = ReceivableAndPayable.Validate(Revenuelevel4.Level3_id);
 
-            if (RevenueAccountId == false)
-            {
-                return new Response<CategoryDto>("Revenue account Invalid");
-            }
-            var Costlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.CostAccountId);
+            //if (RevenueAccountId == false)
+            //{
+            //    return new Response<CategoryDto>("Revenue account Invalid");
+            //}
+            var Costlevel4 = await _unitOfWork.Level4.GetById(entity.CostAccountId);
+            //SBBU-Code
+            //var CostAccountId = ReceivableAndPayable.Validate(Costlevel4.Level3_id);
 
-            var CostAccountId = ReceivableAndPayable.Validate(Costlevel4.Level3_id);
-
-            if (CostAccountId == false)
-            {
-                return new Response<CategoryDto>("Cost account Invalid");
-            }
+            //if (CostAccountId == false)
+            //{
+            //    return new Response<CategoryDto>("Cost account Invalid");
+            //}
 
             if ((bool)entity.IsFixedAsset && (entity.DepreciationModelId == null || entity.DepreciationModelId == 0))
             {
@@ -113,31 +115,31 @@ namespace Application.Services
             }
 
             //Validation for Payable and Receivable
-            var Inventorylevel4 = await _unitOfWork.Level4.GetById((Guid)entity.InventoryAccountId);
+            var Inventorylevel4 = await _unitOfWork.Level4.GetById(entity.InventoryAccountId);
+            //SBBU-Code
+            //var InventoryAccountId = ReceivableAndPayable.Validate(Inventorylevel4.Level3_id);
 
-            var InventoryAccountId = ReceivableAndPayable.Validate(Inventorylevel4.Level3_id);
+            //if (InventoryAccountId == false)
+            //{
+            //    return new Response<CategoryDto>("Inventory account Invalid");
+            //}
 
-            if (InventoryAccountId == false)
-            {
-                return new Response<CategoryDto>("Inventory account Invalid");
-            }
+            var Revenuelevel4 = await _unitOfWork.Level4.GetById(entity.RevenueAccountId);
+            //SBBU-Code
+            //var RevenueAccountId = ReceivableAndPayable.Validate(Revenuelevel4.Level3_id);
 
-            var Revenuelevel4 = await _unitOfWork.Level4.GetById((Guid)entity.RevenueAccountId);
+            //if (RevenueAccountId == false)
+            //{
+            //    return new Response<CategoryDto>("Revenue account Invalid");
+            //}
+            var Costlevel4 = await _unitOfWork.Level4.GetById(entity.CostAccountId);
+            //SBBU-Code
+            //var CostAccountId = ReceivableAndPayable.Validate(Costlevel4.Level3_id);
 
-            var RevenueAccountId = ReceivableAndPayable.Validate(Revenuelevel4.Level3_id);
-
-            if (RevenueAccountId == false)
-            {
-                return new Response<CategoryDto>("Revenue account Invalid");
-            }
-            var Costlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.CostAccountId);
-
-            var CostAccountId = ReceivableAndPayable.Validate(Costlevel4.Level3_id);
-
-            if (CostAccountId == false)
-            {
-                return new Response<CategoryDto>("Cost account Invalid");
-            }
+            //if (CostAccountId == false)
+            //{
+            //    return new Response<CategoryDto>("Cost account Invalid");
+            //}
 
             if ((bool)entity.IsFixedAsset && (entity.DepreciationModelId == null || entity.DepreciationModelId == 0))
             {

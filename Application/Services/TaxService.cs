@@ -57,15 +57,16 @@ namespace Application.Services
             if (tax == null)
                 return new Response<TaxDto>("Not found");
 
-            var taxLevel4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountId);
+            var taxLevel4 = await _unitOfWork.Level4.GetById(entity.AccountId);
 
-            var AccountId = ReceivableAndPayable.Validate(taxLevel4.Level3_id);
+            //SBBU-Code
+            //var AccountId = ReceivableAndPayable.Validate(taxLevel4.Level3_id);
 
-            //Validation For Receivable and Payable
-            if(AccountId == false)
-            {
-                return new  Response<TaxDto>("Account Invalid");
-            }
+            ////Validation For Receivable and Payable
+            //if(AccountId == false)
+            //{
+            //    return new  Response<TaxDto>("Account Invalid");
+            //}
             
             //For updating data
             _mapper.Map<UpdateTaxDto, Taxes>(entity, tax);

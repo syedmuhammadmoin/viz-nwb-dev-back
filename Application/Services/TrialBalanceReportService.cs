@@ -26,7 +26,7 @@ namespace Application.Services
         {
             filters.DocDate = filters.DocDate?.Date;
             filters.DocDate2 = filters.DocDate2?.Date;
-            var accounts = new List<Guid?>();
+            var accounts = new List<string?>();
             var campuses = new List<int?>();
             
             if (filters.DocDate > filters.DocDate2)

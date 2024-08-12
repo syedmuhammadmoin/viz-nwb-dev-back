@@ -28,7 +28,7 @@ namespace Application.Contracts.DTOs
         public int BasicPayItemId { get; set; }
         public int? IncrementItemId { get; set; }
         public string BPS { get; set; }
-        public Guid BPSAccountId { get; set; }
+        public string BPSAccountId { get; set; }
         public string PlaceofBirth { get;  set; }
         public int BusinessPartnerId { get; set; }
         public int DesignationId { get; set; }
@@ -60,7 +60,7 @@ namespace Application.Contracts.DTOs
         public decimal NetPay { get; set; }
         public virtual List<PayrollItemDto> PayrollItems { get; set; }
         public string Email { get; set; }
-        public Guid? AccountPayableId { get; set; }
+        public string? AccountPayableId { get; set; }
         public string AccountPayableName { get; set; }
     }
 }

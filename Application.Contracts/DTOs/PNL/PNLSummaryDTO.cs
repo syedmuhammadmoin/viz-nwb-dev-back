@@ -10,7 +10,7 @@ namespace Application.Contracts.DTOs
     {
         public int Month { get; set; }
         public int year { get; set; }
-        public Guid Level1Id { get; set; }
+        public string Level1Id { get; set; }
         public string Nature { get; set; }
         public decimal Balance { get; set; }
     }

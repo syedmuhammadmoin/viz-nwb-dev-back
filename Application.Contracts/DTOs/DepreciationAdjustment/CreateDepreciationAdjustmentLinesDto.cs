@@ -16,7 +16,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public int? FixedAssetId { get;  set; }
         [Required]
-        public Guid? Level4Id { get;  set; }
+        public string? Level4Id { get;  set; }
         [Required]
         [MaxLength(500)]
         public string Description { get;  set; }

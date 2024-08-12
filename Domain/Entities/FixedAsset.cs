@@ -36,11 +36,11 @@ namespace Domain.Entities
         [ForeignKey("AssetAccountId")]
         public Level4 AssetAccount { get; private set; }
 
-        public Guid? DepreciationExpenseId { get; private set; }
+        public string? DepreciationExpenseId { get; private set; }
         [ForeignKey("DepreciationExpenseId")]
         public Level4 DepreciationExpense { get; private set; }
 
-        public Guid? AccumulatedDepreciationId { get; private set; }
+        public string? AccumulatedDepreciationId { get; private set; }
         [ForeignKey("AccumulatedDepreciationId")]
         public Level4 AccumulatedDepreciation { get; private set; }
 

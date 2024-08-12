@@ -16,13 +16,13 @@ namespace Application.Contracts.DTOs
         public int? BusinessPartnerId { get; set; }
         public DocType PaymentFormType { get; set; }
         [Required]
-        public Guid? AccountId { get; set; }
+        public string? AccountId { get; set; }
         [Required]
         public DateTime? PaymentDate { get; set; }
         [Required]
         public PaymentRegisterType? PaymentRegisterType { get; set; }
         [Required]
-        public Guid? PaymentRegisterId { get; set; }
+        public string? PaymentRegisterId { get; set; }
         [Required]
         [MaxLength(500)]
         public string Description { get; set; }
@@ -40,7 +40,7 @@ namespace Application.Contracts.DTOs
         public string ChequeNo { get; set; }
         public decimal? Deduction { get; set; }
         public int? DocumentLedgerId { get; set; }
-        public Guid? DeductionAccountId { get; set; }
+        public string? DeductionAccountId { get; set; }
         [Required]
         public bool? isSubmit { get; set; }
     }

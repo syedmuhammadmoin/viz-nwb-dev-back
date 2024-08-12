@@ -12,7 +12,7 @@ namespace Application.Contracts.Interfaces
     public interface IGeneralLedgerReportService
     {
         Response<List<GeneralLedgerDto>> GetLedger(GeneralLedgerFilters generalLedger);
-        Response<List<AggregatedRecordLedgerDto>> GetAccountBalance(Guid AccountId);
+        Response<List<AggregatedRecordLedgerDto>> GetAccountBalance(string AccountId);
 
     }
 }

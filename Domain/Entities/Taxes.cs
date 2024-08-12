@@ -15,7 +15,7 @@ namespace Domain.Entities
         [MaxLength(80)]
         public string Name { get; private set; }
         public TaxType TaxType { get; private set; }
-        public Guid? AccountId { get; private set; }
+        public string? AccountId { get; private set; }
         [ForeignKey("AccountId")]
         public Level4 Account { get; private set; }
 

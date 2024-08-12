@@ -17,7 +17,7 @@ namespace Domain.Entities
         public DateTime Date { get; private set; }
         [MaxLength(500)]
         public string Description { get; private set; }
-        public Guid AccountId { get; private set; }
+        public string AccountId { get; private set; }
         [ForeignKey("AccountId")]
         public Level4 Account { get; private set; }
         [Column(TypeName = "decimal(18,2)")]

@@ -1,8 +1,10 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.Helper;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Context;
 using Infrastructure.Specifications;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,9 +17,13 @@ namespace Infrastructure.Repositories
     public class LedgerRepository : GenericRepository<RecordLedger, int>, ILedgerRepository
     {
         private readonly ApplicationDbContext _context;
-        public LedgerRepository(ApplicationDbContext context) : base(context)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public LedgerRepository(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor) : base(context)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
+
         }
 
         public new async Task<RecordLedger> Add(RecordLedger entity)
@@ -28,14 +34,10 @@ namespace Infrastructure.Repositories
                 .Select(i => i.Level3_id)
                 .FirstOrDefaultAsync();
 
+            int orgId = GetTenant.GetTenantId(_httpContextAccessor);
+
             // Setting isReconcilable true if account id is equal to payable or receivable
-            if (getLevel3 == new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00")
-                || getLevel3 == new Guid("12100000-5566-7788-99AA-BBCCDDEEFF00")
-                || getLevel3 == new Guid("12300000-5566-7788-99AA-BBCCDDEEFF00")
-                || getLevel3 == new Guid("12900000-5566-7788-99AA-BBCCDDEEFF00")
-                || getLevel3 == new Guid("12110000-5566-7788-99AA-BBCCDDEEFF00")
-                || getLevel3 == new Guid("12120000-5566-7788-99AA-BBCCDDEEFF00")
-                || getLevel3 == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00"))
+            if (getLevel3 == "12100000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}" || getLevel3 == "22100000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}")
             {
                 entity.SetIsReconcilable(true);
             }
@@ -48,6 +50,7 @@ namespace Infrastructure.Repositories
             return result.Entity;
         }
 
+
         public async Task AddRange(List<RecordLedger> list)
         {
             foreach (var item in list)
@@ -58,14 +61,9 @@ namespace Infrastructure.Repositories
                     .Select(i => i.Level3_id)
                     .FirstOrDefaultAsync();
 
+                int orgId = GetTenant.GetTenantId(_httpContextAccessor);
                 // Setting isReconcilable true if account id is equal to payable or receivable
-                if (getLevel3 == new Guid("12200000-5566-7788-99AA-BBCCDDEEFF00")
-                || getLevel3 == new Guid("12100000-5566-7788-99AA-BBCCDDEEFF00")
-                || getLevel3 == new Guid("12300000-5566-7788-99AA-BBCCDDEEFF00")
-                || getLevel3 == new Guid("12900000-5566-7788-99AA-BBCCDDEEFF00")
-                || getLevel3 == new Guid("12110000-5566-7788-99AA-BBCCDDEEFF00")
-                || getLevel3 == new Guid("12120000-5566-7788-99AA-BBCCDDEEFF00")
-                || getLevel3 == new Guid("22100000-5566-7788-99AA-BBCCDDEEFF00"))
+                if (getLevel3 == "12100000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}" || getLevel3 == "22100000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}")
                 {
                     item.SetIsReconcilable(true);
                 }

@@ -14,7 +14,7 @@ namespace Application.Contracts.DTOs
     {
         public int? Id{ get; set; }
         [Required]
-        public Guid? Level4Id { get; set; }
+        public string? Level4Id { get; set; }
         [Required]
         [MaxLength(500)]
         public string Description { get; set; }

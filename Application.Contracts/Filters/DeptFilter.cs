@@ -16,6 +16,6 @@ namespace Application.Contracts.Filters
         public int? Year { get; set; }
         [Required]
         public int? CampusId { get; set; }
-        public Guid AccountPayableId { get; set; }
+        public string AccountPayableId { get; set; }
     }
 }

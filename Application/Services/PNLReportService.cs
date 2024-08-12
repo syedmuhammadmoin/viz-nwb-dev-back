@@ -1,11 +1,13 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using Domain.Constants;
 using Domain.Interfaces;
 using Infrastructure.Context;
 using Infrastructure.Specifications;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,16 +18,19 @@ namespace Application.Services
 {
     public class PNLReportService : IPNLReportService
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly IUnitOfWork _unitOfWork;
 
-        public PNLReportService(IUnitOfWork unitOfWork)
+        public PNLReportService(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
+            _httpContextAccessor = httpContextAccessor;
+
         }
         public Response<List<PNLDto>> GetProfitLoss(PNLFilters filters)
         {
-            var accounts = new List<Guid?>();
+            var accounts = new List<string?>();
             var warehouses = new List<int?>();
             var campuses = new List<int?>();
             var businessPartners = new List<int?>();
@@ -92,7 +97,7 @@ namespace Application.Services
                         (warehouses.Count() > 0 ? warehouses.Contains(glv.WarehouseId) : true) &&
                         (businessPartners.Count() > 0 ? businessPartners.Contains(glv.BId) : true) &&
                         (campuses.Count() > 0 ? campuses.Contains(glv.CampusId) : true) &&
-                         (glv.Level1Id == new Guid("40000000-5566-7788-99AA-BBCCDDEEFF00") || glv.Level1Id == new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00")) &&
+                         (glv.Level1Id == "40000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{GetTenant.GetTenantId(_httpContextAccessor)}" || glv.Level1Id == "50000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{GetTenant.GetTenantId(_httpContextAccessor)}") &&
                          (glv.DocDate >= filters.DocDate && glv.DocDate <= filters.DocDate2))
                          select new
                          {
@@ -116,7 +121,7 @@ namespace Application.Services
                              Transactional = iGroup.Key.Transactional,
                              Debit = iGroup.Sum(e => e.glv.Debit),
                              Credit = iGroup.Sum(e => e.glv.Credit),
-                             Balance = iGroup.Key.Level1Id == new Guid("40000000-5566-7788-99AA-BBCCDDEEFF00") ? (iGroup.Sum(e => e.glv.Credit) - iGroup.Sum(e => e.glv.Debit)) : (iGroup.Sum(e => e.glv.Debit) - iGroup.Sum(e => e.glv.Credit))
+                             Balance = iGroup.Key.Level1Id == "40000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{GetTenant.GetTenantId(_httpContextAccessor)}" ? (iGroup.Sum(e => e.glv.Credit) - iGroup.Sum(e => e.glv.Debit)) : (iGroup.Sum(e => e.glv.Debit) - iGroup.Sum(e => e.glv.Credit))
                          };
             return new Response<List<PNLDto>>(result.ToList(), "Return Profit and Loss");
         }

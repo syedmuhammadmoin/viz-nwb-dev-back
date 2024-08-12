@@ -39,10 +39,10 @@ namespace Domain.Entities
         public string BankAccountTitle { get; private set; }
         [MaxLength(30)]
         public string BankAccountNumber { get; private set; }
-        public Guid? AccountReceivableId { get; private set; }
+        public string? AccountReceivableId { get; private set; }
         [ForeignKey("AccountReceivableId")]
         public Level4 AccountReceivable { get; private set; }
-        public Guid? AccountPayableId { get; private set; }
+        public string? AccountPayableId { get; private set; }
         [ForeignKey("AccountPayableId")]
         public Level4 AccountPayable { get; private set; }
         public List<Employee> EmployeesList { get; set; }
@@ -58,7 +58,7 @@ namespace Domain.Entities
         {
             Name = name;
         }
-        public void UpdateAccountPayableId(Guid accountPayableId)
+        public void UpdateAccountPayableId(string accountPayableId)
         {
             AccountPayableId = accountPayableId;
         }

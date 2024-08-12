@@ -37,8 +37,8 @@ namespace Application.Contracts.DTOs
         [MaxLength(50)]
         public string BranchCode { get; set; }
         [Required]
-        public Guid? AccountReceivableId { get; set; }
+        public string? AccountReceivableId { get; set; }
         [Required]
-        public Guid? AccountPayableId { get; set; }
+        public string? AccountPayableId { get; set; }
     }
 }

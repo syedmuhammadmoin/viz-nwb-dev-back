@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Level1 : BaseEntity<Guid>, IMustHaveTenant
+    public class Level1 : BaseEntity<string>, IMustHaveTenant
     {
         [MaxLength(200)]
         public string Name { get; set; }
@@ -22,7 +22,7 @@ namespace Domain.Entities
         public Level1()
         {
         }
-        public Level1(Guid id, string name, int orgId)
+        public Level1(string id, string name, int orgId)
         {
             Id = id;
             Name = name;

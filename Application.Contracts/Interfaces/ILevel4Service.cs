@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface ILevel4Service : ICrudService<CreateLevel4Dto, Level4Dto, Guid, PaginationFilter>
+    public interface ILevel4Service : ICrudService<CreateLevel4Dto, Level4Dto, string, PaginationFilter>
     {
         Task<Response<List<Level4Dto>>> GetLevel4DropDown();
         Task<Response<List<Level4Dto>>> GetBudgetAccounts();

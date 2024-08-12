@@ -18,7 +18,7 @@ namespace Domain.Entities
         [MaxLength(20)]
         public string DocNo { get; private set; }
         public DateTime NoteDate { get; private set; }
-        public Guid ReceivableAccountId { get; private set; }
+        public string ReceivableAccountId { get; private set; }
         [ForeignKey("ReceivableAccountId")]
         public Level4 ReceivableAccount { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
@@ -57,7 +57,7 @@ namespace Domain.Entities
             LedgerId = ledgerId;
         }
 
-        public void SetReceivableAccount(Guid receivableAccountId)
+        public void SetReceivableAccount(string receivableAccountId)
         {
             ReceivableAccountId = receivableAccountId;
         }

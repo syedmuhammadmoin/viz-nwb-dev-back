@@ -22,7 +22,7 @@ namespace Domain.Entities
         public int SalvageValue { get; private set; }
         public int UseFullLife { get; private set; }
 
-        public Guid AccumulatedDepreciationId { get; private set; }
+        public string AccumulatedDepreciationId { get; private set; }
         [ForeignKey("AccumulatedDepreciationId")]
         public Level4 AccumulatedDepreciation { get; private set; }
 
@@ -43,7 +43,7 @@ namespace Domain.Entities
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
         public int? LedgerId { get; private set; }
-        public Guid? AccountReceivableId { get; private set; }
+        public string? AccountReceivableId { get; private set; }
         
         public int? BusinessPartnerId { get; private set; }
         [ForeignKey("BusinessPartnerId")]
@@ -66,7 +66,7 @@ namespace Domain.Entities
 
        
 
-        public Disposal(int fixedAssetId, int productId, decimal cost, int salvageValue, int useFullLife, Guid accumulatedDepreciationId, decimal bookValue, DateTime disposalDate, decimal disposalValue, int warehouseId, int statusId,  int? businessPartnerId, Guid? accountReceivableId, int campusId)
+        public Disposal(int fixedAssetId, int productId, decimal cost, int salvageValue, int useFullLife, string accumulatedDepreciationId, decimal bookValue, DateTime disposalDate, decimal disposalValue, int warehouseId, int statusId,  int? businessPartnerId, string? accountReceivableId, int campusId)
         {
             FixedAssetId = fixedAssetId;
             ProductId = productId;
@@ -90,7 +90,7 @@ namespace Domain.Entities
             }
             if (accountReceivableId != null)
             {
-                AccountReceivableId = accountReceivableId.Value;
+                AccountReceivableId = accountReceivableId;
             }
             else
             {
@@ -100,7 +100,7 @@ namespace Domain.Entities
         }
 
 
-        public void Update(int fixedAssetId, int productId, decimal cost, int salvageValue, int useFullLife, Guid accumulatedDepreciationId, decimal bookValue, DateTime disposalDate, decimal disposalValue, int warehouseId, int statusId, int? businessPartnerId, Guid? accountReceivableId, int campusId)
+        public void Update(int fixedAssetId, int productId, decimal cost, int salvageValue, int useFullLife, string accumulatedDepreciationId, decimal bookValue, DateTime disposalDate, decimal disposalValue, int warehouseId, int statusId, int? businessPartnerId, string? accountReceivableId, int campusId)
         {
             FixedAssetId = fixedAssetId;
             ProductId = productId;
@@ -124,7 +124,7 @@ namespace Domain.Entities
             }
             if (accountReceivableId != null)
             {
-                AccountReceivableId = accountReceivableId.Value;
+                AccountReceivableId = accountReceivableId;
             }
             else
             {

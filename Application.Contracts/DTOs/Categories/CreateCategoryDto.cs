@@ -16,11 +16,11 @@ namespace Application.Contracts.DTOs
         [Required]
         public string Name { get; set; }
         [Required]
-        public Guid? InventoryAccountId { get; set; }
+        public string? InventoryAccountId { get; set; }
         [Required]
-        public Guid? RevenueAccountId { get; set; }
+        public string? RevenueAccountId { get; set; }
         [Required]
-        public Guid? CostAccountId { get; set; }
+        public string? CostAccountId { get; set; }
         [Required]
         public bool? IsFixedAsset { get; set; }
         public int? DepreciationModelId { get; set; }

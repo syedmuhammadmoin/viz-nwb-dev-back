@@ -11,7 +11,7 @@ namespace Domain.Entities
 {
     public class BudgetReappropriationLines : BaseEntity<int>
     {
-        public Guid Level4Id { get; private set; }
+        public string Level4Id { get; private set; }
         [ForeignKey("Level4Id")]
         public Level4 Level4 { get; private set; }
         [MaxLength(500)]

@@ -13,7 +13,7 @@ namespace Application.Contracts.Filters
         public DateTime? DocDate { get; set; }
         [Required]
         public DateTime? DocDate2 { get; set; }
-        public Guid? AccountId { get; set; }
+        public string? AccountId { get; set; }
         public int? CampusId { get; set; }
     }
 }

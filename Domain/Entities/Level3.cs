@@ -10,18 +10,18 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Level3 : BaseEntity<Guid>, IMustHaveTenant
+    public class Level3 : BaseEntity<string>, IMustHaveTenant
     {
         [MaxLength(200)]
         public string Name { get; set; }
         [MaxLength(10)]
         public string Code { get; set; }
-        public Guid Level2_id { get; set; }
+        public string Level2_id { get; set; }
         [ForeignKey("Level2_id")]
         public Level2 Level2 { get; private set; }
         public IEnumerable<Level4> Level4 { get; set; }
         public int OrganizationId { get; set; }
-        public Level3(Guid id, string name, Guid level2_id, int orgId)
+        public Level3(string id, string name, string level2_id, int orgId)
         {
             Id = id;
             Name = name;

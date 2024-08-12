@@ -8,7 +8,7 @@ namespace Application.Contracts.DTOs
 {
     public class TrialBalanceDto
     {
-        public Guid AccountId { get; set; }
+        public string AccountId { get; set; }
         public DateTime DocDate { get; set; }
         public string AccountName { get; set; }
         public decimal DebitOB { get; set; }

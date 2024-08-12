@@ -30,10 +30,10 @@ namespace Domain.Entities
         public DateTime OpeningBalanceDate { get; private set; }
         [MaxLength(200)]
         public string Purpose { get; private set; }
-        public Guid ChAccountId { get; private set; }
+        public string ChAccountId { get; private set; }
         [ForeignKey("ChAccountId")]
         public Level4 ChAccount { get; private set; }
-        public Guid ClearingAccountId { get; private set; }
+        public string ClearingAccountId { get; private set; }
         [ForeignKey("ClearingAccountId")]
         public Level4 ClearingAccount { get; private set; }
         public int? CampusId { get; private set; }
@@ -47,11 +47,11 @@ namespace Domain.Entities
         {
 
         }
-        public void SetChAccountId(Guid chAccountId)
+        public void SetChAccountId(string chAccountId)
         {
             ChAccountId = chAccountId;
         }
-        public void SetClAccountId(Guid clAccountId)
+        public void SetClAccountId(string clAccountId)
         {
             ClearingAccountId = clAccountId;
         }
@@ -60,6 +60,7 @@ namespace Domain.Entities
         {
             TransactionId = transactionId;
         }
+
         public void CreateDocNo()
         {
             //Creating doc no..

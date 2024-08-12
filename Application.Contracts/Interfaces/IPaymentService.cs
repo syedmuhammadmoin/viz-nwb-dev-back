@@ -15,7 +15,7 @@ namespace Application.Contracts.Interfaces
         Task<Response<bool>> CheckWorkFlow(ApprovalDto data);
         Task<PaginationResponse<List<PaymentDto>>> GetAllAsync(TransactionFormFilter filter,DocType docType);
         Task<Response<PaymentDto>> GetByIdAsync(int id, DocType docType);
-        Response<List<UnReconStmtDto>> GetBankUnreconciledPayments(Guid id);
+        Response<List<UnReconStmtDto>> GetBankUnreconciledPayments(string id);
         Task<Response<List<PayrollTransactionDto>>> CreatePayrollPaymentProcess(CreatePayrollPaymentDto data);
         Response<List<PayrollTransactionDto>> GetPayrollTransactionByDept(DeptFilter data);
         Response<List<PaymentDto>> GetPaymentByDept(DeptFilter data);

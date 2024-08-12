@@ -10,7 +10,7 @@ namespace Application.Contracts.Filters
     public class BalanceSheetFilters
     {
         [Required]
-        public DateTime? DocDate { get; set; }
+        public DateTime DocDate { get; set; }
         public int? CampusId { get; set; }
     }
 }

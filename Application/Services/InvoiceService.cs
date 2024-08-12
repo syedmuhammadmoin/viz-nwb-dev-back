@@ -190,15 +190,16 @@ namespace Application.Services
                     {
 
                         var totalTax = getInvoice.InvoiceLines.Sum(i => i.Tax);
-
-                        Guid taxAccount = new Guid("00000000-0000-0000-0000-000000000000");
+                        //SBBU-Code
+                       // Guid taxAccount = new Guid("00000000-0000-0000-0000-000000000000");
+                        var taxAccount = "00000000-0000-0000-0000-000000000000";
                         if (totalTax > 0)
                         {
                             var getTaxAccount = _unitOfWork.Taxes.Find(new TaxesSpecs(TaxType.SalesTaxLiability)).Select(i => i.AccountId).FirstOrDefault();
 
                             if (getTaxAccount == null)
                                 return new Response<bool>("Kindly set TaxAccountId");
-                            taxAccount = (Guid)getTaxAccount;
+                            taxAccount = getTaxAccount;
                         }
 
                         await AddToLedger(getInvoice, taxAccount);
@@ -252,20 +253,21 @@ namespace Application.Services
             //setting BusinessPartnerReceivable
             var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.CustomerId);
             
-            //Validation for Payable and Receivable
-            foreach (var check in entity.InvoiceLines)
-            {
-                var level4 = await _unitOfWork.Level4.GetById((Guid)check.AccountId);
+            //SBBU Only
+            ////Validation for Payable and Receivable
+            //foreach (var check in entity.InvoiceLines)
+            //{
+            //    var level4 = await _unitOfWork.Level4.GetById(check.AccountId);
 
-                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+            //    var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
 
-                if (level3 == false)
-                {
-                    return new Response<InvoiceDto>("Account Invalid");
-                }
+            //    if (level3 == false)
+            //    {
+            //        return new Response<InvoiceDto>("Account Invalid");
+            //    }
                 
-            }
-            inv.SetReceivableAccount((Guid)businessPartner.AccountReceivableId);
+            //}
+            inv.SetReceivableAccount(businessPartner.AccountReceivableId);
 
             //Setting status
             inv.SetStatus(status);
@@ -314,21 +316,22 @@ namespace Application.Services
             //setting BusinessPartnerReceivable
             var businessPartner = await _unitOfWork.BusinessPartner.GetById((int)entity.CustomerId);
             
-            //Validation for Payable and Receivable
-            foreach (var check in entity.InvoiceLines)
-            {
-                var level4 = await _unitOfWork.Level4.GetById((Guid)check.AccountId);
+            //SBBU-Code
+            ////Validation for Payable and Receivable
+            //foreach (var check in entity.InvoiceLines)
+            //{
+            //    var level4 = await _unitOfWork.Level4.GetById(check.AccountId);
 
-                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+            //    var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
 
-                if (level3 == false)
-                {
-                    return new Response<InvoiceDto>("Account Invalid");
-                }
+            //    if (level3 == false)
+            //    {
+            //        return new Response<InvoiceDto>("Account Invalid");
+            //    }
 
-            }
+            //}
             
-            inv.SetReceivableAccount((Guid)businessPartner.AccountReceivableId);
+            inv.SetReceivableAccount(businessPartner.AccountReceivableId);
             await _unitOfWork.SaveAsync();
 
             //Commiting the transaction
@@ -339,7 +342,7 @@ namespace Application.Services
 
         }
 
-        private async Task AddToLedger(InvoiceMaster inv, Guid taxAccountId)
+        private async Task AddToLedger(InvoiceMaster inv, string taxAccountId)
         {
             var transaction = new Transactions(inv.Id, inv.DocNo, DocType.Invoice);
             await _unitOfWork.Transaction.Add(transaction);
@@ -373,7 +376,9 @@ namespace Application.Services
                 {
                     var addSalesTaxInRecordLedger = new RecordLedger(
                         transaction.Id,
-                        taxAccountId,
+                       //SBBU Code 
+                       //taxAccountId,
+                       taxAccountId.ToString(),
                         inv.CustomerId,
                         line.WarehouseId,
                         line.Description,
@@ -389,7 +394,7 @@ namespace Application.Services
             var getCustomerAccount = await _unitOfWork.BusinessPartner.GetById(inv.CustomerId);
             var addReceivableInLedger = new RecordLedger(
                         transaction.Id,
-                        (Guid)getCustomerAccount.AccountReceivableId,
+                        getCustomerAccount.AccountReceivableId,
                         inv.CustomerId,
                         null,
                         inv.DocNo,

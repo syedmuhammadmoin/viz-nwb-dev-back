@@ -30,7 +30,7 @@ namespace Application.Services
             if (checkingCode != null)
                 return new Response<Level4Dto>("Duplicate code");
 
-            var level3 = _unitOfWork.Level3.Find(new Level3Specs((Guid)entity.Level3_id)).FirstOrDefault();
+            var level3 = _unitOfWork.Level3.Find(new Level3Specs(entity.Level3_id)).FirstOrDefault();
             if (level3 == null)
             {
                 return new Response<Level4Dto>("Invalid Level3 Account");
@@ -58,7 +58,7 @@ namespace Application.Services
 
         }
 
-        public async Task<Response<Level4Dto>> GetByIdAsync(Guid id)
+        public async Task<Response<Level4Dto>> GetByIdAsync(string id)
         {
             var specification = new Level4Specs();
             var level4 = await _unitOfWork.Level4.GetById(id, specification);
@@ -70,11 +70,11 @@ namespace Application.Services
 
         public async Task<Response<Level4Dto>> UpdateAsync(CreateLevel4Dto entity)
         {
-            var level4 = await _unitOfWork.Level4.GetById((Guid)entity.Id);
+            var level4 = await _unitOfWork.Level4.GetById(entity.Id);
             if (level4 == null)
                 return new Response<Level4Dto>("Not found");
 
-            var checkingCode = _unitOfWork.Level4.Find(new Level4Specs(entity.Code, (Guid)entity.Id)).FirstOrDefault();
+            var checkingCode = _unitOfWork.Level4.Find(new Level4Specs(entity.Code, entity.Id)).FirstOrDefault();
             if (checkingCode != null)
                 return new Response<Level4Dto>("Duplicate code");
 
@@ -88,7 +88,7 @@ namespace Application.Services
             return new Response<Level4Dto>(_mapper.Map<Level4Dto>(level4), "Updated successfully");
         }
         
-        public Task<Response<Guid>> DeleteAsync(Guid id)
+        public Task<Response<string>> DeleteAsync(string id)
         {
             throw new NotImplementedException();
         }
@@ -114,8 +114,9 @@ namespace Application.Services
         }
 
         public async Task<Response<List<Level4Dto>>> GetBudgetAccounts()
-        {
-            var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs(true));
+        {//SBBU-Code
+            //var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs(true));
+            var level4 = await _unitOfWork.Level4.GetAll();
             if (!level4.Any())
                 return new Response<List<Level4Dto>>(null, "List is empty");
 
@@ -124,8 +125,9 @@ namespace Application.Services
         }
 
         public async Task<Response<List<Level4Dto>>> GetPayableAccounts()
-        {
-            var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs(1, false));
+        {//SBBU-Code
+            //var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs(1, false));
+            var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs());
             if (!level4.Any())
                 return new Response<List<Level4Dto>>(null, "List is empty");
 
@@ -134,8 +136,9 @@ namespace Application.Services
         }
 
         public async Task<Response<List<Level4Dto>>> GetReceivableAccounts()
-        {
-            var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs(2, true));
+        {//SBBU-Code
+            //var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs(2, true));
+            var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs());
             if (!level4.Any())
                 return new Response<List<Level4Dto>>(null, "List is empty");
 
@@ -152,8 +155,9 @@ namespace Application.Services
         }
 
         public async Task<Response<List<Level4Dto>>> GetNonCurrentLiabilitiesAccounts()
-        {
-            var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs("", "" , 1));
+        {// SBBU-Code
+            //var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs("", "" , 1));
+            var level4 = await _unitOfWork.Level4.GetAll(new Level4Specs());
             if (!level4.Any())
                 return new Response<List<Level4Dto>>(null, "List is empty");
 

@@ -18,11 +18,11 @@ namespace Application.Contracts.DTOs
         public string BusinessPartnerAddress { get; set; }
         public string BusinessPartnerMobile { get; set; }
         public DocType PaymentFormType { get; set; }
-        public Guid AccountId { get; set; }
+        public string AccountId { get; set; }
         public string AccountName { get; set; }
         public DateTime PaymentDate { get; set; }
         public PaymentRegisterType PaymentRegisterType { get; set; }
-        public Guid PaymentRegisterId { get; set; }
+        public string PaymentRegisterId { get; set; }
         public string PaymentRegisterName { get; set; }
         public string Description { get; set; }
         public int? CampusId { get; set; }

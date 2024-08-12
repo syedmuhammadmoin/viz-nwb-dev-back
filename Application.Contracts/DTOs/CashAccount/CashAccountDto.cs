@@ -14,7 +14,7 @@ namespace Application.Contracts.DTOs
         public decimal OpeningBalance { get; set; }
         public DateTime OpeningBalanceDate { get; set; }
         public string DocNo { get; set; }
-        public Guid ChAccountId { get; set; }
+        public string ChAccountId { get; set; }
         public String ChAccountName { get; set; }
         public int CampusId { get; set; }
         public string CampusName { get; set; }

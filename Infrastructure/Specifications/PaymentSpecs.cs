@@ -70,7 +70,7 @@ namespace Infrastructure.Specifications
         public PaymentSpecs(int businessPartnerId, PaymentType paymentType) : base(e => (e.PaymentType == paymentType))
         {
         }
-        public PaymentSpecs(Guid paymentRegisterId) : base(
+        public PaymentSpecs(string paymentRegisterId, bool NeedtoFixed) : base(
             (x =>
             (x.PaymentRegisterId == paymentRegisterId)
             && (x.BankReconStatus == DocumentStatus.Unreconciled || x.BankReconStatus == DocumentStatus.Partial)
@@ -111,8 +111,8 @@ namespace Infrastructure.Specifications
             isLedgerId ? x.DocumentLedgerId == ledgerId : false)
         {
         }
-        public PaymentSpecs(Guid? deductionAccountId) : base(x => 
-            (Guid)deductionAccountId == x.DeductionAccountId)
+        public PaymentSpecs(string? deductionAccountId,bool NeedtoFixed, bool NeedtoFixed1) : base(x => 
+            deductionAccountId == x.DeductionAccountId)
         {
             AddInclude(i => i.DeductionAccount);
         }

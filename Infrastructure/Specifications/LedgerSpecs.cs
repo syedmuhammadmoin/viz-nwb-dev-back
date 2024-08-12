@@ -10,25 +10,19 @@ namespace Infrastructure.Specifications
 {
     public class LedgerSpecs : BaseSpecification<RecordLedger>
     {
-        public LedgerSpecs(string joingString, Guid AccountID) : base(i => i.Level4_id== AccountID)
+        public LedgerSpecs(string AccountID) : base(i => i.Level4_id== AccountID)
         {
-            switch (joingString)
-            {
-                case "Accounts":
-                    AddInclude(i => i.Level4);
-                    AddInclude("Level4.Level1");
-                    break; 
-                default:
-                    break;
-            }
             
+            AddInclude(i => i.Level4);
+            AddInclude("Level4.Level1");
+
         }
-        public LedgerSpecs(Guid AccountId1, Guid AccountId2) : base(i => (i.Level4.Level1_id== AccountId1|| i.Level4.Level1_id == AccountId2) && i.TransactionDate >= DateTime.Now.AddMonths(-12))
+        public LedgerSpecs(string AccountId1, string AccountId2) : base(i => (i.Level4.Level1_id== AccountId1|| i.Level4.Level1_id == AccountId2) && i.TransactionDate >= DateTime.Now.AddMonths(-12))
         {
                     AddInclude(i => i.Level4);
                     AddInclude("Level4.Level1");
         }
-        public LedgerSpecs(Guid AccountId1, Guid AccountId2,string NeedTobeFixed ) : base(i => (i.Level4.Level1_id == AccountId1 || i.Level4.Level1_id == AccountId2))
+        public LedgerSpecs(string AccountId1, string AccountId2,string NeedTobeFixed ) : base(i => (i.Level4.Level1_id == AccountId1 || i.Level4.Level1_id == AccountId2))
         {
             
             AddInclude("Level4.Level1");
@@ -73,7 +67,7 @@ namespace Infrastructure.Specifications
         {
         }
 
-        public LedgerSpecs(int id, Guid level4Id, int? businessPartnerId, char sign) 
+        public LedgerSpecs(int id, string level4Id, int? businessPartnerId, char sign) 
         : base(i => i.Id == id
         && i.Level4_id == level4Id
         && i.BusinessPartnerId == businessPartnerId
@@ -84,7 +78,7 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Transactions);
         }
 
-        public LedgerSpecs(Guid level4Id, int? businessPartnerId, char sign)
+        public LedgerSpecs(string level4Id, int? businessPartnerId, char sign)
         : base(i => i.Level4_id == level4Id
         && i.BusinessPartnerId == businessPartnerId
         && i.Sign != sign

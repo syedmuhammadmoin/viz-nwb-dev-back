@@ -14,7 +14,7 @@ namespace Application.Contracts.DTOs
         public int? BusinessPartnerId { get; set; }
         [Required]
         public int? CampusId { get; set; }
-        public Guid AccountPayableId { get; set; }
+        public string AccountPayableId { get; set; }
         [Range(1, double.MaxValue, ErrorMessage = "Gross amount must be greater than 0")]
         public decimal NetSalary { get; set; }
 

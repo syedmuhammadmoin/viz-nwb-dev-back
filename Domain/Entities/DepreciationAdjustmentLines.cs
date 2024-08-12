@@ -13,7 +13,7 @@ namespace Domain.Entities
         public int FixedAssetId { get; private set; }
         [ForeignKey("FixedAssetId")]
         public FixedAsset FixedAsset { get; private set; }
-        public Guid Level4Id { get; private set; }
+        public string Level4Id { get; private set; }
         [ForeignKey("Level4Id")]
         public Level4 Level4 { get; private set; }
         public string Description { get; private set; }

@@ -81,8 +81,9 @@ namespace Application.Services
                 return new Response<PaymentDto>("Not found");
 
             var paymentDto = _mapper.Map<PaymentDto>(payment);
-
-            var getBank = _unitOfWork.BankAccount.Find(new BankAccountSpecs(payment.PaymentRegisterId)).FirstOrDefault();
+            //SBBU-Code
+          //  var getBank = _unitOfWork.BankAccount.Find(new BankAccountSpecs(payment.PaymentRegisterId)).FirstOrDefault();
+            var getBank = _unitOfWork.BankAccount.Find(new BankAccountSpecs()).FirstOrDefault();
 
 
             // Mapping Bank details in payment 
@@ -178,14 +179,15 @@ namespace Application.Services
                 if (entity.DeductionAccountId == null)
                     return new Response<PaymentDto>("Deduction account is required");
 
-                var AccountIdlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.DeductionAccountId);
+                var AccountIdlevel4 = await _unitOfWork.Level4.GetById(entity.DeductionAccountId);
 
-                var AccountIdlevel3 = ReceivableAndPayable.Validate(AccountIdlevel4.Level3_id);
+                //SBBU-Code
+                //var AccountIdlevel3 = ReceivableAndPayable.Validate(AccountIdlevel4.Level3_id);
 
-                if (AccountIdlevel3 == false)
-                {
-                    return new Response<PaymentDto>("Account Invalid");
-                }
+                //if (AccountIdlevel3 == false)
+                //{
+                //    return new Response<PaymentDto>("Account Invalid");
+                //}
             }
 
             //Validation for same  Accounts
@@ -195,14 +197,15 @@ namespace Application.Services
             }
 
             //Validation for Payable and Receivable
-            var BankAccountlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.PaymentRegisterId);
+            var BankAccountlevel4 = await _unitOfWork.Level4.GetById(entity.PaymentRegisterId);
 
-            var BankAccount = ReceivableAndPayable.ValidateBankAccount( BankAccountlevel4.Level3_id);
+            //SBBU-Code
+            //var BankAccount = ReceivableAndPayable.ValidateBankAccount( BankAccountlevel4.Level3_id);
 
-            if (BankAccount == false )
-            {
-                return new Response<PaymentDto>("Payment register account Invalid");
-            }
+            //if (BankAccount == false )
+            //{
+            //    return new Response<PaymentDto>("Payment register account Invalid");
+            //}
 
             //Setting status
             payment.SetStatus(status);
@@ -235,14 +238,15 @@ namespace Application.Services
                 if (entity.DeductionAccountId == null)
                     return new Response<PaymentDto>("Deduction account is required");
 
-                var AccountIdlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.DeductionAccountId);
+                var AccountIdlevel4 = await _unitOfWork.Level4.GetById(entity.DeductionAccountId);
 
-                var AccountIdlevel3 = ReceivableAndPayable.Validate(AccountIdlevel4.Level3_id);
+                //SBBU-Code
+                //var AccountIdlevel3 = ReceivableAndPayable.Validate(AccountIdlevel4.Level3_id);
 
-                if (AccountIdlevel3 == false)
-                {
-                    return new Response<PaymentDto>("Account Invalid");
-                }
+                //if (AccountIdlevel3 == false)
+                //{
+                //    return new Response<PaymentDto>("Account Invalid");
+                //}
             }
 
             if (payment == null)
@@ -257,14 +261,15 @@ namespace Application.Services
             }
 
             //Validation for Payable and Receivable
-            var BankAccountlevel4 = await _unitOfWork.Level4.GetById((Guid)entity.PaymentRegisterId);
+            var BankAccountlevel4 = await _unitOfWork.Level4.GetById(entity.PaymentRegisterId);
 
-            var BankAccount = ReceivableAndPayable.ValidateBankAccount(BankAccountlevel4.Level3_id);
+            //SBBU-Code
+            //var BankAccount = ReceivableAndPayable.ValidateBankAccount(BankAccountlevel4.Level3_id);
 
-            if (BankAccount == false)
-            {
-                return new Response<PaymentDto>("Payment register account Invalid");
-            }
+            //if (BankAccount == false)
+            //{
+            //    return new Response<PaymentDto>("Payment register account Invalid");
+            //}
 
             //var level4 = await _unitOfWork.Level4.GetById((Guid)entity.AccountId);
 
@@ -334,7 +339,7 @@ namespace Application.Services
 
                     var addSRBInRecordLedger = new RecordLedger(
                     transaction.Id,
-                    (Guid)getTaxAccount,
+                    getTaxAccount,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -356,7 +361,7 @@ namespace Application.Services
                     var addSalesTaxInRecordLedger = new RecordLedger(
 
                     transaction.Id,
-                    (Guid)getTaxAccount,
+                    getTaxAccount,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -377,7 +382,7 @@ namespace Application.Services
                     var addIncomeTaxInRecordLedger = new RecordLedger(
 
                     transaction.Id,
-                    (Guid)getTaxAccount,
+                    getTaxAccount,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -396,7 +401,7 @@ namespace Application.Services
                     var addDeductionRecordLedger = new RecordLedger(
 
                     transaction.Id,
-                    (Guid)payment.DeductionAccountId,
+                    payment.DeductionAccountId,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -445,7 +450,7 @@ namespace Application.Services
 
                     var addSRBInRecordLedger = new RecordLedger(
                     transaction.Id,
-                    (Guid)getTaxAccount,
+                    getTaxAccount,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -467,7 +472,7 @@ namespace Application.Services
                     var addSalesTaxInRecordLedger = new RecordLedger(
 
                     transaction.Id,
-                    (Guid)getTaxAccount,
+                    getTaxAccount,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -488,7 +493,7 @@ namespace Application.Services
                     var addIncomeTaxInRecordLedger = new RecordLedger(
 
                     transaction.Id,
-                    (Guid)getTaxAccount,
+                    getTaxAccount,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -507,7 +512,7 @@ namespace Application.Services
                     var addDeductionRecordLedger = new RecordLedger(
 
                     transaction.Id,
-                    (Guid)payment.DeductionAccountId,
+                    payment.DeductionAccountId,
                     payment.BusinessPartnerId,
                     null,
                     payment.Description,
@@ -665,11 +670,11 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public Response<List<UnReconStmtDto>> GetBankUnreconciledPayments(Guid id)
+        public Response<List<UnReconStmtDto>> GetBankUnreconciledPayments(string id)
         {
             List<UnReconStmtDto> unreconciledBankPaymentsStatus = new List<UnReconStmtDto>();
 
-            var getBankReconStatus = _unitOfWork.Payment.Find(new PaymentSpecs(id)).ToList();
+            var getBankReconStatus = _unitOfWork.Payment.Find(new PaymentSpecs(id,false,false)).ToList();
 
             if (getBankReconStatus.Count == 0)
                 return new Response<List<UnReconStmtDto>>(unreconciledBankPaymentsStatus, "Unreconciled bank statements not found");

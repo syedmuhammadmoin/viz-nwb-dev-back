@@ -203,7 +203,7 @@ namespace Application.Services
         }
 
 
-        public Response<List<AmountsForReconciliationDto>> GetPaymentReconAmounts(Guid accountId, int businessPartnerId, char sign)
+        public Response<List<AmountsForReconciliationDto>> GetPaymentReconAmounts(string accountId, int businessPartnerId, char sign)
         {
             var amountsForRecociliationList = new List<AmountsForReconciliationDto>();
             var getUnreconciledPaymentAmountList = _unitOfWork.Ledger.Find(new LedgerSpecs(accountId, businessPartnerId, sign)).ToList();

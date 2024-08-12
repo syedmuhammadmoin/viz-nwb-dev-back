@@ -9,7 +9,7 @@ namespace Application.Contracts.DTOs
 {
     public class CreateLevel4Dto
     {
-        public Guid? Id { get; set; }
+        public string? Id { get; set; }
         [MaxLength(200)]
         [Required]
         public string Name { get; set; }
@@ -17,6 +17,6 @@ namespace Application.Contracts.DTOs
         [MaxLength(10)] 
         public string Code { get; set; }
         [Required]
-        public Guid? Level3_id { get; set; }
+        public string? Level3_id { get; set; }
     }
 }

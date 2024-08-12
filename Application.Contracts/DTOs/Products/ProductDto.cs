@@ -14,9 +14,9 @@ namespace Application.Contracts.DTOs
         public ProductType ProductType { get; set; }
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
-        public Guid CostAccountId { get; set; }
-        public Guid InventoryAccountId { get; set; }
-        public Guid RevenueAccountId { get; set; }
+        public string CostAccountId { get; set; }
+        public string InventoryAccountId { get; set; }
+        public string RevenueAccountId { get; set; }
         public int UnitOfMeasurementId { get; set; }
         public string UnitOfMeasurementName { get; set; }
         public decimal SalesPrice { get; set; }

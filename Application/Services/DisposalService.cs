@@ -140,7 +140,7 @@ namespace Application.Services
                 var getCustomerAccount = await _unitOfWork.BusinessPartner.GetById(disposal.BusinessPartnerId.Value);
                 var addReceivableInLedger = new RecordLedger(
                             transaction.Id,
-                            (Guid)getCustomerAccount.AccountReceivableId,
+                            getCustomerAccount.AccountReceivableId,
                             disposal.BusinessPartnerId,
                             fixedAsset.WarehouseId,
                             "Receivable",
@@ -184,7 +184,7 @@ namespace Application.Services
 
                 var GainInLedger = new RecordLedger(
                        transaction.Id,
-                       (Guid)RevenueOrGainOnSaleofAssetAccountId,
+                       RevenueOrGainOnSaleofAssetAccountId,
                        disposal.BusinessPartnerId,
                        fixedAsset.WarehouseId,
                        "Profit",
@@ -205,7 +205,7 @@ namespace Application.Services
 
                 var LossInLedger = new RecordLedger(
                          transaction.Id,
-                        (Guid)ExpenseOrLossOnSaleofAssetAccountId,
+                        ExpenseOrLossOnSaleofAssetAccountId,
                         disposal.BusinessPartnerId,
                          fixedAsset.WarehouseId,
                          "Loss",
@@ -339,14 +339,14 @@ namespace Application.Services
 
 
 
-            Guid? accountRecieveable = null;
+            string? accountRecieveable = null;
             if (getCustomerAccount != null) { 
             
              accountRecieveable = getCustomerAccount.AccountReceivableId;
             }
             //Setting values in disposal
             var disposal = new Disposal((int)entity.FixedAssetId, getFixedAsset.ProductId, getFixedAsset.Cost,
-                getFixedAsset.SalvageValue, (int)getFixedAsset.UseFullLife, (Guid)getFixedAsset.AccumulatedDepreciationId,
+                getFixedAsset.SalvageValue, (int)getFixedAsset.UseFullLife, getFixedAsset.AccumulatedDepreciationId,
                 bookvalue, entity.DisposalDate, entity.DisposalValue, getFixedAsset.WarehouseId, status, entity.BusinessPartnerId, accountRecieveable, campusId);
 
             //Saving in table
@@ -384,7 +384,7 @@ namespace Application.Services
             var getCustomerAccount = await _unitOfWork.BusinessPartner.GetById(entity.BusinessPartnerId.Value);
             var Warehouse = await _unitOfWork.Warehouse.GetById(getFixedAsset.WarehouseId);
             var campusId = Warehouse.CampusId;
-            Guid? accountRecieveable = null;
+            string? accountRecieveable = null;
             if (getCustomerAccount != null)
             {
 
@@ -393,7 +393,7 @@ namespace Application.Services
 
             //Updating disposal
             result.Update((int)entity.FixedAssetId, getFixedAsset.ProductId, getFixedAsset.Cost,
-                getFixedAsset.SalvageValue, (int)getFixedAsset.UseFullLife, (Guid)getFixedAsset.AccumulatedDepreciationId,
+                getFixedAsset.SalvageValue, (int)getFixedAsset.UseFullLife, getFixedAsset.AccumulatedDepreciationId,
                 0, entity.DisposalDate, entity.DisposalValue, getFixedAsset.WarehouseId, status, entity.BusinessPartnerId, accountRecieveable, campusId);
 
             //saving data

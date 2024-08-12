@@ -30,7 +30,7 @@ namespace Application.Services
         }
         public async Task<MemoryStream> Export() 
         {
-            var chartOfAccounts = _unitOfWork.Level4.Find(new Level4Specs(true, 0))
+            var chartOfAccounts = _unitOfWork.Level4.Find(new Level4Specs(true, 0, NeedtoBeFixed: 0))
                    .Select(i => new ChartOfAccountDto()
                    {
                        Nature = i.Level1.Name,

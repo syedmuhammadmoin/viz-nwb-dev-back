@@ -20,7 +20,7 @@ namespace Application.Contracts.DTOs
         public int StatusId { get; set; }
         public string Status { get; set; }
         public DateTime NoteDate { get; set; }
-        public Guid ReceivableAccountId { get;  set; }
+        public string ReceivableAccountId { get;  set; }
         public string ReceivableAccountName { get;  set; }
         public int CampusId { get; set; }
         public string CampusName { get; set; }

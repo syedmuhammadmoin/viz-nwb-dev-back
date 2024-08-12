@@ -26,7 +26,7 @@ namespace Application.Contracts.DTOs
         [Required]
         public decimal? Value { get; set; }
         [Required]
-        public Guid? AccountId { get; set; }
+        public string? AccountId { get; set; }
         [Required]
         public bool? IsActive { get; set; }
         [MaxLength(300)]

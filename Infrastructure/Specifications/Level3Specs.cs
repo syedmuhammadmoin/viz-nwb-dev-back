@@ -9,7 +9,7 @@ namespace Infrastructure.Specifications
 {
     public class Level3Specs : BaseSpecification<Level3>
     {
-        public Level3Specs(Guid id) : base(i => i.Id == id)
+        public Level3Specs(string id) : base(i => i.Id == id)
         {
             AddInclude(i => i.Level2);
         }

@@ -173,17 +173,18 @@ namespace Application.Services
             foreach (var check in entity.CreditNoteLines)
             {
 
-                var level4 = await _unitOfWork.Level4.GetById((Guid)check.AccountId);
+                var level4 = await _unitOfWork.Level4.GetById(check.AccountId);
 
-                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+                //SBBU-Code
+                //var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
 
-                if (level3 == false)
-                {
-                    return new Response<CreditNoteDto>("Account Invalid");
-                }
+                //if (level3 == false)
+                //{
+                //    return new Response<CreditNoteDto>("Account Invalid");
+                //}
 
             }
-            crn.SetReceivableAccount((Guid)businessPartner.AccountReceivableId);
+            crn.SetReceivableAccount(businessPartner.AccountReceivableId);
 
             //Setting status
             crn.SetStatus(status);
@@ -227,17 +228,18 @@ namespace Application.Services
             foreach (var check in entity.CreditNoteLines)
             {
 
-                var level4 = await _unitOfWork.Level4.GetById((Guid)check.AccountId);
+                var level4 = await _unitOfWork.Level4.GetById(check.AccountId);
 
-                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+                //SBBU-Code
+                //var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
 
-                if (level3 == false)
-                {
-                    return new Response<CreditNoteDto>("Account Invalid");
-                }
+                //if (level3 == false)
+                //{
+                //    return new Response<CreditNoteDto>("Account Invalid");
+                //}
 
             }
-            crn.SetReceivableAccount((Guid)businessPartner.AccountReceivableId);
+            crn.SetReceivableAccount(businessPartner.AccountReceivableId);
 
             crn.SetStatus(status);
 
@@ -306,7 +308,7 @@ namespace Application.Services
             var getCustomerAccount = await _unitOfWork.BusinessPartner.GetById(crn.CustomerId);
             var addReceivableInLedger = new RecordLedger(
                         transaction.Id,
-                        (Guid)getCustomerAccount.AccountReceivableId,
+                        getCustomerAccount.AccountReceivableId,
                         crn.CustomerId,
                         null,
                         crn.DocNo,

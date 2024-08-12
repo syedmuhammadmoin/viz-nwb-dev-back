@@ -21,7 +21,7 @@ namespace Domain.Entities
         public DateTime DueDate { get; private set; }
         [MaxLength(20)]
         public string Contact { get; private set; }
-        public Guid ReceivableAccountId { get; private set; }
+        public string ReceivableAccountId { get; private set; }
         [ForeignKey("ReceivableAccountId")]
         public Level4 ReceivableAccount { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
@@ -59,7 +59,7 @@ namespace Domain.Entities
         {
             LedgerId = ledgerId;
         }
-        public void SetReceivableAccount(Guid receivableAccountId)
+        public void SetReceivableAccount(string receivableAccountId)
         {
             ReceivableAccountId = receivableAccountId;
         }

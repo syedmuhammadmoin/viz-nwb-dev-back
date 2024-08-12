@@ -25,9 +25,9 @@ namespace Application.Contracts.DTOs
         public string BankAccountNumber { get; set; }
         public string BankName { get; set; }
         public string BranchCode { get; set; }
-        public Guid AccountReceivableId { get; set; }
+        public string AccountReceivableId { get; set; }
         public string AccountReceivable { get; set; }
-        public Guid AccountPayableId { get; set; }
+        public string AccountPayableId { get; set; }
         public string AccountPayable { get; set; }
         public List<BusinessPartner> EmployeeList { get; set; }
     }

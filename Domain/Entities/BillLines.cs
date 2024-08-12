@@ -25,7 +25,7 @@ namespace Domain.Entities
         public decimal AnyOtherTax { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal SubTotal { get; private set; }
-        public Guid AccountId { get; private set; }
+        public string AccountId { get; private set; }
         [ForeignKey("AccountId")]
         public Level4 Account { get; private set; }
         public int? WarehouseId { get; private set; }

@@ -242,7 +242,7 @@ namespace Application.Services
                 return new Response<EmployeeDto>("Not found");
 
             getEmployee.UpdateEmployee(entity.NoOfIncrements);
-            getEmployee.BusinessPartner.UpdateAccountPayableId((Guid)entity.AccountPayableId);
+            getEmployee.BusinessPartner.UpdateAccountPayableId(entity.AccountPayableId);
             await _unitOfWork.SaveAsync();
 
             return new Response<EmployeeDto>(_mapper.Map<EmployeeDto>(getEmployee), "Updated successfully");

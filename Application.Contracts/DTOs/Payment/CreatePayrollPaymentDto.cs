@@ -13,7 +13,7 @@ namespace Application.Contracts.DTOs
         public DateTime PaymentDate { get; set; }
         public PaymentRegisterType PaymentRegisterType { get; set; } // 1 = cashAccount, 2 = BankAccount
         [Required]
-        public Guid? PaymentRegisterId { get; set; }
+        public string? PaymentRegisterId { get; set; }
         [MaxLength(20)]
         public string ChequeNo { get; set; }
         [Required]

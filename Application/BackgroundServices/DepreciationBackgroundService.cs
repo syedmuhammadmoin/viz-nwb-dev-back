@@ -236,8 +236,8 @@ namespace Application.BackgroundServices
 
                         // 3.entry in the ledger
                         List<RecordLedger> recordLedgers = new List<RecordLedger>() {
-                    new RecordLedger(0, fixedAssetDto.AccumulatedDepreciationId.Value, null, fixedAssetDto.WarehouseId, "Asset" + fixedAssetDto.Id, 'C',depreciationAmount, null, depreciationDate,fixedAssetDto.Id),
-                    new RecordLedger(0, fixedAssetDto.DepreciationExpenseId.Value, null, fixedAssetDto.WarehouseId, "Asset" + fixedAssetDto.Id, 'D', depreciationAmount, null, depreciationDate,fixedAssetDto.Id)
+                    new RecordLedger(0, fixedAssetDto.AccumulatedDepreciationId, null, fixedAssetDto.WarehouseId, "Asset" + fixedAssetDto.Id, 'C',depreciationAmount, null, depreciationDate,fixedAssetDto.Id),
+                    new RecordLedger(0, fixedAssetDto.DepreciationExpenseId, null, fixedAssetDto.WarehouseId, "Asset" + fixedAssetDto.Id, 'D', depreciationAmount, null, depreciationDate,fixedAssetDto.Id)
                     };
 
                         await AddToLedger(recordLedgers, _unitOfWork);

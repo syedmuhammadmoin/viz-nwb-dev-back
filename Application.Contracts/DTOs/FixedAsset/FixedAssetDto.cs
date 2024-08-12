@@ -19,11 +19,11 @@ namespace Application.Contracts.DTOs
         public int? DepreciationModelId { get; set; }
         public string DepreciationModel { get; set; }
         public int? UseFullLife { get; set; }
-        public Guid? AssetAccountId { get; set; }
+        public string? AssetAccountId { get; set; }
         public string AssetAccount { get; set; }
-        public Guid? DepreciationExpenseId { get; set; }
+        public string? DepreciationExpenseId { get; set; }
         public string DepreciationExpense { get; set; }
-        public Guid? AccumulatedDepreciationId { get; set; }
+        public string? AccumulatedDepreciationId { get; set; }
         public string AccumulatedDepreciation { get; set; }
         public decimal AccumulatedDepreciationAmount { get; set; }
         public DepreciationMethod ModelType { get; set; }

@@ -294,7 +294,7 @@ namespace Application.Services
                 return new Response<PayrollTransactionDto>("Payroll Transaction with the input id cannot be found");
 
             // updating data in payroll transaction master table
-            getPayrollTransaction.UpdateAccountPayableId((Guid)entity.AccountPayableId, status);
+            getPayrollTransaction.UpdateAccountPayableId(entity.AccountPayableId, status);
             await _unitOfWork.SaveAsync();
 
             //returning response
@@ -401,7 +401,7 @@ namespace Application.Services
 
             var addPayableInLedger = new RecordLedger(
                 transaction.Id,
-                (Guid)payrollTransaction.AccountPayableId,
+                payrollTransaction.AccountPayableId,
                 payrollTransaction.Employee.BusinessPartnerId,
                 null,
                 payrollTransaction.DocNo,
@@ -919,7 +919,7 @@ namespace Application.Services
         }
         public async Task<Response<List<PayrollTransactionDto>>> GetEmployeesByDept(DeptFilter data)
         {
-            if (data.AccountPayableId == new Guid("00000000-0000-0000-0000-000000000000"))
+            if (data.AccountPayableId == "00000000-0000-0000-0000-000000000000" + $"-{GetTenant.GetTenantId(_httpContextAccessor)}")
             {
                 return new Response<List<PayrollTransactionDto>>("Account payable required");
             }

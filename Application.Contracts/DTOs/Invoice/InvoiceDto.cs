@@ -19,7 +19,7 @@ namespace Application.Contracts.DTOs
         public string CustomerAddress { get; set; }
         public string IncomeTaxId { get; set; }
         public string SalesTaxId { get; set; }
-        public Guid ReceivableAccountId { get; set; }
+        public string ReceivableAccountId { get; set; }
         public string ReceivableAccountName { get; set; }
         public DateTime InvoiceDate { get; set; }
         public DateTime DueDate { get; set; }

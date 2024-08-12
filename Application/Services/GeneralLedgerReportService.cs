@@ -39,7 +39,7 @@ namespace Application.Services
         }
         public Response<List<GeneralLedgerDto>> GetLedger(GeneralLedgerFilters filters)
         {
-            var accounts = new List<Guid?>();
+            var accounts = new List<string?>();
             var warehouses = new List<int?>();
             var campuses = new List<int?>();
             var businessPartners = new List<int?>();
@@ -209,10 +209,10 @@ namespace Application.Services
 
             return new Response<List<GeneralLedgerDto>>(filteredAccount, "Returning list");
         }
-        public Response<List<AggregatedRecordLedgerDto>> GetAccountBalance(Guid AccountId)
+        public Response<List<AggregatedRecordLedgerDto>> GetAccountBalance(string AccountId)
         {
             
-            var aggregatedData = _unitOfWork.Ledger.Find(new LedgerSpecs("Accounts", AccountId))
+            var aggregatedData = _unitOfWork.Ledger.Find(new LedgerSpecs(AccountId))
                                     .GroupBy(i => new
                                     {
                                         Level4Id = i.Level4_id,

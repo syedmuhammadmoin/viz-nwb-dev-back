@@ -9,7 +9,7 @@ namespace Application.Contracts.Filters
 {
     public class GeneralLedgerFilters
     {
-        public Guid? AccountId { get; set; }
+        public string? AccountId { get; set; }
         [Required]
         public DateTime? DocDate { get; set; }
         [Required]

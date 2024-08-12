@@ -243,18 +243,18 @@ namespace Application.Services
                 if (businessPartner.AccountPayableId == null)
                     return new Response<BillDto>("Payable account not found for the business partner");
             }
-            
-            //Validation for Payable and Receivable
-            foreach (var check in entity.BillLines)
-            {
-                var level4 =await _unitOfWork.Level4.GetById((Guid) check.AccountId);
+            //SBBU-Code
+            ////Validation for Payable and Receivable
+            //foreach (var check in entity.BillLines)
+            //{
+            //    var level4 =await _unitOfWork.Level4.GetById(check.AccountId);
 
-                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+            //    var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
 
-                if (level3 == false)
-                    return new Response<BillDto>("Account Invalid");
-            }
-            bill.SetPayableAccountId((Guid)businessPartner.AccountPayableId);
+            //    if (level3 == false)
+            //        return new Response<BillDto>("Account Invalid");
+            //}
+            bill.SetPayableAccountId(businessPartner.AccountPayableId);
 
             //Setting status
             bill.SetStatus(status);
@@ -300,19 +300,19 @@ namespace Application.Services
                 if (businessPartner.AccountPayableId == null)
                     return new Response<BillDto>("Payable account not found for the business partner");
             }
+            //SBBU-Code
+            ////Validation for Payable and Receivable
+            //foreach (var check in entity.BillLines)
+            //{
+            //    var level4 = await _unitOfWork.Level4.GetById(check.AccountId);
 
-            //Validation for Payable and Receivable
-            foreach (var check in entity.BillLines)
-            {
-                var level4 = await _unitOfWork.Level4.GetById((Guid)check.AccountId);
+            //    var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
 
-                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+            //    if (level3 == false)
+            //        return new Response<BillDto>("Account Invalid");
+            //}
 
-                if (level3 == false)
-                    return new Response<BillDto>("Account Invalid");
-            }
-
-            bill.SetPayableAccountId((Guid)businessPartner.AccountPayableId);
+            bill.SetPayableAccountId(businessPartner.AccountPayableId);
 
 
             bill.SetStatus(status);
@@ -367,7 +367,7 @@ namespace Application.Services
             var getVendorAccount = await _unitOfWork.BusinessPartner.GetById(bill.VendorId);
             var addPayableInLedger = new RecordLedger(
                         transaction.Id,
-                        (Guid)getVendorAccount.AccountPayableId,
+                        getVendorAccount.AccountPayableId,
                         bill.VendorId,
                         null,
                         bill.DocNo,

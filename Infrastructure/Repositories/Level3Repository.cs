@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class Level3Repository : GenericRepository<Level3, Guid>, ILevel3Repository
+    public class Level3Repository : GenericRepository<Level3, string>, ILevel3Repository
     {
         private readonly ApplicationDbContext _context;
         public Level3Repository(ApplicationDbContext context) : base(context)

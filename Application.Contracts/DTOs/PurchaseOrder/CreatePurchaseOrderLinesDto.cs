@@ -11,7 +11,7 @@ namespace Application.Contracts.DTOs
     {
         public int Id { get; set; }
         [Required]
-        public Guid? AccountId { get; set; }
+        public string? AccountId { get; set; }
         [Required]
         public int? ItemId { get; set; }
         [MaxLength(500)]

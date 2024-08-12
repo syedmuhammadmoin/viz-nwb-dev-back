@@ -20,7 +20,7 @@ namespace Domain.Entities
         public DateTime OpeningBalanceDate { get; private set; }
         [MaxLength(20)]
         public string DocNo { get; private set; }
-        public Guid ChAccountId { get; private set; }
+        public string ChAccountId { get; private set; }
         [ForeignKey("ChAccountId")]
         public Level4 ChAccount { get; private set; }
         public int CampusId { get; private set; }
@@ -33,7 +33,7 @@ namespace Domain.Entities
         {
 
         }
-        public void SetChAccountId(Guid chAccountId)
+        public void SetChAccountId(string chAccountId)
         {
             ChAccountId = chAccountId;
         }

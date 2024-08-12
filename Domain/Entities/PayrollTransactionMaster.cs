@@ -18,7 +18,7 @@ namespace Domain.Entities
         public int CampusId { get;private set; }
         [ForeignKey("CampusId")]
         public Campus Campus { get;private set; }
-        public Guid? AccountPayableId { get;private set; }
+        public string? AccountPayableId { get;private set; }
         [ForeignKey("AccountPayableId")]
         public Level4 AccountPayable { get;private set; }
         public int WorkingDays { get;private set; }
@@ -106,7 +106,7 @@ namespace Domain.Entities
         [ForeignKey("BasicPayItemId")]
         public PayrollItem BasicPayItem { get; private set; }
 
-        public Guid BPSAccountId { get; private set; }
+        public string BPSAccountId { get; private set; }
         [ForeignKey("BPSAccountId")]
         public Level4 BPSAccount { get; private set; }
         
@@ -129,7 +129,7 @@ namespace Domain.Entities
         public virtual List<PayrollTransactionLines> PayrollTransactionLines { get;set; }
 
         //Construtors        
-        public PayrollTransactionMaster(int month, int year, Guid bPSAccountId, string bPSName,
+        public PayrollTransactionMaster(int month, int year, string bPSAccountId, string bPSName,
             int campusId, int workingDays, int presentDays, int leaveDays,
             DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary,
             int statusId, int employeeId, string name, string fatherName, string cNIC, string employeeType,
@@ -138,7 +138,7 @@ namespace Domain.Entities
             string placeofBirth, int designationId, int departmentId, string address, DateTime dateofJoining,
             DateTime dateofRetirment, DateTime dateofBirth, string faculty,
             string dutyShift, int? noOfIncrements, string email, int basicPayItemId, decimal bpsAmount, 
-            int? incrementItemId, string incrementName, decimal incrementAmount,Guid? accountpayableId,string accountpayableName,
+            int? incrementItemId, string incrementName, decimal incrementAmount,string? accountpayableId,string accountpayableName,
             List<PayrollTransactionLines> payrollTransactionLines)
         {
             Month = month;
@@ -207,7 +207,7 @@ namespace Domain.Entities
         //    PayrollTransactionLines = payrollTransactionLines;
         //}
 
-        public void UpdatePayrollTransaction(Guid bPSAccountId, string bPSName,
+        public void UpdatePayrollTransaction(string bPSAccountId, string bPSName,
             int campusId, int workingDays, int presentDays, int leaveDays,
             DateTime transDate, decimal basicSalary, decimal grossSalary, decimal netSalary, int statusId,
             string name, string fatherName, string employeeType,
@@ -263,7 +263,7 @@ namespace Domain.Entities
             PayrollTransactionLines = payrollTransactionLines;
         }
 
-        public void UpdateAccountPayableId(Guid accountPayableId,int statusId)
+        public void UpdateAccountPayableId(string accountPayableId,int statusId)
         {
             AccountPayableId = accountPayableId;
             StatusId = statusId;

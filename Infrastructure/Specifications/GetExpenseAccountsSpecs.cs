@@ -9,9 +9,9 @@ namespace Infrastructure.Specifications
 {
     public class GetExpenseAccountsSpecs : BaseSpecification<Level4>
     {
-        public GetExpenseAccountsSpecs()
-              : base(x => x.Level1_id == new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00"))
-        {
-        }
+        //public GetExpenseAccountsSpecs()
+        //      : base(x => x.Level1_id == new Guid("50000000-5566-7788-99AA-BBCCDDEEFF00"))
+        //{
+        //}
     }
 }

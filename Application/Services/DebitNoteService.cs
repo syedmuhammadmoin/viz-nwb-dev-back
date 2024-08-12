@@ -188,14 +188,15 @@ namespace Application.Services
             //Validation for Payable and Receivable
             foreach (var check in entity.DebitNoteLines)
             {
-                var level4 = await _unitOfWork.Level4.GetById((Guid)check.AccountId);
+                var level4 = await _unitOfWork.Level4.GetById(check.AccountId);
 
-                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+                //SBBU-Code
+                //var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
 
-                if (level3 == false)
-                    return new Response<DebitNoteDto>("Account Invalid");
+                //if (level3 == false)
+                //    return new Response<DebitNoteDto>("Account Invalid");
             }
-            dbn.SetPayableAccountId((Guid)businessPartner.AccountPayableId);
+            dbn.SetPayableAccountId(businessPartner.AccountPayableId);
 
             //Setting status
             dbn.SetStatus(status);
@@ -241,19 +242,19 @@ namespace Application.Services
                 if (businessPartner.AccountPayableId == null)
                     return new Response<DebitNoteDto>("Payable account not found for the business partner");
             }
+            //SBBU-Code
+            ////Validation for Payable and Receivable
+            //foreach (var check in entity.DebitNoteLines)
+            //{
+            //    var level4 = await _unitOfWork.Level4.GetById(check.AccountId);
 
-            //Validation for Payable and Receivable
-            foreach (var check in entity.DebitNoteLines)
-            {
-                var level4 = await _unitOfWork.Level4.GetById((Guid)check.AccountId);
+            //    var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
 
-                var level3 = ReceivableAndPayable.Validate(level4.Level3_id);
+            //    if (level3 == false)
+            //        return new Response<DebitNoteDto>("Account Invalid");
+            //}
 
-                if (level3 == false)
-                    return new Response<DebitNoteDto>("Account Invalid");
-            }
-
-            dbn.SetPayableAccountId((Guid)businessPartner.AccountPayableId);
+            dbn.SetPayableAccountId(businessPartner.AccountPayableId);
 
             dbn.SetStatus(status);
 
@@ -306,7 +307,7 @@ namespace Application.Services
             var getVendorAccount = await _unitOfWork.BusinessPartner.GetById(dbn.VendorId);
             var addPayableInLedger = new RecordLedger(
                         transaction.Id,
-                        (Guid)getVendorAccount.AccountPayableId,
+                       getVendorAccount.AccountPayableId,
                         dbn.VendorId,
                         null,
                         dbn.DocNo,

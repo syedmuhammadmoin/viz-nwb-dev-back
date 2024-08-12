@@ -13,7 +13,7 @@ namespace Domain.Entities
         [MaxLength(200)]
         public string Name { get; private set; }
 
-        public Guid CWIPAccountId { get; private set; }
+        public string CWIPAccountId { get; private set; }
         [ForeignKey("CWIPAccountId")]
         public Level4 CWIPAccount { get; private set; }
 
@@ -36,7 +36,7 @@ namespace Domain.Entities
 
         public int? UseFullLife { get; private set; }
 
-        public Guid? AssetAccountId { get; private set; }
+        public string? AssetAccountId { get; private set; }
         [ForeignKey("AssetAccountId")]
         public Level4 AssetAccount { get; private set; }
 

@@ -19,7 +19,7 @@ namespace Domain.Entities
         public decimal Value { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Amount { get; private set; }
-        public Guid AccountId { get;private set; }
+        public string AccountId { get;private set; }
         [ForeignKey("AccountId")]
         public Level4 Account { get;private set; }
         public int MasterId { get;private set; }
@@ -30,7 +30,7 @@ namespace Domain.Entities
         {
         }
 
-        public PayrollTransactionLines(int payrollItemId, PayrollType payrollType, decimal value, decimal amount, Guid accountId)
+        public PayrollTransactionLines(int payrollItemId, PayrollType payrollType, decimal value, decimal amount, string accountId)
         {
             PayrollItemId = payrollItemId;
             PayrollType = payrollType;

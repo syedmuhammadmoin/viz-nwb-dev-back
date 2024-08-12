@@ -203,7 +203,7 @@ namespace Application.Services
             await _unitOfWork.SaveAsync();
             var drAssetAccount = new RecordLedger(
                 transaction.Id,
-                AssetAccountId.Value,
+                AssetAccountId,
                 null,
                 cwip.WarehouseId,
                 "",
