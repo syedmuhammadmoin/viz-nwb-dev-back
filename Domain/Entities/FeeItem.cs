@@ -8,7 +8,7 @@ namespace Domain.Entities
     {
         [MaxLength(200)]
         public string Name { get; private set; }
-        public Guid AccountId { get; private set; }
+        public string AccountId { get; private set; }
         [ForeignKey("AccountId")]
         public Level4 Account { get; private set; }
         [Column(TypeName = "decimal(18,2)")]

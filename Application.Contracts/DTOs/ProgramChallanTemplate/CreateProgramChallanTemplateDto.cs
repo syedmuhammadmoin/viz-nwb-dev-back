@@ -17,7 +17,7 @@ namespace Application.Contracts.DTOs
         public int? SemesterId { get; set; }
         public int? ExamId { get; set; }
         [Required]
-        public Guid BankAccountId { get; set; }
+        public string BankAccountId { get; set; }
         [Required]
         [MaxLength(300)]
         public string Description { get; set; }

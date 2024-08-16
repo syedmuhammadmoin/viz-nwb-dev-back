@@ -51,7 +51,7 @@ namespace Infrastructure
                     ValidateAudience = true,
                     ValidAudience = configuration["AuthSettings:Audience"],
                     ValidIssuer = configuration["AuthSettings:Issuer"],
-                    RequireExpirationTime = true,
+                    RequireExpirationTime = false,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["AuthSettings:Key"])),
                     ValidateIssuerSigningKey = true
                 };

@@ -8,7 +8,7 @@ namespace Application.Contracts.DTOs
         public string CwipCode { get; set; }
         public DateTime DateOfAcquisition { get; set; }
         public string Name { get; set; }
-        public Guid CWIPAccountId { get; set; }
+        public string CWIPAccountId { get; set; }
         public string CWIPAccount { get; set; }
         public int Cost { get; set; }
         public int ProductId { get; set; }
@@ -20,11 +20,11 @@ namespace Application.Contracts.DTOs
         public int? DepreciationModelId { get; set; }
         public string DepreciationModel { get; set; }
         public int? UseFullLife { get; set; }
-        public Guid? AssetAccountId { get; set; }
+        public string? AssetAccountId { get; set; }
         public string AssetAccount { get; set; }
-        public Guid? DepreciationExpenseId { get; set; }
+        public string? DepreciationExpenseId { get; set; }
         public string DepreciationExpense { get; set; }
-        public Guid? AccumulatedDepreciationId { get; set; }
+        public string? AccumulatedDepreciationId { get; set; }
         public string AccumulatedDepreciation { get; set; }
         public DepreciationMethod ModelType { get; set; }
         public decimal DecLiningRate { get; set; }

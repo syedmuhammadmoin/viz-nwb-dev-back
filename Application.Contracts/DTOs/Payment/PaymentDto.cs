@@ -46,7 +46,7 @@ namespace Application.Contracts.DTOs
         public IEnumerable<RemarksDto> RemarksList { get; set; }
         public int? TransactionId { get; set; }
         public int? LedgerId { get; set; }
-        public Guid? DeductionAccountId { get; set; }
+        public string? DeductionAccountId { get; set; }
         public string DeductionAccountName { get; set; }
         public int StatusId { get; set; }
         public string Status { get; set; }

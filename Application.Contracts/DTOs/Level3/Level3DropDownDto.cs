@@ -8,7 +8,7 @@ namespace Application.Contracts.DTOs
 {
     public class Level3DropDownDto
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
     }
 }

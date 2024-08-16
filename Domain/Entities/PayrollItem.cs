@@ -20,7 +20,7 @@ namespace Domain.Entities
         public CalculationType PayrollItemType { get; private set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Value { get; private set; }
-        public Guid AccountId { get; private set; }
+        public string AccountId { get; private set; }
         [ForeignKey("AccountId")]
         public Level4 Account { get; private set; }
         public bool IsActive { get; private set; }

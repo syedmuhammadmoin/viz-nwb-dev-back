@@ -12,14 +12,14 @@ namespace Application.Contracts.DTOs
         public int ProductId { get; set; }
         public string Product { get; set; }
         public decimal Cost { get; set; }
-        public Guid AssetAcountId { get; set; }
+        public string AssetAcountId { get; set; }
         public string AssetAcount { get; set; }
         public int SalvageValue { get; set; }
         public int UseFullLife { get; set; }
-        public Guid AccumulatedDepreciationId { get; set; }
+        public string AccumulatedDepreciationId { get; set; }
         public string AccumulatedDepreciation { get; set; }
         public decimal AccumulatedDepreciationAmount { get; set; }
-        public Guid? AccountReceivableId { get; set; }
+        public string? AccountReceivableId { get; set; }
         public string AccountReceivable { get; set; }
         public decimal BookValue { get; set; }
         public DateTime DisposalDate { get; set; }

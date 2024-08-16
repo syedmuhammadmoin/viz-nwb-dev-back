@@ -9,7 +9,7 @@ namespace Application.Contracts.DTOs
         [MaxLength(200)]
         public string Name { get; set; }
         [Required]
-        public Guid? AccountId { get; set; }
+        public string? AccountId { get; set; }
         [Required]
         [Range(1, double.MaxValue, ErrorMessage = "Amount must be greater than 0")]
         public decimal? Amount { get; set; }

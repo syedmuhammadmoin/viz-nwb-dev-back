@@ -32,7 +32,7 @@ namespace Domain.Entities
         
         public int? UseFullLife { get; private set; }
         
-        public Guid? AssetAccountId { get; private set; }
+        public string? AssetAccountId { get; private set; }
         [ForeignKey("AssetAccountId")]
         public Level4 AssetAccount { get; private set; }
 
@@ -74,6 +74,7 @@ namespace Domain.Entities
 
         protected FixedAsset()
         {
+
         }
         
         public void SetStatus(int statusId)

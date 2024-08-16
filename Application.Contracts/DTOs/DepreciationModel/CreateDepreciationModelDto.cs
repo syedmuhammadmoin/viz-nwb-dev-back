@@ -12,11 +12,11 @@ namespace Application.Contracts.DTOs
         [Range(1, int.MaxValue, ErrorMessage = "Use full life must be greater than 0")]
         public int? UseFullLife { get; set; }
         [Required]
-        public Guid AssetAccountId { get; set; }
+        public string AssetAccountId { get; set; }
         [Required]
-        public Guid DepreciationExpenseId { get; set; }
+        public string DepreciationExpenseId { get; set; }
         [Required]
-        public Guid AccumulatedDepreciationId { get; set; }
+        public string AccumulatedDepreciationId { get; set; }
         [Required]
         public DepreciationMethod ModelType { get; set; }
         [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 0 and 100")]

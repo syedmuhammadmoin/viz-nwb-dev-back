@@ -188,6 +188,17 @@ namespace Infrastructure.Context
                             break;
                     }
                 }
+                if (entry.Entity is IMustHaveTenant trackables)
+                {
+                    int orgId = GetOrganizationId();
+                    switch (entry.State)
+                    {
+                        case EntityState.Modified:
+                        case EntityState.Added:
+                            trackables.OrganizationId = trackables.OrganizationId != 0 ? trackables.OrganizationId : orgId;
+                            break;
+                    }
+                }
             }
         }
         private int GetOrganizationId()

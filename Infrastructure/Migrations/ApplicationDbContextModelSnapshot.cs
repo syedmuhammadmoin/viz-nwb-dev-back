@@ -508,11 +508,11 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("CampusId")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ChAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ChAccountId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid>("ClearingAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ClearingAccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -982,8 +982,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("AnyOtherTax")
                         .HasColumnType("decimal(18,2)");
@@ -1094,8 +1094,8 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("OtherTax")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("PayableAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PayableAccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
@@ -1143,8 +1143,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
@@ -1259,8 +1259,8 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("Level4Id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Level4Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("MasterId")
                         .HasColumnType("int");
@@ -1332,11 +1332,11 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid?>("AccountPayableId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountPayableId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid?>("AccountReceivableId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountReceivableId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
                         .HasMaxLength(200)
@@ -1597,8 +1597,8 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<Guid>("ChAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ChAccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -1653,8 +1653,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("CostAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("CostAccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -1666,8 +1666,8 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("DepreciationModelId")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("InventoryAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("InventoryAccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
@@ -1686,8 +1686,8 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<Guid>("RevenueAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("RevenueAccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -1820,8 +1820,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -1922,8 +1922,8 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("NoteDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ReceivableAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ReceivableAccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
@@ -1963,14 +1963,14 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid?>("AccumulatedDepreciationId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccumulatedDepreciationId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid?>("AssetAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AssetAccountId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid>("CWIPAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("CWIPAccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Cost")
                         .HasColumnType("int");
@@ -1995,8 +1995,8 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("DepreciationApplicability")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("DepreciationExpenseId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("DepreciationExpenseId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("DepreciationModelId")
                         .HasColumnType("int");
@@ -2076,8 +2076,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("AnyOtherTax")
                         .HasColumnType("decimal(18,2)");
@@ -2181,8 +2181,8 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("OtherTax")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("PayableAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PayableAccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
@@ -2323,8 +2323,8 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("Level4Id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Level4Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("MasterId")
                         .HasColumnType("int");
@@ -2406,11 +2406,11 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("AccumulatedDepreciationId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccumulatedDepreciationId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid>("AssetAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AssetAccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -2422,8 +2422,8 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("DecliningRate")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("DepreciationExpenseId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("DepreciationExpenseId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
@@ -2542,11 +2542,11 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid?>("AccountReceivableId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountReceivableId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("AccumulatedDepreciationId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccumulatedDepreciationId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("BookValue")
                         .HasColumnType("decimal(18,2)");
@@ -2868,8 +2868,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
@@ -3004,8 +3004,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
@@ -3102,11 +3102,11 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("AccumulatedDepreciationAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("AccumulatedDepreciationId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccumulatedDepreciationId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid?>("AssetAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AssetAccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AssetCode")
                         .HasMaxLength(20)
@@ -3131,8 +3131,8 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("DepreciationApplicability")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("DepreciationExpenseId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("DepreciationExpenseId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("DepreciationModelId")
                         .HasColumnType("int");
@@ -3649,8 +3649,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -3755,8 +3755,8 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ReceivableAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ReceivableAccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
@@ -4097,8 +4097,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("BusinessPartnerId")
                         .HasColumnType("int");
@@ -4213,9 +4213,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Level1", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Code")
                         .HasMaxLength(10)
@@ -4252,9 +4251,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Level2", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Code")
                         .HasMaxLength(10)
@@ -4270,8 +4268,8 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("Level1_id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Level1_id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(100)
@@ -4296,9 +4294,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Level3", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Code")
                         .HasMaxLength(10)
@@ -4314,8 +4311,8 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("Level2_id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Level2_id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(100)
@@ -4340,9 +4337,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Level4", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("AccountType")
                         .HasColumnType("int");
@@ -4361,11 +4357,11 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("Level1_id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Level1_id")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid>("Level3_id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Level3_id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(100)
@@ -4392,6 +4388,56 @@ namespace Infrastructure.Migrations
                     b.HasIndex("Level3_id");
 
                     b.ToTable("Level4");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Location", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Dimensions")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Supervisor")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("WarehouseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.ToTable("Location");
                 });
 
             modelBuilder.Entity("Domain.Entities.LogItem", b =>
@@ -4540,8 +4586,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("BankReconStatus")
                         .HasColumnType("int");
@@ -4566,8 +4612,8 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("Deduction")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("DeductionAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("DeductionAccountId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
@@ -4602,8 +4648,8 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("NetPayment")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("OtherDeductionAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("OtherDeductionAccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2");
@@ -4611,8 +4657,8 @@ namespace Infrastructure.Migrations
                     b.Property<int>("PaymentFormType")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("PaymentRegisterId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PaymentRegisterId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("PaymentRegisterType")
                         .HasColumnType("int");
@@ -4659,8 +4705,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -4761,8 +4807,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
@@ -4819,8 +4865,8 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<Guid?>("AccountPayableId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountPayableId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AccountTitle")
                         .HasMaxLength(50)
@@ -4830,8 +4876,8 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
-                    b.Property<Guid>("BPSAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("BPSAccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("BPSAmount")
                         .HasColumnType("decimal(18,2)");
@@ -5043,8 +5089,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("BusinessPartnerId")
                         .HasColumnType("int");
@@ -5101,8 +5147,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("CampusId")
                         .HasColumnType("int");
@@ -5387,8 +5433,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("BankAccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("BankAccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("CampusId")
                         .HasColumnType("int");
@@ -5504,8 +5550,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Cost")
                         .HasColumnType("decimal(18,2)");
@@ -5865,8 +5911,11 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsReconcilable")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("Level4_id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Level4_id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("LocationId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(100)
@@ -5874,6 +5923,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ReconStatus")
                         .HasColumnType("int");
@@ -5900,6 +5952,8 @@ namespace Infrastructure.Migrations
                     b.HasIndex("FixedAssetId");
 
                     b.HasIndex("Level4_id");
+
+                    b.HasIndex("LocationId");
 
                     b.HasIndex("TransactionId");
 
@@ -6500,8 +6554,8 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid?>("AccountId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -6532,50 +6586,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("AccountId");
 
                     b.ToTable("Taxes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            IsDelete = false,
-                            Name = "Sales Tax Asset",
-                            TaxType = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            IsDelete = false,
-                            Name = "Sales Tax Liability",
-                            TaxType = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            IsDelete = false,
-                            Name = "Income Tax Asset",
-                            TaxType = 2
-                        },
-                        new
-                        {
-                            Id = 4,
-                            IsDelete = false,
-                            Name = "Income Tax Liability",
-                            TaxType = 3
-                        },
-                        new
-                        {
-                            Id = 5,
-                            IsDelete = false,
-                            Name = "SRB Tax Asset",
-                            TaxType = 4
-                        },
-                        new
-                        {
-                            Id = 6,
-                            IsDelete = false,
-                            Name = "SRB Tax Liability",
-                            TaxType = 5
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.TransactionReconcile", b =>
@@ -6833,8 +6843,20 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("Address")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<int>("CampusId")
                         .HasColumnType("int");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Country")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -6843,8 +6865,15 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Manager")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(100)
@@ -6857,6 +6886,13 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("State")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("StoreManager")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -6864,6 +6900,8 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CampusId");
+
+                    b.HasIndex("DepartmentId");
 
                     b.ToTable("Warehouses");
                 });
@@ -7367,14 +7405,12 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "ChAccount")
                         .WithMany()
                         .HasForeignKey("ChAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Level4", "ClearingAccount")
                         .WithMany()
                         .HasForeignKey("ClearingAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Transactions", "Transactions")
                         .WithMany()
@@ -7513,8 +7549,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Product", "Item")
                         .WithMany()
@@ -7556,8 +7591,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "PayableAccount")
                         .WithMany()
                         .HasForeignKey("PayableAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
                         .WithMany()
@@ -7594,8 +7628,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.BudgetMaster", "BudgetMaster")
                         .WithMany("BudgetLines")
@@ -7631,8 +7664,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Level4")
                         .WithMany()
                         .HasForeignKey("Level4Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.BudgetReappropriationMaster", "BudgetReappropriationMaster")
                         .WithMany("BudgetReappropriationLines")
@@ -7732,8 +7764,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "ChAccount")
                         .WithMany()
                         .HasForeignKey("ChAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Transactions", "Transactions")
                         .WithMany()
@@ -7753,8 +7784,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "CostAccount")
                         .WithMany()
                         .HasForeignKey("CostAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.DepreciationModel", "DepreciationModel")
                         .WithMany()
@@ -7764,14 +7794,12 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "InventoryAccount")
                         .WithMany()
                         .HasForeignKey("InventoryAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Level4", "RevenueAccount")
                         .WithMany()
                         .HasForeignKey("RevenueAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("CostAccount");
 
@@ -7798,8 +7826,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Product", "Item")
                         .WithMany()
@@ -7842,8 +7869,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "ReceivableAccount")
                         .WithMany()
                         .HasForeignKey("ReceivableAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
                         .WithMany()
@@ -7882,8 +7908,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "CWIPAccount")
                         .WithMany()
                         .HasForeignKey("CWIPAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Level4", "DepreciationExpense")
                         .WithMany()
@@ -7942,8 +7967,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Product", "Item")
                         .WithMany()
@@ -7980,8 +8004,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "PayableAccount")
                         .WithMany()
                         .HasForeignKey("PayableAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
                         .WithMany()
@@ -8033,8 +8056,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Level4")
                         .WithMany()
                         .HasForeignKey("Level4Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.DepreciationAdjustmentMaster", "Master")
                         .WithMany("DepreciationAdjustmentLines")
@@ -8072,20 +8094,17 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "AccumulatedDepreciation")
                         .WithMany()
                         .HasForeignKey("AccumulatedDepreciationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Level4", "AssetAccount")
                         .WithMany()
                         .HasForeignKey("AssetAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Level4", "DepreciationExpense")
                         .WithMany()
                         .HasForeignKey("DepreciationExpenseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("AccumulatedDepreciation");
 
@@ -8110,8 +8129,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "AccumulatedDepreciation")
                         .WithMany()
                         .HasForeignKey("AccumulatedDepreciationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.BusinessPartner", "BusinessPartner")
                         .WithMany()
@@ -8224,8 +8242,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.EstimatedBudgetMaster", "EstimatedBudgetMaster")
                         .WithMany("EstimatedBudgetLines")
@@ -8262,8 +8279,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Account");
                 });
@@ -8549,8 +8565,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Product", "Item")
                         .WithMany()
@@ -8593,8 +8608,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "ReceivableAccount")
                         .WithMany()
                         .HasForeignKey("ReceivableAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
                         .WithMany()
@@ -8811,8 +8825,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.BusinessPartner", "BusinessPartner")
                         .WithMany()
@@ -8869,8 +8882,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level1", "Level1")
                         .WithMany("Level2")
                         .HasForeignKey("Level1_id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Level1");
                 });
@@ -8880,8 +8892,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level2", "Level2")
                         .WithMany("Level3")
                         .HasForeignKey("Level2_id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Level2");
                 });
@@ -8891,18 +8902,27 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level1", "Level1")
                         .WithMany()
                         .HasForeignKey("Level1_id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Level3", "Level3")
                         .WithMany("Level4")
                         .HasForeignKey("Level3_id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Level1");
 
                     b.Navigation("Level3");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Location", b =>
+                {
+                    b.HasOne("Domain.Entities.Warehouse", "Warehouse")
+                        .WithMany("Locations")
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("Domain.Entities.Payment", b =>
@@ -8910,8 +8930,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.BusinessPartner", "BusinessPartner")
                         .WithMany()
@@ -8932,8 +8951,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "PaymentRegister")
                         .WithMany()
                         .HasForeignKey("PaymentRegisterId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.WorkFlowStatus", "Status")
                         .WithMany()
@@ -8966,8 +8984,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Account");
                 });
@@ -8996,8 +9013,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.PayrollTransactionMaster", "PayrollTransactionMaster")
                         .WithMany("PayrollTransactionLines")
@@ -9028,8 +9044,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "BPSAccount")
                         .WithMany()
                         .HasForeignKey("BPSAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.PayrollItem", "BasicPayItem")
                         .WithMany()
@@ -9103,8 +9118,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.BusinessPartner", "BusinessPartner")
                         .WithMany()
@@ -9129,8 +9143,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
@@ -9270,8 +9283,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "BankAccount")
                         .WithMany()
                         .HasForeignKey("BankAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Campus", "Campus")
                         .WithMany()
@@ -9331,8 +9343,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Product", "Item")
                         .WithMany()
@@ -9463,8 +9474,12 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Level4", "Level4")
                         .WithMany()
                         .HasForeignKey("Level4_id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.Entities.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Transactions", "Transactions")
                         .WithMany()
@@ -9484,6 +9499,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("FixedAsset");
 
                     b.Navigation("Level4");
+
+                    b.Navigation("Location");
 
                     b.Navigation("Transactions");
 
@@ -9799,7 +9816,15 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Campus");
+
+                    b.Navigation("Department");
                 });
 
             modelBuilder.Entity("Domain.Entities.WorkFlowTransition", b =>
@@ -10066,6 +10091,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.RequisitionMaster", b =>
                 {
                     b.Navigation("RequisitionLines");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Warehouse", b =>
+                {
+                    b.Navigation("Locations");
                 });
 
             modelBuilder.Entity("Domain.Entities.WorkFlowMaster", b =>

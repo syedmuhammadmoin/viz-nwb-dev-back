@@ -15,7 +15,7 @@ namespace Application.Contracts.DTOs
         public int? SemesterId { get; set; }
         public string Semester { get; set; }
         public int? ExamId { get; set; }
-        public Guid BankAccountId { get; set; }
+        public string BankAccountId { get; set; }
         public string BankAccount { get; set; }
         public string Description { get; set; }
         public decimal LateFeeAfterDueDate { get; set; }

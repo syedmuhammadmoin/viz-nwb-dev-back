@@ -16,7 +16,7 @@ namespace Application.Contracts.DTOs
         public PayrollType PayrollType { get; set; }
         public decimal Amount { get; set; }
         public decimal Value { get; set; }
-        public Guid AccountId { get; set; }
+        public string AccountId { get; set; }
         public string Account { get; set; }
         public int MasterId { get; set; }
         public bool IsActive { get; set; }

@@ -27,7 +27,7 @@ namespace Domain.Entities
 
         public int? ExamId { get; private set; }
 
-        public Guid BankAccountId { get; private set; }
+        public string BankAccountId { get; private set; }
         [ForeignKey("BankAccountId")]
         public Level4 BankAccount { get; private set; }
 

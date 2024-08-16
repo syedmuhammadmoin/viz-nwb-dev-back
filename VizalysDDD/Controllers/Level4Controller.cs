@@ -45,7 +45,7 @@ namespace Vizalys.Api.Controllers
         }
 
         [ClaimRequirement("Permission", new string[] { Permissions.Level4Claims.Create, Permissions.Level4Claims.View, Permissions.Level4Claims.Delete, Permissions.Level4Claims.Edit })]
-        [HttpGet("{id:Guid}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Response<Level4Dto>>> GetByIdAsync(string id)
         {
             var result = await _level4Service.GetByIdAsync(id);
@@ -56,7 +56,7 @@ namespace Vizalys.Api.Controllers
         }
 
         [ClaimRequirement("Permission", new string[] { Permissions.Level4Claims.Edit })]
-        [HttpPut("{id:Guid}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<Response<Level4Dto>>> UpdateAsync(string id, CreateLevel4Dto entity)
         {
             if (id != entity.Id)

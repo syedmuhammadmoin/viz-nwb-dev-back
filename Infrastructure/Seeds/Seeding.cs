@@ -9,64 +9,188 @@ namespace Infrastructure.Seeds
 {
     public static class Seeding
     {
+
+
         public static async Task COASeeds(IUnitOfWork unitOfWork, int orgId)
         {
-            var level1 = new List<Level1>();
-            level1.Add(new Level1("10000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Assets", orgId));
-            level1.Add(new Level1("20000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Liability", orgId));
-            level1.Add(new Level1("30000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Equity", orgId));
-            level1.Add(new Level1("40000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Income", orgId));
-            level1.Add(new Level1("50000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Expenses", orgId));
-            await unitOfWork.Level1.AddRange(level1);
-
-            var level2 = new List<Level2>();
-            level2.Add(new Level2("11000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Non - Current Assets", "10000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level2.Add(new Level2("12000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Current Assets", "10000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level2.Add(new Level2("21000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Non - Current Liabilities", "20000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level2.Add(new Level2("22000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Current Liabilities", "20000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level2.Add(new Level2("31000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Owner's Equity", "30000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level2.Add(new Level2("41000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Trading Income", "40000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level2.Add(new Level2("42000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Non - Trading Income", "40000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level2.Add(new Level2("51000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Cost of Goods Sold", "50000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level2.Add(new Level2("52000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "General Expenses", "50000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            await unitOfWork.Level2.AddRange(level2);
-
-            var level3 = new List<Level3>();
-            level3.Add(new Level3("11100000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Fixed Assets", "11000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("12100000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Receivable", "12000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("12200000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Bank & Cash", "12000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("12300000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Prepayment", "12000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("12400000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Inventory / Merchandise", "12000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("12500000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Other Current Asset", "12000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("21100000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Loans Payable", "21000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("21200000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Other Non - Current Liability", "21000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("22100000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Payable", "22000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("22200000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Short Term Credit", "22000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("22300000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Other Current Liability", "22000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("31100000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Capital", "31000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("31200000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Reserves", "31000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("41100000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Revenue", "41000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("42100000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Other Income", "42000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("51100000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Cost of Revenue", "51000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("51200000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Depreciation", "51000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("52100000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Administrative Expenses", "52000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("52200000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Finance Charge", "52000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("52300000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Tax Expenses", "52000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level3.Add(new Level3("52400000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Selling Expense", "52000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            await unitOfWork.Level3.AddRange(level3);
-
-            var level4 = new List<Level4>();
-            level4.Add(new Level4("31210000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Opening Balance Equity", "31200000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "30000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level4.Add(new Level4("12510000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Sales Tax Asset", "12500000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "10000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level4.Add(new Level4("12520000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Income Tax Asset", "12500000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "10000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level4.Add(new Level4("22310000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Sales Tax Liability", "22300000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "20000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level4.Add(new Level4("22320000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Income Tax Liability", "22300000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "20000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level4.Add(new Level4("42110000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Discount Allowed", "42100000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "40000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            level4.Add(new Level4("42120000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "Discount Received", "42100000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", "40000000-5566-7788-99AA-BBCCDDEEFF00" + $"-{orgId}", orgId));
-            await unitOfWork.Level4.AddRange(level4);
+            await AddLevel1(unitOfWork, orgId);
+            await AddLevel2(unitOfWork, orgId);
+            await AddLevel3(unitOfWork, orgId);
+            await AddLevel4(unitOfWork, orgId);
 
             await unitOfWork.SaveAsync();
         }
+
+        private static async Task AddLevel1(IUnitOfWork unitOfWork, int orgId)
+        {
+            var level1 = new List<Level1>
+    {
+        new Level1(GenerateId("10000000", orgId), "Assets", orgId),
+        new Level1(GenerateId("20000000", orgId), "Liability", orgId),
+        new Level1(GenerateId("30000000", orgId), "Equity", orgId),
+        new Level1(GenerateId("40000000", orgId), "Income", orgId),
+        new Level1(GenerateId("50000000", orgId), "Expenses", orgId),
+        new Level1(GenerateId("60000000", orgId), "Other", orgId)
+    };
+            await unitOfWork.Level1.AddRange(level1);
+        }
+
+        private static async Task AddLevel2(IUnitOfWork unitOfWork, int orgId)
+        {
+            var level2 = new List<Level2>
+    {
+        // Assets
+        new Level2(GenerateId("11000000", orgId), "Receivable", GenerateId("10000000", orgId), orgId),
+        new Level2(GenerateId("12000000", orgId), "Bank & Cash", GenerateId("10000000", orgId), orgId),
+        new Level2(GenerateId("13000000", orgId), "Current Assets", GenerateId("10000000", orgId), orgId),
+        new Level2(GenerateId("14000000", orgId), "Non - Current Assets", GenerateId("10000000", orgId), orgId),
+        new Level2(GenerateId("15000000", orgId), "Prepayments", GenerateId("10000000", orgId), orgId),
+        new Level2(GenerateId("16000000", orgId), "Fixed Assets", GenerateId("10000000", orgId), orgId),
+        // Liability
+        new Level2(GenerateId("21000000", orgId), "Payable", GenerateId("20000000", orgId), orgId),
+        new Level2(GenerateId("22000000", orgId), "Credit Card", GenerateId("20000000", orgId), orgId),
+        new Level2(GenerateId("23000000", orgId), "Current Liabilities", GenerateId("20000000", orgId), orgId),
+        new Level2(GenerateId("24000000", orgId), "Non - Current Liabilities", GenerateId("20000000", orgId), orgId),
+        // Equity
+        new Level2(GenerateId("31000000", orgId), "Equity", GenerateId("30000000", orgId), orgId),
+        new Level2(GenerateId("32000000", orgId), "Current year Earnings", GenerateId("30000000", orgId), orgId),
+        // Income
+        new Level2(GenerateId("41000000", orgId), "Income", GenerateId("40000000", orgId), orgId),
+        new Level2(GenerateId("42000000", orgId), "Other Income", GenerateId("40000000", orgId), orgId),
+        // Expenses
+        new Level2(GenerateId("51000000", orgId), "Expenses", GenerateId("50000000", orgId), orgId),
+        new Level2(GenerateId("52000000", orgId), "Depreciation", GenerateId("50000000", orgId), orgId),
+        new Level2(GenerateId("53000000", orgId), "Cost of Revenue", GenerateId("50000000", orgId), orgId),
+        // Other
+        new Level2(GenerateId("61000000", orgId), "Off-Balance Sheet", GenerateId("60000000", orgId), orgId)
+    };
+            await unitOfWork.Level2.AddRange(level2);
+        }
+
+        private static async Task AddLevel3(IUnitOfWork unitOfWork, int orgId)
+        {
+            var level3 = new List<Level3>
+    {
+        // Assets
+        new Level3(GenerateId("11100000", orgId), "Receivable", GenerateId("11000000", orgId), orgId),
+        new Level3(GenerateId("12100000", orgId), "Bank & Cash", GenerateId("12000000", orgId), orgId),
+        new Level3(GenerateId("13100000", orgId), "Current Assets", GenerateId("13000000", orgId), orgId),
+        new Level3(GenerateId("14100000", orgId), "Non - Current Assets", GenerateId("14000000", orgId), orgId),
+        new Level3(GenerateId("15100000", orgId), "Prepayments", GenerateId("15000000", orgId), orgId),
+        new Level3(GenerateId("16100000", orgId), "Fixed Assets", GenerateId("16000000", orgId), orgId),
+        // Liability
+        new Level3(GenerateId("21100000", orgId), "Payable", GenerateId("21000000", orgId), orgId),
+        new Level3(GenerateId("22100000", orgId), "Credit Card", GenerateId("22000000", orgId), orgId),
+        new Level3(GenerateId("23100000", orgId), "Current Liabilities", GenerateId("23000000", orgId), orgId),
+        new Level3(GenerateId("24100000", orgId), "Non - Current Liabilities", GenerateId("24000000", orgId), orgId),
+        // Equity
+        new Level3(GenerateId("31100000", orgId), "Equity", GenerateId("31000000", orgId), orgId),
+        new Level3(GenerateId("32100000", orgId), "Current year Earnings", GenerateId("32000000", orgId), orgId),
+        // Income
+        new Level3(GenerateId("41100000", orgId), "Income", GenerateId("41000000", orgId), orgId),
+        new Level3(GenerateId("42100000", orgId), "Other Income", GenerateId("42000000", orgId), orgId),
+        // Expenses
+        new Level3(GenerateId("51100000", orgId), "Expenses", GenerateId("51000000", orgId), orgId),
+        new Level3(GenerateId("52100000", orgId), "Depreciation", GenerateId("52000000", orgId), orgId),
+        new Level3(GenerateId("53100000", orgId), "Cost of Revenue", GenerateId("53000000", orgId), orgId),
+        // Other
+        new Level3(GenerateId("61100000", orgId), "Off-Balance Sheet", GenerateId("61000000", orgId), orgId)
+    };
+            await unitOfWork.Level3.AddRange(level3);
+        }
+
+        private static async Task AddLevel4(IUnitOfWork unitOfWork, int orgId)
+        {
+            var level4 = new List<Level4>
+    {
+            //Asset > Bank & Cash
+            new Level4(GenerateId("12110000", orgId), "Bank", GenerateId("12100000", orgId), GenerateId("10000000", orgId), orgId),
+            new Level4(GenerateId("12120000", orgId), "Cash", GenerateId("12100000", orgId), GenerateId("10000000", orgId), orgId),
+    
+            //Asset > Current Assets
+            new Level4(GenerateId("13110000", orgId), "Bank Suspense Account", GenerateId("13100000", orgId), GenerateId("10000000", orgId), orgId),
+            new Level4(GenerateId("13120000", orgId), "Cost of Production", GenerateId("13100000", orgId), GenerateId("10000000", orgId), orgId),
+            new Level4(GenerateId("13130000", orgId), "Current Assets", GenerateId("13100000", orgId), GenerateId("10000000", orgId), orgId),
+            new Level4(GenerateId("13140000", orgId), "Liquidity Transfer", GenerateId("13100000", orgId), GenerateId("10000000", orgId), orgId),
+            new Level4(GenerateId("13150000", orgId), "Outstanding Payments", GenerateId("13100000", orgId), GenerateId("10000000", orgId), orgId),
+            new Level4(GenerateId("13160000", orgId), "Outstanding Receipts", GenerateId("13100000", orgId), GenerateId("10000000", orgId), orgId),
+            new Level4(GenerateId("13170000", orgId), "Prepaid Expenses", GenerateId("13100000", orgId), GenerateId("10000000", orgId), orgId),
+            new Level4(GenerateId("13180000", orgId), "Products to receive", GenerateId("13100000", orgId), GenerateId("10000000", orgId), orgId),
+            new Level4(GenerateId("13190000", orgId), "Stock Interim (Delivered)", GenerateId("13100000", orgId), GenerateId("10000000", orgId), orgId),
+            new Level4(GenerateId("131100000", orgId), "Stock Interim (Received)", GenerateId("13100000", orgId), GenerateId("10000000", orgId), orgId),
+            new Level4(GenerateId("131110000", orgId), "Stock Valuation", GenerateId("13100000", orgId), GenerateId("10000000", orgId), orgId),
+            new Level4(GenerateId("131120000", orgId), "Tax Paid", GenerateId("13100000", orgId), GenerateId("10000000", orgId), orgId),
+            new Level4(GenerateId("131130000", orgId), "Tax Receivable", GenerateId("13100000", orgId), GenerateId("10000000", orgId), orgId),
+                
+            //Asset > Fixed Assets
+            new Level4(GenerateId("16110000", orgId), "Fixed Assets", GenerateId("16100000", orgId), GenerateId("10000000", orgId), orgId),
+
+            //Asset > Non - Current Assets
+            new Level4(GenerateId("14110000", orgId), "Non - Current Assets", GenerateId("14100000", orgId), GenerateId("10000000", orgId), orgId),
+                
+            //Asset >  Prepayments 
+            new Level4(GenerateId("15110000", orgId), "Prepayments", GenerateId("15100000", orgId), GenerateId("10000000", orgId), orgId),
+
+            //Asset >  Receivable 
+            new Level4(GenerateId("11110000", orgId), "Account Receivable (PoS)", GenerateId("11100000", orgId), GenerateId("10000000", orgId), orgId),
+            new Level4(GenerateId("11112000", orgId), "Account Receivable", GenerateId("11100000", orgId), GenerateId("10000000", orgId), orgId),
+
+
+            //Equity > Equity 
+            new Level4(GenerateId("31110000", orgId), "Capital", GenerateId("31100000", orgId), GenerateId("30000000", orgId), orgId),
+            new Level4(GenerateId("31120000", orgId), "Dividends", GenerateId("31100000", orgId), GenerateId("30000000", orgId), orgId),
+
+            //Equity > Current Year Earnings
+            new Level4(GenerateId("32110000", orgId), "Undistributed Profits/Losses", GenerateId("32100000", orgId), GenerateId("30000000", orgId), orgId),
+
+            //Expenses > Expenses
+            new Level4(GenerateId("51110000", orgId), "Cash Discount Loss", GenerateId("51100000", orgId), GenerateId("50000000", orgId), orgId),
+            new Level4(GenerateId("51120000", orgId), "Expenses", GenerateId("51100000", orgId), GenerateId("50000000", orgId), orgId),
+            new Level4(GenerateId("51130000", orgId), "Purchase of Equipments", GenerateId("51100000", orgId), GenerateId("50000000", orgId), orgId),
+            new Level4(GenerateId("51140000", orgId), "Rent", GenerateId("51100000", orgId), GenerateId("50000000", orgId), orgId),
+            new Level4(GenerateId("51150000", orgId), "Bank Fees", GenerateId("51100000", orgId), GenerateId("50000000", orgId), orgId),
+            new Level4(GenerateId("51160000", orgId), "Salary Expenses", GenerateId("51100000", orgId), GenerateId("50000000", orgId), orgId),
+            new Level4(GenerateId("51170000", orgId), "Foreign Exchange Loss", GenerateId("51100000", orgId), GenerateId("50000000", orgId), orgId),
+            new Level4(GenerateId("51180000", orgId), "Cash Difference Loss", GenerateId("51100000", orgId), GenerateId("50000000", orgId), orgId),
+            new Level4(GenerateId("51190000", orgId), "RD Expenses", GenerateId("51100000", orgId), GenerateId("50000000", orgId), orgId),
+            new Level4(GenerateId("511100000", orgId), "Sales Expenses", GenerateId("51100000", orgId), GenerateId("50000000", orgId), orgId),
+
+            //Expenses > Cost of Revenue
+            new Level4(GenerateId("53110000", orgId), "Cost of Goods Sold", GenerateId("53100000", orgId), GenerateId("50000000", orgId), orgId),
+                 
+            //Income > Income
+            new Level4(GenerateId("41110000", orgId), "Product Sales", GenerateId("41100000", orgId), GenerateId("40000000", orgId), orgId),
+            new Level4(GenerateId("41120000", orgId), "Foreign Exchange Gain", GenerateId("41100000", orgId), GenerateId("40000000", orgId), orgId),
+            new Level4(GenerateId("41130000", orgId), "Cash Difference Gain", GenerateId("41100000", orgId), GenerateId("40000000", orgId), orgId),
+            new Level4(GenerateId("41140000", orgId), "Cash Discount Gain", GenerateId("41100000", orgId), GenerateId("40000000", orgId), orgId),
+                
+            //Income > Other Income
+            new Level4(GenerateId("42110000", orgId), "Other Income", GenerateId("42100000", orgId), GenerateId("40000000", orgId), orgId),
+                
+                // Liability > Current Liabilities
+            new Level4(GenerateId("23110000", orgId), "Current Liabilities", GenerateId("23100000", orgId), GenerateId("20000000", orgId), orgId),
+            new Level4(GenerateId("23120000", orgId), "Bills to receive", GenerateId("23100000", orgId), GenerateId("20000000", orgId), orgId),
+            new Level4(GenerateId("23130000", orgId), "Deferred Revenue", GenerateId("23100000", orgId), GenerateId("20000000", orgId), orgId),
+            new Level4(GenerateId("23140000", orgId), "Salary Payable", GenerateId("23100000", orgId), GenerateId("20000000", orgId), orgId),
+            new Level4(GenerateId("23150000", orgId), "Employee Payroll Taxes", GenerateId("23100000", orgId), GenerateId("20000000", orgId), orgId),
+            new Level4(GenerateId("23160000", orgId), "Employer Payroll Taxes", GenerateId("23100000", orgId), GenerateId("20000000", orgId), orgId),
+            new Level4(GenerateId("23170000", orgId), "Tax Received", GenerateId("23100000", orgId), GenerateId("20000000", orgId), orgId),
+            new Level4(GenerateId("23180000", orgId), "Tax Payable", GenerateId("23100000", orgId), GenerateId("20000000", orgId), orgId),
+
+                // Liability > Non-current Liabilities
+            new Level4(GenerateId("24110000", orgId), "Non-current Liabilities", GenerateId("24100000", orgId), GenerateId("20000000", orgId), orgId),
+
+                // Liability > Payable
+            new Level4(GenerateId("21110000", orgId), "Account Payable", GenerateId("24100000", orgId), GenerateId("20000000", orgId), orgId),
+    };
+            await unitOfWork.Level4.AddRange(level4);
+        }
+
+        private static string GenerateId(string baseId, int orgId)
+        {
+            return $"{baseId}-5566-7788-99AA-BBCCDDEEFF00-{orgId}";
+        }
+
         public static void seeds(ModelBuilder modelBuilder)
         {
             //Adding seeds in organization table
@@ -93,17 +217,17 @@ namespace Infrastructure.Seeds
 
 
 
-
+            //SBBU-Code
             //Adding seeds in TaxAccounts
-            modelBuilder.Entity<Taxes>()
-                .HasData(
-                    new Taxes(1, "Sales Tax Asset", TaxType.SalesTaxAsset),
-                    new Taxes(2, "Sales Tax Liability", TaxType.SalesTaxLiability),
-                    new Taxes(3, "Income Tax Asset", TaxType.IncomeTaxAsset),
-                    new Taxes(4, "Income Tax Liability", TaxType.IncomeTaxLiability),
-                    new Taxes(5, "SRB Tax Asset", TaxType.SRBTaxAsset),
-                    new Taxes(6, "SRB Tax Liability", TaxType.SRBTaxLiability)
-                    );
+            //modelBuilder.Entity<Taxes>()
+            //    .HasData(
+            //        new Taxes(1, "Sales Tax Asset", TaxType.SalesTaxAsset),
+            //        new Taxes(2, "Sales Tax Liability", TaxType.SalesTaxLiability),
+            //        new Taxes(3, "Income Tax Asset", TaxType.IncomeTaxAsset),
+            //        new Taxes(4, "Income Tax Liability", TaxType.IncomeTaxLiability),
+            //        new Taxes(5, "SRB Tax Asset", TaxType.SRBTaxAsset),
+            //        new Taxes(6, "SRB Tax Liability", TaxType.SRBTaxLiability)
+            //        );
         }
     }
 }

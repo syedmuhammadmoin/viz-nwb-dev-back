@@ -132,7 +132,7 @@ namespace Infrastructure.Migrations
                 name: "Level1",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     Code = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
                     OrganizationId = table.Column<int>(type: "int", nullable: false),
@@ -442,11 +442,11 @@ namespace Infrastructure.Migrations
                 name: "Level2",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     Code = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
                     OrganizationId = table.Column<int>(type: "int", nullable: false),
-                    Level1_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Level1_id = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -717,10 +717,10 @@ namespace Infrastructure.Migrations
                 name: "Level3",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     Code = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    Level2_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Level2_id = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     OrganizationId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -882,32 +882,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Warehouses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    StoreManager = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    CampusId = table.Column<int>(type: "int", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    ModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Warehouses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Warehouses_Campuses_CampusId",
-                        column: x => x.CampusId,
-                        principalTable: "Campuses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Districts",
                 columns: table => new
                 {
@@ -1013,12 +987,12 @@ namespace Infrastructure.Migrations
                 name: "Level4",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     Code = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
                     AccountType = table.Column<int>(type: "int", nullable: false),
-                    Level3_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Level1_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Level3_id = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Level1_id = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     OrganizationId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1141,6 +1115,45 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Warehouses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    StoreManager = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    CampusId = table.Column<int>(type: "int", nullable: false),
+                    Country = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    State = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    City = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Manager = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    DepartmentId = table.Column<int>(type: "int", nullable: false),
+                    OrganizationId = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Warehouses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Warehouses_Campuses_CampusId",
+                        column: x => x.CampusId,
+                        principalTable: "Campuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Warehouses_Departments_DepartmentId",
+                        column: x => x.DepartmentId,
+                        principalTable: "Departments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Domiciles",
                 columns: table => new
                 {
@@ -1212,8 +1225,8 @@ namespace Infrastructure.Migrations
                     OpeningBalance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     OpeningBalanceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Purpose = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    ChAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ClearingAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ChAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ClearingAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CampusId = table.Column<int>(type: "int", nullable: true),
                     TransactionId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1257,7 +1270,7 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     RevisedAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     MasterId = table.Column<int>(type: "int", nullable: false),
@@ -1304,8 +1317,8 @@ namespace Infrastructure.Migrations
                     BranchCode = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     BankAccountTitle = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     BankAccountNumber = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
-                    AccountReceivableId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    AccountPayableId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AccountReceivableId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    AccountPayableId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -1340,7 +1353,7 @@ namespace Infrastructure.Migrations
                     OpeningBalance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     OpeningBalanceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DocNo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    ChAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ChAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CampusId = table.Column<int>(type: "int", nullable: false),
                     TransactionId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1380,9 +1393,9 @@ namespace Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ModelName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     UseFullLife = table.Column<int>(type: "int", nullable: false),
-                    AssetAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DepreciationExpenseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AccumulatedDepreciationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AssetAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    DepreciationExpenseId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    AccumulatedDepreciationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     ModelType = table.Column<int>(type: "int", nullable: false),
                     DecliningRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1421,7 +1434,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1451,7 +1464,7 @@ namespace Infrastructure.Migrations
                     PayrollType = table.Column<int>(type: "int", nullable: false),
                     PayrollItemType = table.Column<int>(type: "int", nullable: false),
                     Value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Remarks = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -1480,7 +1493,7 @@ namespace Infrastructure.Migrations
                     DocNo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     TotalDebit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TotalCredit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     OpeningBalance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -1535,7 +1548,7 @@ namespace Infrastructure.Migrations
                     ShiftId = table.Column<int>(type: "int", nullable: false),
                     SemesterId = table.Column<int>(type: "int", nullable: true),
                     ExamId = table.Column<int>(type: "int", nullable: true),
-                    BankAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BankAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
                     LateFeeAfterDueDate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ChallanDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -1589,7 +1602,7 @@ namespace Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(80)", maxLength: 80, nullable: true),
                     TaxType = table.Column<int>(type: "int", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -1613,7 +1626,7 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Level4Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Level4Id = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     AdditionAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     DeletionAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -1647,7 +1660,7 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CalculationType = table.Column<int>(type: "int", nullable: false),
                     Value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -1672,6 +1685,34 @@ namespace Infrastructure.Migrations
                         name: "FK_EstimatedBudgetLines_Level4_AccountId",
                         column: x => x.AccountId,
                         principalTable: "Level4",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Location",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Dimensions = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Supervisor = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    WarehouseId = table.Column<int>(type: "int", nullable: false),
+                    OrganizationId = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Location", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Location_Warehouses_WarehouseId",
+                        column: x => x.WarehouseId,
+                        principalTable: "Warehouses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -1795,7 +1836,7 @@ namespace Infrastructure.Migrations
                     CustomerId = table.Column<int>(type: "int", nullable: false),
                     DocNo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     NoteDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ReceivableAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ReceivableAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     TotalBeforeTax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TotalTax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -1854,7 +1895,7 @@ namespace Infrastructure.Migrations
                     VendorId = table.Column<int>(type: "int", nullable: false),
                     DocNo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     NoteDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PayableAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PayableAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     TotalBeforeTax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Tax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TotalTax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -1982,7 +2023,7 @@ namespace Infrastructure.Migrations
                     InvoiceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Contact = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    ReceivableAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ReceivableAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     TotalBeforeTax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TotalTax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -2037,7 +2078,7 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     BusinessPartnerId = table.Column<int>(type: "int", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Debit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -2089,10 +2130,10 @@ namespace Infrastructure.Migrations
                     PaymentType = table.Column<int>(type: "int", nullable: false),
                     BusinessPartnerId = table.Column<int>(type: "int", nullable: false),
                     PaymentFormType = table.Column<int>(type: "int", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaymentRegisterType = table.Column<int>(type: "int", nullable: false),
-                    PaymentRegisterId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PaymentRegisterId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     CampusId = table.Column<int>(type: "int", nullable: true),
                     GrossPayment = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -2101,8 +2142,8 @@ namespace Infrastructure.Migrations
                     IncomeTax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Deduction = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ChequeNo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    DeductionAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    OtherDeductionAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeductionAccountId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OtherDeductionAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     NetPayment = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TransactionId = table.Column<int>(type: "int", nullable: true),
                     BankReconStatus = table.Column<int>(type: "int", nullable: true),
@@ -2215,9 +2256,9 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    InventoryAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RevenueAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CostAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    InventoryAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    RevenueAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CostAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     IsFixedAsset = table.Column<bool>(type: "bit", nullable: false),
                     DepreciationModelId = table.Column<int>(type: "int", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -2262,7 +2303,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     BusinessPartnerId = table.Column<int>(type: "int", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Debit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -2543,7 +2584,7 @@ namespace Infrastructure.Migrations
                     Month = table.Column<int>(type: "int", nullable: false),
                     Year = table.Column<int>(type: "int", nullable: false),
                     CampusId = table.Column<int>(type: "int", nullable: false),
-                    AccountPayableId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AccountPayableId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     WorkingDays = table.Column<int>(type: "int", nullable: false),
                     PresentDays = table.Column<int>(type: "int", nullable: false),
                     LeaveDays = table.Column<int>(type: "int", nullable: false),
@@ -2584,7 +2625,7 @@ namespace Infrastructure.Migrations
                     NoOfIncrements = table.Column<int>(type: "int", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     BasicPayItemId = table.Column<int>(type: "int", nullable: false),
-                    BPSAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BPSAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     BPSName = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     BPSAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     IncrementItemId = table.Column<int>(type: "int", nullable: true),
@@ -2951,7 +2992,7 @@ namespace Infrastructure.Migrations
                     PayrollType = table.Column<int>(type: "int", nullable: false),
                     Value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     MasterId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -3312,7 +3353,7 @@ namespace Infrastructure.Migrations
                     DocNo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     BillDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PayableAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PayableAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     TotalBeforeTax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TotalTax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     OtherTax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -3467,7 +3508,7 @@ namespace Infrastructure.Migrations
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Tax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     SubTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     WarehouseId = table.Column<int>(type: "int", nullable: true),
                     MasterId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -3514,7 +3555,7 @@ namespace Infrastructure.Migrations
                     CwipCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     DateOfAcquisition = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    CWIPAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CWIPAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Cost = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     WarehouseId = table.Column<int>(type: "int", nullable: false),
@@ -3522,9 +3563,9 @@ namespace Infrastructure.Migrations
                     DepreciationApplicability = table.Column<bool>(type: "bit", nullable: false),
                     DepreciationModelId = table.Column<int>(type: "int", nullable: true),
                     UseFullLife = table.Column<int>(type: "int", nullable: true),
-                    AssetAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DepreciationExpenseId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    AccumulatedDepreciationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AssetAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    DepreciationExpenseId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    AccumulatedDepreciationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     ModelType = table.Column<int>(type: "int", nullable: false),
                     DecLiningRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
@@ -3610,7 +3651,7 @@ namespace Infrastructure.Migrations
                     Tax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     AnyOtherTax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     SubTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     WarehouseId = table.Column<int>(type: "int", nullable: true),
                     MasterId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -3664,9 +3705,9 @@ namespace Infrastructure.Migrations
                     DepreciationApplicability = table.Column<bool>(type: "bit", nullable: false),
                     DepreciationModelId = table.Column<int>(type: "int", nullable: true),
                     UseFullLife = table.Column<int>(type: "int", nullable: true),
-                    AssetAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DepreciationExpenseId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    AccumulatedDepreciationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AssetAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    DepreciationExpenseId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    AccumulatedDepreciationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     ModelType = table.Column<int>(type: "int", nullable: false),
                     DecLiningRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ProrataBasis = table.Column<bool>(type: "bit", nullable: false),
@@ -3797,7 +3838,7 @@ namespace Infrastructure.Migrations
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Tax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     SubTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     WarehouseId = table.Column<int>(type: "int", nullable: true),
                     MasterId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -3846,7 +3887,7 @@ namespace Infrastructure.Migrations
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Cost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Tax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     SubTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     WarehouseId = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
@@ -4023,7 +4064,7 @@ namespace Infrastructure.Migrations
                     Tax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     AnyOtherTax = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     SubTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     WarehouseId = table.Column<int>(type: "int", nullable: true),
                     MasterId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -4111,7 +4152,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FixedAssetId = table.Column<int>(type: "int", nullable: false),
-                    Level4Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Level4Id = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Debit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Credit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -4186,7 +4227,7 @@ namespace Infrastructure.Migrations
                     Cost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     SalvageValue = table.Column<int>(type: "int", nullable: false),
                     UseFullLife = table.Column<int>(type: "int", nullable: false),
-                    AccumulatedDepreciationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccumulatedDepreciationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     BookValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     DisposalDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DisposalValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -4194,7 +4235,7 @@ namespace Infrastructure.Migrations
                     StatusId = table.Column<int>(type: "int", nullable: false),
                     TransactionId = table.Column<int>(type: "int", nullable: true),
                     LedgerId = table.Column<int>(type: "int", nullable: true),
-                    AccountReceivableId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AccountReceivableId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BusinessPartnerId = table.Column<int>(type: "int", nullable: true),
                     CampusId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -4338,7 +4379,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TransactionId = table.Column<int>(type: "int", nullable: false),
-                    Level4_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Level4_id = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     BusinessPartnerId = table.Column<int>(type: "int", nullable: true),
                     WarehouseId = table.Column<int>(type: "int", nullable: true),
                     CampusId = table.Column<int>(type: "int", nullable: true),
@@ -4349,6 +4390,8 @@ namespace Infrastructure.Migrations
                     TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ReconStatus = table.Column<int>(type: "int", nullable: false),
                     IsReconcilable = table.Column<bool>(type: "bit", nullable: false),
+                    LocationId = table.Column<int>(type: "int", nullable: true),
+                    OrganizationId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -4380,6 +4423,12 @@ namespace Infrastructure.Migrations
                         name: "FK_RecordLedger_Level4_Level4_id",
                         column: x => x.Level4_id,
                         principalTable: "Level4",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_RecordLedger_Location_LocationId",
+                        column: x => x.LocationId,
+                        principalTable: "Location",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -4798,19 +4847,6 @@ namespace Infrastructure.Migrations
                         principalTable: "Warehouses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Taxes",
-                columns: new[] { "Id", "AccountId", "CreatedBy", "CreatedDate", "IsDelete", "ModifiedBy", "ModifiedDate", "Name", "TaxType" },
-                values: new object[,]
-                {
-                    { 1, null, null, null, false, null, null, "Sales Tax Asset", 0 },
-                    { 2, null, null, null, false, null, null, "Sales Tax Liability", 1 },
-                    { 3, null, null, null, false, null, null, "Income Tax Asset", 2 },
-                    { 4, null, null, null, false, null, null, "Income Tax Liability", 3 },
-                    { 5, null, null, null, false, null, null, "SRB Tax Asset", 4 },
-                    { 6, null, null, null, false, null, null, "SRB Tax Liability", 5 }
                 });
 
             migrationBuilder.InsertData(
@@ -5834,6 +5870,11 @@ namespace Infrastructure.Migrations
                 column: "Level3_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Location_WarehouseId",
+                table: "Location",
+                column: "WarehouseId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Organizations_Name",
                 table: "Organizations",
                 column: "Name",
@@ -6171,6 +6212,11 @@ namespace Infrastructure.Migrations
                 column: "Level4_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RecordLedger_LocationId",
+                table: "RecordLedger",
+                column: "LocationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RecordLedger_TransactionId",
                 table: "RecordLedger",
                 column: "TransactionId");
@@ -6378,6 +6424,11 @@ namespace Infrastructure.Migrations
                 name: "IX_Warehouses_CampusId",
                 table: "Warehouses",
                 column: "CampusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Warehouses_DepartmentId",
+                table: "Warehouses",
+                column: "DepartmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkFlowTransitions_AllowedRoleId",
@@ -6665,6 +6716,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "FixedAssets");
+
+            migrationBuilder.DropTable(
+                name: "Location");
 
             migrationBuilder.DropTable(
                 name: "Applicants");

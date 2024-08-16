@@ -12,7 +12,7 @@ namespace Application.Contracts.DTOs
         [MaxLength(200)]
         public string Name { get; set; }
         [Required]
-        public Guid CWIPAccountId { get; set; }
+        public string CWIPAccountId { get; set; }
         [Required]
         public int? Cost { get; set; }
         [Required]
@@ -24,9 +24,9 @@ namespace Application.Contracts.DTOs
         public bool DepreciationApplicability { get; set; }
         public int? DepreciationModelId { get; set; }
         public int? UseFullLife { get; set; }
-        public Guid? AssetAccountId { get; set; }
-        public Guid? DepreciationExpenseId { get; set; }
-        public Guid? AccumulatedDepreciationId { get; set; }
+        public string? AssetAccountId { get; set; }
+        public string? DepreciationExpenseId { get; set; }
+        public string? AccumulatedDepreciationId { get; set; }
         public DepreciationMethod ModelType { get; set; }
         [Range(0.00, 100.00, ErrorMessage = "Please enter a value between 0 and 100")]
         public decimal? DecLiningRate { get; set; }

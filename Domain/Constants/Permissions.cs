@@ -38,32 +38,255 @@
         }
 
 
-       
 
-
-        //Profiling forms
         public static class AuthClaims
         {
-            public const string View = "AccessManagement.Auth.VW";
-            public const string Create = "AccessManagement.Auth.CR";
-            public const string Edit = "AccessManagement.Auth.ED";
-            public const string Delete = "AccessManagement.Auth.DL";
+            public const string View = "Permissions.AuthClaims.VW";
+            public const string Create = "Permissions.AuthClaims.CR";
+            public const string Edit = "Permissions.AuthClaims.ED";
+            public const string Delete = "Permissions.AuthClaims.DL";
         }
         public static class BusinessPartnerClaims
         {
-            public const string View = "Profiling.BusinessPartner.VW";
-            public const string Create = "Profiling.BusinessPartner.CR";
-            public const string Edit = "Profiling.BusinessPartner.ED";
-            public const string Delete = "Profiling.BusinessPartner.DL";
+            public const string View = "Permissions.BusinessPartnerClaims.VW";
+            public const string Create = "Permissions.BusinessPartnerClaims.CR";
+            public const string Edit = "Permissions.BusinessPartnerClaims.ED";
+            public const string Delete = "Permissions.BusinessPartnerClaims.DL";
+        }
+        public static class CustomerClaims
+        {
+            public const string View = "Permissions.CustomerClaims.VW";
+            public const string Create = "Permissions.CustomerClaims.CR";
+            public const string Edit = "Permissions.CustomerClaims.ED";
+            public const string Delete = "Permissions.CustomerClaims.DL";
+        }
+        public static class VendorClaims
+        {
+            public const string View = "Permissions.VendorClaims.VW";
+            public const string Create = "Permissions.VendorClaims.CR";
+            public const string Edit = "Permissions.VendorClaims.ED";
+            public const string Delete = "Permissions.VendorClaims.DL";
         }
 
         public static class OrganizationClaims
         {
-            public const string View = "Profiling.Organization.VW";
-            public const string Create = "Profiling.Organization.CR";
-            public const string Edit = "Profiling.Organization.ED";
-            public const string Delete = "Profiling.Organization.DL";
+            public const string View = "Permissions.OrganizationClaims.VW";
+            public const string Create = "Permissions.OrganizationClaims.CR";
+            public const string Edit = "Permissions.OrganizationClaims.ED";
+            public const string Delete = "Permissions.OrganizationClaims.DL";
         }
+        public static class DepartmentsClaims
+        {
+            public const string View = "Permissions.DepartmentsClaims.VW";
+            public const string Create = "Permissions.DepartmentsClaims.CR";
+            public const string Edit = "Permissions.DepartmentsClaims.ED";
+            public const string Delete = "Permissions.DepartmentsClaims.DL";
+        }
+
+        public static class LocationClaims
+        {
+            public const string View = "Permissions.LocationClaims.VW";
+            public const string Create = "Permissions.LocationClaims.CR";
+            public const string Edit = "Permissions.LocationClaims.ED";
+            public const string Delete = "Permissions.LocationClaims.DL";
+        }
+
+        public static class WarehouseClaims
+        {
+            public const string View = "Permissions.WarehouseClaims.VW";
+            public const string Create = "Permissions.WarehouseClaims.CR";
+            public const string Edit = "Permissions.WarehouseClaims.ED";
+            public const string Delete = "Permissions.WarehouseClaims.DL";
+        }
+
+        public static class BankAccountClaims
+        {
+            public const string View = "Permissions.BankAccountClaims.VW";
+            public const string Create = "Permissions.BankAccountClaims.CR";
+            public const string Edit = "Permissions.BankAccountClaims.ED";
+            public const string Delete = "Permissions.BankAccountClaims.DL";
+        }
+
+        public static class BankStatementClaims
+        {
+            public const string View = "Permissions.BankStatementClaims.VW";
+            public const string Create = "Permissions.BankStatementClaims.CR";
+            public const string Edit = "Permissions.BankStatementClaims.ED";
+            public const string Delete = "Permissions.BankStatementClaims.DL";
+        }
+
+        public static class CashAccountClaims
+        {
+            public const string View = "Permissions.CashAccountClaims.VW";
+            public const string Create = "Permissions.CashAccountClaims.CR";
+            public const string Edit = "Permissions.CashAccountClaims.ED";
+            public const string Delete = "Permissions.CashAccountClaims.DL";
+        }
+
+        public static class CategoriesClaims
+        {
+            public const string View = "Permissions.CategoriesClaims.VW";
+            public const string Create = "Permissions.CategoriesClaims.CR";
+            public const string Edit = "Permissions.CategoriesClaims.ED";
+            public const string Delete = "Permissions.CategoriesClaims.DL";
+        }
+
+        public static class ProductsClaims
+        {
+            public const string View = "Permissions.ProductsClaims.VW";
+            public const string Create = "Permissions.ProductsClaims.CR";
+            public const string Edit = "Permissions.ProductsClaims.ED";
+            public const string Delete = "Permissions.ProductsClaims.DL";
+        }
+
+        public static class Level4Claims
+        {
+            public const string View = "Permissions.Level4Claims.VW";
+            public const string Create = "Permissions.Level4Claims.CR";
+            public const string Edit = "Permissions.Level4Claims.ED";
+            public const string Delete = "Permissions.Level4Claims.DL";
+        }
+        public static class BankReconClaims
+        {
+            public const string View = "Permissions.BankReconClaims.VW";
+            public const string Create = "Permissions.BankReconClaims.CR";
+            public const string Edit = "Permissions.BankReconClaims.ED";
+            public const string Delete = "Permissions.BankReconClaims.DL";
+        }
+        public static class TransactionReconClaims
+        {
+            public const string View = "Permissions.TransactionReconClaims.VW";
+            public const string Create = "Permissions.TransactionReconClaims.CR";
+            public const string Edit = "Permissions.TransactionReconClaims.ED";
+            public const string Delete = "Permissions.TransactionReconClaims.DL";
+        }
+
+        //Transaction Forms
+        public static class InvoiceClaims
+        {
+            public const string View = "Permissions.InvoiceClaims.VW";
+            public const string Create = "Permissions.InvoiceClaims.CR";
+            public const string Edit = "Permissions.InvoiceClaims.ED";
+            public const string Delete = "Permissions.InvoiceClaims.DL";
+        }
+
+        public static class BillClaims
+        {
+            public const string View = "Permissions.BillClaims.VW";
+            public const string Create = "Permissions.BillClaims.CR";
+            public const string Edit = "Permissions.BillClaims.ED";
+            public const string Delete = "Permissions.BillClaims.DL";
+        }
+
+        public static class PaymentClaims
+        {
+            public const string View = "Permissions.PaymentClaims.VW";
+            public const string Create = "Permissions.PaymentClaims.CR";
+            public const string Edit = "Permissions.PaymentClaims.ED";
+            public const string Delete = "Permissions.PaymentClaims.DL";
+        }
+
+        public static class ReceiptClaims
+        {
+            public const string View = "Permissions.ReceiptClaims.VW";
+            public const string Create = "Permissions.ReceiptClaims.CR";
+            public const string Edit = "Permissions.ReceiptClaims.ED";
+            public const string Delete = "Permissions.ReceiptClaims.DL";
+        }
+
+        public static class CreditNoteClaims
+        {
+            public const string View = "Permissions.CreditNoteClaims.VW";
+            public const string Create = "Permissions.CreditNoteClaims.CR";
+            public const string Edit = "Permissions.CreditNoteClaims.ED";
+            public const string Delete = "Permissions.CreditNoteClaims.DL";
+        }
+
+        public static class DebitNoteClaims
+        {
+            public const string View = "Permissions.DebitNoteClaims.VW";
+            public const string Create = "Permissions.DebitNoteClaims.CR";
+            public const string Edit = "Permissions.DebitNoteClaims.ED";
+            public const string Delete = "Permissions.DebitNoteClaims.DL";
+        }
+
+        public static class JournalEntryClaims
+        {
+            public const string View = "Permissions.JournalEntryClaims.VW";
+            public const string Create = "Permissions.JournalEntryClaims.CR";
+            public const string Edit = "Permissions.JournalEntryClaims.ED";
+            public const string Delete = "Permissions.JournalEntryClaims.DL";
+        }
+
+        public static class RequisitionClaims
+        {
+            public const string View = "Permissions.RequisitionClaims.VW";
+            public const string Create = "Permissions.RequisitionClaims.CR";
+            public const string Edit = "Permissions.RequisitionClaims.ED";
+            public const string Delete = "Permissions.RequisitionClaims.DL";
+        }
+
+        public static class PurchaseOrderClaims
+        {
+            public const string View = "Permissions.PurchaseOrderClaims.VW";
+            public const string Create = "Permissions.PurchaseOrderClaims.CR";
+            public const string Edit = "Permissions.PurchaseOrderClaims.ED";
+            public const string Delete = "Permissions.PurchaseOrderClaims.DL";
+        }
+
+        public static class GoodsReceivingNoteClaims
+        {
+            public const string View = "Permissions.GoodsReceivingNoteClaims.VW";
+            public const string Create = "Permissions.GoodsReceivingNoteClaims.CR";
+            public const string Edit = "Permissions.GoodsReceivingNoteClaims.ED";
+            public const string Delete = "Permissions.GoodsReceivingNoteClaims.DL";
+        }
+
+        public static class SalesOrderClaims
+        {
+            public const string View = "Permissions.SalesOrderClaims.VW";
+            public const string Create = "Permissions.SalesOrderClaims.CR";
+            public const string Edit = "Permissions.SalesOrderClaims.ED";
+            public const string Delete = "Permissions.SalesOrderClaims.DL";
+        }
+
+        public static class GoodsDispatchNoteClaims
+        {
+            public const string View = "Permissions.GoodsDispatchNoteClaims.VW";
+            public const string Create = "Permissions.GoodsDispatchNoteClaims.CR";
+            public const string Edit = "Permissions.GoodsDispatchNoteClaims.ED";
+            public const string Delete = "Permissions.GoodsDispatchNoteClaims.DL";
+        }
+
+        //Reporting Form
+        public static class ChartOfAccountClaims
+        {
+            public const string View = "Permissions.ChartOfAccountClaims.VW";
+        }
+        public static class TrialBalanceClaims
+        {
+            public const string View = "Permissions.TrialBalanceClaims.VW";
+        }
+        public static class GeneralLedgerClaims
+        {
+            public const string View = "Permissions.GeneralLedgerClaims.VW";
+        }
+        public static class ProfitLossClaims
+        {
+            public const string View = "Permissions.ProfitLossClaims.VW";
+        }
+        public static class BalanceSheetClaims
+        {
+            public const string View = "Permissions.BalanceSheetClaims.VW";
+        }
+
+      
+
+
+
+
+
+
         public static class DepartmentClaims
         {
             public const string View = "Payroll.Department.VW";
@@ -86,52 +309,7 @@
             public const string Delete = "Payroll.Employee.DL";
         }
 
-        public static class LocationClaims
-        {
-            public const string View = "Profiling.Location.VW";
-            public const string Create = "Profiling.Location.CR";
-            public const string Edit = "Profiling.Location.ED";
-            public const string Delete = "Profiling.Location.DL";
-        }
-
-        public static class WarehouseClaims
-        {
-            public const string View = "Profiling.Warehouse.VW";
-            public const string Create = "Profiling.Warehouse.CR";
-            public const string Edit = "Profiling.Warehouse.ED";
-            public const string Delete = "Profiling.Warehouse.DL";
-        }
-
-        public static class BankAccountClaims
-        {
-            public const string View = "Finance.BankAccount.VW";
-            public const string Create = "Finance.BankAccount.CR";
-            public const string Edit = "Finance.BankAccount.ED";
-            public const string Delete = "Finance.BankAccount.DL";
-        }
-
-        public static class BankStatementClaims
-        {
-            public const string View = "Finance.BankStatement.VW";
-            public const string Create = "Finance.BankStatement.CR";
-            public const string Edit = "Finance.BankStatement.ED";
-            public const string Delete = "Finance.BankStatement.DL";
-        }
-
-        public static class CashAccountClaims
-        {
-            public const string View = "Finance.CashAccount.VW";
-            public const string Create = "Finance.CashAccount.CR";
-            public const string Edit = "Finance.CashAccount.ED";
-            public const string Delete = "Finance.CashAccount.DL";
-        }
-        public static class PurchaseOrderClaims
-        {
-            public const string View = "Procurement.PurchaseOrder.VW";
-            public const string Create = "Procurement.PurchaseOrder.CR";
-            public const string Edit = "Procurement.PurchaseOrder.ED";
-            public const string Delete = "Procurement.PurchaseOrder.DL";
-        }
+      
 
         public static class GRNClaims
         {
@@ -140,51 +318,7 @@
             public const string Edit = "Procurement.GRN.ED";
             public const string Delete = "Procurement.GRN.DL";
         }
-        public static class RequisitionClaims
-        {
-            public const string View = "Procurement.Requisition.VW";
-            public const string Create = "Procurement.Requisition.CR";
-            public const string Edit = "Procurement.Requisition.ED";
-            public const string Delete = "Procurement.Requisition.DL";
-        }
-
-        public static class CategoriesClaims
-        {
-            public const string View = "Profiling.Categories.VW";
-            public const string Create = "Profiling.Categories.CR";
-            public const string Edit = "Profiling.Categories.ED";
-            public const string Delete = "Profiling.Categories.DL";
-        }
-
-        public static class ProductsClaims
-        {
-            public const string View = "Profiling.Products.VW";
-            public const string Create = "Profiling.Products.CR";
-            public const string Edit = "Profiling.Products.ED";
-            public const string Delete = "Profiling.Products.DL";
-        }
-
-        public static class Level4Claims
-        {
-            public const string View = "Finance.Level4.VW";
-            public const string Create = "Finance.Level4.CR";
-            public const string Edit = "Finance.Level4.ED";
-            public const string Delete = "Finance.Level4.DL";
-        }
-        public static class BankReconClaims
-        {
-            public const string View = "Finance.BankRecon.VW";
-            public const string Create = "Finance.BankRecon.CR";
-            public const string Edit = "Finance.BankRecon.ED";
-            public const string Delete = "Finance.BankRecon.DL";
-        }
-        public static class TransactionReconClaims
-        {
-            public const string View = "Finance.TransactionRecon.VW";
-            public const string Create = "Finance.TransactionRecon.CR";
-            public const string Edit = "Finance.TransactionRecon.ED";
-            public const string Delete = "Finance.TransactionRecon.DL";
-        }
+       
         public static class WorkflowClaims
         {
             public const string View = "Workflow.Workflow.VW";
@@ -229,38 +363,7 @@
             public const string Delete = "Profiling.UnitOfMeasurement.DL";
         }
 
-        //Transaction Forms
-        public static class InvoiceClaims
-        {
-            public const string View = "Finance.Invoice.VW";
-            public const string Create = "Finance.Invoice.CR";
-            public const string Edit = "Finance.Invoice.ED";
-            public const string Delete = "Finance.Invoice.DL";
-        }
-
-        public static class BillClaims
-        {
-            public const string View = "Finance.Bill.VW";
-            public const string Create = "Finance.Bill.CR";
-            public const string Edit = "Finance.Bill.ED";
-            public const string Delete = "Finance.Bill.DL";
-        }
-
-        public static class PaymentClaims
-        {
-            public const string View = "Finance.Payment.VW";
-            public const string Create = "Finance.Payment.CR";
-            public const string Edit = "Finance.Payment.ED";
-            public const string Delete = "Finance.Payment.DL";
-        }
-
-        public static class ReceiptClaims
-        {
-            public const string View = "Finance.Receipt.VW";
-            public const string Create = "Finance.Receipt.CR";
-            public const string Edit = "Finance.Receipt.ED";
-            public const string Delete = "Finance.Receipt.DL";
-        }
+       
 
         public static class CampusClaims
         {
@@ -270,29 +373,7 @@
             public const string Delete = "Profiling.Campus.DL";
         }
 
-        public static class CreditNoteClaims
-        {
-            public const string View = "Finance.CreditNote.VW";
-            public const string Create = "Finance.CreditNote.CR";
-            public const string Edit = "Finance.CreditNote.ED";
-            public const string Delete = "Finance.CreditNote.DL";
-        }
-
-        public static class DebitNoteClaims
-        {
-            public const string View = "Finance.DebitNote.VW";
-            public const string Create = "Finance.DebitNote.CR";
-            public const string Edit = "Finance.DebitNote.ED";
-            public const string Delete = "Finance.DebitNote.DL";
-        }
-
-        public static class JournalEntryClaims
-        {
-            public const string View = "Finance.JournalEntry.VW";
-            public const string Create = "Finance.JournalEntry.CR";
-            public const string Edit = "Finance.JournalEntry.ED";
-            public const string Delete = "Finance.JournalEntry.DL";
-        }
+       
         public static class PettyCashClaims
         {
             public const string View = "Finance.PettyCash.VW";
@@ -586,27 +667,7 @@
             public const string Delete = "Admission.ProgramChallanTemplate.DL";
         }
 
-        //Reporting Form
-        public static class ChartOfAccountClaims
-        {
-            public const string View = "Finance.ChartOfAccount.VW";
-        }
-        public static class GeneralLedgerClaims
-        {
-            public const string View = "Report.GeneralLedger.VW";
-        }
-        public static class TrialBalanceClaims
-        {
-            public const string View = "Report.TrialBalance.VW";
-        }
-        public static class BalanceSheetClaims
-        {
-            public const string View = "Report.BalanceSheet.VW";
-        }
-        public static class ProfitLossClaims
-        {
-            public const string View = "Report.ProfitLoss.VW";
-        }
+       
         public static class BudgetReportClaims
         {
             public const string View = "Budget.BudgetReport.VW";
