@@ -102,6 +102,7 @@ namespace Infrastructure.Uow
         public IProgramChallanTemplateRepository ProgramChallanTemplate { get; private set; }
         public IUsersOrganization UsersOrganization { get; private set; }
         public IInviteUser InviteUser { get; private set; }
+        public IJournalRepository Journals { get; private set; }
 
 
         public UnitOfWork(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
@@ -193,6 +194,7 @@ namespace Infrastructure.Uow
             ProgramChallanTemplate = new ProgramChallanTemplateRepository(context);
             UsersOrganization = new UsersOrganizationRepository(context);
             InviteUser = new InviteUserRepository(context);
+            Journals = new JournalRepository(context);
 
         }
 

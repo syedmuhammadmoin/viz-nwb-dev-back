@@ -86,7 +86,8 @@ namespace Domain.Constants
         DepreciationAdjustment = 29,
         EstimatedBudget=30,
         Budget=31,
-        PettyCash=32
+        PettyCash=32,
+        Journal =33,
     }
     public enum ActionButton
     {
@@ -214,6 +215,14 @@ namespace Domain.Constants
         AdmissionChallan = 2,
         SemesterChallan = 3,
         SupplementaryChallan = 4,
+    }
+    public enum Types
+    {
+        Sales = 0,
+        Purchase = 1,
+        Cash = 2,
+        Bank = 3,
+        Miscellaneous = 4,
     }
 
 }

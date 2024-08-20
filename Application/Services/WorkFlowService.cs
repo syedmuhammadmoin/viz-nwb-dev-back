@@ -301,6 +301,15 @@ namespace Application.Services
                     return new Response<WorkFlowDto>("Budget is pending for this workflow");
                 }
             }
+            if (entity.DocType == DocType.Journal)
+            {
+                var checking = _unitOfWork.Journals.Find(new JournalSpecs()).ToList();
+
+                if (checking.Count != 0)
+                {
+                    return new Response<WorkFlowDto>("Journal is pending for this workflow");
+                }
+            }
             //For updating data
             _mapper.Map<CreateWorkFlowDto, WorkFlowMaster>(entity, workFlow);
             await _unitOfWork.SaveAsync();

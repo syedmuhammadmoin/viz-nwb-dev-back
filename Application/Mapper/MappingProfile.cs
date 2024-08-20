@@ -779,6 +779,10 @@ namespace Application.Mapper
                .ForMember(dto => dto.Semester, core => core.MapFrom(a => a.Semester.Name))
                .ForMember(dto => dto.BankAccount, core => core.MapFrom(a => a.BankAccount.Name));
 
+            //Journals
+                CreateMap<JournalDto, Journal>();
+                CreateMap<Journal, JournalDto>();
+
             CreateMap<ProgramChallanTemplateLines, ProgramChallanTemplateLinesDto>()
                    .ForMember(dto => dto.FeeItem, core => core.MapFrom(d => d.FeeItem.Name));
 

@@ -282,11 +282,6 @@
 
       
 
-
-
-
-
-
         public static class DepartmentClaims
         {
             public const string View = "Payroll.Department.VW";
@@ -666,8 +661,14 @@
             public const string Edit = "Admission.ProgramChallanTemplate.ED";
             public const string Delete = "Admission.ProgramChallanTemplate.DL";
         }
+        public static class JournalClaims
+        {
+            public const string View = "Permissions.JournalClaims.VW";
+            public const string Create = "Permissions.JournalClaims.CR";
+            public const string Edit = "Permissions.JournalClaims.ED";
+            public const string Delete = "Permissions.JournalClaims.DL";
+        }
 
-       
         public static class BudgetReportClaims
         {
             public const string View = "Budget.BudgetReport.VW";

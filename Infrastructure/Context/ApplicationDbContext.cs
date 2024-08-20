@@ -133,7 +133,7 @@ namespace Infrastructure.Context
         public DbSet<ProgramChallanTemplateMaster> ProgramChallanTemplateMaster { get; set; }
         public DbSet<ProgramChallanTemplateLines> ProgramChallanTemplateLines { get; set; }
         public DbSet<UsersOrganization> UsersOrganization { get; set; }
-
+        public DbSet<Journal> Journals { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

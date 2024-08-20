@@ -95,7 +95,7 @@ namespace Domain.Interfaces
         IProgramChallanTemplateRepository ProgramChallanTemplate { get; }
          IUsersOrganization UsersOrganization { get; }
          IInviteUser InviteUser { get;  }
-
+        IJournalRepository Journals { get; }
 
         Task SaveAsync();
         void CreateTransaction();
