@@ -187,6 +187,7 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaimReport(superAdmin, "Dashboard", "ProfitLossSummary");
             await roleManager.AddPermissionClaimReport(superAdmin, "Dashboard", "BalanceSheetSummary");
             await roleManager.AddPermissionClaimReport(superAdmin, "Dashboard", "BankBalance");
+       
         }
         private async static Task SeedClaimsForApplicant(this RoleManager<Role> roleManager)
         {

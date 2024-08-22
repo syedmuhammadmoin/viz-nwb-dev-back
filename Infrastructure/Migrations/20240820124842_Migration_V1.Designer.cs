@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240820124842_Migration_V1")]
+    partial class Migration_V1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4097,23 +4099,6 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("AccountNumber")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int?>("BankAccountId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("BankAcountId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BankName")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("CashAccount")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -4123,9 +4108,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
-
-                    b.Property<string>("LossAccount")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(100)
@@ -4137,23 +4119,10 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OrganizationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ProfitAccount")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SuspenseAccount")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BankAccountId")
-                        .IsUnique()
-                        .HasFilter("[BankAccountId] IS NOT NULL");
 
                     b.ToTable("Journals");
                 });
@@ -8889,16 +8858,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Warehouse");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Journal", b =>
-                {
-                    b.HasOne("Domain.Entities.BankAccount", "BankAccount")
-                        .WithOne("Journal")
-                        .HasForeignKey("Domain.Entities.Journal", "BankAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("BankAccount");
-                });
-
             modelBuilder.Entity("Domain.Entities.JournalEntryLines", b =>
                 {
                     b.HasOne("Domain.Entities.Level4", "Account")
@@ -10011,11 +9970,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Qualifications");
 
                     b.Navigation("Relatives");
-                });
-
-            modelBuilder.Entity("Domain.Entities.BankAccount", b =>
-                {
-                    b.Navigation("Journal");
                 });
 
             modelBuilder.Entity("Domain.Entities.BankStmtMaster", b =>

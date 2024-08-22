@@ -42,6 +42,7 @@ namespace Domain.Entities
         public int TransactionId { get; private set; }
         [ForeignKey("TransactionId")]
         public Transactions Transactions { get; private set; }
+        public Journal Journal { get; private set; }
 
         protected BankAccount()
         {

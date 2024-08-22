@@ -780,7 +780,7 @@ namespace Application.Mapper
                .ForMember(dto => dto.BankAccount, core => core.MapFrom(a => a.BankAccount.Name));
 
             //Journals
-                CreateMap<JournalDto, Journal>();
+                CreateMap<CreateJournalDto, Journal>();
                 CreateMap<Journal, JournalDto>();
 
             CreateMap<ProgramChallanTemplateLines, ProgramChallanTemplateLinesDto>()
