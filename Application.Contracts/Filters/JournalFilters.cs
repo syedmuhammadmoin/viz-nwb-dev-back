@@ -15,7 +15,7 @@ namespace Application.Contracts.Filters
         [Required]
         public string Name { get; set; }
         [Required]
-        public Types Types { get; set; }
+        public JournalTypes Types { get; set; }
         public string BankAcountId { get; private set; }
         [Required]
         [MaxLength(50)]
@@ -31,5 +31,6 @@ namespace Application.Contracts.Filters
         public string LossAccount { get; private set; }
         [Required]
         public string CashAccount { get; private set; }
+        public string DefaultAccount { get; set; }
     }
 }

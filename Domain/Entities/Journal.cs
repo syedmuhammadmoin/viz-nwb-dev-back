@@ -15,8 +15,8 @@ namespace Domain.Entities
     public class Journal :  BaseEntity<int> ,IMustHaveTenant
     {
         public string Name { get; private set; }
-        public Types Type { get; private set; }
-        public string BankAcountId { get; private set; }
+        public JournalTypes JournalType { get; private set; }
+
         [ForeignKey("BankAccountId")]
         public BankAccount BankAccount { get; private set; }
         [MaxLength(50)]
@@ -27,6 +27,7 @@ namespace Domain.Entities
         public string ProfitAccount { get; private set; }
         public string LossAccount { get; private set; }
         public string CashAccount { get; private set; }
+        public string DefaultAccount { get; private set; }
         public int OrganizationId { get; set; }
        
 

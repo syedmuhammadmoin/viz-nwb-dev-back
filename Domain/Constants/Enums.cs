@@ -216,7 +216,7 @@ namespace Domain.Constants
         SemesterChallan = 3,
         SupplementaryChallan = 4,
     }
-    public enum Types
+    public enum JournalTypes
     {
         Sales = 0,
         Purchase = 1,
