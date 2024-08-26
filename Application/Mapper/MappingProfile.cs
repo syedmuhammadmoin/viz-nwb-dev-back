@@ -780,8 +780,16 @@ namespace Application.Mapper
                .ForMember(dto => dto.BankAccount, core => core.MapFrom(a => a.BankAccount.Name));
 
             //Journals
-                CreateMap<CreateJournalDto, Journal>();
-                CreateMap<Journal, JournalDto>();
+            CreateMap<Journal, JournalDto>()
+               .ForMember(dto => dto.SuspenseAccount, core => core.MapFrom(a => a.SuspenseAccount.Name))
+               .ForMember(dto => dto.AccountNumber, core => core.MapFrom(a => a.AccountNumber.Name))
+               .ForMember(dto => dto.CashAccount, core => core.MapFrom(a => a.CashAccount.Name))
+               .ForMember(dto => dto.DefaultAccount, core => core.MapFrom(a => a.DefaultAccount.Name))
+               .ForMember(dto => dto.LossAccount, core => core.MapFrom(a => a.LossAccount.Name))
+               .ForMember(dto => dto.ProfitAccount, core => core.MapFrom(a => a.ProfitAccount.Name))
+               .ForMember(dto => dto.BankName, core => core.MapFrom(a => a.BankName.Name));
+            CreateMap<CreateJournalDto, Journal>();
+           
 
             CreateMap<ProgramChallanTemplateLines, ProgramChallanTemplateLinesDto>()
                    .ForMember(dto => dto.FeeItem, core => core.MapFrom(d => d.FeeItem.Name));

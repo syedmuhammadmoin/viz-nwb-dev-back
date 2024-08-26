@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240823112801_Migration_V9")]
+    partial class Migration_V9
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4103,8 +4105,9 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("BankAccountId")
                         .HasColumnType("int");
 
-                    b.Property<string>("BankNameId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("BankName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("CashAccountId")
                         .HasColumnType("nvarchar(450)");
@@ -4154,8 +4157,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("BankAccountId")
                         .IsUnique()
                         .HasFilter("[BankAccountId] IS NOT NULL");
-
-                    b.HasIndex("BankNameId");
 
                     b.HasIndex("CashAccountId");
 
@@ -8913,11 +8914,6 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("Domain.Entities.Journal", "BankAccountId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Entities.Level4", "BankName")
-                        .WithMany()
-                        .HasForeignKey("BankNameId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Domain.Entities.Level4", "CashAccount")
                         .WithMany()
                         .HasForeignKey("CashAccountId")
@@ -8946,8 +8942,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("AccountNumber");
 
                     b.Navigation("BankAccount");
-
-                    b.Navigation("BankName");
 
                     b.Navigation("CashAccount");
 

@@ -58,69 +58,58 @@ namespace Application.Services
             switch (entity.JournalType)
             {
                 case JournalTypes.Sales:
-                    if (string.IsNullOrWhiteSpace(entity.DefaultAccount))
-                    {
-                        errors.Add("Bank Account is required for Sales.");
-                    }
-                  
-                    break;
-
                 case JournalTypes.Purchase:
-                    if (string.IsNullOrWhiteSpace(entity.DefaultAccount))
+                case JournalTypes.Miscellaneous:
+                    if (string.IsNullOrWhiteSpace(entity.DefaultAccountId))
                     {
-                        errors.Add("Bank Account is required for Purchase.");
+                        errors.Add("Default Account is required.");
                     }
                   
-                    break;
+                 break;
+
                 case JournalTypes.Cash:
-                    if (string.IsNullOrWhiteSpace(entity.CashAccount))
+                    if (string.IsNullOrWhiteSpace(entity.CashAccountId))
                     {
-                        errors.Add("Cash Account is required for Bank.");
+                        errors.Add("Cash Account is required.");
                     }
-                    if (string.IsNullOrWhiteSpace(entity.SuspenseAccount))
+                    if (string.IsNullOrWhiteSpace(entity.SuspenseAccountId))
                     {
-                        errors.Add("Suspense Account is required for Bank.");
+                        errors.Add("Suspense Account is required.");
                     }
-                    if (string.IsNullOrWhiteSpace(entity.ProfitAccount))
+                    if (string.IsNullOrWhiteSpace(entity.ProfitAccountId))
                     {
-                        errors.Add("Profit Account is required for Bank.");
+                        errors.Add("Profit Account is required.");
                     }
-                    if (string.IsNullOrWhiteSpace(entity.LossAccount))
+                    if (string.IsNullOrWhiteSpace(entity.LossAccountId))
                     {
-                        errors.Add("Loss Account is required for Bank.");
+                        errors.Add("Loss Account is required.");
                     }
                     
                     break;
                 case JournalTypes.Bank:
-                    if (string.IsNullOrWhiteSpace(entity.BankName))
+                    if (string.IsNullOrWhiteSpace(entity.BankNameId))
                     {
-                        errors.Add("Bank Name is required for Bank.");
+                        errors.Add("Bank Name is required.");
                     }
-                    if (string.IsNullOrWhiteSpace(entity.AccountNumber))
+                    if (string.IsNullOrWhiteSpace(entity.AccountNumberId))
                     {
-                        errors.Add("Bank Number is required for Bank.");
+                        errors.Add("Bank Number is required.");
                     }
-                    if (string.IsNullOrWhiteSpace(entity.SuspenseAccount))
+                    if (string.IsNullOrWhiteSpace(entity.SuspenseAccountId))
                     {
-                        errors.Add("Suspense Account is required for Bank.");
+                        errors.Add("Suspense Account is required.");
                     }
-                    if (string.IsNullOrWhiteSpace(entity.ProfitAccount))
+                    if (string.IsNullOrWhiteSpace(entity.ProfitAccountId))
                     {
-                        errors.Add("Profit Account is required for Bank.");
+                        errors.Add("Profit Account is required.");
                     }
-                    if (string.IsNullOrWhiteSpace(entity.LossAccount))
+                    if (string.IsNullOrWhiteSpace(entity.LossAccountId))
                     {
-                        errors.Add("Loss Account is required for Bank.");
+                        errors.Add("Loss Account is required.");
                     }
                     
                     break;
-                case JournalTypes.Miscellaneous:
-                    if (string.IsNullOrWhiteSpace(entity.DefaultAccount))
-                    {
-                        errors.Add("Loss Account is required for Bank.");
-                    }
-                    break;
-
+                
                 default:
                     
                     errors.Add("Invalid JournalType.");
@@ -131,8 +120,35 @@ namespace Application.Services
             {
                 return new Response<JournalDto>(null, string.Join("; ", errors));
             }
+            var journalEntity = _mapper.Map<Journal>(entity);
+         
 
-            var result = await _unitOfWork.Journals.Add(_mapper.Map<Journal>(entity));
+            if (entity.JournalType == JournalTypes.Sales || entity.JournalType == JournalTypes.Purchase || entity.JournalType == JournalTypes.Miscellaneous)
+            {
+                entity.BankNameId = null;
+                entity.CashAccountId = null;
+                entity.SuspenseAccountId = null;
+                entity.ProfitAccountId = null;
+                entity.LossAccountId = null;
+                entity.AccountNumberId = null;
+            }
+            if(entity.JournalType == JournalTypes.Cash)
+            {
+                entity.AccountNumberId = null;
+                entity.DefaultAccountId = null;
+            }
+            if (entity.JournalType == JournalTypes.Bank)
+            {
+
+                entity.DefaultAccountId = null;
+            }
+            var result = await _unitOfWork.Journals.Add(_mapper.Map<Journal>(journalEntity));
+            //var cashAccount = await _unitOfWork.Level4.GetById(entity.CashAccount);
+            //var profitAccount = await _unitOfWork.Level4.GetById(entity.ProfitAccount);
+            //var suspenseAccount = await _unitOfWork.Level4.GetById(entity.SuspenseAccount);
+            //var defaultAccount = await _unitOfWork.Level4.GetById(entity.DefaultAccount);
+            //var lossAccount = await _unitOfWork.Level4.GetById(entity.LossAccount);
+
             await _unitOfWork.SaveAsync();
             return new Response<JournalDto>(_mapper.Map<JournalDto>(result), "Created successfully");
         }

@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240823100636_Migration_V8")]
+    partial class Migration_V8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4097,17 +4099,19 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("AccountNumberId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("AccountNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int?>("BankAccountId")
                         .HasColumnType("int");
 
-                    b.Property<string>("BankNameId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("BankName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("CashAccountId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("CashAccount")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -4116,8 +4120,8 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DefaultAccountId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("DefaultAccount")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
@@ -4125,8 +4129,11 @@ namespace Infrastructure.Migrations
                     b.Property<int>("JournalType")
                         .HasColumnType("int");
 
-                    b.Property<string>("LossAccountId")
+                    b.Property<string>("Level4_id")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LossAccount")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(100)
@@ -4141,31 +4148,19 @@ namespace Infrastructure.Migrations
                     b.Property<int>("OrganizationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ProfitAccountId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("ProfitAccount")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SuspenseAccountId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("SuspenseAccount")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AccountNumberId");
 
                     b.HasIndex("BankAccountId")
                         .IsUnique()
                         .HasFilter("[BankAccountId] IS NOT NULL");
 
-                    b.HasIndex("BankNameId");
-
-                    b.HasIndex("CashAccountId");
-
-                    b.HasIndex("DefaultAccountId");
-
-                    b.HasIndex("LossAccountId");
-
-                    b.HasIndex("ProfitAccountId");
-
-                    b.HasIndex("SuspenseAccountId");
+                    b.HasIndex("Level4_id");
 
                     b.ToTable("Journals");
                 });
@@ -8903,61 +8898,19 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Journal", b =>
                 {
-                    b.HasOne("Domain.Entities.Level4", "AccountNumber")
-                        .WithMany()
-                        .HasForeignKey("AccountNumberId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Domain.Entities.BankAccount", "BankAccount")
                         .WithOne("Journal")
                         .HasForeignKey("Domain.Entities.Journal", "BankAccountId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Entities.Level4", "BankName")
+                    b.HasOne("Domain.Entities.Level4", "Level4")
                         .WithMany()
-                        .HasForeignKey("BankNameId")
+                        .HasForeignKey("Level4_id")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Level4", "CashAccount")
-                        .WithMany()
-                        .HasForeignKey("CashAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Level4", "DefaultAccount")
-                        .WithMany()
-                        .HasForeignKey("DefaultAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Level4", "LossAccount")
-                        .WithMany()
-                        .HasForeignKey("LossAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Level4", "ProfitAccount")
-                        .WithMany()
-                        .HasForeignKey("ProfitAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Level4", "SuspenseAccount")
-                        .WithMany()
-                        .HasForeignKey("SuspenseAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("AccountNumber");
 
                     b.Navigation("BankAccount");
 
-                    b.Navigation("BankName");
-
-                    b.Navigation("CashAccount");
-
-                    b.Navigation("DefaultAccount");
-
-                    b.Navigation("LossAccount");
-
-                    b.Navigation("ProfitAccount");
-
-                    b.Navigation("SuspenseAccount");
+                    b.Navigation("Level4");
                 });
 
             modelBuilder.Entity("Domain.Entities.JournalEntryLines", b =>

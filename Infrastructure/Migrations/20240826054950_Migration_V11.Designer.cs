@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240826054950_Migration_V11")]
+    partial class Migration_V11
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4100,7 +4102,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("AccountNumberId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("BankAccountId")
+                    b.Property<int>("BankAccountId")
                         .HasColumnType("int");
 
                     b.Property<string>("BankNameId")
@@ -4152,8 +4154,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("AccountNumberId");
 
                     b.HasIndex("BankAccountId")
-                        .IsUnique()
-                        .HasFilter("[BankAccountId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("BankNameId");
 
@@ -8911,7 +8912,8 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.BankAccount", "BankAccount")
                         .WithOne("Journal")
                         .HasForeignKey("Domain.Entities.Journal", "BankAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entities.Level4", "BankName")
                         .WithMany()
