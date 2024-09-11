@@ -15,17 +15,14 @@ namespace Application.Contracts.DTOs
         [Required(ErrorMessage = "Journal Name")]
         public string Name { get;  set; }
         [Required]
-        public JournalTypes JournalType { get;  set; }
-        public int? BankAcountId { get;  set; }
+        public JournalTypes Type { get;  set; }
+        //public int? BankAcountId { get;  set; }
+        public string? DefaultAccountId { get;  set; }
         [MaxLength(50)]
-        public string? BankNameId { get;  set; }
-        [MaxLength(50)]
-        public string? AccountNumberId { get;  set; }
+        public string? BankAccountNumber { get;  set; }
         public string? SuspenseAccountId { get;  set; }
         public string? ProfitAccountId { get;  set; }
         public string? LossAccountId { get;  set; }
-        public string? CashAccountId { get;  set; }
-        public string? DefaultAccountId { get;  set; }
-        public int OrganizationId { get; set; }
+        //public string? CashAccountId { get;  set; }
     }
 }

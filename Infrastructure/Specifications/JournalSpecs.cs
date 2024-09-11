@@ -22,6 +22,10 @@ namespace Infrastructure.Specifications
              
              
             }
+            AddInclude(i => i.DefaultAccount);
+            AddInclude(i => i.ProfitAccount);
+            AddInclude(i => i.LossAccount);
+            AddInclude(i => i.SuspenseAccount);
         }
 
         public JournalSpecs()

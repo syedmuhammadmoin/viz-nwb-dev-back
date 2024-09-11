@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface ILevel4Service : ICrudService<CreateLevel4Dto, Level4Dto, string, PaginationFilter>
+    public interface ILevel4Service : ICrudService<CreateLevel4Dto, Level4Dto, string, Level4Filter>
     {
         Task<Response<List<Level4Dto>>> GetLevel4DropDown();
         Task<Response<List<Level4Dto>>> GetBudgetAccounts();
@@ -19,5 +19,11 @@ namespace Application.Contracts.Interfaces
         Task<Response<List<Level4Dto>>> GetNonCurrentAssetAccounts();
         Task<Response<List<Level4Dto>>> GetNonCurrentLiabilitiesAccounts();
         Task<Response<List<Level4Dto>>> GetExpenseAccounts();
+        Task<Response<List<Level4Dto>>> GetIncomeAccounts();
+        Task<Response<List<Level4Dto>>> GetCashBankAccounts();
+        Task<Response<List<Level4Dto>>> GetCurrentAssetAccounts();
+
+        
+
     }
 }

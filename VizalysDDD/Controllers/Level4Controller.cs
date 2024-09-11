@@ -24,7 +24,7 @@ namespace Vizalys.Api.Controllers
 
         [ClaimRequirement("Permission", new string[] { Permissions.Level4Claims.Create, Permissions.Level4Claims.View, Permissions.Level4Claims.Delete, Permissions.Level4Claims.Edit })]
         [HttpGet]
-        public async Task<ActionResult<PaginationResponse<List<Level4Dto>>>> GetAllAsync([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<PaginationResponse<List<Level4Dto>>>> GetAllAsync([FromQuery] Level4Filter filter)
         {
             var level4 = await _level4Service.GetAllAsync(filter);
             if (level4.IsSuccess)
@@ -115,6 +115,21 @@ namespace Vizalys.Api.Controllers
         {
             return Ok(await _level4Service.GetExpenseAccounts()); // Status Code : 200
         }
+        [HttpGet("incomeAccounts")]
+        public async Task<ActionResult<Response<List<Level4Dto>>>> GetIncomeAccounts()
+        {
+            return Ok(await _level4Service.GetIncomeAccounts()); // Status Code : 200
+        }
+        [HttpGet("CashBankAccounts")]
+        public async Task<ActionResult<Response<List<Level4Dto>>>> GetCashBankAccounts()
+        {
+            return Ok(await _level4Service.GetCashBankAccounts());
+        }
 
+        [HttpGet("CurrentAssetAccounts")]
+        public async Task<ActionResult<Response<List<Level4Dto>>>> GetCurrentAssetAccounts()
+        {
+            return Ok(await _level4Service.GetCurrentAssetAccounts());
+        }
     }
 }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Interfaces
 {
-    public interface ITaxService : ICrudService<UpdateTaxDto, TaxDto, int, TransactionFormFilter>
+    public interface ITaxService : ICrudService<CreateTaxDto, TaxDto, int, TransactionFormFilter>
     {
     }
 }

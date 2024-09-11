@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Specifications
 {
-    public class GetExpenseAccountsSpecs : BaseSpecification<Level4>
+    public class GetCashBankAccountsSpecs : BaseSpecification<Level4>
     {
-        public GetExpenseAccountsSpecs(int orgId)
-              : base(x => x.Level1_id == $"{FinanceAccountTypes.Expenses}-{orgId}")
+        public GetCashBankAccountsSpecs(int orgId)
+              : base(x => x.Level3_id == $"{FinanceLevel3Accounts.AssetsBankCash}-{orgId}")
         {
         }
     }

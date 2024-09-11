@@ -15,21 +15,20 @@ namespace Domain.Entities
     public class Journal :  BaseEntity<int> ,IMustHaveTenant
     {
         public string Name { get; private set; }
-        public JournalTypes JournalType { get; private set; }
-        public int? BankAccountId { get; private set; }
+        public JournalTypes Type { get; private set; }
+        //public int? BankAccountId { get; private set; }
         public string BankNameId { get; private set; }
+        public string BankName { get; private set; }
+        public string BankAccountNumber { get; private set; }
         public string AccountNumberId { get; private set; }
         public string SuspenseAccountId { get; private set; }
         public string ProfitAccountId { get; private set; }
         public string LossAccountId { get; private set; }
-        public string CashAccountId { get; private set; }
+        //public string CashAccountId { get; private set; }
         public string DefaultAccountId { get; private set; }
 
         [ForeignKey("BankAccountId")]
         public BankAccount BankAccount { get; private set; }
-        [MaxLength(50)]
-        [ForeignKey("BankNameId")]
-        public Level4 BankName { get; private set; }
         [MaxLength(50)]
         [ForeignKey("AccountNumberId")]
         public Level4 AccountNumber { get; private set; }

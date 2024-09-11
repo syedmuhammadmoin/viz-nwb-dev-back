@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.DTOs
 {
-    public class Level3DropDownDto
+    public class Level3DetailDropDownDto
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public string Level2Name { get; set; }
-        public string Level1Name { get; set; }
+        public Level1Dto Level1 { get; set; }
+       
     }
 }

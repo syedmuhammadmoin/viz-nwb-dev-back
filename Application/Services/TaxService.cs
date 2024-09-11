@@ -7,6 +7,7 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
+using Infrastructure.Uow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +50,7 @@ namespace Application.Services
             return new Response<TaxDto>(_mapper.Map<TaxDto>(tax), "Returning value");
         }
 
-        public async Task<Response<TaxDto>> UpdateAsync(UpdateTaxDto entity)
+        public async Task<Response<TaxDto>> UpdateAsync(CreateTaxDto entity)
 
         {
             var tax = await _unitOfWork.Taxes.GetById((int)entity.Id);
@@ -69,7 +70,7 @@ namespace Application.Services
             //}
             
             //For updating data
-            _mapper.Map<UpdateTaxDto, Taxes>(entity, tax);
+            _mapper.Map<CreateTaxDto, Taxes>(entity, tax);
             await _unitOfWork.SaveAsync();
             return new Response<TaxDto>(_mapper.Map<TaxDto>(tax), "Updated successfully");
         }
@@ -78,9 +79,12 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public Task<Response<TaxDto>> CreateAsync(UpdateTaxDto entity)
+        public async Task<Response<TaxDto>> CreateAsync(CreateTaxDto entity)
         {
-            throw new NotImplementedException();
+            var tax = _mapper.Map<Taxes>(entity);
+            await _unitOfWork.Taxes.Add(tax);
+            await _unitOfWork.SaveAsync();
+            return new Response<TaxDto>(_mapper.Map<TaxDto>(tax), "Create successfully");
         }
     }
 }

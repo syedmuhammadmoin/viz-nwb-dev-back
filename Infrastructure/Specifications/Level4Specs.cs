@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Filters;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,15 @@ namespace Infrastructure.Specifications
 {
     public class Level4Specs : BaseSpecification<Level4>
     {
-        public Level4Specs(PaginationFilter filter)
+        public Level4Specs(Level4Filter filter) : base(c => c.Name.Contains(filter.Name != null ? filter.Name : "")
+                && (c.Code.Contains(filter.Code != null ? filter.Code : ""))
+                 && (c.Level3.Level2.Level1.Name.Contains(filter.Level1Name != null ? filter.Level1Name : "")))
         {
             var validFilter = new PaginationFilter(filter.PageStart, filter.PageEnd);
             ApplyPaging(validFilter.PageStart, validFilter.PageEnd - validFilter.PageStart);
             AddInclude(i => i.Level3);
+            AddInclude(i => i.Level3.Level2);
+            AddInclude(i => i.Level3.Level2.Level1);
             ApplyOrderByDescending(i => i.Id);
         }
 

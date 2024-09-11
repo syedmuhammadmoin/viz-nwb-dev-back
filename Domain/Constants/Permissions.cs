@@ -258,6 +258,14 @@
             public const string Delete = "Permissions.GoodsDispatchNoteClaims.DL";
         }
 
+        public static class TaxesClaims
+        {
+            public const string View = "Permissions.TaxesClaims.VW";
+            public const string Create = "Permissions.TaxesClaims.CR";
+            public const string Edit = "Permissions.TaxesClaims.ED";
+            public const string Delete = "Permissions.TaxesClaims.DL";
+        }
+
         //Reporting Form
         public static class ChartOfAccountClaims
         {
@@ -343,13 +351,7 @@
             public const string Edit = "Budget.EstimatedBudget.ED";
             public const string Delete = "Budget.EstimatedBudget.DL";
         }
-        public static class TaxesClaims
-        {
-            public const string View = "Profiling.Taxes.VW";
-            public const string Create = "Profiling.Taxes.CR";
-            public const string Edit = "Profiling.Taxes.ED";
-            public const string Delete = "Profiling.Taxes.DL";
-        }
+       
         public static class UnitOfMeasurementClaims
         {
             public const string View = "Profiling.UnitOfMeasurement.VW";

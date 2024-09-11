@@ -3,6 +3,7 @@ using Application.Contracts.Filters;
 using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
+using Application.Services;
 using Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -43,10 +44,20 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
+        [ClaimRequirement("Permission", new string[] { Permissions.TaxesClaims.Create })]
+        [HttpPost]
+        public async Task<ActionResult<Response<CategoryDto>>> CreateAsync(CreateTaxDto entity)
+        {
+            var result = await _taxService.CreateAsync(entity);
+            if (result.IsSuccess)
+                return Ok(result); // Status Code : 200
+
+            return BadRequest(result); // Status code : 400
+        }
 
         [ClaimRequirement("Permission", new string[] { Permissions.TaxesClaims.Edit })]
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Response<TaxDto>>> UpdateAsync(int id, UpdateTaxDto entity)
+        public async Task<ActionResult<Response<TaxDto>>> UpdateAsync(int id, CreateTaxDto entity)
         {
             if (id != entity.Id)
                 return BadRequest("Id mismatch");

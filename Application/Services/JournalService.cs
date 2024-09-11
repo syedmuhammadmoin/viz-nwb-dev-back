@@ -55,7 +55,7 @@ namespace Application.Services
         {
             var errors = new List<string>();
 
-            switch (entity.JournalType)
+            switch (entity.Type)
             {
                 case JournalTypes.Sales:
                 case JournalTypes.Purchase:
@@ -68,10 +68,11 @@ namespace Application.Services
                  break;
 
                 case JournalTypes.Cash:
-                    if (string.IsNullOrWhiteSpace(entity.CashAccountId))
+                    if (string.IsNullOrWhiteSpace(entity.DefaultAccountId))
                     {
                         errors.Add("Cash Account is required.");
                     }
+
                     if (string.IsNullOrWhiteSpace(entity.SuspenseAccountId))
                     {
                         errors.Add("Suspense Account is required.");
@@ -87,11 +88,12 @@ namespace Application.Services
                     
                     break;
                 case JournalTypes.Bank:
-                    if (string.IsNullOrWhiteSpace(entity.BankNameId))
+                    if (string.IsNullOrWhiteSpace(entity.DefaultAccountId))
                     {
-                        errors.Add("Bank Name is required.");
+                        errors.Add("Bank Account is required.");
                     }
-                    if (string.IsNullOrWhiteSpace(entity.AccountNumberId))
+
+                    if (string.IsNullOrWhiteSpace(entity.BankAccountNumber))
                     {
                         errors.Add("Bank Number is required.");
                     }
@@ -120,28 +122,25 @@ namespace Application.Services
             {
                 return new Response<JournalDto>(null, string.Join("; ", errors));
             }
-            var journalEntity = _mapper.Map<Journal>(entity);
+            
          
 
-            if (entity.JournalType == JournalTypes.Sales || entity.JournalType == JournalTypes.Purchase || entity.JournalType == JournalTypes.Miscellaneous)
+            if (entity.Type == JournalTypes.Sales || entity.Type == JournalTypes.Purchase || entity.Type == JournalTypes.Miscellaneous)
             {
-                entity.BankNameId = null;
-                entity.CashAccountId = null;
+               
+               
                 entity.SuspenseAccountId = null;
                 entity.ProfitAccountId = null;
                 entity.LossAccountId = null;
-                entity.AccountNumberId = null;
+                entity.BankAccountNumber = null;
             }
-            if(entity.JournalType == JournalTypes.Cash)
+            if(entity.Type == JournalTypes.Cash)
             {
-                entity.AccountNumberId = null;
-                entity.DefaultAccountId = null;
+                entity.BankAccountNumber = null;
+               
             }
-            if (entity.JournalType == JournalTypes.Bank)
-            {
-
-                entity.DefaultAccountId = null;
-            }
+           
+            var journalEntity = _mapper.Map<Journal>(entity);
             var result = await _unitOfWork.Journals.Add(_mapper.Map<Journal>(journalEntity));
             //var cashAccount = await _unitOfWork.Level4.GetById(entity.CashAccount);
             //var profitAccount = await _unitOfWork.Level4.GetById(entity.ProfitAccount);
