@@ -84,8 +84,8 @@ namespace Application.Services
                 return new Response<Level4Dto>("Duplicate code");
 
             
-            if(level4.AccountType == Domain.Constants.AccountType.SystemDefined)
-                return new Response<Level4Dto>("System defined accounts cannot be edited");
+            //if(level4.AccountType == Domain.Constants.AccountType.SystemDefined)
+            //    return new Response<Level4Dto>("System defined accounts cannot be edited");
             
             //For updating data
             _mapper.Map<CreateLevel4Dto, Level4>(entity, level4);
