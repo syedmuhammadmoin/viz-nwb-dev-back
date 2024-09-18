@@ -55,7 +55,7 @@ namespace Application.Mapper
                 .ForMember(dto => dto.EditableName, core => core.MapFrom(a => a.Name))
                 .ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
             CreateMap<CreateLevel4Dto, Level4>()
-                .ForMember(core => core.AccountType, dto => dto.MapFrom(a => AccountType.UserDefined));
+                .ForMember(core => core.AccountType, dto => dto.MapFrom(a => AccountType.UserDefined))
 
             // Level3 Mapping
             CreateMap<Level3, Level3DropDownDto>()
