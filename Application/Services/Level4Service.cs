@@ -93,7 +93,7 @@ namespace Application.Services
             return new Response<Level4Dto>(_mapper.Map<Level4Dto>(level4), "Updated successfully");
         }
         
-        public Task<Response<string>> DeleteAsync(string id)
+        public async Task<Response<string>> DeleteAsync(string id)
         {
             throw new NotImplementedException();
         }
@@ -203,6 +203,26 @@ namespace Application.Services
                 return new Response<List<Level4Dto>>(null, "List is empty");
 
             return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
+        }
+
+        public async Task<Response<bool>> DeleteCOAs(List<string> ids)
+        {
+            if(ids.Count() < 0 || ids == null)
+            {
+                return new Response<bool>("List Cannot be Empty.");
+            }
+            else
+            {
+                foreach (var coa in ids)
+                {
+                    var account = await _unitOfWork.Level4.GetById(coa);                                    
+                    if (account == null)
+                        return new Response<bool>("Account Not Found.");
+                    account.IsDelete = true;
+                    await _unitOfWork.SaveAsync();
+                }
+                    return new Response<bool>(true, "Deleted Successfully.");
+            }                   
         }
     }
 }

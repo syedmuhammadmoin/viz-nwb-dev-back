@@ -22,6 +22,7 @@ namespace Application.Contracts.Interfaces
         Task<Response<List<Level4Dto>>> GetIncomeAccounts();
         Task<Response<List<Level4Dto>>> GetCashBankAccounts();
         Task<Response<List<Level4Dto>>> GetCurrentAssetAccounts();
+        Task<Response<bool>> DeleteCOAs(List<string> ids);
 
         
 

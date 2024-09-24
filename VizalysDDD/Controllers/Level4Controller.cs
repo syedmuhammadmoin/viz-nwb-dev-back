@@ -131,5 +131,13 @@ namespace Vizalys.Api.Controllers
         {
             return Ok(await _level4Service.GetCurrentAssetAccounts());
         }
+        [HttpDelete]
+        public async Task<ActionResult<Response<string>>> DeleteCOA(List<string> ids)
+        {
+            var result = await _level4Service.DeleteCOAs(ids);
+            if(result.IsSuccess)
+                return Ok(result);
+            return BadRequest(result);
+        }
     }
 }
