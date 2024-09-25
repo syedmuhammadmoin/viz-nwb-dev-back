@@ -63,6 +63,14 @@ namespace Vizalys.API.Controllers
 
             return BadRequest(result); // Status code : 400
         }
-       
+        [HttpDelete]
+        public async Task<ActionResult<Response<string>>> DeleteCOA(List<int> ids)
+        {
+            var result = await _journalService.DeleteCOAs(ids);
+            if (result.IsSuccess)
+                return Ok(result);
+            return BadRequest(result);
+        }
+
     }
 }

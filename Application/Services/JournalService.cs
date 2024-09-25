@@ -168,5 +168,25 @@ namespace Application.Services
             await _unitOfWork.SaveAsync();
             return new Response<JournalDto>(_mapper.Map<JournalDto>(result), "Updated successfully");
         }
+
+        public async Task<Response<bool>> DeleteCOAs(List<int> ids)
+        {
+            if (ids.Count() < 0 || ids == null)
+            {
+                return new Response<bool>("List Cannot be Empty.");
+            }
+            else
+            {
+                foreach (var coa in ids)
+                {
+                    var account = await _unitOfWork.Journals.GetById(coa);
+                    if (account == null)
+                        return new Response<bool>("Journals Not Found.");
+                    account.IsDelete = true;
+                    await _unitOfWork.SaveAsync();
+                }
+                return new Response<bool>(true, "Deleted Successfully.");
+            }
+        }
     }
 }
