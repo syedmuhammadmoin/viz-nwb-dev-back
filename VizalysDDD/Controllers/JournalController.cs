@@ -66,7 +66,7 @@ namespace Vizalys.API.Controllers
         [HttpDelete]
         public async Task<ActionResult<Response<string>>> DeleteJournals(List<int> ids)
         {
-            var result = await _journalService.DeleteCOAs(ids);
+            var result = await _journalService.DeleteJournals(ids);
             if (result.IsSuccess)
                 return Ok(result);
             return BadRequest(result);
