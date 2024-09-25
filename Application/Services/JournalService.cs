@@ -169,7 +169,7 @@ namespace Application.Services
             return new Response<JournalDto>(_mapper.Map<JournalDto>(result), "Updated successfully");
         }
 
-        public async Task<Response<bool>> DeleteCOAs(List<int> ids)
+        public async Task<Response<bool>> DeleteJournals(List<int> ids)
         {
             if (ids.Count() < 0 || ids == null)
             {

@@ -12,7 +12,7 @@ namespace Application.Contracts.Interfaces
     public interface IJournalService : ICrudService<CreateJournalDto, JournalDto, int, TransactionFormFilter>
     {
         Task<Response<List<JournalDto>>> GetDropDown();
-        Task<Response<bool>> DeleteCOAs(List<int> ids);
+        Task<Response<bool>> DeleteJournals(List<int> ids);
 
     }
 }
