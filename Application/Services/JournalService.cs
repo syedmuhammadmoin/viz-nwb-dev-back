@@ -179,10 +179,10 @@ namespace Application.Services
             {
                 foreach (var coa in ids)
                 {
-                    var account = await _unitOfWork.Journals.GetById(coa);
-                    if (account == null)
-                        return new Response<bool>("Journals Not Found.");
-                    account.IsDelete = true;
+                    var Jv = await _unitOfWork.Journals.GetById(coa);
+                    if (Jv == null)
+                        return new Response<bool>("Journal Not Found.");
+                    Jv.IsDelete = true;
                     await _unitOfWork.SaveAsync();
                 }
                 return new Response<bool>(true, "Deleted Successfully.");
