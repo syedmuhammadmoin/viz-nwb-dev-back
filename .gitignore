@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Infrastructure/Migrations/20240926070259_TaxComputationField.cs
+/Infrastructure/Migrations/20240926120225_TaxLinesAmountTaxScope.cs
+/Infrastructure/Migrations/20240926070259_TaxComputationField.Designer.cs
+/Infrastructure/Migrations/20240926120225_TaxLinesAmountTaxScope.Designer.cs
+/Infrastructure/Migrations/20240926124221_AddingMasterIdInLines.cs
+/Infrastructure/Migrations/20240926124221_AddingMasterIdInLines.Designer.cs
