@@ -14,5 +14,8 @@ namespace Application.Contracts.DTOs
         public TaxType TaxType { get; set; }
         public string AccountId { get; set; }
         public string AccountName { get; set; }
+        public TaxComputation TaxComputation { get; set; }
+        public string Description { get; set; }
+        public string LegalNotes { get; set; }
     }
 }

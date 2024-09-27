@@ -1,4 +1,6 @@
-﻿using Domain.Constants;
+﻿using Application.Contracts.DTOs.Tax;
+using Domain.Constants;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,5 +19,12 @@ namespace Application.Contracts.DTOs
         public string Name { get; set; }
         [Required]
         public TaxType TaxType { get; set; }
+        public TaxComputation? TaxComputation { get; set; }
+        public string Description { get; set; }
+        public string LegalNotes { get; set; }
+        public decimal? Amount { get; set; }
+        public TaxScope? TaxScope { get; set; }
+        public virtual List<CreateTaxInvoiceLinesDto> TaxInvoicesLines { get; set; }
+        public virtual List<CreateTaxRefundLinesDto> TaxRefundLines { get; set; }
     }
 }

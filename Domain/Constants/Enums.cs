@@ -119,6 +119,24 @@ namespace Domain.Constants
         AssignmentAllowance = 4,
         TaxDeduction = 5
     }
+    public enum TaxComputation
+    {
+        Percentage = 0,
+        Fixed = 1,
+        GroupOfTaxes = 2,
+        PercentageTaxIncluded = 3
+    }
+    public enum TaxScope
+    {
+        Services = 0,
+        Goods = 1
+    }
+
+    public enum TaxBase
+    {
+        Base = 0,
+        ofTax = 1
+    }
     public enum TaxType
     {
         SalesTaxAsset = 0,

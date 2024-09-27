@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.Tax;
 using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
@@ -438,6 +439,10 @@ namespace Application.Mapper
                 .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
             CreateMap<UpdateTaxDto, Taxes>();
             CreateMap<CreateTaxDto, Taxes>();
+            CreateMap<CreateTaxInvoiceLinesDto,TaxInvoicesLines>();
+            CreateMap<TaxInvoicesLines, TaxInvoiceLinesDto>();
+            CreateMap<CreateTaxRefundLinesDto, TaxRefundLines>();
+            CreateMap<TaxRefundLines, TaxRefundLinesDto>();
             
             // UnitOfMeasurement Mapping
             CreateMap<UnitOfMeasurement, UnitOfMeasurementDto>();
