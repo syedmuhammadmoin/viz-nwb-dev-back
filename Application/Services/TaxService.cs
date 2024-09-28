@@ -86,5 +86,25 @@ namespace Application.Services
             await _unitOfWork.SaveAsync();
             return new Response<TaxDto>(_mapper.Map<TaxDto>(tax), "Create successfully");
         }
+
+        public async Task<Response<bool>> DeleteTaxes(List<int> ids)
+        {
+            if (ids.Count() < 0 || ids == null)
+            {
+                return new Response<bool>("List Cannot be Empty.");
+            }
+            else
+            {
+                foreach (var coa in ids)
+                {
+                    var Jv = await _unitOfWork.Taxes.GetById(coa);
+                    if (Jv == null)
+                        return new Response<bool>("Tax Not Found.");
+                    Jv.IsDelete = true;
+                    await _unitOfWork.SaveAsync();
+                }
+                return new Response<bool>(true, "Deleted Successfully.");
+            }
+        }
     }
 }

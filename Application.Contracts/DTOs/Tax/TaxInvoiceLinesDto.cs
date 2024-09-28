@@ -11,7 +11,7 @@ namespace Application.Contracts.DTOs.Tax
     {
         public int Id { get; set; }
         public TaxBase TaxBase { get; set; }
-        public Guid AccountId { get; set; }
+        public string AccountId { get; set; }
         public int MasterId { get; set; }
     }
 }

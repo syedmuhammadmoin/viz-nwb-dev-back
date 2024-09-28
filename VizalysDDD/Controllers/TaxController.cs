@@ -68,5 +68,13 @@ namespace Vizalys.Api.Controllers
 
             return BadRequest(result); // Status code : 400
         }
+        [HttpDelete]
+        public async Task<ActionResult<Response<string>>> DeleteTaxes(List<int> ids)
+        {
+            var result = await _taxService.DeleteTaxes(ids);
+            if (result.IsSuccess)
+                return Ok(result);
+            return BadRequest(result);
+        }
     }
 }

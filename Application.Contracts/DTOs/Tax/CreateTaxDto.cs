@@ -12,8 +12,7 @@ namespace Application.Contracts.DTOs
 {
     public class CreateTaxDto
     {
-        public int? Id { get; set; }
-        [Required]
+        public int? Id { get; set; }       
         public string? AccountId { get; set; }
         [Required]
         public string Name { get; set; }

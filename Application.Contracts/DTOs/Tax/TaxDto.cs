@@ -1,4 +1,5 @@
-﻿using Domain.Constants;
+﻿using Application.Contracts.DTOs.Tax;
+using Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +18,9 @@ namespace Application.Contracts.DTOs
         public TaxComputation TaxComputation { get; set; }
         public string Description { get; set; }
         public string LegalNotes { get; set; }
+        public decimal Amount { get; set; }
+        public TaxScope TaxScope { get; set; }
+        public virtual List<TaxInvoiceLinesDto> TaxInvoicesLines { get; set; }        
+        public virtual List<TaxRefundLinesDto> TaxRefundLines { get; set; }
     }
 }

@@ -34,6 +34,19 @@ namespace Infrastructure.Context
             .WithMany(c => c.InvoiceLines)
             .OnDelete(DeleteBehavior.Cascade);
 
+            //Tax Invoice
+            modelBuilder.Entity<TaxInvoicesLines>()
+            .HasOne(tc => tc.Taxes)
+            .WithMany(c => c.TaxInvoicesLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //Tax Refund
+
+            modelBuilder.Entity<TaxRefundLines>()
+          .HasOne(tc => tc.Taxes)
+          .WithMany(c => c.TaxRefundLines)
+          .OnDelete(DeleteBehavior.Cascade);
+
             //Bill
             modelBuilder.Entity<BillLines>()
             .HasOne(tc => tc.BillMaster)

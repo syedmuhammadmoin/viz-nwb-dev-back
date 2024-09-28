@@ -437,12 +437,12 @@ namespace Application.Mapper
             // Tax Mapping
             CreateMap<Taxes, TaxDto>()
                 .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
-            CreateMap<UpdateTaxDto, Taxes>();
-            CreateMap<CreateTaxDto, Taxes>();
-            CreateMap<CreateTaxInvoiceLinesDto,TaxInvoicesLines>();
             CreateMap<TaxInvoicesLines, TaxInvoiceLinesDto>();
-            CreateMap<CreateTaxRefundLinesDto, TaxRefundLines>();
             CreateMap<TaxRefundLines, TaxRefundLinesDto>();
+            CreateMap<UpdateTaxDto, Taxes>();
+            CreateMap<CreateTaxDto, Taxes>();            
+            CreateMap<CreateTaxInvoiceLinesDto,TaxInvoicesLines>();
+            CreateMap<CreateTaxRefundLinesDto, TaxRefundLines>();
             
             // UnitOfMeasurement Mapping
             CreateMap<UnitOfMeasurement, UnitOfMeasurementDto>();
