@@ -25,8 +25,8 @@ namespace Domain.Entities
         public virtual List<TaxRefundLines> TaxRefundLines { get; private set; }
         public string? Description { get; private set; }
         public string? LegalNotes { get; private set; }
-
-
+        public decimal Percent { get; private set; }
+        public virtual List<ChildrenTaxes> ChildrenTaxes { get; private set; } = null;
         public Taxes(int id, string name, TaxType taxType)
         {
             Id = id;

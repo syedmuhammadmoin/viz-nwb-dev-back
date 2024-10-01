@@ -23,6 +23,7 @@ namespace Application.Contracts.DTOs
         public string LegalNotes { get; set; }
         public decimal? Amount { get; set; }
         public TaxScope? TaxScope { get; set; }
+        public virtual List<CreateChildrenTaxDto> ChildrenTaxes { get; set; }
         public virtual List<CreateTaxInvoiceLinesDto> TaxInvoicesLines { get; set; }
         public virtual List<CreateTaxRefundLinesDto> TaxRefundLines { get; set; }
     }

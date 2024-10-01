@@ -106,5 +106,16 @@ namespace Application.Services
                 return new Response<bool>(true, "Deleted Successfully.");
             }
         }
+
+        public async Task<Response<List<TaxDto>>> GetTaxesWithIds(List<int> ids)
+        {
+            if (ids == null || !ids.Any())
+                return new Response<List<TaxDto>>("No IDs provided");
+            var taxes = await _unitOfWork.Taxes.GetAll();
+            if (taxes == null)
+                return new Response<List<TaxDto>>("List is Empty");
+            var selectedTaxes = taxes.Where(x => ids.Contains(x.Id)).ToList();
+            return new Response<List<TaxDto>>(_mapper.Map<List<TaxDto>>(selectedTaxes), "Returning List");
+        }
     }
 }

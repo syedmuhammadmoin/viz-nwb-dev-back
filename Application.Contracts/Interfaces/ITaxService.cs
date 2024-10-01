@@ -12,5 +12,6 @@ namespace Application.Contracts.Interfaces
     public interface ITaxService : ICrudService<CreateTaxDto, TaxDto, int, TransactionFormFilter>
     {
         Task<Response<bool>> DeleteTaxes(List<int> ids);
+        Task<Response<List<TaxDto>>> GetTaxesWithIds(List<int> ids);
     }
 }

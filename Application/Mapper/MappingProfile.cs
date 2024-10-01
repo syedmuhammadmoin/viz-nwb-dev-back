@@ -443,6 +443,8 @@ namespace Application.Mapper
             CreateMap<CreateTaxDto, Taxes>();            
             CreateMap<CreateTaxInvoiceLinesDto,TaxInvoicesLines>();
             CreateMap<CreateTaxRefundLinesDto, TaxRefundLines>();
+            CreateMap<CreateChildrenTaxDto, ChildrenTaxes>();
+            CreateMap<ChildrenTaxes, ChildrenTaxDto>();
             
             // UnitOfMeasurement Mapping
             CreateMap<UnitOfMeasurement, UnitOfMeasurementDto>();

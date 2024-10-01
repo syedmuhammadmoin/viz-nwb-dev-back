@@ -76,5 +76,14 @@ namespace Vizalys.Api.Controllers
                 return Ok(result);
             return BadRequest(result);
         }
+
+        [HttpPost("GetTaxesByIds")]
+        public async Task<ActionResult<List<Response<TaxDto>>>> GetTaxesById(List<int> ids)
+        {
+            var result = await _taxService.GetTaxesWithIds(ids);
+            if(result != null) 
+                return Ok(result);
+            return BadRequest(result);
+        }
     }
 }

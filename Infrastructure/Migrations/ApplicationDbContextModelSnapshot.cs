@@ -1702,6 +1702,50 @@ namespace Infrastructure.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ChildrenTaxes", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TaxComputation")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TaxId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TaxId");
+
+                    b.ToTable("ChildrenTaxes");
+                });
+
             modelBuilder.Entity("Domain.Entities.City", b =>
                 {
                     b.Property<int>("Id")
@@ -6672,6 +6716,9 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
 
+                    b.Property<decimal>("Percent")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int?>("TaxComputation")
                         .HasColumnType("int");
 
@@ -7994,6 +8041,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("InventoryAccount");
 
                     b.Navigation("RevenueAccount");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ChildrenTaxes", b =>
+                {
+                    b.HasOne("Domain.Entities.Taxes", "Taxes")
+                        .WithMany("ChildrenTaxes")
+                        .HasForeignKey("TaxId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Taxes");
                 });
 
             modelBuilder.Entity("Domain.Entities.City", b =>
@@ -9966,7 +10024,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Taxes", "Taxes")
                         .WithMany("TaxInvoicesLines")
                         .HasForeignKey("TaxesId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Account");
@@ -9984,7 +10042,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Taxes", "Taxes")
                         .WithMany("TaxRefundLines")
                         .HasForeignKey("TaxesId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Account");
@@ -10374,6 +10432,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Taxes", b =>
                 {
+                    b.Navigation("ChildrenTaxes");
+
                     b.Navigation("TaxInvoicesLines");
 
                     b.Navigation("TaxRefundLines");
