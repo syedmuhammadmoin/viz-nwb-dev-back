@@ -22,6 +22,10 @@ namespace Application.Contracts.DTOs
         public decimal Amount { get; set; }
         public TaxScope TaxScope { get; set; }
         public decimal Percent { get; set; }
+        public string LabelOnInv { get; set; }
+        public string Company { get; set; }
+        public TaxInculsion IncludedPrice { get; set; }
+        public bool SabsequentTaxes { get; set; }
         public virtual List<ChildrenTaxDto> ChildrenTaxes { get; set; }
         public virtual List<TaxInvoiceLinesDto> TaxInvoicesLines { get; set; }        
         public virtual List<TaxRefundLinesDto> TaxRefundLines { get; set; }

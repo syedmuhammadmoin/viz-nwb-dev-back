@@ -46,7 +46,7 @@ namespace Vizalys.Api.Controllers
         }
         [ClaimRequirement("Permission", new string[] { Permissions.TaxesClaims.Create })]
         [HttpPost]
-        public async Task<ActionResult<Response<CategoryDto>>> CreateAsync(CreateTaxDto entity)
+        public async Task<ActionResult<Response<TaxDto>>> CreateAsync(CreateTaxDto entity)
         {
             var result = await _taxService.CreateAsync(entity);
             if (result.IsSuccess)
