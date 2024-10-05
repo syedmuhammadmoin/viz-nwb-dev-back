@@ -285,8 +285,13 @@ namespace Infrastructure.Context
             modelBuilder.Entity<Campus>()
                 .Property(et => et.Id)
                 .ValueGeneratedNever();
-            
-           
+
+            modelBuilder.Entity<Taxes>()
+           .HasOne(t => t.TaxGroup)
+           .WithMany(tg => tg.Taxes)
+           .HasForeignKey(t => t.GroupId);
+
+
         }
 
         public static string GetCurrentUser(IHttpContextAccessor httpContextAccessor)

@@ -100,6 +100,7 @@ builder.Services.AddScoped<IProgramChallanTemplateService, ProgramChallanTemplat
 builder.Services.AddSingleton<IEmailSenderService, EmailSenderService>();
 builder.Services.AddHostedService<DepreciationBackgroundService>();
 builder.Services.AddScoped<IJournalService, JournalService>();
+builder.Services.AddScoped<ITaxGroupService, TaxGroupService>();
 
 
 //Add auto mapper config

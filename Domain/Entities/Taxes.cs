@@ -30,7 +30,12 @@ namespace Domain.Entities
         public string? Company { get; private set; }
         public TaxInculsion? IncludedPrice { get; private set; }
         public bool SabsequentTaxes { get; private set; }
-
+        ///public int GroupId { get; private set; }
+        //[ForeignKey("GroupId")]
+        //public TaxGroup TaxGroup { get; private set; }
+        public int? GroupId { get; private set; } = null;
+        [ForeignKey("GroupId")]
+        public TaxGroup? TaxGroup { get; private set; }
         public virtual List<ChildrenTaxes> ChildrenTaxes { get; private set; } = null;
         public Taxes(int id, string name, TaxType taxType)
         {

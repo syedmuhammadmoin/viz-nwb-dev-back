@@ -18,6 +18,7 @@ namespace Application.Contracts.DTOs
         public string Name { get; set; }
         [Required]
         public TaxType TaxType { get; set; }
+        public int GroupId { get; set; }
         public TaxComputation? TaxComputation { get; set; }
         public string Description { get; set; }
         public string LegalNotes { get; set; }
@@ -27,7 +28,7 @@ namespace Application.Contracts.DTOs
         public string? Company { get; set; }
         public TaxInculsion? IncludedPrice { get; set; }
         public bool SabsequentTaxes { get; set; }
-        public TaxScope? TaxScope { get; set; }
+        public TaxScope? TaxScope { get; set; }      
         public virtual List<CreateChildrenTaxDto> ChildrenTaxes { get; set; }
         public virtual List<CreateTaxInvoiceLinesDto> TaxInvoicesLines { get; set; }
         public virtual List<CreateTaxRefundLinesDto> TaxRefundLines { get; set; }

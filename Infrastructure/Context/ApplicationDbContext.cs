@@ -135,6 +135,7 @@ namespace Infrastructure.Context
         public DbSet<UsersOrganization> UsersOrganization { get; set; }
         public DbSet<Journal> Journals { get; set; }
         
+        public DbSet<TaxGroup> TaxGroups {  get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

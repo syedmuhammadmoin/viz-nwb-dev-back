@@ -103,6 +103,7 @@ namespace Infrastructure.Uow
         public IUsersOrganization UsersOrganization { get; private set; }
         public IInviteUser InviteUser { get; private set; }
         public IJournalRepository Journals { get; private set; }
+        public ITaxGroupRepository TaxGroup { get; private set; }
 
 
         public UnitOfWork(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
@@ -195,6 +196,7 @@ namespace Infrastructure.Uow
             UsersOrganization = new UsersOrganizationRepository(context);
             InviteUser = new InviteUserRepository(context);
             Journals = new JournalRepository(context);
+            TaxGroup = new TaxGroupRepository(context);
 
         }
 

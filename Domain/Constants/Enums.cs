@@ -136,7 +136,7 @@ namespace Domain.Constants
         Default = 0,
         TaxIncluded = 1,
         TaxExcluded = 2
-    }
+    }   
 
     public enum TaxBase
     {

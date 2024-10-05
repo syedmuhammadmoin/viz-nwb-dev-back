@@ -96,6 +96,7 @@ namespace Domain.Interfaces
          IUsersOrganization UsersOrganization { get; }
          IInviteUser InviteUser { get;  }
         IJournalRepository Journals { get; }
+        ITaxGroupRepository TaxGroup { get; }
 
         Task SaveAsync();
         void CreateTransaction();

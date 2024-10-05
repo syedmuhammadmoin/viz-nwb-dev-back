@@ -125,6 +125,7 @@ namespace Application.Interfaces
         public DbSet<ProgramChallanTemplateLines> ProgramChallanTemplateLines { get; set; }
         public DbSet<InviteUser> InviteUser { get; set; }
         public DbSet<Journal> Journals { get; set; }
+        public DbSet<TaxGroup> TaxGroups { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }
