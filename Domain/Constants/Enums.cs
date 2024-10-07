@@ -131,6 +131,12 @@ namespace Domain.Constants
         Services = 0,
         Goods = 1
     }
+    public enum TaxInculsion
+    {
+        Default = 0,
+        TaxIncluded = 1,
+        TaxExcluded = 2
+    }   
 
     public enum TaxBase
     {

@@ -265,6 +265,13 @@
             public const string Edit = "Permissions.TaxesClaims.ED";
             public const string Delete = "Permissions.TaxesClaims.DL";
         }
+        public static class TaxGroupClaims
+        {
+            public const string View = "Permissions.TaxGroupClaims.VW";
+            public const string Create = "Permissions.TaxGroupClaims.CR";
+            public const string Edit = "Permissions.TaxGroupClaims.ED";
+            public const string Delete = "Permissions.TaxGroupClaims.DL";
+        }
 
         public static class CurrencyClaims
         {

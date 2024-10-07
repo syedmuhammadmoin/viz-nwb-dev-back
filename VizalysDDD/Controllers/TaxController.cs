@@ -46,7 +46,7 @@ namespace Vizalys.Api.Controllers
         }
         [ClaimRequirement("Permission", new string[] { Permissions.TaxesClaims.Create })]
         [HttpPost]
-        public async Task<ActionResult<Response<CategoryDto>>> CreateAsync(CreateTaxDto entity)
+        public async Task<ActionResult<Response<TaxDto>>> CreateAsync(CreateTaxDto entity)
         {
             var result = await _taxService.CreateAsync(entity);
             if (result.IsSuccess)
@@ -73,6 +73,15 @@ namespace Vizalys.Api.Controllers
         {
             var result = await _taxService.DeleteTaxes(ids);
             if (result.IsSuccess)
+                return Ok(result);
+            return BadRequest(result);
+        }
+
+        [HttpPost("GetTaxesByIds")]
+        public async Task<ActionResult<List<Response<TaxDto>>>> GetTaxesById(List<int> ids)
+        {
+            var result = await _taxService.GetTaxesWithIds(ids);
+            if(result != null) 
                 return Ok(result);
             return BadRequest(result);
         }

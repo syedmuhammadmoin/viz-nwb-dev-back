@@ -106,6 +106,7 @@ namespace Infrastructure.Uow
         public IJournalRepository Journals { get; private set; }
         public IGenericRepository<BaseEntity<int>, int> GenericRepository { get; private set; }
         private readonly Dictionary<Type, object> _repositories = new();
+        public ITaxGroupRepository TaxGroup { get; private set; }
 
 
         public UnitOfWork(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
@@ -198,6 +199,7 @@ namespace Infrastructure.Uow
             UsersOrganization = new UsersOrganizationRepository(context);
             InviteUser = new InviteUserRepository(context);
             Journals = new JournalRepository(context);
+            TaxGroup = new TaxGroupRepository(context);
 
         }
 

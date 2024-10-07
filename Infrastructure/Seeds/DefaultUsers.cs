@@ -75,6 +75,8 @@ namespace Infrastructure.Seeds
 
             await roleManager.AddPermissionClaimReport(superAdmin, "CurrencyClaims");
             
+            await roleManager.AddPermissionClaimReport(superAdmin, "TaxGroupClaims");
+            
         }
         public static async Task AddPermissionClaimReport(this RoleManager<Role> roleManager, Role role, string module)
         {
@@ -142,6 +144,7 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaim(superAdmin, "Payroll", "PayrollTransaction");
             await roleManager.AddPermissionClaim(superAdmin, "Payroll", "PayrollPayment");
             await roleManager.AddPermissionClaim(superAdmin, "Profiling", "Taxes");
+            await roleManager.AddPermissionClaim(superAdmin, "Profiling", "TaxGroup");
             await roleManager.AddPermissionClaim(superAdmin, "Profiling", "UnitOfMeasurement");
             await roleManager.AddPermissionClaim(superAdmin, "Procurement", "Issuance");
             await roleManager.AddPermissionClaim(superAdmin, "Procurement", "GoodsReturnNote");

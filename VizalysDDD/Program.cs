@@ -102,6 +102,7 @@ builder.Services.AddHostedService<DepreciationBackgroundService>();
 builder.Services.AddScoped<IJournalService, JournalService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 
+builder.Services.AddScoped<ITaxGroupService, TaxGroupService>();
 
 
 //Add auto mapper config

@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.DTOs.Tax;
+using Application.Contracts.DTOs.TaxGroup;
 using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
@@ -443,6 +444,8 @@ namespace Application.Mapper
             CreateMap<CreateTaxDto, Taxes>();            
             CreateMap<CreateTaxInvoiceLinesDto,TaxInvoicesLines>();
             CreateMap<CreateTaxRefundLinesDto, TaxRefundLines>();
+            CreateMap<CreateChildrenTaxDto, ChildrenTaxes>();
+            CreateMap<ChildrenTaxes, ChildrenTaxDto>();
             
             // UnitOfMeasurement Mapping
             CreateMap<UnitOfMeasurement, UnitOfMeasurementDto>();
@@ -820,6 +823,13 @@ namespace Application.Mapper
             CreateMap<CreateCurrencyLineDto, CurrencyLine>();
             CreateMap<CurrencyLine, CurrencyLineDto>();
 
+
+            CreateMap<CreateTaxGroupDto, TaxGroup>();
+            CreateMap<TaxGroup, TaxGroupDto>()
+                .ForMember(dto => dto.AdvanceAccountName, core => core.MapFrom(x => x.AdvanceAccount.Name))
+                .ForMember(dto => dto.PayableAccountName, core => core.MapFrom(x => x.PayableAccount.Name))
+                .ForMember(dto => dto.ReceivableAccountName, core => core.MapFrom(x => x.ReceivableAccount.Name))
+                .ForMember(dto => dto.CountryName, core => core.MapFrom(x => x.Country.Name));
 
         }
     }

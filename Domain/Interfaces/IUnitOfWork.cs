@@ -98,6 +98,7 @@ namespace Domain.Interfaces
          IInviteUser InviteUser { get;  }
         IJournalRepository Journals { get; }
         IGenericRepository<TEntity, int> GetRepository<TEntity>() where TEntity : BaseEntity<int>;
+        ITaxGroupRepository TaxGroup { get; }
 
         Task SaveAsync();
         void CreateTransaction();

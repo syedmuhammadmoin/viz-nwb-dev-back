@@ -126,6 +126,7 @@ namespace Application.Interfaces
         public DbSet<InviteUser> InviteUser { get; set; }
         public DbSet<Journal> Journals { get; set; }
         public DbSet<Currency> Currency { get; set; }
+        public DbSet<TaxGroup> TaxGroups { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

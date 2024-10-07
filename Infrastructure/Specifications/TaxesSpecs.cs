@@ -27,6 +27,7 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.Account);
             AddInclude(i => i.TaxInvoicesLines);
             AddInclude(i => i.TaxRefundLines);
+            AddInclude(i => i.ChildrenTaxes);
             AddInclude("TaxInvoicesLines.Account");
             AddInclude("TaxRefundLines.Account");
 
