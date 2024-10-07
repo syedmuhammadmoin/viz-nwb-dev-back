@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Domain.Base;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -96,6 +97,7 @@ namespace Domain.Interfaces
          IUsersOrganization UsersOrganization { get; }
          IInviteUser InviteUser { get;  }
         IJournalRepository Journals { get; }
+        IGenericRepository<TEntity, int> GetRepository<TEntity>() where TEntity : BaseEntity<int>;
 
         Task SaveAsync();
         void CreateTransaction();

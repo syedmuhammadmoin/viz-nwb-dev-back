@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240927074913_AddCurrency")]
+    partial class AddCurrency
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1978,7 +1980,7 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("LastUpdate")
+                    b.Property<DateTime>("LastUpdate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ModifiedBy")
@@ -1992,29 +1994,24 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("OrganizationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("SubUnit")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Symbol")
                         .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
 
                     b.Property<decimal>("USDPerUnit")
-                        .HasColumnType("decimal(18,6)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Unit")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<decimal>("UnitPerUSD")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(18,6)")
-                        .HasDefaultValue(1m);
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -2040,7 +2037,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("date");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
@@ -2052,19 +2049,15 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("OrganizationId")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("USDPerUnit")
-                        .HasColumnType("decimal(18,6)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("UnitPerUSD")
-                        .HasColumnType("decimal(18,6)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CurrencyId", "Date")
-                        .IsUnique();
+                    b.HasIndex("CurrencyId");
 
                     b.ToTable("CurrencyLine");
                 });
@@ -6756,9 +6749,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("AccountId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<decimal?>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -6766,14 +6756,8 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
-
-                    b.Property<string>("LegalNotes")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(100)
@@ -6786,12 +6770,6 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
 
-                    b.Property<int?>("TaxComputation")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TaxScope")
-                        .HasColumnType("int");
-
                     b.Property<int>("TaxType")
                         .HasColumnType("int");
 
@@ -6800,92 +6778,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("AccountId");
 
                     b.ToTable("Taxes");
-                });
-
-            modelBuilder.Entity("Domain.Entities.TaxInvoicesLines", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("AccountId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("TaxBase")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TaxesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.HasIndex("TaxesId");
-
-                    b.ToTable("TaxInvoicesLines");
-                });
-
-            modelBuilder.Entity("Domain.Entities.TaxRefundLines", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("AccountId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("TaxBase")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TaxesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.HasIndex("TaxesId");
-
-                    b.ToTable("TaxRefundLines");
                 });
 
             modelBuilder.Entity("Domain.Entities.TransactionReconcile", b =>
@@ -10079,42 +9971,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("Domain.Entities.TaxInvoicesLines", b =>
-                {
-                    b.HasOne("Domain.Entities.Level4", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Taxes", "Taxes")
-                        .WithMany("TaxInvoicesLines")
-                        .HasForeignKey("TaxesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-
-                    b.Navigation("Taxes");
-                });
-
-            modelBuilder.Entity("Domain.Entities.TaxRefundLines", b =>
-                {
-                    b.HasOne("Domain.Entities.Level4", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Taxes", "Taxes")
-                        .WithMany("TaxRefundLines")
-                        .HasForeignKey("TaxesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-
-                    b.Navigation("Taxes");
-                });
-
             modelBuilder.Entity("Domain.Entities.TransactionReconcile", b =>
                 {
                     b.HasOne("Domain.Entities.RecordLedger", "DocumentLedger")
@@ -10498,13 +10354,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.RequisitionMaster", b =>
                 {
                     b.Navigation("RequisitionLines");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Taxes", b =>
-                {
-                    b.Navigation("TaxInvoicesLines");
-
-                    b.Navigation("TaxRefundLines");
                 });
 
             modelBuilder.Entity("Domain.Entities.Warehouse", b =>

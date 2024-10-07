@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.Contracts.Filters
 {
-    public class TransactionFormFilter : PaginationFilter
+    public class TransactionFormFilter : PaginationFilter,  IEntityFilter
     {
         public string DocNo { get; set; }
         public string BusinessPartner { get; set; }

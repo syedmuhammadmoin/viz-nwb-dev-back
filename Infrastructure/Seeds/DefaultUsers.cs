@@ -11,7 +11,7 @@ namespace Infrastructure.Seeds
         {
             var defaultUser = new User
             {
-                UserName = "Naveed",
+                UserName = "Muhammad",
                 Email = "superadmin@vizalys.com",
                 EmailConfirmed = true
             };
@@ -72,6 +72,8 @@ namespace Infrastructure.Seeds
             await roleManager.AddPermissionClaimReport(superAdmin, "TrialBalanceClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "JournalClaims");
             await roleManager.AddPermissionClaimReport(superAdmin, "TaxesClaims");
+
+            await roleManager.AddPermissionClaimReport(superAdmin, "CurrencyClaims");
             
         }
         public static async Task AddPermissionClaimReport(this RoleManager<Role> roleManager, Role role, string module)

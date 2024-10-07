@@ -810,7 +810,16 @@ namespace Application.Mapper
 
             CreateMap<PayrollTransactionMaster, UpdateEmployeeTransactionDto>();
             CreateMap<UpdateEmployeeTransactionDto, PayrollTransactionMaster>();
-           
+
+
+            CreateMap<CreateCurrencyDto,Currency>();
+            CreateMap<Currency,CurrencyDto>();
+
+
+
+            CreateMap<CreateCurrencyLineDto, CurrencyLine>();
+            CreateMap<CurrencyLine, CurrencyLineDto>();
+
 
         }
     }

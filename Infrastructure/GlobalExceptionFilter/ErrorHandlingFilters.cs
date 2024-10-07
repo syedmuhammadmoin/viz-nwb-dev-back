@@ -31,13 +31,13 @@ namespace Infrastructure.GlobalExceptionFilter
             //RollBack Previous Transaction from Service
             _unitOfWork.Rollback();
             var exception = context.Exception;
-            var responses = new Response<bool>("Something went wrong", StatusCodes.Status500InternalServerError, context.HttpContext.TraceIdentifier);
+            var responses = new Response<bool>($"Something went wrong {context.HttpContext.TraceIdentifier}", StatusCodes.Status500InternalServerError, context.HttpContext.TraceIdentifier, context.Exception);
 
-            // commit for Development purpose only 
-            //context.Result = new ObjectResult(responses)
-            //{
-            //    StatusCode = 500
-            //};
+            // commit in Development Mode Only
+            context.Result = new ObjectResult(responses)
+            {
+                StatusCode = 500
+            };
 
             string result;
             if (exception.InnerException == null)
@@ -71,8 +71,11 @@ namespace Infrastructure.GlobalExceptionFilter
                 context2.SaveChanges();
                 transaction.Commit();
             }
+
+            //append Logs.Id to exception message
+
             // false for Development purpose only
-            context.ExceptionHandled = false;
+            context.ExceptionHandled = true;
         }
     }
 }

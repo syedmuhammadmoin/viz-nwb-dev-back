@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241001124510_AddDateOptional")]
+    partial class AddDateOptional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2001,11 +2003,11 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Symbol")
                         .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
 
                     b.Property<decimal>("USDPerUnit")
-                        .HasColumnType("decimal(18,6)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Unit")
                         .HasMaxLength(50)
@@ -2013,7 +2015,7 @@ namespace Infrastructure.Migrations
 
                     b.Property<decimal>("UnitPerUSD")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(18,6)")
+                        .HasColumnType("decimal(18,2)")
                         .HasDefaultValue(1m);
 
                     b.HasKey("Id");
@@ -2040,7 +2042,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("date");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
@@ -2056,15 +2058,14 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("USDPerUnit")
-                        .HasColumnType("decimal(18,6)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("UnitPerUSD")
-                        .HasColumnType("decimal(18,6)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CurrencyId", "Date")
-                        .IsUnique();
+                    b.HasIndex("CurrencyId");
 
                     b.ToTable("CurrencyLine");
                 });

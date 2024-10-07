@@ -243,4 +243,20 @@ namespace Domain.Constants
         Miscellaneous = 4,
     }
 
+    public static class ResponseMessages
+    {
+        public const string CreatedSuccessfully = "Created successfully";
+        public const string UpdatedSuccessfully = "Updated successfully";
+        public const string DeletedSuccessfully = "Deleted successfully";
+        public const string NotFound = "Not found";
+        public const string RetrieveSuccessfully = "Returning value";
+        public const string EmptyList = "List is empty";
+        public const string ReturnList = "Return List";
+
+        
+        // Add more messages as needed
+    }
+
+
+
 }

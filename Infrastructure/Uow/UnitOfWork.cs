@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Domain.Base;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Context;
 using Infrastructure.Repositories;
@@ -103,6 +104,8 @@ namespace Infrastructure.Uow
         public IUsersOrganization UsersOrganization { get; private set; }
         public IInviteUser InviteUser { get; private set; }
         public IJournalRepository Journals { get; private set; }
+        public IGenericRepository<BaseEntity<int>, int> GenericRepository { get; private set; }
+        private readonly Dictionary<Type, object> _repositories = new();
 
 
         public UnitOfWork(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
@@ -198,6 +201,16 @@ namespace Infrastructure.Uow
 
         }
 
+        public IGenericRepository<TEntity, int> GetRepository<TEntity>() where TEntity : BaseEntity<int>
+        {
+            if (!_repositories.TryGetValue(typeof(TEntity), out var repository))
+            {
+                repository = new GenericRepository<TEntity, int>(_context);
+                _repositories[typeof(TEntity)] = repository;
+            }
+
+            return (IGenericRepository<TEntity, int>)repository;
+        }
         public async Task SaveAsync()
         {
             await _context.SaveChangesAsync();

@@ -134,6 +134,7 @@ namespace Infrastructure.Context
         public DbSet<ProgramChallanTemplateLines> ProgramChallanTemplateLines { get; set; }
         public DbSet<UsersOrganization> UsersOrganization { get; set; }
         public DbSet<Journal> Journals { get; set; }
+        public DbSet<Currency> Currency { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
