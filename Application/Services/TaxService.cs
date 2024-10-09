@@ -7,6 +7,7 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
+using Infrastructure.Uow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +50,7 @@ namespace Application.Services
             return new Response<TaxDto>(_mapper.Map<TaxDto>(tax), "Returning value");
         }
 
-        public async Task<Response<TaxDto>> UpdateAsync(UpdateTaxDto entity)
+        public async Task<Response<TaxDto>> UpdateAsync(CreateTaxDto entity)
 
         {
             var tax = await _unitOfWork.Taxes.GetById((int)entity.Id);
@@ -67,10 +68,12 @@ namespace Application.Services
             //{
             //    return new  Response<TaxDto>("Account Invalid");
             //}
-            
+
             //For updating data
-            _mapper.Map<UpdateTaxDto, Taxes>(entity, tax);
+            _unitOfWork.CreateTransaction();
+            _mapper.Map<CreateTaxDto, Taxes>(entity, tax);
             await _unitOfWork.SaveAsync();
+            _unitOfWork.Commit();
             return new Response<TaxDto>(_mapper.Map<TaxDto>(tax), "Updated successfully");
         }
         public Task<Response<int>> DeleteAsync(int id)
@@ -78,9 +81,43 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public Task<Response<TaxDto>> CreateAsync(UpdateTaxDto entity)
+        public async Task<Response<TaxDto>> CreateAsync(CreateTaxDto entity)
         {
-            throw new NotImplementedException();
+            var tax = _mapper.Map<Taxes>(entity);
+            await _unitOfWork.Taxes.Add(tax);
+            await _unitOfWork.SaveAsync();
+            return new Response<TaxDto>(_mapper.Map<TaxDto>(tax), "Create successfully");
+        }
+
+        public async Task<Response<bool>> DeleteTaxes(List<int> ids)
+        {
+            if (ids.Count() < 0 || ids == null)
+            {
+                return new Response<bool>("List Cannot be Empty.");
+            }
+            else
+            {
+                foreach (var coa in ids)
+                {
+                    var Jv = await _unitOfWork.Taxes.GetById(coa);
+                    if (Jv == null)
+                        return new Response<bool>("Tax Not Found.");
+                    Jv.IsDelete = true;
+                    await _unitOfWork.SaveAsync();
+                }
+                return new Response<bool>(true, "Deleted Successfully.");
+            }
+        }
+
+        public async Task<Response<List<TaxDto>>> GetTaxesWithIds(List<int> ids)
+        {
+            if (ids == null || !ids.Any())
+                return new Response<List<TaxDto>>("No IDs provided");
+            var taxes = await _unitOfWork.Taxes.GetAll();
+            if (taxes == null)
+                return new Response<List<TaxDto>>("List is Empty");
+            var selectedTaxes = taxes.Where(x => ids.Contains(x.Id)).ToList();
+            return new Response<List<TaxDto>>(_mapper.Map<List<TaxDto>>(selectedTaxes), "Returning List");
         }
     }
 }

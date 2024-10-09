@@ -12,5 +12,6 @@ namespace Domain.Interfaces
         Task AddRange(List<Level4> list);
 
         Task<List<Level1>> GetCOA();
+        IQueryable<Level1> GetAccoutTypes();
     }
 }

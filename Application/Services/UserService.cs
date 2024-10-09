@@ -636,6 +636,8 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.DashboardProfitLossClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.DashboardBalanceSheetClaims), id);
             allPermissions.GetPermissions(typeof(Permissions.DashboardBankBalanceClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.JournalClaims), id);
+            allPermissions.GetPermissions(typeof(Permissions.TaxGroupClaims), id);
 
 
             //Getting all claims for this role
@@ -791,6 +793,9 @@ namespace Application.Services
             allPermissions.GetPermissions(typeof(Permissions.DashboardBalanceSheetClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.DashboardProfitLossClaims), "12");
             allPermissions.GetPermissions(typeof(Permissions.DashboardBankBalanceClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.JournalClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.TaxGroupClaims), "12");
+            allPermissions.GetPermissions(typeof(Permissions.TaxSettingClaims), "12");
 
             var allClaimValues = allPermissions.Select(a => a.Value).ToList();
             return new Response<List<string>>(allClaimValues, "Returning all claims");

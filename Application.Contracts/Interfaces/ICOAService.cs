@@ -12,5 +12,6 @@ namespace Application.Contracts.Interfaces
     {
         Task<Response<List<Level1Dto>>> GetCOA();
         Task<MemoryStream> Export();
+        Task<Response<List<Level1And3Dto>>> GetLevel3();
     }
 }

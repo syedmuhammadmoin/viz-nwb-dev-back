@@ -69,13 +69,22 @@ namespace Infrastructure.Repositories
                             {
                                 Id = a.Id,
                                 Name = a.Name,
-                                AccountType = a.AccountType
+                                AccountType = a.AccountType,
+                                Code = a.Code
                             })
                         })
                     })
                 })
                 .ToListAsync();
         }
-
+        public IQueryable<Level1> GetAccoutTypes()
+        {
+            return  _context.Level1
+                .Include(c => c.Level2)
+                .ThenInclude(x => x.Level3)
+                .ThenInclude(x => x.Level4);
+                
+                
+        }
     }
 }

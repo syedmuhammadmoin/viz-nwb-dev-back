@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Domain.Base;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,7 +96,10 @@ namespace Domain.Interfaces
         IProgramChallanTemplateRepository ProgramChallanTemplate { get; }
          IUsersOrganization UsersOrganization { get; }
          IInviteUser InviteUser { get;  }
-
+        IJournalRepository Journals { get; }
+        IGenericRepository<TEntity, int> GetRepository<TEntity>() where TEntity : BaseEntity<int>;
+        ITaxGroupRepository TaxGroup { get; }
+        ITaxSettingRepository TaxSetting { get; }
 
         Task SaveAsync();
         void CreateTransaction();

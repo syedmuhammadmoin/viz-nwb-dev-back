@@ -124,7 +124,10 @@ namespace Application.Interfaces
         public DbSet<ProgramChallanTemplateMaster> ProgramChallanTemplateMaster { get; set; }
         public DbSet<ProgramChallanTemplateLines> ProgramChallanTemplateLines { get; set; }
         public DbSet<InviteUser> InviteUser { get; set; }
-
+        public DbSet<Journal> Journals { get; set; }
+        public DbSet<Currency> Currency { get; set; }
+        public DbSet<TaxGroup> TaxGroups { get; set; }
+        public DbSet<TaxSetting> TaxSetting { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

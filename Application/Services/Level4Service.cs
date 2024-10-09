@@ -1,11 +1,13 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.Filters;
+using Application.Contracts.Helper;
 using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Specifications;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +20,14 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public Level4Service(IUnitOfWork unitOfWork, IMapper mapper)
+        public Level4Service(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
+
         }
         public async Task<Response<Level4Dto>> CreateAsync(CreateLevel4Dto entity)
         {
@@ -43,7 +48,7 @@ namespace Application.Services
             return new Response<Level4Dto>(_mapper.Map<Level4Dto>(result), "Created successfully");
         }
 
-        public async Task<PaginationResponse<List<Level4Dto>>> GetAllAsync(PaginationFilter filter)
+        public async Task<PaginationResponse<List<Level4Dto>>> GetAllAsync(Level4Filter filter)
         {
 
             var specification = new Level4Specs(filter);
@@ -79,8 +84,8 @@ namespace Application.Services
                 return new Response<Level4Dto>("Duplicate code");
 
             
-            if(level4.AccountType == Domain.Constants.AccountType.SystemDefined)
-                return new Response<Level4Dto>("System defined accounts cannot be edited");
+            //if(level4.AccountType == Domain.Constants.AccountType.SystemDefined)
+            //    return new Response<Level4Dto>("System defined accounts cannot be edited");
             
             //For updating data
             _mapper.Map<CreateLevel4Dto, Level4>(entity, level4);
@@ -88,7 +93,7 @@ namespace Application.Services
             return new Response<Level4Dto>(_mapper.Map<Level4Dto>(level4), "Updated successfully");
         }
         
-        public Task<Response<string>> DeleteAsync(string id)
+        public async Task<Response<string>> DeleteAsync(string id)
         {
             throw new NotImplementedException();
         }
@@ -165,11 +170,59 @@ namespace Application.Services
         }
         public async Task<Response<List<Level4Dto>>> GetExpenseAccounts()
         {
-            var level4 = await _unitOfWork.Level4.GetAll(new GetExpenseAccountsSpecs());
+            int tenantId = GetTenant.GetTenantId(_httpContextAccessor);
+            var level4 = await _unitOfWork.Level4.GetAll(new GetExpenseAccountsSpecs(tenantId));
             if (!level4.Any())
                 return new Response<List<Level4Dto>>(null, "List is empty");
 
             return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
+        }
+        public async Task<Response<List<Level4Dto>>> GetIncomeAccounts()
+        {
+            int tenantId = GetTenant.GetTenantId(_httpContextAccessor);
+            var level4 = await _unitOfWork.Level4.GetAll(new GetIncomeAccountsSpecs(tenantId));
+            if (!level4.Any())
+                return new Response<List<Level4Dto>>(null, "List is empty");
+
+            return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
+        }
+        public async Task<Response<List<Level4Dto>>> GetCashBankAccounts()
+        {
+            int tenantId = GetTenant.GetTenantId(_httpContextAccessor);
+            var level4 = await _unitOfWork.Level4.GetAll(new GetCashBankAccountsSpecs(tenantId));
+            if (!level4.Any())
+                return new Response<List<Level4Dto>>(null, "List is empty");
+
+            return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
+        }
+        public async Task<Response<List<Level4Dto>>> GetCurrentAssetAccounts()
+        {
+            int tenantId = GetTenant.GetTenantId(_httpContextAccessor);
+            var level4 = await _unitOfWork.Level4.GetAll(new GetCurrentAssetAccountsSpecs(tenantId));
+            if (!level4.Any())
+                return new Response<List<Level4Dto>>(null, "List is empty");
+
+            return new Response<List<Level4Dto>>(_mapper.Map<List<Level4Dto>>(level4), "Returning List");
+        }
+
+        public async Task<Response<bool>> DeleteCOAs(List<string> ids)
+        {
+            if(ids.Count() < 0 || ids == null)
+            {
+                return new Response<bool>("List Cannot be Empty.");
+            }
+            else
+            {
+                foreach (var coa in ids)
+                {
+                    var account = await _unitOfWork.Level4.GetById(coa);                                    
+                    if (account == null)
+                        return new Response<bool>("Account Not Found.");
+                    account.IsDelete = true;
+                    await _unitOfWork.SaveAsync();
+                }
+                    return new Response<bool>(true, "Deleted Successfully.");
+            }                   
         }
     }
 }

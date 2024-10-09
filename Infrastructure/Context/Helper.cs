@@ -34,6 +34,24 @@ namespace Infrastructure.Context
             .WithMany(c => c.InvoiceLines)
             .OnDelete(DeleteBehavior.Cascade);
 
+            //Tax Invoice
+            modelBuilder.Entity<TaxInvoicesLines>()
+            .HasOne(tc => tc.Taxes)
+            .WithMany(c => c.TaxInvoicesLines)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            //Tax Refund
+
+            modelBuilder.Entity<TaxRefundLines>()
+          .HasOne(tc => tc.Taxes)
+          .WithMany(c => c.TaxRefundLines)
+          .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ChildrenTaxes>()
+                .HasOne(tc => tc.Taxes)
+                .WithMany(tc => tc.ChildrenTaxes)
+                .OnDelete(DeleteBehavior.Cascade); 
+
             //Bill
             modelBuilder.Entity<BillLines>()
             .HasOne(tc => tc.BillMaster)
@@ -198,7 +216,7 @@ namespace Infrastructure.Context
                 .IsUnique();
 
             //Changing Identity users and roles tables name
-         
+
             modelBuilder.Entity<Organization>(entity =>
             {
                 entity.HasIndex(e => e.Name).IsUnique();
@@ -272,9 +290,57 @@ namespace Infrastructure.Context
             modelBuilder.Entity<Campus>()
                 .Property(et => et.Id)
                 .ValueGeneratedNever();
-            
-           
+
+
+            modelBuilder.Entity<Currency>()
+                .Property(et => et.Code).HasMaxLength(3).IsRequired();
+
+            modelBuilder.Entity<Currency>()
+                .Property(et => et.Symbol).HasMaxLength(5).IsRequired();
+
+            modelBuilder.Entity<Currency>()
+                .Property(et => et.Name).HasMaxLength(100);
+
+            modelBuilder.Entity<Currency>()
+                .Property(et => et.Unit).HasMaxLength(50);
+
+            modelBuilder.Entity<Currency>()
+                .Property(et => et.SubUnit).HasMaxLength(50);
+
+            modelBuilder.Entity<Currency>()
+                .Property(et => et.UnitPerUSD).HasColumnType("decimal(18,6)").HasDefaultValue(1.000000);
+            modelBuilder.Entity<Currency>()
+               .Property(et => et.USDPerUnit).HasColumnType("decimal(18,6)");
+
+            modelBuilder.Entity<Currency>()
+                .HasMany(c => c.CurrencyLines) // Define the collection in Currency
+                .WithOne()                      // No navigation property in CurrencyLine
+                .HasForeignKey("CurrencyId")     // Define the foreign key in CurrencyLine
+                .OnDelete(DeleteBehavior.Cascade); // Optional: set cascade delete if needed
+
+
+
+            modelBuilder.Entity<CurrencyLine>()
+           .Property(cl => cl.Date)
+           .HasColumnType("date"); // This will store only the date without the time part
+
+            // Define the composite unique constraint on CurrencyId and Date
+            modelBuilder.Entity<CurrencyLine>()
+            .HasIndex(cl => new { cl.CurrencyId, cl.Date })
+            .IsUnique();
+
+            modelBuilder.Entity<CurrencyLine>()
+            .Property(et => et.USDPerUnit).HasColumnType("decimal(18,6)");
+
+            modelBuilder.Entity<CurrencyLine>()
+           .Property(et => et.UnitPerUSD).HasColumnType("decimal(18,6)");
+
+
+
+
         }
+
+
 
         public static string GetCurrentUser(IHttpContextAccessor httpContextAccessor)
         {
@@ -287,6 +353,6 @@ namespace Infrastructure.Context
             }
             return "N/A";
         }
-       
+
     }
 }

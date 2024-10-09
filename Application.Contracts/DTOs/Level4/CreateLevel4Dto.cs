@@ -12,7 +12,7 @@ namespace Application.Contracts.DTOs
         public string? Id { get; set; }
         [MaxLength(200)]
         [Required]
-        public string Name { get; set; }
+        public string EditableName { get; set; }
         [Required]
         [MaxLength(10)] 
         public string Code { get; set; }

@@ -1,4 +1,5 @@
-﻿using Application.Contracts.Interfaces;
+﻿using Application.Contracts.DTOs;
+using Application.Contracts.Interfaces;
 using Application.Contracts.Response;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -20,7 +21,7 @@ namespace Vizalys.Api.Controllers
         }
 
         [HttpGet("Dropdown")]
-        public async Task<ActionResult<Response<List<Level3>>>> GetProductDropDown()
+        public async Task<ActionResult<Response<List<Level3DropDownDto>>>> GetDropDown()
         {
             return Ok(await _level3Service.GetLevel3DropDown()); // Status Code : 200
         }

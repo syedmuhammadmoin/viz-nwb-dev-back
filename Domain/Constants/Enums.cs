@@ -23,6 +23,15 @@ namespace Domain.Constants
         Student = 6,
         ServiceProvider=7
     }
+    public enum Periodicity
+    {
+        annually = 0,
+        semiannually = 1,
+        every4Month = 2,
+        quarterly = 3,
+        every2Month = 4,
+        monthly = 5
+    }
     public enum ProductType
     {
         Consumable = 0,
@@ -86,7 +95,8 @@ namespace Domain.Constants
         DepreciationAdjustment = 29,
         EstimatedBudget=30,
         Budget=31,
-        PettyCash=32
+        PettyCash=32,
+        Journal =33,
     }
     public enum ActionButton
     {
@@ -117,6 +127,30 @@ namespace Domain.Constants
         Allowance = 3,
         AssignmentAllowance = 4,
         TaxDeduction = 5
+    }
+    public enum TaxComputation
+    {
+        Percentage = 0,
+        Fixed = 1,
+        GroupOfTaxes = 2,
+        PercentageTaxIncluded = 3
+    }
+    public enum TaxScope
+    {
+        Services = 0,
+        Goods = 1
+    }
+    public enum TaxInculsion
+    {
+        Default = 0,
+        TaxIncluded = 1,
+        TaxExcluded = 2
+    }   
+
+    public enum TaxBase
+    {
+        Base = 0,
+        ofTax = 1
     }
     public enum TaxType
     {
@@ -215,5 +249,29 @@ namespace Domain.Constants
         SemesterChallan = 3,
         SupplementaryChallan = 4,
     }
+    public enum JournalTypes
+    {
+        Sales = 0,
+        Purchase = 1,
+        Cash = 2,
+        Bank = 3,
+        Miscellaneous = 4,
+    }
+
+    public static class ResponseMessages
+    {
+        public const string CreatedSuccessfully = "Created successfully";
+        public const string UpdatedSuccessfully = "Updated successfully";
+        public const string DeletedSuccessfully = "Deleted successfully";
+        public const string NotFound = "Not found";
+        public const string RetrieveSuccessfully = "Returning value";
+        public const string EmptyList = "List is empty";
+        public const string ReturnList = "Return List";
+
+        
+        // Add more messages as needed
+    }
+
+
 
 }

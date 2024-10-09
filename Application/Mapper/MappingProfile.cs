@@ -1,4 +1,7 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.Tax;
+using Application.Contracts.DTOs.TaxGroup;
+using Application.Contracts.DTOs.TaxSetting;
 using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
@@ -52,24 +55,27 @@ namespace Application.Mapper
             // Level4 Mapping
             CreateMap<Level4, Level4Dto>()
                 .ForMember(dto => dto.Level3Name, core => core.MapFrom(a => a.Level3.Name))
-                .ForMember(dto => dto.EditableName, core => core.MapFrom(a => a.Name))
-                .ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
+                .ForMember(dto => dto.EditableName, core => core.MapFrom(a => a.Name));
+                //.ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
             CreateMap<CreateLevel4Dto, Level4>()
-                .ForMember(core => core.AccountType, dto => dto.MapFrom(a => AccountType.UserDefined));
+                .ForMember(core => core.AccountType, dto => dto.MapFrom(a => AccountType.UserDefined))
+                .ForMember(core => core.Name,dto => dto.MapFrom(a => a.EditableName));
+                
 
             // Level3 Mapping
-            CreateMap<Level3, Level3DropDownDto>();
+            CreateMap<Level3, Level3DropDownDto>()
+                .ForMember(dto => dto.Level1Name, core => core.MapFrom(a => a.Level2.Level1.Name));
 
             // Level1 Mapping
             CreateMap<Level1, Level1Dto>()
-                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level2))
-                .ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
+                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level2));
+            //.ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
             CreateMap<Level2, Level2Dto>()
-                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level3))
-                .ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
+                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level3));
+            //.ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
             CreateMap<Level3, Level3Dto>()
-                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level4))
-                .ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
+                .ForMember(dto => dto.children, core => core.MapFrom(a => a.Level4));
+                //.ForMember(dto => dto.Name, core => core.MapFrom(a => ($"{a.Code}-{a.Name}")));
 
             // Category Mapping
             CreateMap<Category, CategoryDto>()
@@ -433,8 +439,15 @@ namespace Application.Mapper
             // Tax Mapping
             CreateMap<Taxes, TaxDto>()
                 .ForMember(dto => dto.AccountName, core => core.MapFrom(a => a.Account.Name));
+            CreateMap<TaxInvoicesLines, TaxInvoiceLinesDto>();
+            CreateMap<TaxRefundLines, TaxRefundLinesDto>();
             CreateMap<UpdateTaxDto, Taxes>();
-
+            CreateMap<CreateTaxDto, Taxes>();            
+            CreateMap<CreateTaxInvoiceLinesDto,TaxInvoicesLines>();
+            CreateMap<CreateTaxRefundLinesDto, TaxRefundLines>();
+            CreateMap<CreateChildrenTaxDto, ChildrenTaxes>();
+            CreateMap<ChildrenTaxes, ChildrenTaxDto>();
+            
             // UnitOfMeasurement Mapping
             CreateMap<UnitOfMeasurement, UnitOfMeasurementDto>();
             CreateMap<CreateUnitOfMeasurementDto, UnitOfMeasurement>();
@@ -779,6 +792,18 @@ namespace Application.Mapper
                .ForMember(dto => dto.Semester, core => core.MapFrom(a => a.Semester.Name))
                .ForMember(dto => dto.BankAccount, core => core.MapFrom(a => a.BankAccount.Name));
 
+            //Journals
+            CreateMap<Journal, JournalDto>()
+               .ForMember(dto => dto.SuspenseAccount, core => core.MapFrom(a => a.SuspenseAccount.Name))
+               .ForMember(dto => dto.AccountNumber, core => core.MapFrom(a => a.AccountNumber.Name))
+               .ForMember(dto => dto.CashAccount, core => core.MapFrom(a => a.CashAccount.Name))
+               .ForMember(dto => dto.DefaultAccount, core => core.MapFrom(a => a.DefaultAccount.Name))
+               .ForMember(dto => dto.LossAccount, core => core.MapFrom(a => a.LossAccount.Name))
+               .ForMember(dto => dto.ProfitAccount, core => core.MapFrom(a => a.ProfitAccount.Name))
+               .ForMember(dto => dto.BankName, core => core.MapFrom(a => a.BankName));
+            CreateMap<CreateJournalDto, Journal>();
+           
+
             CreateMap<ProgramChallanTemplateLines, ProgramChallanTemplateLinesDto>()
                    .ForMember(dto => dto.FeeItem, core => core.MapFrom(d => d.FeeItem.Name));
 
@@ -789,7 +814,26 @@ namespace Application.Mapper
 
             CreateMap<PayrollTransactionMaster, UpdateEmployeeTransactionDto>();
             CreateMap<UpdateEmployeeTransactionDto, PayrollTransactionMaster>();
-           
+
+
+            CreateMap<CreateCurrencyDto,Currency>();
+            CreateMap<Currency,CurrencyDto>();
+
+
+
+            CreateMap<CreateCurrencyLineDto, CurrencyLine>();
+            CreateMap<CurrencyLine, CurrencyLineDto>();
+
+
+            CreateMap<CreateTaxGroupDto, TaxGroup>();
+            CreateMap<TaxGroup, TaxGroupDto>()
+                .ForMember(dto => dto.AdvanceAccountName, core => core.MapFrom(x => x.AdvanceAccount.Name))
+                .ForMember(dto => dto.PayableAccountName, core => core.MapFrom(x => x.PayableAccount.Name))
+                .ForMember(dto => dto.ReceivableAccountName, core => core.MapFrom(x => x.ReceivableAccount.Name))
+                .ForMember(dto => dto.CountryName, core => core.MapFrom(x => x.Country.Name));
+
+            CreateMap<TaxSetting, TaxSettingDto>();
+            CreateMap<CreateTaxSettingDto, TaxSetting>();
 
         }
     }

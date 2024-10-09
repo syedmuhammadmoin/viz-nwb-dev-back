@@ -258,6 +258,40 @@
             public const string Delete = "Permissions.GoodsDispatchNoteClaims.DL";
         }
 
+        public static class TaxesClaims
+        {
+            public const string View = "Permissions.TaxesClaims.VW";
+            public const string Create = "Permissions.TaxesClaims.CR";
+            public const string Edit = "Permissions.TaxesClaims.ED";
+            public const string Delete = "Permissions.TaxesClaims.DL";
+        }
+        public static class TaxGroupClaims
+        {
+            public const string View = "Permissions.TaxGroupClaims.VW";
+            public const string Create = "Permissions.TaxGroupClaims.CR";
+            public const string Edit = "Permissions.TaxGroupClaims.ED";
+            public const string Delete = "Permissions.TaxGroupClaims.DL";
+        }
+
+        public static class CurrencyClaims
+        {
+            public const string View = "Permissions.CurrencyClaims.VW";
+            public const string Create = "Permissions.CurrencyClaims.CR";
+            public const string Edit = "Permissions.CurrencyClaims.ED";
+            public const string Delete = "Permissions.CurrencyClaims.DL";
+        }
+
+        public static class TaxSettingClaims
+        {
+            public const string View = "Permissions.TaxSettingClaims.VW";
+            public const string Create = "Permissions.TaxSettingClaims.CR";
+            public const string Edit = "Permissions.TaxSettingClaims.ED";
+            public const string Delete = "Permissions.TaxSettingClaims.DL";
+        }
+
+
+
+
         //Reporting Form
         public static class ChartOfAccountClaims
         {
@@ -281,11 +315,6 @@
         }
 
       
-
-
-
-
-
 
         public static class DepartmentClaims
         {
@@ -348,13 +377,7 @@
             public const string Edit = "Budget.EstimatedBudget.ED";
             public const string Delete = "Budget.EstimatedBudget.DL";
         }
-        public static class TaxesClaims
-        {
-            public const string View = "Profiling.Taxes.VW";
-            public const string Create = "Profiling.Taxes.CR";
-            public const string Edit = "Profiling.Taxes.ED";
-            public const string Delete = "Profiling.Taxes.DL";
-        }
+       
         public static class UnitOfMeasurementClaims
         {
             public const string View = "Profiling.UnitOfMeasurement.VW";
@@ -666,8 +689,14 @@
             public const string Edit = "Admission.ProgramChallanTemplate.ED";
             public const string Delete = "Admission.ProgramChallanTemplate.DL";
         }
+        public static class JournalClaims
+        {
+            public const string View = "Permissions.JournalClaims.VW";
+            public const string Create = "Permissions.JournalClaims.CR";
+            public const string Edit = "Permissions.JournalClaims.ED";
+            public const string Delete = "Permissions.JournalClaims.DL";
+        }
 
-       
         public static class BudgetReportClaims
         {
             public const string View = "Budget.BudgetReport.VW";

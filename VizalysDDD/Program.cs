@@ -99,6 +99,11 @@ builder.Services.AddScoped<IAdmissionApplicationService, AdmissionApplicationSer
 builder.Services.AddScoped<IProgramChallanTemplateService, ProgramChallanTemplateService>();
 builder.Services.AddSingleton<IEmailSenderService, EmailSenderService>();
 builder.Services.AddHostedService<DepreciationBackgroundService>();
+builder.Services.AddScoped<IJournalService, JournalService>();
+builder.Services.AddScoped<ICurrencyService, CurrencyService>();
+
+builder.Services.AddScoped<ITaxGroupService, TaxGroupService>();
+builder.Services.AddScoped<ITaxSettingService, TaxSettingService>();
 
 
 //Add auto mapper config

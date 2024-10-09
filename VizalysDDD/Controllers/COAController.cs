@@ -27,6 +27,15 @@ namespace Vizalys.Api.Controllers
         {
             return Ok(await _coaService.GetCOA()); // Status Code : 200
         }
+
+
+        [ClaimRequirement("Permission", new string[] { Permissions.ChartOfAccountClaims.View, Permissions.Level4Claims.Create, Permissions.Level4Claims.View, Permissions.Level4Claims.Delete, Permissions.Level4Claims.Edit })]
+        [HttpGet("Types")]
+        public async Task<ActionResult<Response<List<Level1And3Dto>>>> GetLevel3()
+        {
+            return Ok(await _coaService.GetLevel3()); // Status Code : 200
+        }
+
         [AllowAnonymous]
         [HttpGet("download")]
         public async Task<ActionResult> DownloadCOA()

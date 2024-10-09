@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Filters;
+using Domain.Constants;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,8 @@ namespace Infrastructure.Specifications
             AddInclude(i => i.ChAccount);
             AddInclude(i => i.ClearingAccount);
         }
+
+      
         //SBBU-Code
         //public BankAccountSpecs(Guid clearingAccountId) : base(e => e.ClearingAccountId == clearingAccountId)
         //{

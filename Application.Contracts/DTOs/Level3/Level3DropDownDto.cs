@@ -10,5 +10,7 @@ namespace Application.Contracts.DTOs
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        public string Level2Name { get; set; }
+        public string Level1Name { get; set; }
     }
 }

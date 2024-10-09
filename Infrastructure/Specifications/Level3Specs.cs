@@ -13,5 +13,10 @@ namespace Infrastructure.Specifications
         {
             AddInclude(i => i.Level2);
         }
+        public Level3Specs() : base()
+        {
+            AddInclude(i => i.Level2);
+            AddInclude(i => i.Level2.Level1);
+        }
     }
 }

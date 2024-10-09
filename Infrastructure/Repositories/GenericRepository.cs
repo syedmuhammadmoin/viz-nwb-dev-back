@@ -30,6 +30,7 @@ namespace Infrastructure.Repositories
         public async Task<IEnumerable<T>> GetAll(ISpecification<T> specification = null)
         {
             return await SpecificationEvaluator<T, TKey>.GetQuery(_context.Set<T>()
+                                    .Where(x => x.IsDelete != true)
                                     .AsQueryable(), specification)
                                     .AsNoTracking()
                                     .ToListAsync();
