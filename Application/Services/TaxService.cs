@@ -68,10 +68,12 @@ namespace Application.Services
             //{
             //    return new  Response<TaxDto>("Account Invalid");
             //}
-            
+
             //For updating data
+            _unitOfWork.CreateTransaction();
             _mapper.Map<CreateTaxDto, Taxes>(entity, tax);
             await _unitOfWork.SaveAsync();
+            _unitOfWork.Commit();
             return new Response<TaxDto>(_mapper.Map<TaxDto>(tax), "Updated successfully");
         }
         public Task<Response<int>> DeleteAsync(int id)

@@ -23,6 +23,15 @@ namespace Domain.Constants
         Student = 6,
         ServiceProvider=7
     }
+    public enum Periodicity
+    {
+        annually = 0,
+        semiannually = 1,
+        every4Month = 2,
+        quarterly = 3,
+        every2Month = 4,
+        monthly = 5
+    }
     public enum ProductType
     {
         Consumable = 0,

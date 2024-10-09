@@ -103,6 +103,7 @@ builder.Services.AddScoped<IJournalService, JournalService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 
 builder.Services.AddScoped<ITaxGroupService, TaxGroupService>();
+builder.Services.AddScoped<ITaxSettingService, TaxSettingService>();
 
 
 //Add auto mapper config

@@ -107,6 +107,7 @@ namespace Infrastructure.Uow
         public IGenericRepository<BaseEntity<int>, int> GenericRepository { get; private set; }
         private readonly Dictionary<Type, object> _repositories = new();
         public ITaxGroupRepository TaxGroup { get; private set; }
+        public ITaxSettingRepository TaxSetting {  get; private set; }
 
 
         public UnitOfWork(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
@@ -200,7 +201,7 @@ namespace Infrastructure.Uow
             InviteUser = new InviteUserRepository(context);
             Journals = new JournalRepository(context);
             TaxGroup = new TaxGroupRepository(context);
-
+            TaxSetting = new TaxSettingRepository(context);
         }
 
         public IGenericRepository<TEntity, int> GetRepository<TEntity>() where TEntity : BaseEntity<int>

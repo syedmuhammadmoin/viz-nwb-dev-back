@@ -99,6 +99,7 @@ namespace Domain.Interfaces
         IJournalRepository Journals { get; }
         IGenericRepository<TEntity, int> GetRepository<TEntity>() where TEntity : BaseEntity<int>;
         ITaxGroupRepository TaxGroup { get; }
+        ITaxSettingRepository TaxSetting { get; }
 
         Task SaveAsync();
         void CreateTransaction();

@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.DTOs;
 using Application.Contracts.DTOs.Tax;
 using Application.Contracts.DTOs.TaxGroup;
+using Application.Contracts.DTOs.TaxSetting;
 using AutoMapper;
 using Domain.Constants;
 using Domain.Entities;
@@ -830,6 +831,9 @@ namespace Application.Mapper
                 .ForMember(dto => dto.PayableAccountName, core => core.MapFrom(x => x.PayableAccount.Name))
                 .ForMember(dto => dto.ReceivableAccountName, core => core.MapFrom(x => x.ReceivableAccount.Name))
                 .ForMember(dto => dto.CountryName, core => core.MapFrom(x => x.Country.Name));
+
+            CreateMap<TaxSetting, TaxSettingDto>();
+            CreateMap<CreateTaxSettingDto, TaxSetting>();
 
         }
     }

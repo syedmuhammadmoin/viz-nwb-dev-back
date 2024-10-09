@@ -281,6 +281,15 @@
             public const string Delete = "Permissions.CurrencyClaims.DL";
         }
 
+        public static class TaxSettingClaims
+        {
+            public const string View = "Permissions.TaxSettingClaims.VW";
+            public const string Create = "Permissions.TaxSettingClaims.CR";
+            public const string Edit = "Permissions.TaxSettingClaims.ED";
+            public const string Delete = "Permissions.TaxSettingClaims.DL";
+        }
+
+
 
 
         //Reporting Form

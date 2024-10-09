@@ -137,6 +137,7 @@ namespace Infrastructure.Context
         public DbSet<Currency> Currency { get; set; }
         
         public DbSet<TaxGroup> TaxGroups {  get; set; }
+        public DbSet<TaxSetting> TaxSetting { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
