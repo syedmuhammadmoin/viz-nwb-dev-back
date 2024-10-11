@@ -51,9 +51,9 @@ namespace Application.Services
         }
 
         public async Task<Response<TaxDto>> UpdateAsync(CreateTaxDto entity)
-
         {
-            var tax = await _unitOfWork.Taxes.GetById((int)entity.Id);
+            var specs = new TaxesSpecs();
+            var tax = await _unitOfWork.Taxes.GetById((int)entity.Id,specs);
 
             if (tax == null)
                 return new Response<TaxDto>("Not found");
@@ -118,6 +118,16 @@ namespace Application.Services
                 return new Response<List<TaxDto>>("List is Empty");
             var selectedTaxes = taxes.Where(x => ids.Contains(x.Id)).ToList();
             return new Response<List<TaxDto>>(_mapper.Map<List<TaxDto>>(selectedTaxes), "Returning List");
+        }
+
+        public async Task<Response<bool>> InActiveTax(int id,bool status)
+        {
+            var result = await _unitOfWork.Taxes.GetById(id);
+            if (result == null)
+                return new Response<bool>("Could not find record.");
+            result.SetActiveStatus(status);
+           await _unitOfWork.SaveAsync();
+            return new Response<bool>("Status Updated");
         }
     }
 }

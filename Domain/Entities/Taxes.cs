@@ -29,6 +29,7 @@ namespace Domain.Entities
         public string? LabelOnInv {  get; private set; }
         public string? Company { get; private set; }
         public TaxInculsion? IncludedPrice { get; private set; }
+        public bool? IsActive {  get; private set; }
         public bool SabsequentTaxes { get; private set; }
         ///public int GroupId { get; private set; }
         //[ForeignKey("GroupId")]
@@ -47,6 +48,10 @@ namespace Domain.Entities
         protected Taxes()
         {
 
+        }
+        public void SetActiveStatus(bool status)
+        {
+            this.IsActive = status;
         }
     }
 }
