@@ -13,6 +13,6 @@ namespace Application.Contracts.Interfaces
     {
         Task<Response<bool>> DeleteTaxes(List<int> ids);
         Task<Response<List<TaxDto>>> GetTaxesWithIds(List<int> ids);
-        Task<Response<bool>> InActiveTax(int id);
+        Task<Response<bool>> InActiveTax(int id, bool status);
     }
 }

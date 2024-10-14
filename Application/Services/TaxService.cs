@@ -127,7 +127,7 @@ namespace Application.Services
                 return new Response<bool>("Could not find record.");
             result.SetActiveStatus(status);
            await _unitOfWork.SaveAsync();
-            return new Response<bool>("Status Updated");
+            return new Response<bool>(status, "Status Updated");
         }
     }
 }

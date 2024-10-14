@@ -15,9 +15,8 @@ namespace Application.Contracts.DTOs
         public int? Id { get; set; }       
         public string? AccountId { get; set; }
         [Required]
-        public string Name { get; set; }
-        [Required]
-        public TaxType TaxType { get; set; }
+        public string Name { get; set; }      
+        public TaxType? TaxType { get; set; }
         public int? GroupId { get; set; }
         public TaxComputation? TaxComputation { get; set; }
         public string? Description { get; set; }

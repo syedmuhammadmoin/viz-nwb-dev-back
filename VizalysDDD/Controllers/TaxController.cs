@@ -85,5 +85,15 @@ namespace Vizalys.Api.Controllers
                 return Ok(result);
             return BadRequest(result);
         }
+
+        [HttpPost("change-status/{id:int}")]
+        public async Task<ActionResult<Response<bool>>> ChangeStatus(int id, [FromBody]bool status)
+        {
+            var result = await _taxService.InActiveTax(id, status);
+            if (result.IsSuccess)
+                return Ok(result);
+            return BadRequest(result);
+        }
+
     }
 }
