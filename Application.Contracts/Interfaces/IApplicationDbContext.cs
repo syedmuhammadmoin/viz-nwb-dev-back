@@ -127,7 +127,11 @@ namespace Application.Interfaces
         public DbSet<Journal> Journals { get; set; }
         public DbSet<Currency> Currency { get; set; }
         public DbSet<TaxGroup> TaxGroups { get; set; }
-        public DbSet<TaxSetting> TaxSetting { get; set; }
+        //public DbSet<TaxSetting> TaxSetting { get; set; }
+        public DbSet<FiscalPeriod> FiscalPeriods { get; set; }
+        //public DbSet<FiscalPeriodSetting> FiscalPeriodSettings { get; set; }
+        //public DbSet<DefaultCurrencySetting> CurrencySettings { get; set; }
+        public DbSet<AccountingSettingEntity> AccountingSettings { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

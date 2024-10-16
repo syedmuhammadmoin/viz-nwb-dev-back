@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241015055535_CurrencyFiscalSettingFiscalPeriod")]
+    partial class CurrencyFiscalSettingFiscalPeriod
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,93 +61,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("FacultyId");
 
                     b.ToTable("AcademicDepartments");
-                });
-
-            modelBuilder.Entity("Domain.Entities.AccountingSettingEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("CountryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CurrencyId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("DyanmicReports")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("EuropeVAT")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("JournalAccountId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("LastDay")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LastMonth")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("OrganizationId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Periodicity")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PurchaseTaxId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("RemindPeriod")
-                        .HasColumnType("int");
-
-                    b.Property<bool?>("RoundGlobally")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("RoundPerLine")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("SalesTaxId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ThresholdDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
-
-                    b.HasIndex("CurrencyId");
-
-                    b.HasIndex("JournalAccountId");
-
-                    b.HasIndex("OrganizationId");
-
-                    b.HasIndex("PurchaseTaxId");
-
-                    b.HasIndex("SalesTaxId");
-
-                    b.ToTable("AccountingSettings");
                 });
 
             modelBuilder.Entity("Domain.Entities.AdmissionApplication", b =>
@@ -7951,51 +7866,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Faculty");
-                });
-
-            modelBuilder.Entity("Domain.Entities.AccountingSettingEntity", b =>
-                {
-                    b.HasOne("Domain.Entities.Country", "Country")
-                        .WithMany()
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Level4", "JournalAccount")
-                        .WithMany()
-                        .HasForeignKey("JournalAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Organization", "Organization")
-                        .WithMany()
-                        .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Taxes", "PurchaseTax")
-                        .WithMany()
-                        .HasForeignKey("PurchaseTaxId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Taxes", "SalesTax")
-                        .WithMany()
-                        .HasForeignKey("SalesTaxId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Country");
-
-                    b.Navigation("Currency");
-
-                    b.Navigation("JournalAccount");
-
-                    b.Navigation("Organization");
-
-                    b.Navigation("PurchaseTax");
-
-                    b.Navigation("SalesTax");
                 });
 
             modelBuilder.Entity("Domain.Entities.AdmissionApplication", b =>
