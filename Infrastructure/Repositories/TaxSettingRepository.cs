@@ -21,8 +21,8 @@ namespace Infrastructure.Repositories
 
         public void DeleteAll()
         {
-            _options.Database.ExecuteSqlRaw("DELETE FROM TaxSetting");
-            _options.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('TaxSetting', RESEED, 0)");
+            _options.Database.ExecuteSqlRaw("DELETE FROM AccountingSettings");
+            _options.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('AccountingSettings', RESEED, 0)");
         }
     }
 }

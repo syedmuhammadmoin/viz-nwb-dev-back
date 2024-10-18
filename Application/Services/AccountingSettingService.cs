@@ -29,6 +29,7 @@ namespace Application.Services
         public async Task<Response<AccountingSettingDto>> CreateAsync(CreateAccountingSettingDto entity)
         {
             _unitOfWork.TaxSetting.DeleteAll();
+
             var result = await _unitOfWork.AccountingSetting.Add(_mapper.Map<AccountingSettingEntity>(entity));
             await _unitOfWork.SaveAsync();
             return new Response<AccountingSettingDto>(_mapper.Map<AccountingSettingDto>(result), "Created Successfully.");
