@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.DTOs;
+using Application.Contracts.DTOs.AccountSetting;
 using Application.Contracts.DTOs.CurrencySetting;
 using Application.Contracts.DTOs.FiscalPeriod;
 using Application.Contracts.DTOs.FiscalPeriodSetting;
@@ -846,6 +847,9 @@ namespace Application.Mapper
 
             CreateMap<CreateDefaultCurrencySettingDto, DefaultCurrencySetting>();
             CreateMap<DefaultCurrencySetting, DefaultCurrencyDto>();
+
+            CreateMap<CreateAccountingSettingDto, AccountingSettingEntity>();
+            CreateMap<AccountingSettingEntity, AccountingSettingDto>();
 
         }
     }

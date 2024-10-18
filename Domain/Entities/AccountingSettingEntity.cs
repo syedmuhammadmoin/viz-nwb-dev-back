@@ -11,7 +11,7 @@ namespace Domain.Entities
 {
     public class AccountingSettingEntity : BaseEntity<int>
     {
-        public string? LastMonth { get; private set; }
+        public int? LastMonth { get; private set; }
         public int? LastDay { get; private set; }
         public DateTime? ThresholdDate { get; private set; }
         public bool DyanmicReports { get; private set; }
@@ -43,6 +43,15 @@ namespace Domain.Entities
         public bool? EuropeVAT { get; private set; }
         public int? CountryId { get; private set; }
         [ForeignKey("CountryId")]
-        public Country Country { get; private set; }
+        public Country? Country { get; private set; }
+        public string? Environment {  get; private set; }
+        public string? ApiId { get; private set; }
+        public string? ApiKey { get; private set; }
+        public string? CompanyCode   { get; private set; }
+        public bool? UseUPC { get; private set; }
+        public bool? CommitTransactions { get; private set; }
+        public bool? AddressValidation { get; private set; }
+        public bool? IsAvatax { get; private set; }
+        public bool? CaseBasis {  get; private set; }
     }
 }

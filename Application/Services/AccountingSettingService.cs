@@ -31,7 +31,7 @@ namespace Application.Services
             _unitOfWork.TaxSetting.DeleteAll();
             var result = await _unitOfWork.AccountingSetting.Add(_mapper.Map<AccountingSettingEntity>(entity));
             await _unitOfWork.SaveAsync();
-            return new Response<AccountingSettingDto>(_mapper.Map<AccountingSettingDto>(result), "Created Successfully."); throw new NotImplementedException();
+            return new Response<AccountingSettingDto>(_mapper.Map<AccountingSettingDto>(result), "Created Successfully.");
         }
 
         public async Task<Response<int>> DeleteAsync(int id)
@@ -54,6 +54,7 @@ namespace Application.Services
 
         public async Task<Response<AccountingSettingDto>> GetByIdAsync(int id)
         {
+            var specs = new AccountingSettingSpecs(true);
             var tax = await _unitOfWork.AccountingSetting.GetById(id);
             if (tax == null)
                 return new Response<AccountingSettingDto>("Not found");

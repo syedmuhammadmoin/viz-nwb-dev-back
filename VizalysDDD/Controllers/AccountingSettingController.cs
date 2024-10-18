@@ -9,11 +9,11 @@ namespace Vizalys.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccounttingSettingController : ControllerBase
+    public class AccountingSettingController : ControllerBase
     {
         private readonly IAccountingSettingService _service;
 
-        public AccounttingSettingController(IAccountingSettingService service)
+        public AccountingSettingController(IAccountingSettingService service)
         {
             _service = service;
         }
@@ -28,6 +28,7 @@ namespace Vizalys.API.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<AccountingSettingDto>> GetById(int id)
         {
+            
             var result = await _service.GetByIdAsync(id);
             if (result.IsSuccess)
                 return Ok(result);

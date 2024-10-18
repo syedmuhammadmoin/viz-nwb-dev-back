@@ -104,6 +104,7 @@ namespace Domain.Interfaces
         IFiscalPeriodSettingRepository FiscalPeriodSetting { get; }
         ICurrencySettingRepository CurrencySetting { get; }
         IAccountingSettingRepository AccountingSetting { get; }
+        IGeneralSettingRepository GeneralSetting { get; }
 
         Task SaveAsync();
         void CreateTransaction();

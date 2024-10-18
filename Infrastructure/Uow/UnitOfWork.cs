@@ -112,6 +112,7 @@ namespace Infrastructure.Uow
         public IFiscalPeriodSettingRepository FiscalPeriodSetting { get; private set; }
         public ICurrencySettingRepository CurrencySetting { get; private set; }
         public IAccountingSettingRepository AccountingSetting { get; private set; }
+        public IGeneralSettingRepository GeneralSetting { get; private set; }
 
 
         public UnitOfWork(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
@@ -210,6 +211,7 @@ namespace Infrastructure.Uow
             CurrencySetting = new CurrencySettingRepository(context);
             FiscalPeriodSetting = new FiscalPeriodSettingRepository(context);
             AccountingSetting = new AccountingSettingRepository(context);
+            GeneralSetting = new GeneralSettingRepository(context);
         }
 
         public IGenericRepository<TEntity, int> GetRepository<TEntity>() where TEntity : BaseEntity<int>

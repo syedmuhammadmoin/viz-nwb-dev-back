@@ -108,6 +108,7 @@ builder.Services.AddScoped<IFiscalPeriodService, FiscalPeriodService>();
 builder.Services.AddScoped<IFiscalPeriodSettingService, FiscalPeriodSettingService>();
 builder.Services.AddScoped<ICurrencySettingService, CurrencySettingService>();
 builder.Services.AddScoped<IAccountingSettingService, AccountingSettingService>();
+builder.Services.AddScoped<IGeneralSettingService, GeneralSettingService>();
 
 
 //Add auto mapper config

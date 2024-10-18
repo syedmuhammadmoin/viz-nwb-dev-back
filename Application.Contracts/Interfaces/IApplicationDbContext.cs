@@ -132,6 +132,7 @@ namespace Application.Interfaces
         //public DbSet<FiscalPeriodSetting> FiscalPeriodSettings { get; set; }
         //public DbSet<DefaultCurrencySetting> CurrencySettings { get; set; }
         public DbSet<AccountingSettingEntity> AccountingSettings { get; set; }
+        public DbSet<GeneralSettingEntity> GeneralSettings { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

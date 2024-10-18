@@ -142,6 +142,7 @@ namespace Infrastructure.Context
         public DbSet<FiscalPeriod> FiscalPeriods { get; set; }
         public DbSet<FiscalPeriodSetting> FiscalPeriodSettings { get; set; }
         public DbSet<AccountingSettingEntity> AccountingSettings { get; set; }
+        public DbSet<GeneralSettingEntity> GeneralSettings { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
