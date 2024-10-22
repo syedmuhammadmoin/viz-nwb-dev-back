@@ -10,15 +10,14 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class TaxSettingRepository : GenericRepository<TaxSetting,int>,ITaxSettingRepository
+    public class AccountingSettingRepository : GenericRepository<AccountingSettingEntity , int> , IAccountingSettingRepository
     {
         private readonly ApplicationDbContext _options;
 
-        public TaxSettingRepository(ApplicationDbContext options):base(options)
+        public AccountingSettingRepository(ApplicationDbContext options) : base(options)
         {
             _options = options;
         }
-
         public void DeleteAll()
         {
             _options.Database.ExecuteSqlRaw("DELETE FROM AccountingSettings");

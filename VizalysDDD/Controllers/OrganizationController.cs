@@ -21,15 +21,15 @@ namespace Vizalys.Api.Controllers
             _organizationService = organizationService;
         }
 
-        //[HttpGet]
-        //public async Task<ActionResult<PaginationResponse<List<OrganizationDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
-        //{
-        //    var orgs = await _organizationService.GetAllAsync(filter);
-        //    if (orgs.IsSuccess)
-        //        return Ok(orgs); // Status Code : 200
+        [HttpGet]
+        public async Task<ActionResult<PaginationResponse<List<OrganizationDto>>>> GetAllAsync([FromQuery] TransactionFormFilter filter)
+        {
+            var orgs = await _organizationService.GetAllAsync(filter);
+            if (orgs.IsSuccess)
+                return Ok(orgs); // Status Code : 200
 
-        //    return BadRequest(orgs); // Status code : 400
-        //}
+            return BadRequest(orgs); // Status code : 400
+        }
 
         [HttpPost]
         public async Task<ActionResult<Response<OrganizationDto>>> CreateAsync(CreateOrganizationDto entity)

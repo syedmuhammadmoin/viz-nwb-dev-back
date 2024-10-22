@@ -108,6 +108,11 @@ namespace Infrastructure.Uow
         private readonly Dictionary<Type, object> _repositories = new();
         public ITaxGroupRepository TaxGroup { get; private set; }
         public ITaxSettingRepository TaxSetting {  get; private set; }
+        public IFiscalPeriodRepository FiscalPeriod { get; private set; }
+        public IFiscalPeriodSettingRepository FiscalPeriodSetting { get; private set; }
+        public ICurrencySettingRepository CurrencySetting { get; private set; }
+        public IAccountingSettingRepository AccountingSetting { get; private set; }
+        public IGeneralSettingRepository GeneralSetting { get; private set; }
 
 
         public UnitOfWork(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
@@ -202,6 +207,11 @@ namespace Infrastructure.Uow
             Journals = new JournalRepository(context);
             TaxGroup = new TaxGroupRepository(context);
             TaxSetting = new TaxSettingRepository(context);
+            FiscalPeriod = new FiscalPeriodRepository(context);
+            CurrencySetting = new CurrencySettingRepository(context);
+            FiscalPeriodSetting = new FiscalPeriodSettingRepository(context);
+            AccountingSetting = new AccountingSettingRepository(context);
+            GeneralSetting = new GeneralSettingRepository(context);
         }
 
         public IGenericRepository<TEntity, int> GetRepository<TEntity>() where TEntity : BaseEntity<int>

@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241018063924_changingMonthType")]
+    partial class changingMonthType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,9 +83,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("BaseTaxReceivedAccountId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool?>("CaseBasis")
-                        .HasColumnType("bit");
-
                     b.Property<bool?>("CommitTransactions")
                         .HasColumnType("bit");
 
@@ -110,9 +109,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("EuropeVAT")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsAvatax")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDelete")

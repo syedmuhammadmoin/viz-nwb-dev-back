@@ -100,6 +100,11 @@ namespace Domain.Interfaces
         IGenericRepository<TEntity, int> GetRepository<TEntity>() where TEntity : BaseEntity<int>;
         ITaxGroupRepository TaxGroup { get; }
         ITaxSettingRepository TaxSetting { get; }
+        IFiscalPeriodRepository FiscalPeriod { get; }
+        IFiscalPeriodSettingRepository FiscalPeriodSetting { get; }
+        ICurrencySettingRepository CurrencySetting { get; }
+        IAccountingSettingRepository AccountingSetting { get; }
+        IGeneralSettingRepository GeneralSetting { get; }
 
         Task SaveAsync();
         void CreateTransaction();

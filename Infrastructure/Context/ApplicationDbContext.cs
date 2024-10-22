@@ -138,6 +138,11 @@ namespace Infrastructure.Context
         
         public DbSet<TaxGroup> TaxGroups {  get; set; }
         public DbSet<TaxSetting> TaxSetting { get; set; }
+        public DbSet<DefaultCurrencySetting> CurrencySettings { get; set; }
+        public DbSet<FiscalPeriod> FiscalPeriods { get; set; }
+        public DbSet<FiscalPeriodSetting> FiscalPeriodSettings { get; set; }
+        public DbSet<AccountingSettingEntity> AccountingSettings { get; set; }
+        public DbSet<GeneralSettingEntity> GeneralSettings { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

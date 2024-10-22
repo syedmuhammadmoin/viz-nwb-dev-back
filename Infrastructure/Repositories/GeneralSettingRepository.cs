@@ -10,19 +10,19 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class TaxSettingRepository : GenericRepository<TaxSetting,int>,ITaxSettingRepository
+    public class GeneralSettingRepository : GenericRepository<GeneralSettingEntity,int> , IGeneralSettingRepository
     {
         private readonly ApplicationDbContext _options;
 
-        public TaxSettingRepository(ApplicationDbContext options):base(options)
+        public GeneralSettingRepository(ApplicationDbContext options) : base(options)
         {
             _options = options;
         }
 
         public void DeleteAll()
         {
-            _options.Database.ExecuteSqlRaw("DELETE FROM AccountingSettings");
-            _options.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('AccountingSettings', RESEED, 0)");
+            _options.Database.ExecuteSqlRaw("DELETE FROM GeneralSettings");
+            _options.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('GeneralSettings', RESEED, 0)");
         }
     }
 }

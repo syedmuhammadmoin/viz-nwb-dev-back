@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241015112421_AccountingSettingSingleEntity")]
+    partial class AccountingSettingSingleEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,27 +71,6 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<bool?>("AddressValidation")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ApiId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ApiKey")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BaseTaxReceivedAccountId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool?>("CaseBasis")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("CommitTransactions")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("CompanyCode")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("CountryId")
                         .HasColumnType("int");
 
@@ -106,13 +87,7 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("DyanmicReports")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Environment")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool?>("EuropeVAT")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsAvatax")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDelete")
@@ -124,8 +99,8 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("LastDay")
                         .HasColumnType("int");
 
-                    b.Property<int?>("LastMonth")
-                        .HasColumnType("int");
+                    b.Property<string>("LastMonth")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(100)
@@ -155,18 +130,10 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("SalesTaxId")
                         .HasColumnType("int");
 
-                    b.Property<string>("TaxCashBasisId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime?>("ThresholdDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool?>("UseUPC")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("BaseTaxReceivedAccountId");
 
                     b.HasIndex("CountryId");
 
@@ -179,8 +146,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("PurchaseTaxId");
 
                     b.HasIndex("SalesTaxId");
-
-                    b.HasIndex("TaxCashBasisId");
 
                     b.ToTable("AccountingSettings");
                 });
@@ -3670,62 +3635,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("MasterId");
 
                     b.ToTable("FixedAssetLines");
-                });
-
-            modelBuilder.Entity("Domain.Entities.GeneralSettingEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("ButtonColor")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("ComTransactions")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("HeaderColor")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("IsCubicFeet")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsCubicMeters")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsKilogram")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsPound")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("OrganizationId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganizationId");
-
-                    b.ToTable("GeneralSettings");
                 });
 
             modelBuilder.Entity("Domain.Entities.GoodsReturnNoteLines", b =>
@@ -8048,11 +7957,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.AccountingSettingEntity", b =>
                 {
-                    b.HasOne("Domain.Entities.Level4", "BaseTaxReceivedAccount")
-                        .WithMany()
-                        .HasForeignKey("BaseTaxReceivedAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Domain.Entities.Country", "Country")
                         .WithMany()
                         .HasForeignKey("CountryId")
@@ -8083,13 +7987,6 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("SalesTaxId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Entities.Level4", "TaxCashBasis")
-                        .WithMany()
-                        .HasForeignKey("TaxCashBasisId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("BaseTaxReceivedAccount");
-
                     b.Navigation("Country");
 
                     b.Navigation("Currency");
@@ -8101,8 +7998,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("PurchaseTax");
 
                     b.Navigation("SalesTax");
-
-                    b.Navigation("TaxCashBasis");
                 });
 
             modelBuilder.Entity("Domain.Entities.AdmissionApplication", b =>
@@ -9289,16 +9184,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("FixedAsset");
-                });
-
-            modelBuilder.Entity("Domain.Entities.GeneralSettingEntity", b =>
-                {
-                    b.HasOne("Domain.Entities.Organization", "Organization")
-                        .WithMany()
-                        .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("Domain.Entities.GoodsReturnNoteLines", b =>

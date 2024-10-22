@@ -8,7 +8,11 @@ namespace Application.Contracts.DTOs
 {
     public class UnitOfMeasurementDto
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public int Id { get; set; }  
+        public bool? IsKilogram { get; set; }
+        public bool? IsPound { get; set; }
+        public bool? IsCubicMeterVol { get; set; }
+        public bool? IsCubicFeetVol { get; set; }
+        public int? OrganizationId { get; set; }
     }
 }
