@@ -13,7 +13,7 @@ namespace Application.Contracts.DTOs
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int GroupId { get; set; }
+        public int? GroupId { get; set; }
         public TaxType TaxType { get; set; }
         public string AccountId { get; set; }
         public string AccountName { get; set; }
